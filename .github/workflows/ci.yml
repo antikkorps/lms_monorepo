@@ -1,0 +1,243 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+jobs:
+  # =============================================================================
+  # Affected Check - Determine which projects changed
+  # =============================================================================
+  affected:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.affected.outputs.api }}
+      app: ${{ steps.affected.outputs.app }}
+      landing: ${{ steps.affected.outputs.landing }}
+      shared: ${{ steps.affected.outputs.shared }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determine affected projects
+        id: affected
+        run: |
+          # Get base ref for comparison
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE_REF="origin/${{ github.base_ref }}"
+          else
+            BASE_REF="HEAD~1"
+          fi
+
+          # Check affected projects
+          echo "api=$(npx nx show projects --affected --base=$BASE_REF | grep -q 'api' && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "app=$(npx nx show projects --affected --base=$BASE_REF | grep -q 'app' && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "landing=$(npx nx show projects --affected --base=$BASE_REF | grep -q 'landing' && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "shared=$(npx nx show projects --affected --base=$BASE_REF | grep -qE 'shared-(schemas|types|ui)' && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+  # =============================================================================
+  # Lint - Code quality checks
+  # =============================================================================
+  lint:
+    runs-on: ubuntu-latest
+    needs: affected
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npx nx affected -t lint --base=HEAD~1
+
+  # =============================================================================
+  # Typecheck - TypeScript validation
+  # =============================================================================
+  typecheck:
+    runs-on: ubuntu-latest
+    needs: affected
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run typecheck
+        run: npx nx affected -t typecheck --base=HEAD~1
+
+  # =============================================================================
+  # Test - Unit and integration tests
+  # =============================================================================
+  test:
+    runs-on: ubuntu-latest
+    needs: affected
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: lms
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: lms_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://lms:test_password@localhost:5432/lms_test
+      REDIS_URL: redis://localhost:6379
+      JWT_SECRET: test-jwt-secret
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npx nx affected -t test --base=HEAD~1 --coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+  # =============================================================================
+  # Build - Production builds
+  # =============================================================================
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build affected projects
+        run: npx nx affected -t build --base=HEAD~1 --configuration=production
+
+      - name: Upload API artifact
+        uses: actions/upload-artifact@v4
+        if: needs.affected.outputs.api == 'true'
+        with:
+          name: api-build
+          path: dist/apps/api
+          retention-days: 7
+
+      - name: Upload App artifact
+        uses: actions/upload-artifact@v4
+        if: needs.affected.outputs.app == 'true'
+        with:
+          name: app-build
+          path: dist/apps/app
+          retention-days: 7
+
+      - name: Upload Landing artifact
+        uses: actions/upload-artifact@v4
+        if: needs.affected.outputs.landing == 'true'
+        with:
+          name: landing-build
+          path: dist/apps/landing
+          retention-days: 7
+
+  # =============================================================================
+  # E2E Tests - Playwright (on main branch only)
+  # =============================================================================
+  e2e:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests
+        run: npx nx e2e app-e2e
+        continue-on-error: true # TODO: Remove when E2E tests are stable
+
+      - name: Upload E2E report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: dist/.playwright
+          retention-days: 7

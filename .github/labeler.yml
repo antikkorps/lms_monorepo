@@ -1,0 +1,64 @@
+# Auto-labeling configuration for PRs
+
+# Application labels
+api:
+  - changed-files:
+      - any-glob-to-any-file: 'apps/api/**'
+
+app:
+  - changed-files:
+      - any-glob-to-any-file: 'apps/app/**'
+
+landing:
+  - changed-files:
+      - any-glob-to-any-file: 'apps/landing/**'
+
+# Library labels
+shared:
+  - changed-files:
+      - any-glob-to-any-file: 'libs/shared/**'
+
+shared-schemas:
+  - changed-files:
+      - any-glob-to-any-file: 'libs/shared/schemas/**'
+
+shared-types:
+  - changed-files:
+      - any-glob-to-any-file: 'libs/shared/types/**'
+
+shared-ui:
+  - changed-files:
+      - any-glob-to-any-file: 'libs/shared/ui/**'
+
+# Infrastructure labels
+infrastructure:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docker/**'
+          - 'docker-compose.yml'
+          - '.github/**'
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: '.github/workflows/**'
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - 'docs/**'
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'package.json'
+          - 'package-lock.json'
+          - '**/package.json'
+
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.json'
+          - '*.yml'
+          - '*.yaml'
+          - '.env*'
