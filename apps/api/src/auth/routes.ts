@@ -9,6 +9,8 @@ import {
   changePassword,
   forgotPassword,
   resetPassword,
+  verifyEmail,
+  resendVerification,
 } from './controller.js';
 import { authenticate } from './middleware.js';
 import { authRateLimiter } from '../middlewares/index.js';
@@ -21,6 +23,8 @@ authRouter.post('/login', authRateLimiter, login);
 authRouter.post('/refresh', refresh);
 authRouter.post('/forgot-password', authRateLimiter, forgotPassword);
 authRouter.post('/reset-password', authRateLimiter, resetPassword);
+authRouter.post('/verify-email', authRateLimiter, verifyEmail);
+authRouter.post('/resend-verification', authRateLimiter, resendVerification);
 
 // Protected routes (require authentication)
 authRouter.post('/logout', authenticate, logout);

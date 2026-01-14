@@ -8,11 +8,13 @@ const BLACKLIST_PREFIX = 'auth:blacklist:';
 const REFRESH_TOKEN_PREFIX = 'auth:refresh:';
 const USER_SESSIONS_PREFIX = 'auth:sessions:';
 const PASSWORD_RESET_PREFIX = 'auth:password_reset:';
+const EMAIL_VERIFICATION_PREFIX = 'auth:email_verify:';
 
 // TTL in seconds
 const BLACKLIST_TTL = 60 * 60 * 24 * 7; // 7 days (match refresh token expiry)
 const REFRESH_TOKEN_TTL = 60 * 60 * 24 * 7; // 7 days
 const PASSWORD_RESET_TTL = 60 * 60; // 1 hour
+const EMAIL_VERIFICATION_TTL = 60 * 60 * 24; // 24 hours
 
 /**
  * Add a token to the blacklist (for logout/revocation)
@@ -212,4 +214,64 @@ export async function deletePasswordResetToken(token: string): Promise<void> {
   const key = `${PASSWORD_RESET_PREFIX}${token}`;
   await redis.del(key);
   logger.debug('Password reset token deleted');
+}
+
+// ==================== EMAIL VERIFICATION ====================
+
+/**
+ * Generate a secure email verification token
+ */
+export function generateEmailVerificationToken(): string {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+/**
+ * Store an email verification token for a user
+ */
+export async function storeEmailVerificationToken(
+  userId: string,
+  email: string,
+  token: string
+): Promise<void> {
+  const redis = getRedisClient();
+  const key = `${EMAIL_VERIFICATION_PREFIX}${token}`;
+
+  await redis.setex(
+    key,
+    EMAIL_VERIFICATION_TTL,
+    JSON.stringify({
+      userId,
+      email,
+      createdAt: Date.now(),
+    })
+  );
+
+  logger.debug({ userId, email }, 'Email verification token stored');
+}
+
+/**
+ * Verify and get email verification token data
+ */
+export async function getEmailVerificationToken(
+  token: string
+): Promise<{ userId: string; email: string; createdAt: number } | null> {
+  const redis = getRedisClient();
+  const key = `${EMAIL_VERIFICATION_PREFIX}${token}`;
+  const data = await redis.get(key);
+
+  if (!data) {
+    return null;
+  }
+
+  return JSON.parse(data);
+}
+
+/**
+ * Delete email verification token after use
+ */
+export async function deleteEmailVerificationToken(token: string): Promise<void> {
+  const redis = getRedisClient();
+  const key = `${EMAIL_VERIFICATION_PREFIX}${token}`;
+  await redis.del(key);
+  logger.debug('Email verification token deleted');
 }

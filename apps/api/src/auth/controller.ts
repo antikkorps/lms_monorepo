@@ -19,6 +19,10 @@ import {
   storePasswordResetToken,
   getPasswordResetToken,
   deletePasswordResetToken,
+  generateEmailVerificationToken,
+  storeEmailVerificationToken,
+  getEmailVerificationToken,
+  deleteEmailVerificationToken,
 } from './session.js';
 import { AppError } from '../utils/app-error.js';
 import { config } from '../config/index.js';
@@ -122,7 +126,7 @@ export async function register(ctx: Context): Promise<void> {
     firstName,
     lastName,
     role: tenantId ? UserRole.LEARNER : UserRole.LEARNER,
-    status: UserStatus.ACTIVE, // In production, you might want PENDING for email verification
+    status: UserStatus.PENDING, // Requires email verification
     tenantId,
   });
 
@@ -131,35 +135,39 @@ export async function register(ctx: Context): Promise<void> {
     await Tenant.increment('seatsUsed', { where: { id: tenantId } });
   }
 
-  // Generate tokens
-  const { accessToken, refreshToken, tokenFamily } = generateTokenPair({
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    tenantId: user.tenantId,
-  });
+  // Generate email verification token
+  const verificationToken = generateEmailVerificationToken();
+  await storeEmailVerificationToken(user.id, user.email, verificationToken);
 
-  // Store refresh token family
-  await storeRefreshTokenFamily(user.id, tokenFamily, refreshToken);
+  // Build verification URL
+  const verificationUrl = `${config.frontendUrl}/verify-email?token=${verificationToken}`;
 
-  // Set cookies
-  setAuthCookies(ctx, accessToken, refreshToken);
-
-  logger.info({ userId: user.id, email: user.email }, 'User registered');
+  // TODO: Send verification email via email service
+  if (config.env === 'development') {
+    logger.info(
+      { userId: user.id, email: user.email, verificationUrl },
+      'User registered - verification email (dev mode - URL logged)'
+    );
+  } else {
+    logger.info({ userId: user.id, email: user.email }, 'User registered - verification email sent');
+    // In production, send email here
+    // await emailService.sendVerificationEmail(user.email, verificationUrl);
+  }
 
   ctx.status = 201;
   ctx.body = {
     success: true,
     data: {
+      message: 'Registration successful. Please check your email to verify your account.',
       user: {
         id: user.id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        status: user.status,
         tenantId: user.tenantId,
       },
-      accessToken, // Also return in body for non-cookie clients
     },
   };
 }
@@ -191,6 +199,9 @@ export async function login(ctx: Context): Promise<void> {
   }
 
   // Check user status
+  if (user.status === UserStatus.PENDING) {
+    throw new AppError('Please verify your email address before logging in', 403, 'EMAIL_NOT_VERIFIED');
+  }
   if (user.status !== UserStatus.ACTIVE) {
     throw new AppError('Account is not active', 403, 'ACCOUNT_INACTIVE', {
       status: user.status,
@@ -588,4 +599,137 @@ export async function resetPassword(ctx: Context): Promise<void> {
       message: 'Password has been reset successfully. Please log in with your new password.',
     },
   };
+}
+
+/**
+ * Verify email address with token
+ * POST /auth/verify-email
+ */
+export async function verifyEmail(ctx: Context): Promise<void> {
+  const { token } = ctx.request.body as { token: string };
+
+  if (!token) {
+    throw new AppError('Verification token is required', 400, 'VALIDATION_ERROR');
+  }
+
+  // Verify token
+  const tokenData = await getEmailVerificationToken(token);
+  if (!tokenData) {
+    throw new AppError('Invalid or expired verification token', 400, 'INVALID_VERIFICATION_TOKEN');
+  }
+
+  // Find user
+  const user = await User.findByPk(tokenData.userId);
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  // Check if already verified
+  if (user.status === UserStatus.ACTIVE) {
+    // Delete token and return success
+    await deleteEmailVerificationToken(token);
+    ctx.body = {
+      success: true,
+      data: {
+        message: 'Email already verified. You can log in.',
+      },
+    };
+    return;
+  }
+
+  // Check if user is in PENDING status
+  if (user.status !== UserStatus.PENDING) {
+    throw new AppError('Account cannot be verified', 403, 'ACCOUNT_INACTIVE', {
+      status: user.status,
+    });
+  }
+
+  // Activate user
+  await user.update({ status: UserStatus.ACTIVE });
+
+  // Delete the verification token (one-time use)
+  await deleteEmailVerificationToken(token);
+
+  logger.info({ userId: user.id, email: user.email }, 'Email verified successfully');
+
+  // Generate tokens for automatic login after verification
+  const { accessToken, refreshToken, tokenFamily } = generateTokenPair({
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    tenantId: user.tenantId,
+  });
+
+  await storeRefreshTokenFamily(user.id, tokenFamily, refreshToken);
+  setAuthCookies(ctx, accessToken, refreshToken);
+
+  ctx.body = {
+    success: true,
+    data: {
+      message: 'Email verified successfully. You are now logged in.',
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        tenantId: user.tenantId,
+      },
+      accessToken,
+    },
+  };
+}
+
+/**
+ * Resend email verification
+ * POST /auth/resend-verification
+ */
+export async function resendVerification(ctx: Context): Promise<void> {
+  const { email } = ctx.request.body as { email: string };
+
+  if (!email) {
+    throw new AppError('Email is required', 400, 'VALIDATION_ERROR');
+  }
+
+  // Always return success to prevent email enumeration
+  const successResponse = {
+    success: true,
+    data: {
+      message: 'If an account exists with this email and requires verification, a new link has been sent.',
+    },
+  };
+
+  // Find user by email
+  const user = await User.findOne({ where: { email } });
+  if (!user) {
+    ctx.body = successResponse;
+    return;
+  }
+
+  // Only send if user is PENDING
+  if (user.status !== UserStatus.PENDING) {
+    ctx.body = successResponse;
+    return;
+  }
+
+  // Generate new verification token
+  const verificationToken = generateEmailVerificationToken();
+  await storeEmailVerificationToken(user.id, user.email, verificationToken);
+
+  // Build verification URL
+  const verificationUrl = `${config.frontendUrl}/verify-email?token=${verificationToken}`;
+
+  // TODO: Send verification email via email service
+  if (config.env === 'development') {
+    logger.info(
+      { userId: user.id, email: user.email, verificationUrl },
+      'Verification email resent (dev mode - URL logged)'
+    );
+  } else {
+    logger.info({ userId: user.id, email: user.email }, 'Verification email resent');
+    // In production, send email here
+    // await emailService.sendVerificationEmail(user.email, verificationUrl);
+  }
+
+  ctx.body = successResponse;
 }
