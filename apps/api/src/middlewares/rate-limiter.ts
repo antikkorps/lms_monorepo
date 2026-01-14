@@ -144,32 +144,27 @@ export function rateLimiter(options?: {
     const limits = RATE_LIMITS[tier] || RATE_LIMITS.b2c;
     const key = getRateLimitKey(ctx, tier);
 
-    try {
-      const result = await checkRateLimit(key, limits);
+    const result = await checkRateLimit(key, limits);
 
-      // Set rate limit headers
-      ctx.set('X-RateLimit-Limit', String(result.total));
-      ctx.set('X-RateLimit-Remaining', String(result.remaining));
-      ctx.set('X-RateLimit-Reset', String(Math.ceil(result.resetAt / 1000)));
-      ctx.set('X-RateLimit-Tier', tier);
+    // Set rate limit headers
+    ctx.set('X-RateLimit-Limit', String(result.total));
+    ctx.set('X-RateLimit-Remaining', String(result.remaining));
+    ctx.set('X-RateLimit-Reset', String(Math.ceil(result.resetAt / 1000)));
+    ctx.set('X-RateLimit-Tier', tier);
 
-      if (!result.allowed) {
-        const retryAfter = Math.ceil((result.resetAt - Date.now()) / 1000);
-        ctx.set('Retry-After', String(retryAfter));
+    if (!result.allowed) {
+      const retryAfter = Math.ceil((result.resetAt - Date.now()) / 1000);
+      ctx.set('Retry-After', String(retryAfter));
 
-        logger.warn(
-          { key, tier, ip: ctx.ip, path: ctx.path, retryAfter },
-          'Rate limit exceeded'
-        );
+      logger.warn(
+        { key, tier, ip: ctx.ip, path: ctx.path, retryAfter },
+        'Rate limit exceeded'
+      );
 
-        throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED');
-      }
-
-      await next();
-    } catch (error) {
-      // Always re-throw errors - whether from rate limiting or downstream
-      throw error;
+      throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED');
     }
+
+    await next();
   };
 }
 
