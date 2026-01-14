@@ -10,12 +10,17 @@
  * Usage: npx ts-node apps/api/src/database/seed.ts
  */
 
-import { randomUUID } from 'crypto';
-import { hash } from 'bcrypt';
+import { randomUUID, scryptSync, randomBytes } from 'crypto';
 
 // Seed data configuration
-const SALT_ROUNDS = 10;
 const DEFAULT_PASSWORD = 'Password123!';
+
+// Hash password using scrypt (Node.js native crypto)
+function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString('hex');
+  const hash = scryptSync(password, salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+}
 
 // =============================================================================
 // Data Definitions
@@ -221,8 +226,8 @@ export const seedChapters = [
 // SQL Generation Functions
 // =============================================================================
 
-export async function generateSeedSQL(): Promise<string> {
-  const passwordHash = await hash(DEFAULT_PASSWORD, SALT_ROUNDS);
+export function generateSeedSQL(): string {
+  const passwordHash = hashPassword(DEFAULT_PASSWORD);
   const now = new Date().toISOString();
 
   const sql: string[] = [
@@ -289,13 +294,13 @@ VALUES ('${chapter.id}', '${chapter.courseId}', '${chapter.title}', '${chapter.d
 // Main execution
 // =============================================================================
 
-async function main() {
+function main() {
   console.log('Generating seed SQL...');
-  const sql = await generateSeedSQL();
+  const sql = generateSeedSQL();
   console.log(sql);
 }
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(console.error);
+  main();
 }

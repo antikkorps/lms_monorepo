@@ -2,20 +2,32 @@
 
 ## Modified: 2026-01-14
 
+### Completed
+
+- [x] Implement JWT authentication middleware (Done: 2026-01-14)
+- [x] Create login/register endpoints (Done: 2026-01-14)
+- [x] Setup HTTP-Only cookie token storage (Done: 2026-01-14)
+- [x] Implement refresh token rotation (Done: 2026-01-14)
+- [x] Setup Redis session blacklist for token revocation (Done: 2026-01-14)
+- [x] Create RBAC permission system (requireRole, requireSuperAdmin) (Done: 2026-01-14)
+- [x] Implement password hashing with bcryptjs (Done: 2026-01-14)
+- [x] Add password strength validation (Done: 2026-01-14)
+- [x] Create change password endpoint (Done: 2026-01-14)
+- [x] Implement logout & logout-all endpoints (Done: 2026-01-14)
+- [x] Create password reset flow (forgot-password, reset-password) (Done: 2026-01-14)
+- [x] Add email verification on registration (verify-email, resend-verification) (Done: 2026-01-14)
+
 ### Pending
-- [ ] Implement JWT authentication middleware
-- [ ] Create login/register endpoints
-- [ ] Setup HTTP-Only cookie token storage
-- [ ] Implement refresh token rotation
-- [ ] Create password reset flow
+
 - [ ] Implement user invitation system (Solo/Pro)
-- [ ] Setup Redis session blacklist for token revocation
-- [ ] Implement CheckAccess middleware for resource validation
-- [ ] Create RBAC permission system
 - [ ] Setup SSO integration (OAuth2/OpenID Connect)
 - [ ] Implement session fingerprinting (optional)
 
 ### Notes
-- JWT contains only identity (userId, role)
+
+- JWT contains only identity (userId, email, role, tenantId)
+- Access token: 15 min expiry (configurable via JWT_ACCESS_EXPIRES_IN)
+- Refresh token: 7 days expiry with rotation
 - Stateful validation via Redis for real-time access control
 - Support both B2C (Solo) and B2B (Enterprise) auth flows
+- Auth rate limiting: 10 requests per minute

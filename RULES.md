@@ -9,10 +9,12 @@
 ## 1. PROJECT OVERVIEW
 
 ### Vision
+
 High-performance video training platform (LMS) with AI-first approach.
 **Hybrid Model**: B2C (Solo course purchases) + B2B (Enterprise tenants with dashboards).
 
 ### Key Principles
+
 - **SOTA 2026**: Robust, secure, highly tested architecture ready for LLM integration (V2)
 - **Row-Level Multi-Tenancy**: Single database with `tenant_id` isolation
 - **Repository Pattern**: Prepared for future database silo per large tenant
@@ -23,11 +25,13 @@ High-performance video training platform (LMS) with AI-first approach.
 ## 2. TECHNICAL STACK (STRICT CONSTRAINTS)
 
 ### Monorepo
+
 - **Build System**: Nx (Integrated Monorepo mode)
 - **Package Manager**: npm (latest)
 - **Node.js**: v24 LTS target (v22+ acceptable)
 
 ### Backend (`apps/api`)
+
 - **Framework**: Koa.js (TypeScript strict mode)
 - **ORM**: Sequelize with strict typing
 - **Validation**: Zod (shared via `@shared/schemas`)
@@ -36,15 +40,18 @@ High-performance video training platform (LMS) with AI-first approach.
 - **Graceful Shutdown**: SIGTERM handling mandatory
 
 ### Frontend (`apps/app`)
+
 - **Framework**: Vue.js 3.5+ (Composition API) or Nuxt
 - **Styling**: Tailwind CSS 4.0 (CSS-first approach)
 - **State**: Pinia (if needed)
 
 ### Landing Page (`apps/landing`)
+
 - **Framework**: Astro
 - **Styling**: Tailwind CSS 4.0
 
 ### Shared Libraries
+
 - `@shared/schemas`: Zod schemas (validation)
 - `@shared/types`: TypeScript interfaces/types
 - `@shared/ui`: Reusable Vue components
@@ -52,17 +59,20 @@ High-performance video training platform (LMS) with AI-first approach.
 > **CRITICAL**: `@shared/*` libraries MUST be pure TypeScript without Node.js or Browser-specific dependencies for full portability.
 
 ### Database
+
 - **Primary**: PostgreSQL with pgvector extension
 - **Cache**: Redis
 - **Storage**: Cloudflare R2 (badges, media)
 
 ### External Services
+
 - **Video**: Cloudflare Stream / Mux / AWS MediaConvert
 - **Payment**: Stripe (with Adapter Pattern for anti-lock-in)
 - **Email**: Postmark / SendGrid
 - **CDN**: Cloudflare
 
 ### DevOps
+
 - **Containerization**: Docker Compose (full hot-reload)
 - **CI/CD**: GitHub Actions
 - **Environments**: dev / staging / prod
@@ -71,6 +81,7 @@ High-performance video training platform (LMS) with AI-first approach.
 - **Job Queue**: BullMQ
 
 ### Testing
+
 - **Unit/Integration**: Vitest
 - **E2E**: Playwright
 - **Coverage Target**: 100% on calculation functions
@@ -80,6 +91,7 @@ High-performance video training platform (LMS) with AI-first approach.
 ## 3. ARCHITECTURE RULES
 
 ### File Structure
+
 ```
 lms_monorepo/
 ├── apps/
@@ -104,6 +116,7 @@ lms_monorepo/
 ```
 
 ### Nx Tags & Constraints
+
 ```
 scope:api       - Backend application
 scope:app       - Frontend application
@@ -115,6 +128,7 @@ type:util       - Utility library
 ```
 
 ### Dependency Rules
+
 - `scope:shared` can be imported by ALL
 - `scope:api` CANNOT import from `scope:app` or `scope:landing`
 - `scope:app` CANNOT import from `scope:api` or `scope:landing`
@@ -125,23 +139,43 @@ type:util       - Utility library
 ## 4. CODING STANDARDS
 
 ### General
+
 - **Language**: TypeScript strict mode everywhere
 - **Comments**: English only
 - **Function names**: Self-documenting (no abbreviations)
 - **No magic values**: Use constants/enums
+- **Number methods**: Use `Number.parseInt()`, `Number.parseFloat()`, `Number.isNaN()`, `Number.isFinite()` instead of global functions
+
+### DRY Principles (Don't Repeat Yourself)
+
+- **Single Source of Truth**: Each piece of knowledge must have a single, authoritative representation
+- **Shared Schemas**: Use `@shared/schemas` for validation rules shared between frontend and backend
+- **Shared Types**: Use `@shared/types` for TypeScript interfaces used across apps
+- **Centralized Constants**: Define enums and constants in shared libs, never duplicate
+- **Utility Functions**: Extract repeated logic into `@shared/utils` or app-specific utils
+- **Database Models**: Single model definition per entity, never duplicate field definitions
+- **Error Handling**: Use centralized `AppError` class, don't create ad-hoc error objects
+- **Config Management**: Single config source per app, environment variables in one place
+- **API Response Format**: Consistent response wrapper (`{ success, data, error }`) everywhere
+- **Middleware Reuse**: Create composable middleware, avoid duplicating auth/validation logic
+
+> **Rule of Three**: If code appears 3+ times, extract it. Two occurrences may be acceptable.
 
 ### API Design
+
 - **Versioning**: `/api/v1/`
 - **Documentation**: OpenAPI/Swagger auto-generated
 - **Error handling**: Centralized `AppError` class
 - **Rate limiting**: Differentiated B2C (strict) vs B2B (permissive)
 
 ### Database
+
 - **Soft deletes**: `paranoid: true` for user-related entities
 - **Timestamps**: `createdAt`, `updatedAt` on all tables
 - **Migrations**: Sequelize CLI, never manual SQL
 
 ### Security
+
 - **Auth**: JWT via HTTP-Only cookies
 - **Headers**: Helmet.js + strict CORS
 - **Validation**: Zod on all inputs
@@ -152,17 +186,20 @@ type:util       - Utility library
 ## 5. WORKFLOW METHODOLOGY
 
 ### PLAN-ACT-VERIFY
+
 1. **PLAN**: Define scope, create todos, identify dependencies
 2. **ACT**: Implement with small, focused commits
 3. **VERIFY**: Run tests, validate against specs
 
 ### BMAD Compliance
+
 - Feature branches from `dev`
 - PR review before merge
 - Dated todos per feature
 - Specs written before implementation
 
 ### Branch Naming
+
 ```
 feat/feature-name     # New features
 fix/bug-description   # Bug fixes
@@ -171,18 +208,22 @@ docs/topic            # Documentation
 ```
 
 ### Todo Format
+
 ```markdown
 # Feature Name - Todo List
 
 ## Modified: YYYY-MM-DD
 
 ### Pending
+
 - [ ] Task description
 
 ### In Progress
+
 - [ ] Task description (WIP)
 
 ### Completed
+
 - [x] Task description (Done: YYYY-MM-DD)
 ```
 
@@ -191,6 +232,7 @@ docs/topic            # Documentation
 ## 6. DATA MODELS (REFERENCE)
 
 ### Core Entities
+
 - **Users**: `tenant_id` nullable (NULL = B2C Solo)
 - **Tenants**: Enterprise entities with seats/licenses
 - **Groups**: Sub-entities of Tenant for user grouping
@@ -199,6 +241,7 @@ docs/topic            # Documentation
 - **Badges**: Gamification rewards
 
 ### RBAC Roles
+
 1. SuperAdmin - Global platform management
 2. Admin Entreprise - Tenant management, billing
 3. Manager - Group-specific management
@@ -210,6 +253,7 @@ docs/topic            # Documentation
 ## 7. PHASE TRACKING
 
 ### Phase 1: Workspace Initialization
+
 - [x] Create Nx monorepo
 - [ ] Configure Docker Compose
 - [ ] Setup hot-reload
@@ -217,24 +261,28 @@ docs/topic            # Documentation
 - [ ] Database seeding
 
 ### Phase 2: Core Backend (Security & Auth)
+
 - [ ] Error handling middleware
 - [ ] Rate limiting with Redis
 - [ ] Auth system (Solo/Pro)
 - [ ] Email integration
 
 ### Phase 3: Data Logic & Stripe
+
 - [ ] Sequelize migrations
 - [ ] Stripe webhooks (idempotent)
 - [ ] B2B pricing logic
 - [ ] Basic analytics
 
 ### Phase 4: Frontend & Dashboard
+
 - [ ] Tailwind 4 design system
 - [ ] VideoPlayer component
 - [ ] QuizzEngine component
 - [ ] Dashboard views
 
 ### Phase 5: Delivery & Tests
+
 - [ ] Playwright E2E tests
 - [ ] Data isolation validation
 
@@ -243,6 +291,7 @@ docs/topic            # Documentation
 ## 8. QUICK REFERENCE
 
 ### Commands
+
 ```bash
 # Development
 nx serve api          # Start API
@@ -263,6 +312,7 @@ docker-compose up -d  # Detached mode
 ```
 
 ### Environment Variables
+
 ```
 NODE_ENV=development|staging|production
 DATABASE_URL=postgres://...
