@@ -1,23 +1,52 @@
+// Common error codes - extensible with string type
 export type ErrorCode =
+  // General
   | 'VALIDATION_ERROR'
-  | 'UNAUTHORIZED'
-  | 'FORBIDDEN'
+  | 'BAD_REQUEST'
   | 'NOT_FOUND'
   | 'CONFLICT'
-  | 'RATE_LIMIT_EXCEEDED'
   | 'INTERNAL_SERVER_ERROR'
   | 'SERVICE_UNAVAILABLE'
-  | 'BAD_REQUEST';
+  // Auth
+  | 'AUTH_REQUIRED'
+  | 'AUTH_FAILED'
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'TOKEN_EXPIRED'
+  | 'TOKEN_INVALID'
+  | 'TOKEN_REVOKED'
+  | 'TOKEN_REUSE'
+  | 'REFRESH_TOKEN_REQUIRED'
+  | 'REFRESH_TOKEN_EXPIRED'
+  | 'INVALID_REFRESH_TOKEN'
+  | 'INVALID_CREDENTIALS'
+  | 'WEAK_PASSWORD'
+  | 'INVALID_PASSWORD'
+  | 'ACCOUNT_INACTIVE'
+  | 'USER_NOT_FOUND'
+  | 'USER_INVALID'
+  | 'USER_INACTIVE'
+  | 'EMAIL_EXISTS'
+  // Tenant
+  | 'TENANT_REQUIRED'
+  | 'INVALID_TENANT'
+  | 'NO_SEATS_AVAILABLE'
+  // RBAC
+  | 'SUPER_ADMIN_REQUIRED'
+  // Rate limiting
+  | 'RATE_LIMIT_EXCEEDED'
+  // Allow any string for extensibility
+  | (string & {});
 
 export class AppError extends Error {
   public readonly statusCode: number;
-  public readonly code: ErrorCode;
+  public readonly code: string;
   public readonly details?: Record<string, unknown>;
 
   constructor(
     message: string,
     statusCode: number,
-    code: ErrorCode,
+    code: string,
     details?: Record<string, unknown>
   ) {
     super(message);

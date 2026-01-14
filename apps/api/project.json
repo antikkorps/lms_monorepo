@@ -33,13 +33,23 @@
         "main": "apps/api/src/main.ts",
         "tsConfig": "apps/api/tsconfig.app.json",
         "assets": ["apps/api/src/assets"],
-        "generatePackageJson": true,
+        "generatePackageJson": false,
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {
             ".js": ".mjs"
           }
-        }
+        },
+        "external": [
+          "pg",
+          "pg-hstore",
+          "sequelize",
+          "ioredis",
+          "pino",
+          "pino-pretty",
+          "bcryptjs",
+          "jsonwebtoken"
+        ]
       },
       "configurations": {
         "development": {
