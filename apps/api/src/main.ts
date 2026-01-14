@@ -4,6 +4,7 @@ import { setupMiddlewares } from './middlewares/index.js';
 import { setupRoutes } from './routes/index.js';
 import { logger } from './utils/logger.js';
 import { connectRedis, disconnectRedis } from './utils/redis.js';
+import { initializeDatabase, shutdownDatabase } from './database/index.js';
 
 const app = new Koa();
 
@@ -16,6 +17,9 @@ setupRoutes(app);
 // Initialize connections and start server
 async function bootstrap() {
   try {
+    // Initialize database (models + connection)
+    await initializeDatabase();
+
     // Connect to Redis
     await connectRedis();
     logger.info('Redis connection established');
@@ -34,12 +38,11 @@ async function bootstrap() {
         logger.info('HTTP server closed');
 
         try {
-          // Close database connections
-          // await sequelize.close();
-          // logger.info('Database connections closed');
-
           // Close Redis connections
           await disconnectRedis();
+
+          // Close database connections
+          await shutdownDatabase();
 
           logger.info('Graceful shutdown completed');
           process.exit(0);

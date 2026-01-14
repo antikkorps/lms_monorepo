@@ -129,6 +129,7 @@ type:util       - Utility library
 - **Comments**: English only
 - **Function names**: Self-documenting (no abbreviations)
 - **No magic values**: Use constants/enums
+- **Number methods**: Use `Number.parseInt()`, `Number.parseFloat()`, `Number.isNaN()`, `Number.isFinite()` instead of global functions
 
 ### API Design
 - **Versioning**: `/api/v1/`

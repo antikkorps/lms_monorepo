@@ -3,6 +3,7 @@
 ## Modified: 2026-01-14
 
 ### Pending
+
 - [ ] Implement JWT authentication middleware
 - [ ] Create login/register endpoints
 - [ ] Setup HTTP-Only cookie token storage
@@ -16,6 +17,7 @@
 - [ ] Implement session fingerprinting (optional)
 
 ### Notes
+
 - JWT contains only identity (userId, role)
 - Stateful validation via Redis for real-time access control
 - Support both B2C (Solo) and B2B (Enterprise) auth flows

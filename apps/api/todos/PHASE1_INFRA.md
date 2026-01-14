@@ -26,10 +26,23 @@
 
 ### Pending
 
-- [ ] Install and configure Sequelize ORM
-- [ ] Setup PostgreSQL connection pool
 - [ ] Setup Vitest for unit testing
 - [ ] Configure esbuild for production builds
+
+### Completed (Phase 2 - Sequelize ORM)
+
+- [x] Install Sequelize and pg dependencies (Done: 2026-01-14)
+- [x] Create Sequelize instance with connection pool (Done: 2026-01-14)
+- [x] Create Tenant model with all fields (Done: 2026-01-14)
+- [x] Create User model with roles and status (Done: 2026-01-14)
+- [x] Create Group and UserGroup models (Done: 2026-01-14)
+- [x] Create Course, Chapter, Lesson models (Done: 2026-01-14)
+- [x] Create QuizQuestion model with JSONB options (Done: 2026-01-14)
+- [x] Create Purchase model with Stripe fields (Done: 2026-01-14)
+- [x] Create UserProgress and QuizResult models (Done: 2026-01-14)
+- [x] Create Badge and UserBadge models (Done: 2026-01-14)
+- [x] Setup all model associations (Done: 2026-01-14)
+- [x] Integrate database init in main.ts (Done: 2026-01-14)
 
 ### Completed (Phase 1.5 - Rate Limiting)
 
