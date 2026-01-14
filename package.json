@@ -9,7 +9,13 @@
     "build": "nx run-many -t build",
     "test": "nx run-many -t test",
     "lint": "nx run-many -t lint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:up": "docker compose up -d postgres redis",
+    "db:down": "docker compose down",
+    "db:schema": "docker exec -i lms-postgres psql -U lms -d lms < docker/postgres/schema.sql",
+    "db:seed": "docker exec -i lms-postgres psql -U lms -d lms < docker/postgres/seed.sql",
+    "db:reset": "npm run db:schema && npm run db:seed",
+    "db:psql": "docker exec -it lms-postgres psql -U lms -d lms"
   },
   "private": true,
   "devDependencies": {
