@@ -5,8 +5,12 @@ import helmet from 'koa-helmet';
 import { config } from '../config/index.js';
 import { errorHandler } from './error-handler.js';
 import { requestLogger } from './request-logger.js';
+import { defaultRateLimiter } from './rate-limiter.js';
 
 export function setupMiddlewares(app: Koa): void {
+  // Error handling (should be first to catch all errors)
+  app.use(errorHandler);
+
   // Security headers
   app.use(helmet());
 
@@ -21,15 +25,24 @@ export function setupMiddlewares(app: Koa): void {
         return config.corsOrigins[0];
       },
       credentials: true,
+      exposeHeaders: [
+        'X-RateLimit-Limit',
+        'X-RateLimit-Remaining',
+        'X-RateLimit-Reset',
+        'X-RateLimit-Tier',
+        'Retry-After',
+      ],
     })
   );
+
+  // Rate limiting (before body parsing to save resources on blocked requests)
+  app.use(defaultRateLimiter);
 
   // Body parser
   app.use(bodyParser());
 
   // Request logging
   app.use(requestLogger);
-
-  // Error handling (should be first to catch all errors)
-  app.use(errorHandler);
 }
+
+export { authRateLimiter } from './rate-limiter.js';

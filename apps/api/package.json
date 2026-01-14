@@ -11,7 +11,8 @@
     "koa-bodyparser": "^4.4.1",
     "koa-helmet": "^8.0.0",
     "pino": "^9.6.0",
-    "pino-pretty": "^13.0.0"
+    "pino-pretty": "^13.0.0",
+    "ioredis": "^5.4.2"
   },
   "devDependencies": {
     "@types/koa": "^2.15.0",

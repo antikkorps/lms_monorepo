@@ -3,7 +3,7 @@ export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
 
   // Database
-  databaseUrl: process.env.DATABASE_URL || 'postgres://lms:lms@localhost:5432/lms',
+  databaseUrl: process.env.DATABASE_URL || 'postgres://lms:lms@localhost:5433/lms',
 
   // Redis
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
@@ -19,9 +19,25 @@ export const config = {
   // CORS
   corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:5173').split(','),
 
-  // Rate limiting
-  rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000', 10),
-  rateLimitMaxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
+  // Rate limiting (defaults, can be overridden per tier in middleware)
+  rateLimit: {
+    b2c: {
+      windowMs: parseInt(process.env.RATE_LIMIT_B2C_WINDOW_MS || '60000', 10),
+      maxRequests: parseInt(process.env.RATE_LIMIT_B2C_MAX || '100', 10),
+    },
+    b2b: {
+      windowMs: parseInt(process.env.RATE_LIMIT_B2B_WINDOW_MS || '60000', 10),
+      maxRequests: parseInt(process.env.RATE_LIMIT_B2B_MAX || '500', 10),
+    },
+    b2bPremium: {
+      windowMs: parseInt(process.env.RATE_LIMIT_B2B_PREMIUM_WINDOW_MS || '60000', 10),
+      maxRequests: parseInt(process.env.RATE_LIMIT_B2B_PREMIUM_MAX || '1000', 10),
+    },
+    auth: {
+      windowMs: parseInt(process.env.RATE_LIMIT_AUTH_WINDOW_MS || '60000', 10),
+      maxRequests: parseInt(process.env.RATE_LIMIT_AUTH_MAX || '10', 10),
+    },
+  },
 } as const;
 
 export type Config = typeof config;
