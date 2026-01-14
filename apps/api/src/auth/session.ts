@@ -1,14 +1,18 @@
 import { getRedisClient } from '../utils/redis.js';
 import { logger } from '../utils/logger.js';
 
+import crypto from 'node:crypto';
+
 // Redis key prefixes
 const BLACKLIST_PREFIX = 'auth:blacklist:';
 const REFRESH_TOKEN_PREFIX = 'auth:refresh:';
 const USER_SESSIONS_PREFIX = 'auth:sessions:';
+const PASSWORD_RESET_PREFIX = 'auth:password_reset:';
 
 // TTL in seconds
 const BLACKLIST_TTL = 60 * 60 * 24 * 7; // 7 days (match refresh token expiry)
 const REFRESH_TOKEN_TTL = 60 * 60 * 24 * 7; // 7 days
+const PASSWORD_RESET_TTL = 60 * 60; // 1 hour
 
 /**
  * Add a token to the blacklist (for logout/revocation)
@@ -148,4 +152,64 @@ export async function detectTokenReuse(
   // If the presented token doesn't match the stored one,
   // it means an old token is being reused
   return data.refreshToken !== presentedToken;
+}
+
+// ==================== PASSWORD RESET ====================
+
+/**
+ * Generate a secure password reset token
+ */
+export function generatePasswordResetToken(): string {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+/**
+ * Store a password reset token for a user
+ */
+export async function storePasswordResetToken(
+  userId: string,
+  email: string,
+  token: string
+): Promise<void> {
+  const redis = getRedisClient();
+  const key = `${PASSWORD_RESET_PREFIX}${token}`;
+
+  await redis.setex(
+    key,
+    PASSWORD_RESET_TTL,
+    JSON.stringify({
+      userId,
+      email,
+      createdAt: Date.now(),
+    })
+  );
+
+  logger.debug({ userId, email }, 'Password reset token stored');
+}
+
+/**
+ * Verify and get password reset token data
+ */
+export async function getPasswordResetToken(
+  token: string
+): Promise<{ userId: string; email: string; createdAt: number } | null> {
+  const redis = getRedisClient();
+  const key = `${PASSWORD_RESET_PREFIX}${token}`;
+  const data = await redis.get(key);
+
+  if (!data) {
+    return null;
+  }
+
+  return JSON.parse(data);
+}
+
+/**
+ * Delete password reset token after use
+ */
+export async function deletePasswordResetToken(token: string): Promise<void> {
+  const redis = getRedisClient();
+  const key = `${PASSWORD_RESET_PREFIX}${token}`;
+  await redis.del(key);
+  logger.debug('Password reset token deleted');
 }

@@ -15,6 +15,10 @@ import {
   invalidateAllUserSessions,
   detectTokenReuse,
   getRefreshTokenFamily,
+  generatePasswordResetToken,
+  storePasswordResetToken,
+  getPasswordResetToken,
+  deletePasswordResetToken,
 } from './session.js';
 import { AppError } from '../utils/app-error.js';
 import { config } from '../config/index.js';
@@ -468,6 +472,120 @@ export async function changePassword(ctx: Context): Promise<void> {
     data: {
       message: 'Password changed successfully',
       accessToken,
+    },
+  };
+}
+
+/**
+ * Request password reset (forgot password)
+ * POST /auth/forgot-password
+ */
+export async function forgotPassword(ctx: Context): Promise<void> {
+  const { email } = ctx.request.body as { email: string };
+
+  if (!email) {
+    throw new AppError('Email is required', 400, 'VALIDATION_ERROR');
+  }
+
+  // Always return success to prevent email enumeration
+  const successResponse = {
+    success: true,
+    data: {
+      message: 'If an account exists with this email, a password reset link has been sent.',
+    },
+  };
+
+  // Find user by email
+  const user = await User.findOne({ where: { email } });
+  if (!user) {
+    // Don't reveal that the user doesn't exist
+    ctx.body = successResponse;
+    return;
+  }
+
+  // Check if user is active
+  if (user.status !== UserStatus.ACTIVE) {
+    ctx.body = successResponse;
+    return;
+  }
+
+  // Generate reset token
+  const resetToken = generatePasswordResetToken();
+
+  // Store token in Redis
+  await storePasswordResetToken(user.id, user.email, resetToken);
+
+  // Build reset URL
+  const resetUrl = `${config.frontendUrl || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
+
+  // TODO: Send email with reset link via email service
+  // For now, log the URL in development
+  if (config.env === 'development') {
+    logger.info({ userId: user.id, email: user.email, resetUrl }, 'Password reset requested (dev mode - URL logged)');
+  } else {
+    logger.info({ userId: user.id, email: user.email }, 'Password reset requested');
+    // In production, send email here
+    // await emailService.sendPasswordResetEmail(user.email, resetUrl);
+  }
+
+  ctx.body = successResponse;
+}
+
+/**
+ * Reset password with token
+ * POST /auth/reset-password
+ */
+export async function resetPassword(ctx: Context): Promise<void> {
+  const { token, newPassword } = ctx.request.body as {
+    token: string;
+    newPassword: string;
+  };
+
+  if (!token || !newPassword) {
+    throw new AppError('Token and new password are required', 400, 'VALIDATION_ERROR');
+  }
+
+  // Validate password strength
+  const passwordValidation = validatePasswordStrength(newPassword);
+  if (!passwordValidation.valid) {
+    throw new AppError('Password does not meet requirements', 400, 'WEAK_PASSWORD', {
+      errors: passwordValidation.errors,
+    });
+  }
+
+  // Verify reset token
+  const tokenData = await getPasswordResetToken(token);
+  if (!tokenData) {
+    throw new AppError('Invalid or expired reset token', 400, 'INVALID_RESET_TOKEN');
+  }
+
+  // Find user
+  const user = await User.findByPk(tokenData.userId);
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  // Check user status
+  if (user.status !== UserStatus.ACTIVE) {
+    throw new AppError('Account is not active', 403, 'ACCOUNT_INACTIVE');
+  }
+
+  // Hash and update password
+  const passwordHash = await hashPassword(newPassword);
+  await user.update({ passwordHash });
+
+  // Delete the reset token (one-time use)
+  await deletePasswordResetToken(token);
+
+  // Invalidate all existing sessions for security
+  await invalidateAllUserSessions(user.id);
+
+  logger.info({ userId: user.id, email: user.email }, 'Password reset successfully');
+
+  ctx.body = {
+    success: true,
+    data: {
+      message: 'Password has been reset successfully. Please log in with your new password.',
     },
   };
 }

@@ -14,10 +14,9 @@
 - [x] Add password strength validation (Done: 2026-01-14)
 - [x] Create change password endpoint (Done: 2026-01-14)
 - [x] Implement logout & logout-all endpoints (Done: 2026-01-14)
+- [x] Create password reset flow (forgot-password, reset-password) (Done: 2026-01-14)
 
 ### Pending
-
-- [ ] Create password reset flow (forgot password)
 - [ ] Implement user invitation system (Solo/Pro)
 - [ ] Setup SSO integration (OAuth2/OpenID Connect)
 - [ ] Implement session fingerprinting (optional)
