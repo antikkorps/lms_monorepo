@@ -19,6 +19,8 @@
 - [x] Setup GitHub Actions CI pipeline (Done: 2026-01-14)
 - [x] Setup GitHub Actions Deploy pipeline (Done: 2026-01-14)
 - [x] Create Dockerfiles for all services (Done: 2026-01-14)
+- [x] Setup Vitest for unit testing (Done: 2026-01-14)
+- [x] Configure esbuild for production builds (Done: 2026-01-14)
 
 ### In Progress
 
@@ -26,8 +28,7 @@
 
 ### Pending
 
-- [ ] Setup Vitest for unit testing
-- [ ] Configure esbuild for production builds
+(None - Phase 1 complete)
 
 ### Completed (Phase 2 - Sequelize ORM)
 
