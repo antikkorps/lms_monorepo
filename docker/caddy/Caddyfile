@@ -1,0 +1,59 @@
+# =============================================================================
+# Caddy Configuration - Reverse Proxy with Automatic SSL
+# =============================================================================
+
+# Development configuration (localhost)
+:80 {
+    # Landing page (default)
+    handle {
+        reverse_proxy landing:80
+    }
+
+    # App routes
+    handle /app/* {
+        uri strip_prefix /app
+        reverse_proxy app:80
+    }
+
+    # API routes
+    handle /api/* {
+        reverse_proxy api:3000
+    }
+}
+
+# Production configuration (uncomment and configure your domain)
+# {$DOMAIN:lms.example.com} {
+#     # Automatic HTTPS
+#     tls {$TLS_EMAIL:admin@example.com}
+#
+#     # Security headers
+#     header {
+#         X-Frame-Options "SAMEORIGIN"
+#         X-Content-Type-Options "nosniff"
+#         X-XSS-Protection "1; mode=block"
+#         Referrer-Policy "strict-origin-when-cross-origin"
+#         -Server
+#     }
+#
+#     # Landing page (root domain)
+#     handle {
+#         reverse_proxy landing:80
+#     }
+#
+#     # App subdomain or path
+#     handle /app/* {
+#         uri strip_prefix /app
+#         reverse_proxy app:80
+#     }
+#
+#     # API routes
+#     handle /api/* {
+#         reverse_proxy api:3000
+#     }
+#
+#     # Logs
+#     log {
+#         output file /var/log/caddy/access.log
+#         format json
+#     }
+# }

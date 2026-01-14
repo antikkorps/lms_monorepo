@@ -1,0 +1,154 @@
+services:
+  # =============================================================================
+  # DATABASE - PostgreSQL with pgvector
+  # =============================================================================
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: lms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lms_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-lms}
+    ports:
+      - '${POSTGRES_PORT:-5433}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-lms} -d ${POSTGRES_DB:-lms}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================================
+  # CACHE - Redis
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: lms-redis
+    restart: unless-stopped
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================================
+  # BACKEND - Koa.js API
+  # =============================================================================
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+      target: development
+    container_name: lms-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-lms}:${POSTGRES_PASSWORD:-lms_dev_password}@postgres:5432/${POSTGRES_DB:-lms}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
+      CORS_ORIGINS: http://localhost:5173,http://localhost:4321
+    ports:
+      - '${API_PORT:-3000}:3000'
+    volumes:
+      # Mount source code for hot-reload
+      - ./apps/api/src:/app/apps/api/src:ro
+      - ./libs:/app/libs:ro
+      # Exclude node_modules
+      - /app/node_modules
+      - /app/apps/api/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: npm run start:api
+
+  # =============================================================================
+  # FRONTEND - Vue.js App
+  # =============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: development
+    container_name: lms-app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:3000
+    ports:
+      - '${APP_PORT:-5173}:5173'
+    volumes:
+      # Mount source code for hot-reload
+      - ./apps/app/src:/app/apps/app/src:ro
+      - ./apps/app/index.html:/app/apps/app/index.html:ro
+      - ./libs:/app/libs:ro
+      # Exclude node_modules
+      - /app/node_modules
+      - /app/apps/app/node_modules
+    depends_on:
+      - api
+    command: npm run start:app
+
+  # =============================================================================
+  # LANDING - Astro
+  # =============================================================================
+  landing:
+    build:
+      context: .
+      dockerfile: docker/landing/Dockerfile
+      target: development
+    container_name: lms-landing
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+    ports:
+      - '${LANDING_PORT:-4321}:4321'
+    volumes:
+      # Mount source code for hot-reload
+      - ./apps/landing/src:/app/apps/landing/src:ro
+      - ./libs:/app/libs:ro
+      # Exclude node_modules
+      - /app/node_modules
+      - /app/apps/landing/node_modules
+    command: npm run start:landing
+
+  # =============================================================================
+  # REVERSE PROXY - Caddy (optional, for production-like setup)
+  # =============================================================================
+  caddy:
+    image: caddy:2-alpine
+    container_name: lms-caddy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - app
+      - landing
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+  redis_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  default:
+    name: lms-network
