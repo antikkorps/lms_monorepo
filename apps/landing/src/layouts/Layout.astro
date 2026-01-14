@@ -1,0 +1,85 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Modern Learning Management System' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-white text-gray-900 antialiased">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+      <nav class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="/" class="text-xl font-bold text-primary-600">
+          LMS Platform
+        </a>
+        <div class="flex items-center gap-6">
+          <a href="#features" class="text-gray-600 hover:text-gray-900 transition-colors">
+            Features
+          </a>
+          <a href="#pricing" class="text-gray-600 hover:text-gray-900 transition-colors">
+            Pricing
+          </a>
+          <a
+            href="/app/login"
+            class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Sign In
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="pt-16">
+      <slot />
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-12">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="text-sm">
+            &copy; {new Date().getFullYear()} LMS Platform. All rights reserved.
+          </p>
+          <div class="flex gap-6 text-sm">
+            <a href="/privacy" class="hover:text-white transition-colors">Privacy</a>
+            <a href="/terms" class="hover:text-white transition-colors">Terms</a>
+            <a href="/contact" class="hover:text-white transition-colors">Contact</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  @import "tailwindcss";
+
+  @theme {
+    --color-primary-50: oklch(0.97 0.02 250);
+    --color-primary-100: oklch(0.94 0.04 250);
+    --color-primary-200: oklch(0.88 0.08 250);
+    --color-primary-600: oklch(0.50 0.16 250);
+    --color-primary-700: oklch(0.42 0.14 250);
+    --color-primary-800: oklch(0.35 0.12 250);
+    --color-primary-900: oklch(0.28 0.10 250);
+
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+  }
+</style>

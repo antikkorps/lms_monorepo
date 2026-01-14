@@ -1,0 +1,45 @@
+# Cursor Rules - LMS Platform
+
+## Project Type
+Nx Integrated Monorepo - TypeScript Full Stack
+
+## Stack
+- Backend: Koa.js + Sequelize + Zod
+- Frontend: Vue 3.5 + Tailwind CSS 4.0
+- Landing: Astro + Tailwind CSS 4.0
+- Database: PostgreSQL + Redis
+- Tests: Vitest + Playwright
+
+## Code Style
+- TypeScript strict mode
+- English comments only
+- Self-documenting function names
+- No magic values (use constants/enums)
+
+## File Patterns
+- API routes: apps/api/src/routes/*.ts
+- Vue components: apps/app/src/components/**/*.vue
+- Shared schemas: libs/shared/schemas/src/*.ts
+- Shared types: libs/shared/types/src/*.ts
+
+## Import Rules
+- @shared/* can be imported everywhere
+- apps/* cannot import from other apps/*
+- Use path aliases (@api/, @app/, @shared/)
+
+## Constraints
+- Shared libs must be pure TypeScript (no Node/Browser deps)
+- Tailwind 4 CSS-first (use @import "tailwindcss")
+- All external API calls need Circuit Breaker
+- User entities need paranoid: true (soft delete)
+- API must implement graceful shutdown
+
+## Testing
+- Unit tests: *.spec.ts files
+- E2E tests: apps/*-e2e/
+- Coverage target: 100% on calculations
+
+## Documentation
+- Update todos in apps/*/todos/ with dates
+- Follow PLAN-ACT-VERIFY methodology
+- Feature branches from dev branch

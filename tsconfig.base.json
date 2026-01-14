@@ -5,9 +5,9 @@
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["es2022"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
@@ -15,7 +15,18 @@
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "es2022",
-    "customConditions": ["@lms-monorepo-temp/source"]
-  }
+    "target": "ES2022",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/schemas": ["libs/shared/schemas/src/index.ts"],
+      "@shared/types": ["libs/shared/types/src/index.ts"],
+      "@shared/ui": ["libs/shared/ui/src/index.ts"],
+      "@api/*": ["apps/api/src/*"],
+      "@app/*": ["apps/app/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
 }

@@ -2,8 +2,29 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "production": ["default"],
-    "sharedGlobals": []
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/eslint.config.js"
+    ],
+    "sharedGlobals": ["{workspaceRoot}/tsconfig.base.json"]
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    },
+    "typecheck": {
+      "cache": true
+    }
   },
   "plugins": [
     {
@@ -19,6 +40,60 @@
           "watchDepsName": "watch-deps"
         }
       }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "testTargetName": "test",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "typecheck"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
     }
-  ]
+  ],
+  "generators": {
+    "@nx/js:library": {
+      "buildable": true
+    }
+  },
+  "enforceModuleBoundaries": {
+    "depConstraints": [
+      {
+        "sourceTag": "scope:shared",
+        "onlyDependOnLibsWithTags": ["scope:shared"]
+      },
+      {
+        "sourceTag": "scope:api",
+        "onlyDependOnLibsWithTags": ["scope:shared", "scope:api"]
+      },
+      {
+        "sourceTag": "scope:app",
+        "onlyDependOnLibsWithTags": ["scope:shared", "scope:app"]
+      },
+      {
+        "sourceTag": "scope:landing",
+        "onlyDependOnLibsWithTags": ["scope:shared", "scope:landing"]
+      },
+      {
+        "sourceTag": "type:app",
+        "onlyDependOnLibsWithTags": ["type:lib", "type:util"]
+      },
+      {
+        "sourceTag": "type:lib",
+        "onlyDependOnLibsWithTags": ["type:lib", "type:util"]
+      },
+      {
+        "sourceTag": "type:util",
+        "onlyDependOnLibsWithTags": ["type:util"]
+      }
+    ]
+  }
 }

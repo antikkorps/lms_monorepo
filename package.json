@@ -1,21 +1,48 @@
 {
-  "name": "@lms-monorepo-temp/source",
+  "name": "@lms/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:api": "nx serve api",
+    "start:app": "nx serve app",
+    "start:landing": "nx serve landing",
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test",
+    "lint": "nx run-many -t lint",
+    "prepare": "husky"
+  },
   "private": true,
-  "dependencies": {},
   "devDependencies": {
+    "@nx/esbuild": "^22.3.3",
+    "@nx/eslint": "^22.3.3",
     "@nx/js": "22.3.3",
+    "@nx/node": "^22.3.3",
+    "@nx/vite": "^22.3.3",
+    "@nx/web": "^22.3.3",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "@vitest/coverage-v8": "^4.0.17",
+    "@vue/compiler-sfc": "^3.5.26",
+    "esbuild": "^0.27.2",
+    "eslint": "^9.39.2",
+    "husky": "^9.1.7",
+    "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
     "nx": "22.3.3",
     "prettier": "~3.6.2",
     "tslib": "^2.3.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.17",
+    "vue-tsc": "^3.2.2"
   },
   "workspaces": [
-    "packages/*"
-  ]
+    "apps/*",
+    "libs/*",
+    "libs/shared/*"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  }
 }
