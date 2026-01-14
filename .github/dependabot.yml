@@ -1,0 +1,41 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    target-branch: "dev"
+    open-pull-requests-limit: 10
+    groups:
+      nx:
+        patterns:
+          - "@nx/*"
+          - "nx"
+      vue:
+        patterns:
+          - "vue*"
+          - "@vue/*"
+          - "@vitejs/plugin-vue"
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+      linting:
+        patterns:
+          - "eslint*"
+          - "typescript-eslint"
+          - "prettier"
+    labels:
+      - "dependencies"
+      - "automated"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    target-branch: "dev"
+    labels:
+      - "dependencies"
+      - "ci"
