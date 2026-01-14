@@ -10,7 +10,13 @@ export const config = {
 
   // JWT
   jwtSecret: process.env.JWT_SECRET || 'dev-secret-change-in-production',
-  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-change-in-production',
+  jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
+  jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+
+  // Cookie settings
+  cookieSecure: process.env.NODE_ENV === 'production',
+  cookieDomain: process.env.COOKIE_DOMAIN || undefined,
 
   // Stripe
   stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',

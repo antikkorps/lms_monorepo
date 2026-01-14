@@ -167,13 +167,8 @@ export function rateLimiter(options?: {
 
       await next();
     } catch (error) {
-      if (error instanceof AppError) {
-        throw error;
-      }
-
-      // Redis error - fail open (allow request) but log
-      logger.error({ err: error, key, tier }, 'Rate limiter error');
-      await next();
+      // Always re-throw errors - whether from rate limiting or downstream
+      throw error;
     }
   };
 }

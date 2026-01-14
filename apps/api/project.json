@@ -46,7 +46,9 @@
           "sequelize",
           "ioredis",
           "pino",
-          "pino-pretty"
+          "pino-pretty",
+          "bcryptjs",
+          "jsonwebtoken"
         ]
       },
       "configurations": {

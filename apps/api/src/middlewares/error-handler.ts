@@ -20,7 +20,7 @@ export async function errorHandler(ctx: Context, next: Next): Promise<void> {
       if (err.statusCode >= 500) {
         logger.error({
           err,
-          userId: ctx.state.user?.id,
+          userId: ctx.state.user?.userId,
           tenantId: ctx.state.tenant?.id,
           path: ctx.path,
           method: ctx.method,
@@ -39,7 +39,7 @@ export async function errorHandler(ctx: Context, next: Next): Promise<void> {
 
       logger.error({
         err,
-        userId: ctx.state.user?.id,
+        userId: ctx.state.user?.userId,
         tenantId: ctx.state.tenant?.id,
         path: ctx.path,
         method: ctx.method,

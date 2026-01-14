@@ -17,7 +17,7 @@ export async function requestLogger(ctx: Context, next: Next): Promise<void> {
     path: ctx.path,
     status: ctx.status,
     duration: `${duration}ms`,
-    userId: ctx.state.user?.id,
+    userId: ctx.state.user?.userId,
     tenantId: ctx.state.tenant?.id,
     userAgent: ctx.request.header['user-agent'],
     ip: ctx.ip,
