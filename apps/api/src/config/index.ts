@@ -29,6 +29,15 @@ export const config = {
   // CORS
   corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:5173').split(','),
 
+  // Email
+  email: {
+    provider: process.env.EMAIL_PROVIDER || 'console', // 'console' | 'postmark' | 'sendgrid'
+    from: process.env.EMAIL_FROM || 'noreply@example.com',
+    fromName: process.env.EMAIL_FROM_NAME || 'LMS Platform',
+    postmarkApiKey: process.env.POSTMARK_API_KEY || '',
+    sendgridApiKey: process.env.SENDGRID_API_KEY || '',
+  },
+
   // Rate limiting (defaults, can be overridden per tier in middleware)
   rateLimit: {
     b2c: {

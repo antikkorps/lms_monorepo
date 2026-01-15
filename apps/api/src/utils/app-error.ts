@@ -35,6 +35,14 @@ export type ErrorCode =
   | 'SUPER_ADMIN_REQUIRED'
   // Rate limiting
   | 'RATE_LIMIT_EXCEEDED'
+  // Invitation
+  | 'INVITATION_NOT_FOUND'
+  | 'INVITATION_EXISTS'
+  | 'INVITATION_EXPIRED'
+  | 'INVITATION_INVALID'
+  | 'GROUPS_REQUIRED'
+  | 'INVALID_GROUPS'
+  | 'INVALID_TOKEN'
   // Allow any string for extensibility
   | (string & {});
 
