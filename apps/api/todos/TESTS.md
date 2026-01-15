@@ -13,12 +13,15 @@
 | Module | File | Tests | Status |
 |--------|------|-------|--------|
 | Utils | `app-error.spec.ts` | 4 | Done |
+| Auth Password | `password.spec.ts` | 13 | Done |
+| Auth JWT | `jwt.spec.ts` | 18 | Done |
+| Auth Middleware | `middleware.spec.ts` | 23 | Done |
 | Invitations | `service.spec.ts` | 25 | Done |
 | Email Templates | `templates.spec.ts` | 14 | Done |
 | Email Service | `email.service.spec.ts` | 5 | Done |
 | Circuit Breaker | `circuit-breaker.spec.ts` | 6 | Done |
 
-**Total: 54 tests**
+**Total: 108 tests**
 
 ### Mocks Disponibles
 
@@ -28,6 +31,9 @@ import { createMockTenant, createMockUser, createMockInvitation, createMockGroup
 
 // Email Service
 import { emailServiceMock } from '../test/mocks/email.mock.js';
+
+// Koa Context
+import { createMockContext, createMockNext } from '../test/mocks/koa.mock.js';
 ```
 
 ### Running Tests
@@ -45,10 +51,8 @@ cd apps/api && npx vitest run --coverage
 
 ### Pending Tests
 
-- [ ] Auth controller tests
-- [ ] Auth middleware tests
-- [ ] Password service tests
-- [ ] Redis session tests
+- [ ] Auth controller tests (complex, many endpoints)
+- [ ] Redis session tests (requires Redis mock)
 
 ### Notes
 
