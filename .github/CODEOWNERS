@@ -1,23 +1,29 @@
 # CODEOWNERS - Define who reviews what
 
 # Default owners for everything
-* @antikkorps
+
+- @antikkorps
 
 # Backend
+
 /apps/api/ @antikkorps
 
 # Frontend
+
 /apps/app/ @antikkorps
 /apps/landing/ @antikkorps
 
 # Shared libraries
+
 /libs/shared/ @antikkorps
 
 # Infrastructure
+
 /docker/ @antikkorps
 /.github/ @antikkorps
 /docker-compose.yml @antikkorps
 
 # Documentation
-*.md @antikkorps
+
+\*.md @antikkorps
 /docs/ @antikkorps

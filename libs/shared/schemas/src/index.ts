@@ -6,3 +6,4 @@ export * from './user.schema.js';
 export * from './tenant.schema.js';
 export * from './course.schema.js';
 export * from './common.schema.js';
+export * from './invitation.schema.js';
