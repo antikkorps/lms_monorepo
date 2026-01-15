@@ -20,6 +20,7 @@ export { Purchase } from './Purchase.js';
 export { UserProgress } from './UserProgress.js';
 export { QuizResult } from './QuizResult.js';
 export { Badge, UserBadge } from './Badge.js';
+export { Invitation, InvitationGroup } from './Invitation.js';
 
 // Import for associations setup
 import { Tenant } from './Tenant.js';
@@ -33,6 +34,7 @@ import { Purchase } from './Purchase.js';
 import { UserProgress } from './UserProgress.js';
 import { QuizResult } from './QuizResult.js';
 import { Badge, UserBadge } from './Badge.js';
+import { Invitation, InvitationGroup } from './Invitation.js';
 
 /**
  * Setup all model associations
@@ -272,6 +274,43 @@ export function setupAssociations(): void {
     foreignKey: 'courseId',
     as: 'course',
   });
+
+  // =============================================================================
+  // Invitation Associations
+  // =============================================================================
+  Invitation.belongsTo(Tenant, {
+    foreignKey: 'tenantId',
+    as: 'tenant',
+  });
+
+  Invitation.belongsTo(User, {
+    foreignKey: 'invitedById',
+    as: 'invitedBy',
+  });
+
+  Invitation.belongsTo(User, {
+    foreignKey: 'acceptedById',
+    as: 'acceptedBy',
+  });
+
+  Invitation.belongsToMany(Group, {
+    through: InvitationGroup,
+    foreignKey: 'invitationId',
+    otherKey: 'groupId',
+    as: 'groups',
+  });
+
+  Group.belongsToMany(Invitation, {
+    through: InvitationGroup,
+    foreignKey: 'groupId',
+    otherKey: 'invitationId',
+    as: 'invitations',
+  });
+
+  Tenant.hasMany(Invitation, {
+    foreignKey: 'tenantId',
+    as: 'invitations',
+  });
 }
 
 // All models for easy iteration
@@ -289,4 +328,6 @@ export const models = {
   QuizResult,
   Badge,
   UserBadge,
+  Invitation,
+  InvitationGroup,
 } as const;

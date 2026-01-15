@@ -19,7 +19,7 @@
 
 ### Pending
 
-- [ ] Implement user invitation system (Solo/Pro)
+- [x] Implement user invitation system (Solo/Pro) (Done: 2026-01-15)
 - [ ] Setup SSO integration (OAuth2/OpenID Connect)
 - [ ] Implement session fingerprinting (optional)
 
