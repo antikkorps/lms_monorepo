@@ -4,11 +4,13 @@
 > **Last Modified**: 2026-01-14
 
 ## Context Files
+
 - **Primary Rules**: `RULES.md` - Full project specification and constraints
 - **Specs Directory**: `docs/specs/` - Feature specifications
 - **Todos**: `apps/*/todos/` - Per-app task tracking
 
 ## Quick Stack Reference
+
 - **Monorepo**: Nx (Integrated mode)
 - **Backend**: Koa.js + Sequelize + Zod
 - **Frontend**: Vue 3.5 + Tailwind 4
@@ -17,6 +19,7 @@
 - **Tests**: Vitest + Playwright
 
 ## Critical Constraints
+
 1. **Shared libraries** (`@shared/*`) must be pure TypeScript (no Node/Browser deps)
 2. **Tailwind 4** uses CSS-first approach (not tailwind.config.js)
 3. **All API calls** to external services need Circuit Breaker pattern
@@ -24,12 +27,14 @@
 5. **Soft deletes** (`paranoid: true`) for user-related entities
 
 ## Workflow
+
 1. Check `RULES.md` before starting
 2. Create/update todos in `apps/*/todos/` with dates
 3. Work on feature branches from `dev`
 4. Follow PLAN-ACT-VERIFY methodology
 
 ## Nx Commands
+
 ```bash
 nx serve api          # Backend dev server
 nx serve app          # Frontend dev server
@@ -39,6 +44,7 @@ nx graph              # Dependency visualization
 ```
 
 ## File Locations
+
 - API Routes: `apps/api/src/routes/`
 - Vue Components: `apps/app/src/components/`
 - Shared Schemas: `libs/shared/schemas/src/`
