@@ -10,6 +10,7 @@ import { hashPassword, validatePasswordStrength } from '../auth/password.js';
 import { AppError } from '../utils/app-error.js';
 import { logger } from '../utils/logger.js';
 import { config } from '../config/index.js';
+import { emailService } from '../services/email/index.js';
 
 const INVITATION_EXPIRY_DAYS = 7;
 
@@ -374,21 +375,28 @@ export async function resendInvitation(tenantId: string, invitationId: string): 
   return invitation;
 }
 
-async function sendInvitationEmail(invitation: Invitation, tenant: Tenant): Promise<void> {
+async function sendInvitationEmail(
+  invitation: Invitation,
+  tenant: Tenant,
+  inviterName?: string
+): Promise<void> {
   const inviteUrl = `${config.frontendUrl}/accept-invitation?token=${invitation.token}`;
 
-  if (config.env === 'development') {
-    logger.info(
-      {
-        invitationId: invitation.id,
-        email: invitation.email,
-        inviteUrl,
-        tenantName: tenant.name,
-      },
-      'Invitation email (dev mode - URL logged)'
-    );
-  } else {
-    // TODO: Implement email service (Postmark/SendGrid)
-    logger.info({ invitationId: invitation.id, email: invitation.email }, 'Invitation email sent');
+  // Get inviter name if not provided
+  let inviter = inviterName;
+  if (!inviter) {
+    const inviterUser = await User.findByPk(invitation.invitedById, {
+      attributes: ['firstName', 'lastName'],
+    });
+    inviter = inviterUser ? `${inviterUser.firstName} ${inviterUser.lastName}` : tenant.name;
   }
+
+  await emailService.sendInvitationEmail({
+    to: invitation.email,
+    firstName: invitation.firstName,
+    tenantName: tenant.name,
+    inviterName: inviter,
+    inviteUrl,
+    role: invitation.role,
+  });
 }

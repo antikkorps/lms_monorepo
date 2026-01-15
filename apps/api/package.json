@@ -5,26 +5,30 @@
   "type": "module",
   "main": "src/main.ts",
   "dependencies": {
-    "koa": "^2.15.0",
     "@koa/cors": "^5.0.0",
     "@koa/router": "^13.0.0",
+    "@sendgrid/mail": "^8.1.6",
+    "bcryptjs": "^3.0.2",
+    "ioredis": "^5.4.2",
+    "jsonwebtoken": "^9.0.2",
+    "koa": "^2.15.0",
     "koa-bodyparser": "^4.4.1",
     "koa-helmet": "^8.0.0",
-    "pino": "^9.6.0",
-    "pino-pretty": "^13.0.0",
-    "ioredis": "^5.4.2",
-    "sequelize": "^6.37.0",
+    "opossum": "^9.0.0",
     "pg": "^8.13.0",
     "pg-hstore": "^2.3.4",
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^3.0.2"
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "postmark": "^4.0.5",
+    "sequelize": "^6.37.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/koa": "^2.15.0",
     "@types/koa__cors": "^5.0.0",
     "@types/koa__router": "^12.0.4",
     "@types/koa-bodyparser": "^4.3.12",
-    "@types/jsonwebtoken": "^9.0.9",
-    "@types/bcryptjs": "^2.4.6"
+    "@types/opossum": "^8.1.9"
   }
 }
