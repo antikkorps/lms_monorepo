@@ -16,12 +16,12 @@
 - [x] Implement logout & logout-all endpoints (Done: 2026-01-14)
 - [x] Create password reset flow (forgot-password, reset-password) (Done: 2026-01-14)
 - [x] Add email verification on registration (verify-email, resend-verification) (Done: 2026-01-14)
+- [x] Implement user invitation system (Done: 2026-01-15)
+- [x] Implement email service with Circuit Breaker (Done: 2026-01-15)
+- [x] Add unit tests for auth, invitations & email (108 tests) (Done: 2026-01-15)
 
 ### Pending
 
-- [x] Implement user invitation system (Solo/Pro) (Done: 2026-01-15)
-- [x] Implement email service (Postmark/SendGrid with Circuit Breaker) (Done: 2026-01-15)
-- [x] Add unit tests for invitation service & email service (Done: 2026-01-15)
 - [ ] Setup SSO integration (OAuth2/OpenID Connect)
 - [ ] Implement session fingerprinting (optional)
 

@@ -5,9 +5,8 @@
  */
 
 import { vi } from 'vitest';
-import type { Context } from 'koa';
 
-export interface MockContext extends Partial<Context> {
+export interface MockContext {
   headers: Record<string, string>;
   cookies: {
     get: ReturnType<typeof vi.fn>;
