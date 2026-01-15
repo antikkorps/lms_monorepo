@@ -1,6 +1,6 @@
 # API - Phase 2: Authentication & Security
 
-## Modified: 2026-01-14
+## Modified: 2026-01-15
 
 ### Completed
 
@@ -20,6 +20,7 @@
 ### Pending
 
 - [x] Implement user invitation system (Solo/Pro) (Done: 2026-01-15)
+- [x] Implement email service (Postmark/SendGrid with Circuit Breaker) (Done: 2026-01-15)
 - [ ] Setup SSO integration (OAuth2/OpenID Connect)
 - [ ] Implement session fingerprinting (optional)
 

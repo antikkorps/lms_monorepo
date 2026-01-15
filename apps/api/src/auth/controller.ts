@@ -27,6 +27,7 @@ import {
 import { AppError } from '../utils/app-error.js';
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
+import { emailService } from '../services/email/index.js';
 
 // Cookie options for tokens
 const COOKIE_OPTIONS = {
@@ -142,17 +143,12 @@ export async function register(ctx: Context): Promise<void> {
   // Build verification URL
   const verificationUrl = `${config.frontendUrl}/verify-email?token=${verificationToken}`;
 
-  // TODO: Send verification email via email service
-  if (config.env === 'development') {
-    logger.info(
-      { userId: user.id, email: user.email, verificationUrl },
-      'User registered - verification email (dev mode - URL logged)'
-    );
-  } else {
-    logger.info({ userId: user.id, email: user.email }, 'User registered - verification email sent');
-    // In production, send email here
-    // await emailService.sendVerificationEmail(user.email, verificationUrl);
-  }
+  // Send verification email
+  await emailService.sendVerificationEmail({
+    to: user.email,
+    firstName: user.firstName,
+    verificationUrl,
+  });
 
   ctx.status = 201;
   ctx.body = {
@@ -529,15 +525,12 @@ export async function forgotPassword(ctx: Context): Promise<void> {
   // Build reset URL
   const resetUrl = `${config.frontendUrl || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
 
-  // TODO: Send email with reset link via email service
-  // For now, log the URL in development
-  if (config.env === 'development') {
-    logger.info({ userId: user.id, email: user.email, resetUrl }, 'Password reset requested (dev mode - URL logged)');
-  } else {
-    logger.info({ userId: user.id, email: user.email }, 'Password reset requested');
-    // In production, send email here
-    // await emailService.sendPasswordResetEmail(user.email, resetUrl);
-  }
+  // Send password reset email
+  await emailService.sendPasswordResetEmail({
+    to: user.email,
+    firstName: user.firstName,
+    resetUrl,
+  });
 
   ctx.body = successResponse;
 }
@@ -719,17 +712,12 @@ export async function resendVerification(ctx: Context): Promise<void> {
   // Build verification URL
   const verificationUrl = `${config.frontendUrl}/verify-email?token=${verificationToken}`;
 
-  // TODO: Send verification email via email service
-  if (config.env === 'development') {
-    logger.info(
-      { userId: user.id, email: user.email, verificationUrl },
-      'Verification email resent (dev mode - URL logged)'
-    );
-  } else {
-    logger.info({ userId: user.id, email: user.email }, 'Verification email resent');
-    // In production, send email here
-    // await emailService.sendVerificationEmail(user.email, verificationUrl);
-  }
+  // Send verification email
+  await emailService.sendVerificationEmail({
+    to: user.email,
+    firstName: user.firstName,
+    verificationUrl,
+  });
 
   ctx.body = successResponse;
 }
