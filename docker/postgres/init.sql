@@ -18,6 +18,7 @@ CREATE TYPE course_status AS ENUM ('draft', 'published', 'archived');
 CREATE TYPE lesson_type AS ENUM ('video', 'quiz', 'document', 'assignment');
 CREATE TYPE quiz_question_type AS ENUM ('single_choice', 'multiple_choice', 'true_false');
 CREATE TYPE purchase_status AS ENUM ('pending', 'completed', 'refunded', 'failed');
+CREATE TYPE invitation_status AS ENUM ('pending', 'accepted', 'expired', 'revoked');
 
 -- Log successful initialization
 DO $$
