@@ -1,6 +1,6 @@
 # App (Vue) - Phase 1: Infrastructure Setup
 
-## Modified: 2026-01-14
+## Modified: 2026-01-18
 
 ### Completed
 - [x] Create Vue 3.5 application structure (Done: 2026-01-14)
@@ -10,17 +10,17 @@
 - [x] Configure Tailwind CSS 4.0 (CSS-first approach) (Done: 2026-01-14)
 - [x] Create basic views (Home, Login, Dashboard, 404) (Done: 2026-01-14)
 - [x] Configure project.json with Nx targets (Done: 2026-01-14)
-
-### In Progress
-- [ ] Setup API proxy in Vite dev server
+- [x] Setup API proxy in Vite dev server (Done: 2026-01-18)
+- [x] Configure Pinia for state management (Done: 2026-01-18)
+- [x] Setup auth store with JWT handling (Done: 2026-01-18)
+- [x] Create auth views (Register, ForgotPassword, ResetPassword, VerifyEmail) (Done: 2026-01-18)
+- [x] Add navigation guards (requiresAuth, guestOnly) (Done: 2026-01-18)
+- [x] Create API client composable with token refresh (Done: 2026-01-18)
 
 ### Pending
-- [ ] Configure Pinia for state management
-- [ ] Setup auth store with JWT handling
-- [ ] Configure environment variables
-- [ ] Setup Vitest for component testing
-- [ ] Create base layout components
+- [ ] Create base layout components (AppLayout, AuthLayout)
 - [ ] Implement responsive navigation
+- [ ] Setup Vitest for component testing
 
 ---
 

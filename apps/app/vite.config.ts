@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig({
@@ -22,11 +23,7 @@ export default defineConfig({
     host: true,
   },
 
-  plugins: [vue(), nxViteTsPaths()],
-
-  css: {
-    transformer: 'lightningcss',
-  },
+  plugins: [vue(), tailwindcss(), nxViteTsPaths()],
 
   build: {
     outDir: '../../dist/apps/app',
