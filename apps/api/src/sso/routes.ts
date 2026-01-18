@@ -14,7 +14,7 @@ import {
 import { authenticate } from '../auth/middleware.js';
 import { authRateLimiter } from '../middlewares/index.js';
 
-export const ssoRouter = new Router({ prefix: '/sso' });
+export const ssoRouter = new Router({ prefix: '/auth/sso' });
 
 // Public routes
 // GET /auth/sso/providers - List available SSO providers
