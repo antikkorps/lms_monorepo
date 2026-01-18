@@ -82,6 +82,41 @@ CREATE TABLE IF NOT EXISTS user_groups (
 );
 
 -- =============================================================================
+-- INVITATIONS
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS invitations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    email VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    role user_role NOT NULL DEFAULT 'learner',
+    token VARCHAR(64) UNIQUE NOT NULL,
+    status invitation_status NOT NULL DEFAULT 'pending',
+    invited_by_id UUID NOT NULL REFERENCES users(id),
+    accepted_by_id UUID REFERENCES users(id),
+    expires_at TIMESTAMPTZ NOT NULL,
+    accepted_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_invitations_tenant_id ON invitations(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_invitations_token ON invitations(token);
+CREATE INDEX IF NOT EXISTS idx_invitations_email ON invitations(email);
+CREATE INDEX IF NOT EXISTS idx_invitations_status ON invitations(status);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_pending_invitation ON invitations(tenant_id, email) WHERE status = 'pending';
+
+-- =============================================================================
+-- INVITATION_GROUPS (Many-to-Many)
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS invitation_groups (
+    invitation_id UUID NOT NULL REFERENCES invitations(id) ON DELETE CASCADE,
+    group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    PRIMARY KEY (invitation_id, group_id)
+);
+
+-- =============================================================================
 -- COURSES
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS courses (
