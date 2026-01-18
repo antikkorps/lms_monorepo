@@ -23,6 +23,21 @@
 4. **Graceful shutdown** mandatory for `apps/api`
 5. **Soft deletes** (`paranoid: true`) for user-related entities
 
+## Git Conventions
+
+**Branching workflow:**
+```
+feat/* ──► dev ──► main
+```
+- Feature branches are created from `dev`
+- PRs target `dev` (never `main` directly)
+- `main` is updated by merging `dev` when ready for release
+
+**Commit rules:**
+- No "Claude Code" references in commit messages or PR descriptions
+- No "Co-Authored-By: Claude" lines
+- Follow conventional commits (`feat`, `fix`, `chore`, etc.)
+
 ## Workflow
 1. Check `RULES.md` before starting
 2. Create/update todos in `apps/*/todos/` with dates

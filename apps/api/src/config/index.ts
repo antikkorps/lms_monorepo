@@ -29,6 +29,32 @@ export const config = {
   // CORS
   corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:5173').split(','),
 
+  // Email
+  email: {
+    provider: process.env.EMAIL_PROVIDER || 'console', // 'console' | 'postmark' | 'sendgrid'
+    from: process.env.EMAIL_FROM || 'noreply@example.com',
+    fromName: process.env.EMAIL_FROM_NAME || 'LMS Platform',
+    postmarkApiKey: process.env.POSTMARK_API_KEY || '',
+    sendgridApiKey: process.env.SENDGRID_API_KEY || '',
+  },
+
+  // SSO (OAuth2/OpenID Connect)
+  sso: {
+    // Callback URL for OAuth providers
+    callbackUrl: process.env.SSO_CALLBACK_URL || 'http://localhost:3000/api/v1/auth/sso/callback',
+    // Google OAuth
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    },
+    // Microsoft Entra ID (Azure AD)
+    microsoft: {
+      clientId: process.env.MICROSOFT_CLIENT_ID || '',
+      clientSecret: process.env.MICROSOFT_CLIENT_SECRET || '',
+      tenantId: process.env.MICROSOFT_TENANT_ID || 'common', // 'common', 'organizations', or specific tenant
+    },
+  },
+
   // Rate limiting (defaults, can be overridden per tier in middleware)
   rateLimit: {
     b2c: {

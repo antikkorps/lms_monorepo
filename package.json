@@ -52,5 +52,9 @@
   ],
   "engines": {
     "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "google-auth-library": "^10.5.0",
+    "jose": "^6.1.3"
   }
 }
