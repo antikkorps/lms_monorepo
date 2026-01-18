@@ -3,9 +3,9 @@
  * Manages authentication state with Pinia
  */
 
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
 import type { AuthenticatedUser, Role } from '@shared/types';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 import { apiClient, ApiRequestError } from '../composables/useApi';
 
 interface LoginCredentials {
@@ -61,6 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
       const userData = await apiClient.get<AuthenticatedUser>('/auth/me');
       user.value = userData;
     } catch (err) {
+      console.error('Auth initialization error:', err);
       // Not authenticated - that's OK
       user.value = null;
     } finally {
@@ -77,7 +78,10 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null;
 
     try {
-      const response = await apiClient.post<{ user: AuthenticatedUser }>('/auth/login', credentials);
+      const response = await apiClient.post<{ user: AuthenticatedUser }>(
+        '/auth/login',
+        credentials,
+      );
       user.value = response.user;
       return true;
     } catch (err) {
@@ -172,7 +176,10 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Reset password with token
    */
-  async function resetPassword(token: string, password: string): Promise<boolean> {
+  async function resetPassword(
+    token: string,
+    password: string,
+  ): Promise<boolean> {
     isLoading.value = true;
     error.value = null;
 
@@ -194,12 +201,18 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Change password (when logged in)
    */
-  async function changePassword(currentPassword: string, newPassword: string): Promise<boolean> {
+  async function changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<boolean> {
     isLoading.value = true;
     error.value = null;
 
     try {
-      await apiClient.post('/auth/change-password', { currentPassword, newPassword });
+      await apiClient.post('/auth/change-password', {
+        currentPassword,
+        newPassword,
+      });
       return true;
     } catch (err) {
       if (err instanceof ApiRequestError) {
@@ -260,14 +273,19 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Get SSO authorization URL
    */
-  async function getSSOAuthUrl(provider: 'google' | 'microsoft' | 'oidc'): Promise<string | null> {
+  async function getSSOAuthUrl(
+    provider: 'google' | 'microsoft' | 'oidc',
+  ): Promise<string | null> {
     isLoading.value = true;
     error.value = null;
 
     try {
-      const response = await apiClient.get<{ authUrl: string }>(`/auth/sso/${provider}/authorize`, {
-        redirect_uri: window.location.origin + '/dashboard',
-      });
+      const response = await apiClient.get<{ authUrl: string }>(
+        `/auth/sso/${provider}/authorize`,
+        {
+          redirect_uri: window.location.origin + '/dashboard',
+        },
+      );
       return response.authUrl;
     } catch (err) {
       if (err instanceof ApiRequestError) {
