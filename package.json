@@ -65,6 +65,7 @@
     "jose": "^6.1.3",
     "lucide-vue-next": "^0.562.0",
     "reka-ui": "^2.7.0",
+    "slugify": "^1.6.6",
     "tailwind-merge": "^3.4.0"
   }
 }
