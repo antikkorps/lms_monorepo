@@ -14,6 +14,7 @@ import {
 } from './controller.js';
 import { authenticate } from './middleware.js';
 import { authRateLimiter } from '../middlewares/index.js';
+import { ssoRouter } from '../sso/index.js';
 
 export const authRouter = new Router({ prefix: '/auth' });
 
@@ -31,3 +32,7 @@ authRouter.post('/logout', authenticate, logout);
 authRouter.post('/logout-all', authenticate, logoutAll);
 authRouter.get('/me', authenticate, me);
 authRouter.post('/change-password', authenticate, changePassword);
+
+// Mount SSO routes under /auth/sso
+authRouter.use(ssoRouter.routes());
+authRouter.use(ssoRouter.allowedMethods());

@@ -1,6 +1,6 @@
 # API - Phase 2: Authentication & Security
 
-## Modified: 2026-01-14
+## Modified: 2026-01-18
 
 ### Completed
 
@@ -16,11 +16,13 @@
 - [x] Implement logout & logout-all endpoints (Done: 2026-01-14)
 - [x] Create password reset flow (forgot-password, reset-password) (Done: 2026-01-14)
 - [x] Add email verification on registration (verify-email, resend-verification) (Done: 2026-01-14)
+- [x] Implement user invitation system (Done: 2026-01-15)
+- [x] Implement email service with Circuit Breaker (Done: 2026-01-15)
+- [x] Add unit tests for auth, invitations & email (108 tests) (Done: 2026-01-15)
+- [x] Setup SSO integration - Google, Microsoft, OIDC générique (Done: 2026-01-18)
 
 ### Pending
 
-- [ ] Implement user invitation system (Solo/Pro)
-- [ ] Setup SSO integration (OAuth2/OpenID Connect)
 - [ ] Implement session fingerprinting (optional)
 
 ### Notes
