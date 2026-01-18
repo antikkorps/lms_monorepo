@@ -25,6 +25,10 @@ export class User extends Model<
   declare tenantId: ForeignKey<Tenant['id']> | null;
   declare avatarUrl: CreationOptional<string | null>;
   declare lastLoginAt: CreationOptional<Date | null>;
+  // SSO fields
+  declare ssoProvider: CreationOptional<string | null>;
+  declare ssoProviderId: CreationOptional<string | null>;
+  declare ssoMetadata: CreationOptional<Record<string, unknown> | null>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare deletedAt: CreationOptional<Date | null>;
@@ -47,6 +51,10 @@ export class User extends Model<
 
   get isB2B(): NonAttribute<boolean> {
     return this.tenantId !== null;
+  }
+
+  get isSSO(): NonAttribute<boolean> {
+    return this.ssoProvider !== null;
   }
 }
 
@@ -104,6 +112,22 @@ User.init(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    // SSO fields
+    ssoProvider: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      comment: 'SSO provider type: google, microsoft, oidc',
+    },
+    ssoProviderId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      comment: 'External user ID from SSO provider',
+    },
+    ssoMetadata: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+      comment: 'Raw claims/data from SSO provider',
+    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
     deletedAt: DataTypes.DATE,
@@ -117,6 +141,7 @@ User.init(
       { fields: ['email'] },
       { fields: ['tenant_id'] },
       { fields: ['status'] },
+      { fields: ['sso_provider', 'sso_provider_id'], name: 'idx_users_sso' },
     ],
   }
 );
