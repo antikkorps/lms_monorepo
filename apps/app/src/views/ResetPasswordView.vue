@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
+import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { CheckCircle } from 'lucide-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -37,7 +43,6 @@ async function handleSubmit() {
   const success = await authStore.resetPassword(token.value, password.value);
   if (success) {
     resetSuccess.value = true;
-    // Redirect to login after 3 seconds
     setTimeout(() => {
       router.push('/login');
     }, 3000);
@@ -46,75 +51,72 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-    <div class="card w-full max-w-md">
-      <h1 class="text-2xl font-bold text-center mb-6">Set New Password</h1>
-
+  <Card>
+    <CardHeader class="text-center">
+      <CardTitle class="text-2xl">Set New Password</CardTitle>
+      <CardDescription>Enter your new password below</CardDescription>
+    </CardHeader>
+    <CardContent>
       <!-- Success message -->
-      <div v-if="resetSuccess" class="text-center">
-        <div class="mb-4 p-4 bg-green-50 text-green-700 rounded-lg">
-          <h2 class="font-semibold mb-2">Password Reset Successful</h2>
-          <p class="text-sm">
+      <div v-if="resetSuccess" class="text-center space-y-4">
+        <Alert class="border-green-500 bg-green-50 text-green-700">
+          <CheckCircle class="h-4 w-4" />
+          <AlertTitle>Password Reset Successful</AlertTitle>
+          <AlertDescription>
             Your password has been updated. Redirecting to sign in...
-          </p>
-        </div>
-        <router-link to="/login" class="text-primary-600 hover:text-primary-500 font-medium">
-          Sign In Now
-        </router-link>
+          </AlertDescription>
+        </Alert>
+        <RouterLink to="/login">
+          <Button variant="link">Sign In Now</Button>
+        </RouterLink>
       </div>
 
       <!-- Form -->
       <form v-else @submit.prevent="handleSubmit" class="space-y-4">
-        <div v-if="authStore.error || localError" class="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-          {{ authStore.error || localError }}
-        </div>
+        <Alert v-if="authStore.error || localError" variant="destructive">
+          <AlertDescription>{{ authStore.error || localError }}</AlertDescription>
+        </Alert>
 
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-            New Password
-          </label>
-          <input
+        <div class="space-y-2">
+          <Label for="password">New Password</Label>
+          <Input
             id="password"
             v-model="password"
             type="password"
-            class="input"
             placeholder="••••••••"
             required
             minlength="8"
             :disabled="authStore.isLoading || !token"
           />
-          <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
+          <p class="text-xs text-muted-foreground">Minimum 8 characters</p>
         </div>
 
-        <div>
-          <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">
-            Confirm New Password
-          </label>
-          <input
+        <div class="space-y-2">
+          <Label for="confirmPassword">Confirm New Password</Label>
+          <Input
             id="confirmPassword"
             v-model="confirmPassword"
             type="password"
-            class="input"
             placeholder="••••••••"
             required
             :disabled="authStore.isLoading || !token"
           />
         </div>
 
-        <button
+        <Button
           type="submit"
-          class="btn-primary w-full"
+          class="w-full"
           :disabled="authStore.isLoading || !token"
         >
           {{ authStore.isLoading ? 'Resetting...' : 'Reset Password' }}
-        </button>
+        </Button>
 
         <p class="text-center">
-          <router-link to="/login" class="text-sm text-gray-600 hover:text-gray-500">
+          <RouterLink to="/login" class="text-sm text-muted-foreground hover:text-foreground">
             Back to Sign In
-          </router-link>
+          </RouterLink>
         </p>
       </form>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 </template>

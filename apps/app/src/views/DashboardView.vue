@@ -1,42 +1,71 @@
 <script setup lang="ts">
-// Dashboard view - placeholder for future implementation
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { BookOpen, Trophy, GraduationCap, ArrowRight } from 'lucide-vue-next';
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <header class="bg-white border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 py-4">
-        <h1 class="text-xl font-semibold">Dashboard</h1>
-      </div>
-    </header>
+  <div class="space-y-6">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
+      <p class="text-muted-foreground">Welcome back! Here's an overview of your progress.</p>
+    </div>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Stats cards -->
-        <div class="card">
-          <h3 class="text-sm font-medium text-gray-500 mb-1">My Courses</h3>
-          <p class="text-3xl font-bold">0</p>
-        </div>
+    <!-- Stats cards -->
+    <div class="grid gap-4 md:grid-cols-3">
+      <Card>
+        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle class="text-sm font-medium">My Courses</CardTitle>
+          <BookOpen class="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div class="text-2xl font-bold">0</div>
+          <p class="text-xs text-muted-foreground">Enrolled courses</p>
+        </CardContent>
+      </Card>
 
-        <div class="card">
-          <h3 class="text-sm font-medium text-gray-500 mb-1">Completed</h3>
-          <p class="text-3xl font-bold">0</p>
-        </div>
+      <Card>
+        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle class="text-sm font-medium">Completed</CardTitle>
+          <GraduationCap class="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div class="text-2xl font-bold">0</div>
+          <p class="text-xs text-muted-foreground">Finished courses</p>
+        </CardContent>
+      </Card>
 
-        <div class="card">
-          <h3 class="text-sm font-medium text-gray-500 mb-1">Badges</h3>
-          <p class="text-3xl font-bold">0</p>
-        </div>
-      </div>
+      <Card>
+        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle class="text-sm font-medium">Badges</CardTitle>
+          <Trophy class="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div class="text-2xl font-bold">0</div>
+          <p class="text-xs text-muted-foreground">Achievements earned</p>
+        </CardContent>
+      </Card>
+    </div>
 
-      <div class="mt-8">
-        <h2 class="text-lg font-semibold mb-4">Continue Learning</h2>
-        <div class="card">
-          <p class="text-gray-500 text-center py-8">
-            No courses yet. Start exploring our catalog!
+    <!-- Continue Learning -->
+    <Card>
+      <CardHeader>
+        <CardTitle>Continue Learning</CardTitle>
+        <CardDescription>Pick up where you left off</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="flex flex-col items-center justify-center py-8 text-center">
+          <BookOpen class="h-12 w-12 text-muted-foreground mb-4" />
+          <h3 class="text-lg font-semibold mb-2">No courses yet</h3>
+          <p class="text-muted-foreground mb-4">
+            Start exploring our catalog to find courses that interest you.
           </p>
+          <Button>
+            Browse Courses
+            <ArrowRight class="ml-2 h-4 w-4" />
+          </Button>
         </div>
-      </div>
-    </main>
+      </CardContent>
+    </Card>
   </div>
 </template>
