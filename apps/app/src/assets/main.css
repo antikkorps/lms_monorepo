@@ -1,9 +1,8 @@
-/* Tailwind CSS 4.0 - CSS-first approach */
+/* Tailwind CSS 4.0 */
 @import "tailwindcss";
 
-/* Custom theme configuration */
-@theme {
-  /* Colors - LMS Brand */
+/* Custom CSS variables */
+:root {
   --color-primary-50: oklch(0.97 0.02 250);
   --color-primary-100: oklch(0.94 0.04 250);
   --color-primary-200: oklch(0.88 0.08 250);
@@ -15,64 +14,84 @@
   --color-primary-800: oklch(0.35 0.12 250);
   --color-primary-900: oklch(0.28 0.10 250);
   --color-primary-950: oklch(0.20 0.08 250);
-
-  /* Semantic colors */
-  --color-success: oklch(0.65 0.15 145);
-  --color-warning: oklch(0.75 0.15 80);
-  --color-error: oklch(0.60 0.20 25);
-
-  /* Font families */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-
-  /* Border radius */
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
 }
 
 /* Base styles */
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply bg-white text-gray-900 antialiased;
-    font-family: var(--font-sans);
-  }
-
-  /* Dark mode support */
-  .dark body {
-    @apply bg-gray-950 text-gray-100;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
-/* Component layer */
-@layer components {
-  .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors duration-200;
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed;
-  }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
 
-  .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700;
-    @apply focus:ring-primary-500;
-  }
+/* Button components */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
 
-  .btn-secondary {
-    @apply btn bg-gray-100 text-gray-900 hover:bg-gray-200;
-    @apply focus:ring-gray-500;
-  }
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-500);
+}
 
-  .input {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
-    @apply placeholder:text-gray-400;
-  }
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-  .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
-  }
+.btn-primary {
+  background-color: var(--color-primary-600);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-700);
+}
+
+.btn-secondary {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+/* Input component */
+.input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-500);
+  border-color: transparent;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.input:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Card component */
+.card {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
 }
