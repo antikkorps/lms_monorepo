@@ -26,6 +26,12 @@
 4. **Graceful shutdown** mandatory for `apps/api`
 5. **Soft deletes** (`paranoid: true`) for user-related entities
 
+## Git Conventions
+
+- **No "Claude Code" references** in commit messages or PR descriptions
+- **No "Co-Authored-By: Claude"** lines
+- Commit messages follow conventional commits (`feat`, `fix`, `chore`, etc.)
+
 ## Workflow
 
 1. Check `RULES.md` before starting
