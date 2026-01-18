@@ -1,10 +1,12 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-01-14
+## Modified: 2026-01-18
 
-### Pending
+### In Progress
 - [ ] Create learner dashboard layout
 - [ ] Implement course listing component
+
+### Pending
 - [ ] Create course detail page
 - [ ] Implement VideoPlayer component (streaming integration)
 - [ ] Create QuizzEngine component
