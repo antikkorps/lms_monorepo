@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthStore } from '../stores/auth';
+import { RouterLink } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Mail } from 'lucide-vue-next';
 
 const authStore = useAuthStore();
 
@@ -18,62 +25,61 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-    <div class="card w-full max-w-md">
-      <h1 class="text-2xl font-bold text-center mb-2">Reset Password</h1>
-      <p class="text-center text-gray-600 mb-6">
+  <Card>
+    <CardHeader class="text-center">
+      <CardTitle class="text-2xl">Reset Password</CardTitle>
+      <CardDescription>
         Enter your email and we'll send you a link to reset your password.
-      </p>
-
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
       <!-- Success message -->
-      <div v-if="submitted" class="text-center">
-        <div class="mb-4 p-4 bg-green-50 text-green-700 rounded-lg">
-          <h2 class="font-semibold mb-2">Check your email</h2>
-          <p class="text-sm">
+      <div v-if="submitted" class="text-center space-y-4">
+        <Alert class="border-green-500 bg-green-50 text-green-700">
+          <Mail class="h-4 w-4" />
+          <AlertTitle>Check your email</AlertTitle>
+          <AlertDescription>
             If an account exists for <strong>{{ email }}</strong>,
             you will receive a password reset link shortly.
-          </p>
-        </div>
-        <router-link to="/login" class="text-primary-600 hover:text-primary-500 font-medium">
-          Back to Sign In
-        </router-link>
+          </AlertDescription>
+        </Alert>
+        <RouterLink to="/login">
+          <Button variant="link">Back to Sign In</Button>
+        </RouterLink>
       </div>
 
       <!-- Form -->
       <form v-else @submit.prevent="handleSubmit" class="space-y-4">
-        <div v-if="authStore.error" class="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-          {{ authStore.error }}
-        </div>
+        <Alert v-if="authStore.error" variant="destructive">
+          <AlertDescription>{{ authStore.error }}</AlertDescription>
+        </Alert>
 
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
+        <div class="space-y-2">
+          <Label for="email">Email</Label>
+          <Input
             id="email"
             v-model="email"
             type="email"
-            class="input"
             placeholder="you@example.com"
             required
             :disabled="authStore.isLoading"
           />
         </div>
 
-        <button
+        <Button
           type="submit"
-          class="btn-primary w-full"
+          class="w-full"
           :disabled="authStore.isLoading"
         >
           {{ authStore.isLoading ? 'Sending...' : 'Send Reset Link' }}
-        </button>
+        </Button>
 
         <p class="text-center">
-          <router-link to="/login" class="text-sm text-gray-600 hover:text-gray-500">
+          <RouterLink to="/login" class="text-sm text-muted-foreground hover:text-foreground">
             Back to Sign In
-          </router-link>
+          </RouterLink>
         </p>
       </form>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 </template>
