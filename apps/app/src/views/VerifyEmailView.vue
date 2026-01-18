@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
+import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { CheckCircle, XCircle, Loader2 } from 'lucide-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -23,7 +27,6 @@ onMounted(async () => {
   verificationStatus.value = success ? 'success' : 'error';
 
   if (success) {
-    // Redirect to login after 3 seconds
     setTimeout(() => {
       router.push('/login');
     }, 3000);
@@ -32,50 +35,49 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-    <div class="card w-full max-w-md text-center">
+  <Card>
+    <CardHeader class="text-center">
+      <CardTitle class="text-2xl">Email Verification</CardTitle>
+    </CardHeader>
+    <CardContent class="text-center">
       <!-- Verifying -->
-      <div v-if="verificationStatus === 'verifying'">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-        <h1 class="text-xl font-semibold text-gray-700">Verifying your email...</h1>
+      <div v-if="verificationStatus === 'verifying'" class="space-y-4">
+        <Loader2 class="h-12 w-12 mx-auto animate-spin text-primary" />
+        <p class="text-muted-foreground">Verifying your email...</p>
       </div>
 
       <!-- Success -->
-      <div v-else-if="verificationStatus === 'success'">
-        <div class="mb-4 p-4 bg-green-50 text-green-700 rounded-lg">
-          <svg class="w-12 h-12 mx-auto mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          <h2 class="font-semibold text-lg mb-2">Email Verified!</h2>
-          <p class="text-sm">
+      <div v-else-if="verificationStatus === 'success'" class="space-y-4">
+        <Alert class="border-green-500 bg-green-50 text-green-700">
+          <CheckCircle class="h-4 w-4" />
+          <AlertTitle>Email Verified!</AlertTitle>
+          <AlertDescription>
             Your email has been verified successfully. Redirecting to sign in...
-          </p>
-        </div>
-        <router-link to="/login" class="text-primary-600 hover:text-primary-500 font-medium">
-          Sign In Now
-        </router-link>
+          </AlertDescription>
+        </Alert>
+        <RouterLink to="/login">
+          <Button variant="link">Sign In Now</Button>
+        </RouterLink>
       </div>
 
       <!-- Error -->
-      <div v-else>
-        <div class="mb-4 p-4 bg-red-50 text-red-700 rounded-lg">
-          <svg class="w-12 h-12 mx-auto mb-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-          <h2 class="font-semibold text-lg mb-2">Verification Failed</h2>
-          <p class="text-sm">
+      <div v-else class="space-y-4">
+        <Alert variant="destructive">
+          <XCircle class="h-4 w-4" />
+          <AlertTitle>Verification Failed</AlertTitle>
+          <AlertDescription>
             {{ authStore.error || 'Unable to verify your email. The link may have expired.' }}
-          </p>
-        </div>
+          </AlertDescription>
+        </Alert>
         <div class="space-y-2">
-          <router-link to="/login" class="block text-primary-600 hover:text-primary-500 font-medium">
-            Sign In
-          </router-link>
-          <p class="text-sm text-gray-500">
+          <RouterLink to="/login">
+            <Button variant="link">Sign In</Button>
+          </RouterLink>
+          <p class="text-sm text-muted-foreground">
             Need a new verification link? Sign in and request a new one.
           </p>
         </div>
       </div>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 </template>
