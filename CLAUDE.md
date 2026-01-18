@@ -25,21 +25,26 @@
 3. **All API calls** to external services need Circuit Breaker pattern
 4. **Graceful shutdown** mandatory for `apps/api`
 5. **Soft deletes** (`paranoid: true`) for user-related entities
+6. **NEVER commit directly to `dev` or `main`** - always use feature branches
 
-## Git Conventions
+## Git Workflow
 
-**Branching workflow:**
+⚠️ **IMPORTANT: Never commit directly to `dev` or `main`**
+
 ```
 feat/* ──► dev ──► main
+fix/*  ──► dev ──► main
 ```
-- Feature branches are created from `dev`
-- PRs target `dev` (never `main` directly)
-- `main` is updated by merging `dev` when ready for release
+
+1. **Create a feature branch** from `dev` before any work: `git checkout -b feat/my-feature dev`
+2. **Commit to the feature branch** only
+3. **Create a PR** targeting `dev`
+4. **Never push directly** to `dev` or `main`
 
 **Commit rules:**
-- No "Claude Code" references in commit messages or PR descriptions
-- No "Co-Authored-By: Claude" lines
-- Follow conventional commits (`feat`, `fix`, `chore`, etc.)
+- Follow conventional commits (`feat`, `fix`, `chore`, `test`, `docs`, etc.)
+- No "Claude Code" references in commit messages
+- No "Co-Authored-By" lines
 
 ## Workflow
 
