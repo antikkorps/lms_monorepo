@@ -43,6 +43,10 @@ CREATE TABLE IF NOT EXISTS users (
     tenant_id UUID REFERENCES tenants(id) ON DELETE SET NULL,
     avatar_url TEXT,
     last_login_at TIMESTAMPTZ,
+    -- SSO fields
+    sso_provider VARCHAR(50),
+    sso_provider_id VARCHAR(255),
+    sso_metadata JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMPTZ
@@ -51,6 +55,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_tenant_id ON users(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
+CREATE INDEX IF NOT EXISTS idx_users_sso ON users(sso_provider, sso_provider_id);
 
 -- =============================================================================
 -- GROUPS

@@ -8,10 +8,19 @@ import {
 import { sequelize } from '../sequelize.js';
 import { TenantStatus, SubscriptionStatus, IsolationStrategy } from './enums.js';
 
+export interface TenantSSOConfig {
+  provider: 'google' | 'microsoft' | 'oidc';
+  clientId: string;
+  clientSecret: string;
+  issuer?: string;
+  tenantId?: string; // For Microsoft Azure AD
+}
+
 export interface TenantSettings {
   brandColor?: string;
   customDomain?: string;
   ssoEnabled?: boolean;
+  ssoConfig?: TenantSSOConfig;
   features?: string[];
 }
 
