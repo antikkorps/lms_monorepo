@@ -185,7 +185,7 @@ jobs:
         run: npx nx affected -t build --base=HEAD~1 --configuration=production
 
       - name: Upload API artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: needs.affected.outputs.api == 'true'
         with:
           name: api-build
@@ -193,7 +193,7 @@ jobs:
           retention-days: 7
 
       - name: Upload App artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: needs.affected.outputs.app == 'true'
         with:
           name: app-build
@@ -201,7 +201,7 @@ jobs:
           retention-days: 7
 
       - name: Upload Landing artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: needs.affected.outputs.landing == 'true'
         with:
           name: landing-build
@@ -235,7 +235,7 @@ jobs:
         continue-on-error: true # TODO: Remove when E2E tests are stable
 
       - name: Upload E2E report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: playwright-report
