@@ -9,7 +9,7 @@
     "@koa/router": "^13.0.0",
     "@sendgrid/mail": "^8.1.6",
     "bcryptjs": "^3.0.2",
-    "ioredis": "^5.4.2",
+    "ioredis": "^5.9.2",
     "jsonwebtoken": "^9.0.2",
     "koa": "^2.15.0",
     "koa-bodyparser": "^4.4.1",
