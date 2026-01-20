@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserAvatar } from '@/components/user';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
@@ -23,6 +23,8 @@ import {
   Menu,
   User,
   Bell,
+  BarChart3,
+  Trophy,
 } from 'lucide-vue-next';
 
 const router = useRouter();
@@ -30,17 +32,12 @@ const authStore = useAuthStore();
 
 const isMobileMenuOpen = ref(false);
 
-const userInitials = computed(() => {
-  if (!authStore.user) return '?';
-  const first = authStore.user.firstName?.charAt(0) || '';
-  const last = authStore.user.lastName?.charAt(0) || '';
-  return (first + last).toUpperCase() || '?';
-});
-
 const navigationItems = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Courses', href: '/courses', icon: BookOpen },
   { name: 'My Learning', href: '/learning', icon: GraduationCap },
+  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+  { name: 'Badges', href: '/badges', icon: Trophy },
 ];
 
 async function handleLogout() {
@@ -78,10 +75,13 @@ async function handleLogout() {
         <!-- User section at bottom -->
         <div class="border-t border-sidebar-border p-4">
           <div class="flex items-center gap-3">
-            <Avatar class="h-9 w-9">
-              <AvatarImage :src="authStore.user?.avatarUrl" :alt="authStore.fullName" />
-              <AvatarFallback>{{ userInitials }}</AvatarFallback>
-            </Avatar>
+            <UserAvatar
+              :user-id="authStore.user?.id || ''"
+              :first-name="authStore.user?.firstName"
+              :last-name="authStore.user?.lastName"
+              :avatar-url="authStore.user?.avatarUrl"
+              size="sm"
+            />
             <div class="flex-1 overflow-hidden">
               <p class="truncate text-sm font-medium text-sidebar-foreground">
                 {{ authStore.fullName }}
@@ -136,10 +136,13 @@ async function handleLogout() {
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <Button variant="ghost" size="icon" class="rounded-full">
-            <Avatar class="h-8 w-8">
-              <AvatarImage :src="authStore.user?.avatarUrl" :alt="authStore.fullName" />
-              <AvatarFallback>{{ userInitials }}</AvatarFallback>
-            </Avatar>
+            <UserAvatar
+              :user-id="authStore.user?.id || ''"
+              :first-name="authStore.user?.firstName"
+              :last-name="authStore.user?.lastName"
+              :avatar-url="authStore.user?.avatarUrl"
+              size="sm"
+            />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-56">
@@ -182,10 +185,13 @@ async function handleLogout() {
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <Button variant="ghost" class="relative h-9 w-9 rounded-full">
-              <Avatar class="h-9 w-9">
-                <AvatarImage :src="authStore.user?.avatarUrl" :alt="authStore.fullName" />
-                <AvatarFallback>{{ userInitials }}</AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                :user-id="authStore.user?.id || ''"
+                :first-name="authStore.user?.firstName"
+                :last-name="authStore.user?.lastName"
+                :avatar-url="authStore.user?.avatarUrl"
+                size="sm"
+              />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" class="w-56">

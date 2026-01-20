@@ -59,9 +59,9 @@ services:
     ports:
       - '${API_PORT:-3000}:3000'
     volumes:
-      # Mount source code for hot-reload
+      # Mount source code for hot-reload (libs not read-only for Vite temp files)
       - ./apps/api/src:/app/apps/api/src:ro
-      - ./libs:/app/libs:ro
+      - ./libs:/app/libs
       # Exclude node_modules
       - /app/node_modules
       - /app/apps/api/node_modules
@@ -88,10 +88,10 @@ services:
     ports:
       - '${APP_PORT:-5173}:5173'
     volumes:
-      # Mount source code for hot-reload
+      # Mount source code for hot-reload (libs not read-only for Vite temp files)
       - ./apps/app/src:/app/apps/app/src:ro
       - ./apps/app/index.html:/app/apps/app/index.html:ro
-      - ./libs:/app/libs:ro
+      - ./libs:/app/libs
       # Exclude node_modules
       - /app/node_modules
       - /app/apps/app/node_modules
@@ -114,9 +114,9 @@ services:
     ports:
       - '${LANDING_PORT:-4321}:4321'
     volumes:
-      # Mount source code for hot-reload
+      # Mount source code for hot-reload (libs not read-only for Vite temp files)
       - ./apps/landing/src:/app/apps/landing/src:ro
-      - ./libs:/app/libs:ro
+      - ./libs:/app/libs
       # Exclude node_modules
       - /app/node_modules
       - /app/apps/landing/node_modules
