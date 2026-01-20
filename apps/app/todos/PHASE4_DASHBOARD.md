@@ -15,14 +15,13 @@
 - [x] Implement VideoPlayer component (Done: 2026-01-20)
 - [x] Add skeleton loading states (Done: 2026-01-20)
 - [x] Implement progress tracking UI (Done: 2026-01-20)
+- [x] Create badge display component (Done: 2026-01-20)
 
 ### Pending
-- [ ] Create badge display component
 - [ ] Build tenant admin dashboard
 - [ ] Implement team management views
 - [ ] Create analytics charts (Chart.js/Recharts)
 - [ ] Implement seat management UI
-- [ ] Add skeleton loading states
 - [ ] Implement lazy loading for videos
 - [ ] Create discussion/comment system
 - [ ] Integrate DiceBear for user avatars

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ import {
 import { useAuthStore } from '@/stores/auth';
 import { useDashboard } from '@/composables/useDashboard';
 import { DashboardSkeleton } from '@/components/skeletons';
+import { BadgeCard, BadgeModal } from '@/components/badges';
+import type { Badge } from '@/composables/useBadges';
 
 const authStore = useAuthStore();
 const {
@@ -28,6 +30,14 @@ const {
   fetchDashboard,
   formatRelativeTime,
 } = useDashboard();
+
+const selectedBadge = ref<Badge | null>(null);
+const badgeModalOpen = ref(false);
+
+function handleBadgeClick(badge: Badge) {
+  selectedBadge.value = badge;
+  badgeModalOpen.value = true;
+}
 
 onMounted(() => {
   fetchDashboard();
@@ -222,7 +232,7 @@ function getProgressColor(progress: number): string {
               <CardTitle>Recent Achievements</CardTitle>
               <CardDescription>Badges you've earned recently</CardDescription>
             </div>
-            <RouterLink to="/profile#badges">
+            <RouterLink to="/badges">
               <Button variant="ghost" size="sm">
                 View All
                 <ArrowRight class="ml-1 h-4 w-4" />
@@ -231,26 +241,20 @@ function getProgressColor(progress: number): string {
           </div>
         </CardHeader>
         <CardContent>
-          <div class="flex flex-wrap gap-4">
-            <div
+          <div class="flex flex-wrap gap-6">
+            <BadgeCard
               v-for="badge in recentBadges"
               :key="badge.id"
-              class="flex items-center gap-3 rounded-lg border p-3"
-            >
-              <!-- Badge icon placeholder -->
-              <div
-                class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-orange-500"
-              >
-                <Trophy class="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <p class="font-medium">{{ badge.name }}</p>
-                <p class="text-xs text-muted-foreground">{{ badge.description }}</p>
-              </div>
-            </div>
+              :badge="badge"
+              size="md"
+              @click="handleBadgeClick"
+            />
           </div>
         </CardContent>
       </Card>
     </template>
+
+    <!-- Badge Modal -->
+    <BadgeModal v-model:open="badgeModalOpen" :badge="selectedBadge" />
   </div>
 </template>
