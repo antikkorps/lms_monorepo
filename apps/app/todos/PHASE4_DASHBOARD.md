@@ -13,9 +13,10 @@
 ### Completed (continued)
 - [x] Create QuizzEngine component (Done: 2026-01-20)
 - [x] Implement VideoPlayer component (Done: 2026-01-20)
+- [x] Add skeleton loading states (Done: 2026-01-20)
+- [x] Implement progress tracking UI (Done: 2026-01-20)
 
 ### Pending
-- [ ] Implement progress tracking UI
 - [ ] Create badge display component
 - [ ] Build tenant admin dashboard
 - [ ] Implement team management views

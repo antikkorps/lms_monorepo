@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   Search,
-  Loader2,
   AlertCircle,
   BookOpen,
   Filter,
   SlidersHorizontal,
 } from 'lucide-vue-next';
 import CourseCard from '@/components/courses/CourseCard.vue';
+import { CourseCardSkeleton } from '@/components/skeletons';
 import { useCourses, type CourseFilter, type CourseSortBy } from '@/composables/useCourses';
 
 const {
@@ -133,8 +133,8 @@ onMounted(() => {
     </div>
 
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex items-center justify-center py-12">
-      <Loader2 class="h-8 w-8 animate-spin text-muted-foreground" />
+    <div v-if="isLoading" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <CourseCardSkeleton v-for="i in 6" :key="i" />
     </div>
 
     <!-- Error State -->

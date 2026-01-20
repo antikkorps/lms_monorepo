@@ -20,6 +20,7 @@ import {
 } from 'lucide-vue-next';
 import { useCourseDetail } from '@/composables/useCourseDetail';
 import { useToast } from '@/composables/useToast';
+import { CourseDetailSkeleton } from '@/components/skeletons';
 import type { LessonItem } from '@shared/types';
 
 const route = useRoute();
@@ -117,9 +118,7 @@ function getProgressColor(pct: number): string {
     </RouterLink>
 
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex items-center justify-center py-12">
-      <Loader2 class="h-8 w-8 animate-spin text-muted-foreground" />
-    </div>
+    <CourseDetailSkeleton v-if="isLoading" />
 
     <!-- Error State -->
     <Card v-else-if="error" class="border-destructive">

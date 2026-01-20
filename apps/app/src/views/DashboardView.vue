@@ -10,11 +10,11 @@ import {
   Clock,
   ArrowRight,
   PlayCircle,
-  Loader2,
   AlertCircle,
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useDashboard } from '@/composables/useDashboard';
+import { DashboardSkeleton } from '@/components/skeletons';
 
 const authStore = useAuthStore();
 const {
@@ -59,9 +59,7 @@ function getProgressColor(progress: number): string {
     </div>
 
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex items-center justify-center py-12">
-      <Loader2 class="h-8 w-8 animate-spin text-muted-foreground" />
-    </div>
+    <DashboardSkeleton v-if="isLoading" />
 
     <!-- Error State -->
     <Card v-else-if="error" class="border-destructive">
