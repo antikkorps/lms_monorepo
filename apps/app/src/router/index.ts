@@ -48,6 +48,18 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/DashboardView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/courses',
+    name: 'courses',
+    component: () => import('../views/CoursesView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/courses/:slug',
+    name: 'course-detail',
+    component: () => import('../views/CourseDetailView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Catch-all 404
   {

@@ -1,15 +1,20 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-01-18
+## Modified: 2026-01-20
+
+### Completed
+- [x] Create learner dashboard layout (Done: 2026-01-20)
+- [x] Implement course listing component (Done: 2026-01-20)
+- [x] Create course detail page (Done: 2026-01-20)
 
 ### In Progress
-- [ ] Create learner dashboard layout
-- [ ] Implement course listing component
+(None currently)
+
+### Completed (continued)
+- [x] Create QuizzEngine component (Done: 2026-01-20)
+- [x] Implement VideoPlayer component (Done: 2026-01-20)
 
 ### Pending
-- [ ] Create course detail page
-- [ ] Implement VideoPlayer component (streaming integration)
-- [ ] Create QuizzEngine component
 - [ ] Implement progress tracking UI
 - [ ] Create badge display component
 - [ ] Build tenant admin dashboard
