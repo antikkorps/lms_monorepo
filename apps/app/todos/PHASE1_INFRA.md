@@ -1,6 +1,6 @@
 # App (Vue) - Phase 1: Infrastructure Setup
 
-## Modified: 2026-01-18
+## Modified: 2026-01-21
 
 ### Completed
 - [x] Create Vue 3.5 application structure (Done: 2026-01-14)
@@ -16,11 +16,12 @@
 - [x] Create auth views (Register, ForgotPassword, ResetPassword, VerifyEmail) (Done: 2026-01-18)
 - [x] Add navigation guards (requiresAuth, guestOnly) (Done: 2026-01-18)
 - [x] Create API client composable with token refresh (Done: 2026-01-18)
+- [x] Create base layout components (AppLayout, AuthLayout) (Done: 2026-01-21)
+- [x] Implement responsive navigation (Done: 2026-01-21)
+- [x] Setup Vitest for component testing (Done: 2026-01-21)
 
 ### Pending
-- [ ] Create base layout components (AppLayout, AuthLayout)
-- [ ] Implement responsive navigation
-- [ ] Setup Vitest for component testing
+(Phase 1 complete)
 
 ---
 
