@@ -168,3 +168,34 @@ export interface CreateInvitationInput {
   role?: import('./auth.types.js').Role;
   groupIds?: string[];
 }
+
+// Seat management domain
+export interface SeatOverview {
+  seatsPurchased: number;
+  seatsUsed: number;
+  seatsAvailable: number;
+  pendingInvitations: number;
+  usagePercentage: number;
+}
+
+export interface SeatAllocation {
+  role: import('./auth.types.js').Role;
+  count: number;
+  percentage: number;
+}
+
+export interface SeatUsageHistory {
+  date: string;
+  used: number;
+  purchased: number;
+}
+
+export interface SeatPlan {
+  id: string;
+  name: string;
+  seats: number;
+  pricePerSeat: number;
+  features: string[];
+  isCurrent: boolean;
+  isRecommended?: boolean;
+}

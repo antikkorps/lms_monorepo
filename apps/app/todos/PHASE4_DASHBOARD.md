@@ -21,9 +21,11 @@
 (None currently)
 
 ### Pending
-- [ ] Implement seat management UI
 - [ ] Implement lazy loading for videos
 - [ ] Create discussion/comment system
+
+### Recently Completed
+- [x] Implement seat management UI (Done: 2026-01-21)
 
 ---
 

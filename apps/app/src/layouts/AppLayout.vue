@@ -27,6 +27,7 @@ import {
   LayoutDashboard,
   Users,
   Mail,
+  CreditCard,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 
@@ -103,6 +104,14 @@ async function handleLogout() {
             >
               <Mail class="h-5 w-5" />
               Invitations
+            </RouterLink>
+            <RouterLink
+              to="/admin/seats"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+            >
+              <CreditCard class="h-5 w-5" />
+              Seat Management
             </RouterLink>
           </template>
         </nav>
@@ -189,6 +198,15 @@ async function handleLogout() {
                 >
                   <Mail class="h-5 w-5" />
                   Invitations
+                </RouterLink>
+                <RouterLink
+                  to="/admin/seats"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  active-class="bg-accent text-accent-foreground"
+                  @click="isMobileMenuOpen = false"
+                >
+                  <CreditCard class="h-5 w-5" />
+                  Seat Management
                 </RouterLink>
               </template>
             </nav>

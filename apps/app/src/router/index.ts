@@ -98,6 +98,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/admin/InvitationsView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/admin/seats',
+    name: 'admin-seats',
+    component: () => import('../views/admin/SeatManagementView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Catch-all 404
   {
