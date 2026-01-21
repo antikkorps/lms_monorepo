@@ -4,7 +4,6 @@ import { RouterLink, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { UserAvatar } from '@/components/user';
-import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
   DropdownMenu,
@@ -25,7 +24,12 @@ import {
   Bell,
   BarChart3,
   Trophy,
+  LayoutDashboard,
+  Users,
+  Mail,
+  CreditCard,
 } from 'lucide-vue-next';
+import { Separator } from '@/components/ui/separator';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -70,6 +74,46 @@ async function handleLogout() {
             <component :is="item.icon" class="h-5 w-5" />
             {{ item.name }}
           </RouterLink>
+
+          <!-- Admin Section (tenant_admin only) -->
+          <template v-if="authStore.hasRole('tenant_admin')">
+            <Separator class="my-4" />
+            <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Administration
+            </p>
+            <RouterLink
+              to="/admin"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+            >
+              <LayoutDashboard class="h-5 w-5" />
+              Dashboard Admin
+            </RouterLink>
+            <RouterLink
+              to="/admin/members"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+            >
+              <Users class="h-5 w-5" />
+              Team Members
+            </RouterLink>
+            <RouterLink
+              to="/admin/invitations"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+            >
+              <Mail class="h-5 w-5" />
+              Invitations
+            </RouterLink>
+            <RouterLink
+              to="/admin/seats"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+            >
+              <CreditCard class="h-5 w-5" />
+              Seat Management
+            </RouterLink>
+          </template>
         </nav>
 
         <!-- User section at bottom -->
@@ -121,6 +165,50 @@ async function handleLogout() {
                 <component :is="item.icon" class="h-5 w-5" />
                 {{ item.name }}
               </RouterLink>
+
+              <!-- Admin Section (tenant_admin only) -->
+              <template v-if="authStore.hasRole('tenant_admin')">
+                <Separator class="my-4" />
+                <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Administration
+                </p>
+                <RouterLink
+                  to="/admin"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  active-class="bg-accent text-accent-foreground"
+                  @click="isMobileMenuOpen = false"
+                >
+                  <LayoutDashboard class="h-5 w-5" />
+                  Dashboard Admin
+                </RouterLink>
+                <RouterLink
+                  to="/admin/members"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  active-class="bg-accent text-accent-foreground"
+                  @click="isMobileMenuOpen = false"
+                >
+                  <Users class="h-5 w-5" />
+                  Team Members
+                </RouterLink>
+                <RouterLink
+                  to="/admin/invitations"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  active-class="bg-accent text-accent-foreground"
+                  @click="isMobileMenuOpen = false"
+                >
+                  <Mail class="h-5 w-5" />
+                  Invitations
+                </RouterLink>
+                <RouterLink
+                  to="/admin/seats"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  active-class="bg-accent text-accent-foreground"
+                  @click="isMobileMenuOpen = false"
+                >
+                  <CreditCard class="h-5 w-5" />
+                  Seat Management
+                </RouterLink>
+              </template>
             </nav>
           </div>
         </SheetContent>

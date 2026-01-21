@@ -79,6 +79,32 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: 'app', requiresAuth: true },
   },
 
+  // Admin routes (tenant_admin only)
+  {
+    path: '/admin',
+    name: 'admin-dashboard',
+    component: () => import('../views/admin/AdminDashboardView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/members',
+    name: 'admin-members',
+    component: () => import('../views/admin/TeamMembersView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/invitations',
+    name: 'admin-invitations',
+    component: () => import('../views/admin/InvitationsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/seats',
+    name: 'admin-seats',
+    component: () => import('../views/admin/SeatManagementView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+
   // Catch-all 404
   {
     path: '/:pathMatch(.*)*',
