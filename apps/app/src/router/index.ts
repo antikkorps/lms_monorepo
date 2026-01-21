@@ -79,6 +79,20 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: 'app', requiresAuth: true },
   },
 
+  // Admin routes (tenant_admin only)
+  {
+    path: '/admin',
+    name: 'admin-dashboard',
+    component: () => import('../views/admin/AdminDashboardView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/members',
+    name: 'admin-members',
+    component: () => import('../views/admin/TeamMembersView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+
   // Catch-all 404
   {
     path: '/:pathMatch(.*)*',

@@ -122,4 +122,18 @@ export interface TenantDashboardStats {
   seatsPurchased: number;
   averageProgress: number;
   completionRate: number;
+  pendingInvitations: number;
+}
+
+export interface TenantMember {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  avatarUrl: string | null;
+  role: import('./auth.types.js').Role;
+  status: UserStatus;
+  lastLoginAt: Date | null;
+  createdAt: Date;
 }
