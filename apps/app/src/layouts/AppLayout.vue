@@ -26,6 +26,7 @@ import {
   Trophy,
   LayoutDashboard,
   Users,
+  Mail,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 
@@ -94,6 +95,14 @@ async function handleLogout() {
             >
               <Users class="h-5 w-5" />
               Team Members
+            </RouterLink>
+            <RouterLink
+              to="/admin/invitations"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+            >
+              <Mail class="h-5 w-5" />
+              Invitations
             </RouterLink>
           </template>
         </nav>
@@ -171,6 +180,15 @@ async function handleLogout() {
                 >
                   <Users class="h-5 w-5" />
                   Team Members
+                </RouterLink>
+                <RouterLink
+                  to="/admin/invitations"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  active-class="bg-accent text-accent-foreground"
+                  @click="isMobileMenuOpen = false"
+                >
+                  <Mail class="h-5 w-5" />
+                  Invitations
                 </RouterLink>
               </template>
             </nav>

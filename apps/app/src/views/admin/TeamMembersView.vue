@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import type { TenantMember } from '@shared/types';
+import { onMounted, ref } from 'vue';
+import type { TenantMember, CreateInvitationInput } from '@shared/types';
 import type { Role } from '@shared/types';
 import {
   Card,
@@ -14,9 +14,10 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select } from '@/components/ui/select';
 import { UserAvatar } from '@/components/user';
-import { MemberActionsDropdown } from '@/components/admin';
+import { MemberActionsDropdown, InviteMemberModal } from '@/components/admin';
 import { MembersTableSkeleton } from '@/components/skeletons';
 import { useTenantMembers } from '@/composables/useTenantMembers';
+import { useInvitations } from '@/composables/useInvitations';
 import {
   Search,
   UserPlus,
@@ -47,6 +48,14 @@ const {
   clearFilters,
   formatRelativeTime,
 } = useTenantMembers();
+
+const {
+  isCreating: isInviting,
+  createInvitation,
+  error: invitationError,
+} = useInvitations();
+
+const isInviteModalOpen = ref(false);
 
 function getRoleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' | 'info' {
   switch (role) {
@@ -126,8 +135,17 @@ async function handleRemoveMember(member: TenantMember) {
 }
 
 function handleInvite() {
-  // TODO: Open invite modal
-  toast.info('Invite functionality coming soon');
+  isInviteModalOpen.value = true;
+}
+
+async function handleInviteSubmit(data: CreateInvitationInput) {
+  const invitation = await createInvitation(data);
+  if (invitation) {
+    toast.success(`Invitation sent to ${data.email}`);
+    isInviteModalOpen.value = false;
+  } else {
+    toast.error(invitationError.value || 'Failed to send invitation');
+  }
 }
 
 onMounted(() => {
@@ -359,5 +377,12 @@ onMounted(() => {
         </div>
       </div>
     </template>
+
+    <!-- Invite Modal -->
+    <InviteMemberModal
+      v-model:open="isInviteModalOpen"
+      :is-submitting="isInviting"
+      @submit="handleInviteSubmit"
+    />
   </div>
 </template>

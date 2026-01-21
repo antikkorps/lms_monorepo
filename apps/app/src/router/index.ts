@@ -92,6 +92,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/admin/TeamMembersView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/admin/invitations',
+    name: 'admin-invitations',
+    component: () => import('../views/admin/InvitationsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Catch-all 404
   {

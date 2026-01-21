@@ -137,3 +137,34 @@ export interface TenantMember {
   lastLoginAt: Date | null;
   createdAt: Date;
 }
+
+// Invitation domain
+export type InvitationStatus = 'pending' | 'accepted' | 'expired' | 'revoked';
+
+export interface Invitation {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  role: import('./auth.types.js').Role;
+  status: InvitationStatus;
+  tenantId: string;
+  tenantName?: string;
+  groupIds: string[];
+  invitedBy?: {
+    id: string;
+    fullName: string;
+  };
+  expiresAt: Date;
+  acceptedAt: Date | null;
+  createdAt: Date;
+}
+
+export interface CreateInvitationInput {
+  email: string;
+  firstName: string;
+  lastName: string;
+  role?: import('./auth.types.js').Role;
+  groupIds?: string[];
+}

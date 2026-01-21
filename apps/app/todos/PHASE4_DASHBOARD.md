@@ -15,6 +15,7 @@
 - [x] Create analytics charts with Chart.js (Done: 2026-01-20)
 - [x] Build tenant admin dashboard (Done: 2026-01-21)
 - [x] Implement team management views (Done: 2026-01-21)
+- [x] Implement member invitation system (Done: 2026-01-21)
 
 ### In Progress
 (None currently)
