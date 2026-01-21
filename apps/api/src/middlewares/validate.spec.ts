@@ -194,7 +194,7 @@ describe('Validation Middleware', () => {
       const ctx = createMockContext({ body: {} });
       const next = createMockNext();
 
-      await expect(validate(schema as z.ZodSchema)(ctx, next)).rejects.toThrow('Custom error');
+      await expect(validate(schema as unknown as z.ZodSchema)(ctx, next)).rejects.toThrow('Custom error');
     });
   });
 });

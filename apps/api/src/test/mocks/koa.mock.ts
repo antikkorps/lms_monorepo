@@ -5,6 +5,18 @@
  */
 
 import { vi } from 'vitest';
+import type { Next } from 'koa';
+
+export interface MockContextState {
+  user?: {
+    userId: string;
+    email?: string;
+    role?: string;
+    tenantId?: string | null;
+    fullUser?: unknown;
+  };
+  tenant?: unknown;
+}
 
 export interface MockContext {
   headers: Record<string, string>;
@@ -12,7 +24,7 @@ export interface MockContext {
     get: ReturnType<typeof vi.fn>;
     set: ReturnType<typeof vi.fn>;
   };
-  state: Record<string, unknown>;
+  state: MockContextState;
   status: number;
   body: unknown;
   throw: ReturnType<typeof vi.fn>;
@@ -37,6 +49,6 @@ export function createMockContext(overrides: Partial<MockContext> = {}): MockCon
   };
 }
 
-export function createMockNext(): ReturnType<typeof vi.fn> {
-  return vi.fn().mockResolvedValue(undefined);
+export function createMockNext(): Next {
+  return vi.fn().mockResolvedValue(undefined) as unknown as Next;
 }

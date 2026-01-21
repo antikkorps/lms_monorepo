@@ -122,4 +122,80 @@ export interface TenantDashboardStats {
   seatsPurchased: number;
   averageProgress: number;
   completionRate: number;
+  pendingInvitations: number;
+}
+
+export interface TenantMember {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  avatarUrl: string | null;
+  role: import('./auth.types.js').Role;
+  status: UserStatus;
+  lastLoginAt: Date | null;
+  createdAt: Date;
+}
+
+// Invitation domain
+export type InvitationStatus = 'pending' | 'accepted' | 'expired' | 'revoked';
+
+export interface Invitation {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  role: import('./auth.types.js').Role;
+  status: InvitationStatus;
+  tenantId: string;
+  tenantName?: string;
+  groupIds: string[];
+  invitedBy?: {
+    id: string;
+    fullName: string;
+  };
+  expiresAt: Date;
+  acceptedAt: Date | null;
+  createdAt: Date;
+}
+
+export interface CreateInvitationInput {
+  email: string;
+  firstName: string;
+  lastName: string;
+  role?: import('./auth.types.js').Role;
+  groupIds?: string[];
+}
+
+// Seat management domain
+export interface SeatOverview {
+  seatsPurchased: number;
+  seatsUsed: number;
+  seatsAvailable: number;
+  pendingInvitations: number;
+  usagePercentage: number;
+}
+
+export interface SeatAllocation {
+  role: import('./auth.types.js').Role;
+  count: number;
+  percentage: number;
+}
+
+export interface SeatUsageHistory {
+  date: string;
+  used: number;
+  purchased: number;
+}
+
+export interface SeatPlan {
+  id: string;
+  name: string;
+  seats: number;
+  pricePerSeat: number;
+  features: string[];
+  isCurrent: boolean;
+  isRecommended?: boolean;
 }

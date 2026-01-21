@@ -48,6 +48,62 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/DashboardView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/courses',
+    name: 'courses',
+    component: () => import('../views/CoursesView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/courses/:slug',
+    name: 'course-detail',
+    component: () => import('../views/CourseDetailView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/learning',
+    name: 'my-learning',
+    component: () => import('../views/MyLearningView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/badges',
+    name: 'badges',
+    component: () => import('../views/BadgesView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/analytics',
+    name: 'analytics',
+    component: () => import('../views/AnalyticsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+
+  // Admin routes (tenant_admin only)
+  {
+    path: '/admin',
+    name: 'admin-dashboard',
+    component: () => import('../views/admin/AdminDashboardView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/members',
+    name: 'admin-members',
+    component: () => import('../views/admin/TeamMembersView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/invitations',
+    name: 'admin-invitations',
+    component: () => import('../views/admin/InvitationsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/seats',
+    name: 'admin-seats',
+    component: () => import('../views/admin/SeatManagementView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Catch-all 404
   {
