@@ -339,7 +339,7 @@ function navigateToLesson(lesson: LessonItem) {
 
             <!-- Notes Tab -->
             <div v-show="activeTab === 'notes'">
-              <NoteEditor :lesson-id="lessonId" />
+              <NoteEditor :lesson-id="lessonId" :lesson-title="currentLesson?.title" />
             </div>
 
             <!-- Discussions Tab -->
