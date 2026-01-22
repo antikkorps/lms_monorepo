@@ -25,6 +25,8 @@
 - [ ] Implement dark mode
 
 ### Pending
+- [ ] Fix DiceBear avatars not displaying
+- [ ] Create profile page with avatar selector component
 - [ ] Implement lazy loading for videos
 - [ ] Integrate real API (replace mock data in composables)
 
