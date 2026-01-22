@@ -1,4 +1,41 @@
 {
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "subtitle": "Here's an overview of your learning progress.",
+    "stats": {
+      "enrolledCourses": "Enrolled Courses",
+      "inProgress": "{count} in progress",
+      "completed": "Completed",
+      "coursesFinished": "Courses finished",
+      "badgesEarned": "Badges Earned",
+      "achievementsUnlocked": "Achievements unlocked",
+      "learningTime": "Learning Time",
+      "totalTimeSpent": "Total time spent"
+    },
+    "continueLearning": {
+      "title": "Continue Learning",
+      "subtitle": "Pick up where you left off",
+      "next": "Next:",
+      "continue": "Continue"
+    },
+    "empty": {
+      "title": "No courses yet",
+      "message": "Start exploring our catalog to find courses that interest you.",
+      "action": "Browse Courses"
+    },
+    "recentAchievements": {
+      "title": "Recent Achievements",
+      "subtitle": "Badges you've earned recently"
+    },
+    "error": {
+      "title": "Failed to load dashboard",
+      "retry": "Retry"
+    }
+  },
   "actions": {
     "save": "Save",
     "cancel": "Cancel",
