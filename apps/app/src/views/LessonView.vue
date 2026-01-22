@@ -195,7 +195,7 @@ function navigateToLesson(lesson: LessonItem) {
       </div>
     </header>
 
-    <div class="container py-6">
+    <div class="container px-4 sm:px-6 lg:px-8 py-6 mx-auto">
       <!-- Loading -->
       <div v-if="courseLoading" class="flex items-center justify-center py-20">
         <Loader2 class="h-8 w-8 animate-spin text-muted-foreground" />
@@ -248,9 +248,9 @@ function navigateToLesson(lesson: LessonItem) {
       </Card>
 
       <!-- Main content -->
-      <div v-else-if="course && currentLesson" class="grid gap-6 lg:grid-cols-3">
+      <div v-else-if="course && currentLesson" class="grid gap-6 lg:grid-cols-[1fr_320px] max-w-6xl mx-auto">
         <!-- Main area -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="space-y-6 max-w-3xl">
           <!-- Tabs -->
           <div class="flex border-b">
             <button

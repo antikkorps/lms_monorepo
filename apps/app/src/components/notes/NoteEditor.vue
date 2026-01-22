@@ -9,6 +9,16 @@ import {
   Eye,
   Edit3,
   Download,
+  Bold,
+  Italic,
+  Heading1,
+  Heading2,
+  List,
+  ListOrdered,
+  Code,
+  Quote,
+  Link,
+  Minus,
 } from 'lucide-vue-next';
 import { useNote } from '@/composables/useNote';
 import { useToast } from '@/composables/useToast';
@@ -45,10 +55,10 @@ const previewRef = ref<HTMLDivElement | null>(null);
 
 // Markdown parser instance
 const md = new MarkdownIt({
-  html: false, // Disable HTML tags in source
-  breaks: true, // Convert \n to <br>
-  linkify: true, // Auto-convert URLs to links
-  typographer: true, // Smart quotes and other typographic replacements
+  html: false,
+  breaks: true,
+  linkify: true,
+  typographer: true,
 });
 
 // View mode: 'edit' or 'preview'
@@ -70,6 +80,108 @@ const renderedContent = computed(() => {
     ALLOWED_ATTR: ['href', 'target', 'rel'],
   });
 });
+
+// Toolbar actions
+interface ToolbarAction {
+  icon: typeof Bold;
+  title: string;
+  action: () => void;
+}
+
+function insertText(before: string, after = '', placeholder = '') {
+  const textarea = textareaRef.value;
+  if (!textarea) return;
+
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = localContent.value;
+  const selectedText = text.substring(start, end) || placeholder;
+
+  const newText = text.substring(0, start) + before + selectedText + after + text.substring(end);
+  updateLocalContent(newText);
+
+  // Restore cursor position
+  setTimeout(() => {
+    textarea.focus();
+    const newCursorPos = start + before.length + selectedText.length;
+    textarea.setSelectionRange(
+      start + before.length,
+      start + before.length + (end === start ? placeholder.length : end - start)
+    );
+  }, 0);
+}
+
+function insertAtLineStart(prefix: string) {
+  const textarea = textareaRef.value;
+  if (!textarea) return;
+
+  const start = textarea.selectionStart;
+  const text = localContent.value;
+
+  // Find the start of the current line
+  const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+
+  const newText = text.substring(0, lineStart) + prefix + text.substring(lineStart);
+  updateLocalContent(newText);
+
+  setTimeout(() => {
+    textarea.focus();
+    textarea.setSelectionRange(start + prefix.length, start + prefix.length);
+  }, 0);
+}
+
+const toolbarActions: ToolbarAction[] = [
+  {
+    icon: Bold,
+    title: 'Bold (Ctrl+B)',
+    action: () => insertText('**', '**', 'bold text'),
+  },
+  {
+    icon: Italic,
+    title: 'Italic (Ctrl+I)',
+    action: () => insertText('*', '*', 'italic text'),
+  },
+  {
+    icon: Heading1,
+    title: 'Heading 1',
+    action: () => insertAtLineStart('# '),
+  },
+  {
+    icon: Heading2,
+    title: 'Heading 2',
+    action: () => insertAtLineStart('## '),
+  },
+  {
+    icon: List,
+    title: 'Bullet List',
+    action: () => insertAtLineStart('- '),
+  },
+  {
+    icon: ListOrdered,
+    title: 'Numbered List',
+    action: () => insertAtLineStart('1. '),
+  },
+  {
+    icon: Code,
+    title: 'Code',
+    action: () => insertText('`', '`', 'code'),
+  },
+  {
+    icon: Quote,
+    title: 'Quote',
+    action: () => insertAtLineStart('> '),
+  },
+  {
+    icon: Link,
+    title: 'Link',
+    action: () => insertText('[', '](url)', 'link text'),
+  },
+  {
+    icon: Minus,
+    title: 'Horizontal Rule',
+    action: () => insertText('\n---\n', ''),
+  },
+];
 
 // Load note on mount
 onMounted(() => {
@@ -130,6 +242,16 @@ function handleKeydown(event: KeyboardEvent) {
       handleSave();
     }
   }
+  // Bold on Cmd+B or Ctrl+B
+  if (event.key === 'b' && (event.metaKey || event.ctrlKey)) {
+    event.preventDefault();
+    insertText('**', '**', 'bold text');
+  }
+  // Italic on Cmd+I or Ctrl+I
+  if (event.key === 'i' && (event.metaKey || event.ctrlKey)) {
+    event.preventDefault();
+    insertText('*', '*', 'italic text');
+  }
 }
 
 // Auto-resize textarea
@@ -155,10 +277,8 @@ async function exportToPdf() {
   isExporting.value = true;
 
   try {
-    // Dynamically import html2pdf to avoid SSR issues
     const html2pdf = (await import('html2pdf.js')).default;
 
-    // Create a temporary container with styled content
     const container = document.createElement('div');
     container.innerHTML = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; max-width: 800px;">
@@ -172,7 +292,6 @@ async function exportToPdf() {
       </div>
     `;
 
-    // Add some basic styles for markdown elements
     const style = document.createElement('style');
     style.textContent = `
       .note-content h1, .note-content h2, .note-content h3 { margin-top: 1.5em; margin-bottom: 0.5em; font-weight: 600; }
@@ -194,10 +313,8 @@ async function exportToPdf() {
     `;
     container.appendChild(style);
 
-    // Generate filename
     const filename = `notes-${props.lessonTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
 
-    // Generate PDF
     await html2pdf()
       .set({
         margin: [15, 15, 15, 15],
@@ -228,7 +345,6 @@ const characterCount = computed(() => localContent.value.length);
       <div class="flex items-center gap-2">
         <FileText class="h-5 w-5 text-muted-foreground" />
         <h3 class="font-medium">Personal Notes</h3>
-        <span class="text-xs text-muted-foreground">(Markdown supported)</span>
       </div>
       <div class="flex items-center gap-2">
         <!-- Unsaved indicator -->
@@ -283,28 +399,44 @@ const characterCount = computed(() => localContent.value.length);
 
     <!-- Editor -->
     <div v-else class="space-y-2">
-      <!-- View mode tabs -->
-      <div class="flex border-b">
-        <button
-          class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border-b-2 transition-colors"
-          :class="viewMode === 'edit'
-            ? 'border-primary text-primary'
-            : 'border-transparent text-muted-foreground hover:text-foreground'"
-          @click="viewMode = 'edit'"
-        >
-          <Edit3 class="h-3.5 w-3.5" />
-          Edit
-        </button>
-        <button
-          class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border-b-2 transition-colors"
-          :class="viewMode === 'preview'
-            ? 'border-primary text-primary'
-            : 'border-transparent text-muted-foreground hover:text-foreground'"
-          @click="viewMode = 'preview'"
-        >
-          <Eye class="h-3.5 w-3.5" />
-          Preview
-        </button>
+      <!-- View mode tabs + Toolbar -->
+      <div class="rounded-t-lg border border-b-0 bg-muted/30">
+        <!-- Tabs -->
+        <div class="flex border-b">
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border-b-2 transition-colors"
+            :class="viewMode === 'edit'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'"
+            @click="viewMode = 'edit'"
+          >
+            <Edit3 class="h-3.5 w-3.5" />
+            Edit
+          </button>
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border-b-2 transition-colors"
+            :class="viewMode === 'preview'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'"
+            @click="viewMode = 'preview'"
+          >
+            <Eye class="h-3.5 w-3.5" />
+            Preview
+          </button>
+        </div>
+
+        <!-- Toolbar (only in edit mode) -->
+        <div v-show="viewMode === 'edit'" class="flex flex-wrap items-center gap-0.5 p-1.5">
+          <button
+            v-for="action in toolbarActions"
+            :key="action.title"
+            class="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            :title="action.title"
+            @click="action.action"
+          >
+            <component :is="action.icon" class="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       <!-- Edit mode -->
@@ -312,17 +444,8 @@ const characterCount = computed(() => localContent.value.length);
         v-show="viewMode === 'edit'"
         ref="textareaRef"
         :value="localContent"
-        placeholder="Write your personal notes here using Markdown...
-
-# Heading
-**bold** and *italic*
-- List item
-- Another item
-
-> Quote
-
-`code`"
-        class="min-h-[200px] w-full resize-none rounded-lg border bg-background px-4 py-3 font-mono text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+        placeholder="Write your notes using Markdown..."
+        class="min-h-[250px] w-full resize-none rounded-b-lg border border-t-0 bg-background px-4 py-3 font-mono text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
         :disabled="isSaving"
         @input="handleInput"
         @keydown="handleKeydown"
@@ -332,7 +455,7 @@ const characterCount = computed(() => localContent.value.length);
       <div
         v-show="viewMode === 'preview'"
         ref="previewRef"
-        class="min-h-[200px] w-full rounded-lg border bg-background px-4 py-3"
+        class="min-h-[250px] w-full rounded-b-lg border border-t-0 bg-background px-4 py-3"
       >
         <div
           v-if="renderedContent"
@@ -347,10 +470,17 @@ const characterCount = computed(() => localContent.value.length);
       <!-- Footer -->
       <div class="flex items-center justify-between text-xs text-muted-foreground">
         <span>{{ characterCount }} characters</span>
-        <span>
-          Press <kbd class="rounded border bg-muted px-1.5 py-0.5">Cmd</kbd> +
-          <kbd class="rounded border bg-muted px-1.5 py-0.5">S</kbd> to save
-        </span>
+        <div class="flex items-center gap-3">
+          <span class="hidden sm:inline">
+            <kbd class="rounded border bg-muted px-1 py-0.5 text-[10px]">Ctrl</kbd>+<kbd class="rounded border bg-muted px-1 py-0.5 text-[10px]">B</kbd> Bold
+          </span>
+          <span class="hidden sm:inline">
+            <kbd class="rounded border bg-muted px-1 py-0.5 text-[10px]">Ctrl</kbd>+<kbd class="rounded border bg-muted px-1 py-0.5 text-[10px]">I</kbd> Italic
+          </span>
+          <span>
+            <kbd class="rounded border bg-muted px-1 py-0.5 text-[10px]">Ctrl</kbd>+<kbd class="rounded border bg-muted px-1 py-0.5 text-[10px]">S</kbd> Save
+          </span>
+        </div>
       </div>
     </div>
 
@@ -374,39 +504,42 @@ const characterCount = computed(() => localContent.value.length);
 
 <style scoped>
 /* Prose styles for markdown preview */
-.prose h1 { font-size: 1.5em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; }
-.prose h2 { font-size: 1.3em; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
-.prose h3 { font-size: 1.1em; font-weight: 600; margin-top: 1.25em; margin-bottom: 0.5em; }
-.prose p { margin-bottom: 1em; line-height: 1.7; }
-.prose ul, .prose ol { margin-bottom: 1em; padding-left: 1.5em; }
-.prose li { margin-bottom: 0.25em; }
-.prose code {
+.prose :deep(h1) { font-size: 1.5em; font-weight: 700; margin-top: 1em; margin-bottom: 0.5em; }
+.prose :deep(h2) { font-size: 1.3em; font-weight: 600; margin-top: 1.25em; margin-bottom: 0.5em; }
+.prose :deep(h3) { font-size: 1.1em; font-weight: 600; margin-top: 1em; margin-bottom: 0.5em; }
+.prose :deep(p) { margin-bottom: 0.75em; line-height: 1.7; }
+.prose :deep(ul), .prose :deep(ol) { margin-bottom: 0.75em; padding-left: 1.5em; }
+.prose :deep(ul) { list-style-type: disc; }
+.prose :deep(ol) { list-style-type: decimal; }
+.prose :deep(li) { margin-bottom: 0.25em; }
+.prose :deep(code) {
   background: hsl(var(--muted));
   padding: 0.2em 0.4em;
   border-radius: 0.25rem;
   font-size: 0.875em;
-  font-family: ui-monospace, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
-.prose pre {
+.prose :deep(pre) {
   background: hsl(var(--muted));
   padding: 1em;
   border-radius: 0.5rem;
   overflow-x: auto;
   margin-bottom: 1em;
 }
-.prose pre code { background: none; padding: 0; }
-.prose blockquote {
+.prose :deep(pre code) { background: none; padding: 0; }
+.prose :deep(blockquote) {
   border-left: 3px solid hsl(var(--border));
   margin: 1em 0;
   padding-left: 1em;
   color: hsl(var(--muted-foreground));
   font-style: italic;
 }
-.prose a { color: hsl(var(--primary)); text-decoration: underline; }
-.prose hr { border: none; border-top: 1px solid hsl(var(--border)); margin: 2em 0; }
-.prose strong { font-weight: 600; }
-.prose em { font-style: italic; }
-.prose table { border-collapse: collapse; width: 100%; margin-bottom: 1em; }
-.prose th, .prose td { border: 1px solid hsl(var(--border)); padding: 0.5em 0.75em; text-align: left; }
-.prose th { background: hsl(var(--muted)); font-weight: 600; }
+.prose :deep(a) { color: hsl(var(--primary)); text-decoration: underline; }
+.prose :deep(a:hover) { opacity: 0.8; }
+.prose :deep(hr) { border: none; border-top: 1px solid hsl(var(--border)); margin: 1.5em 0; }
+.prose :deep(strong) { font-weight: 600; }
+.prose :deep(em) { font-style: italic; }
+.prose :deep(table) { border-collapse: collapse; width: 100%; margin-bottom: 1em; }
+.prose :deep(th), .prose :deep(td) { border: 1px solid hsl(var(--border)); padding: 0.5em 0.75em; text-align: left; }
+.prose :deep(th) { background: hsl(var(--muted)); font-weight: 600; }
 </style>
