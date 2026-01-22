@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-01-21
+## Modified: 2026-01-22
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -16,16 +16,20 @@
 - [x] Build tenant admin dashboard (Done: 2026-01-21)
 - [x] Implement team management views (Done: 2026-01-21)
 - [x] Implement member invitation system (Done: 2026-01-21)
+- [x] Implement seat management UI (Done: 2026-01-21)
+- [x] Create discussion/comment system (Done: 2026-01-22)
+- [x] Create personal notes system with markdown & PDF export (Done: 2026-01-22)
+- [x] Add internationalization (i18n) EN/FR (Done: 2026-01-22)
 
 ### In Progress
-(None currently)
+- [ ] Implement dark mode
 
 ### Pending
 - [ ] Implement lazy loading for videos
-- [ ] Create discussion/comment system
+- [ ] Integrate real API (replace mock data in composables)
 
 ### Recently Completed
-- [x] Implement seat management UI (Done: 2026-01-21)
+- [x] Discussion & Notes system merged to dev (Done: 2026-01-22)
 
 ---
 
@@ -33,3 +37,4 @@
 - VideoPlayer must support multiple formats (1080p, 720p, 480p)
 - QuizzEngine uses Zod schemas from @shared/schemas
 - Dashboard views differ for Learner vs Tenant Admin
+- Dark mode should use Tailwind's dark: variant with system preference detection
