@@ -1,9 +1,10 @@
 import type { Context } from 'koa';
 import { Op } from 'sequelize';
-import { Course, Chapter, Lesson, User } from '../database/models/index.js';
+import { Course, Chapter, Lesson, User, LessonContent } from '../database/models/index.js';
 import { CourseStatus, UserRole, LessonType } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
+import { parseLocaleFromRequest, getLocalizedLessonContent } from '../utils/locale.js';
 import slugify from 'slugify';
 
 // Type for authenticated user from context
@@ -113,9 +114,17 @@ export async function listCourses(ctx: Context): Promise<void> {
 /**
  * Get course by ID or slug
  * GET /courses/:id
+ * Supports locale via Accept-Language header or ?lang= query param
  */
 export async function getCourse(ctx: Context): Promise<void> {
   const { id } = ctx.params;
+  const { lang } = ctx.query as { lang?: string };
+
+  // Parse locale from request
+  const locale = parseLocaleFromRequest(
+    ctx.get('Accept-Language'),
+    lang
+  );
 
   const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
   const where = isUUID ? { id } : { slug: id };
@@ -135,7 +144,14 @@ export async function getCourse(ctx: Context): Promise<void> {
           {
             model: Lesson,
             as: 'lessons',
-            attributes: ['id', 'title', 'type', 'duration', 'position', 'isFree'],
+            attributes: ['id', 'title', 'type', 'duration', 'position', 'isFree', 'videoUrl', 'videoId'],
+            include: [
+              {
+                model: LessonContent,
+                as: 'contents',
+                required: false,
+              },
+            ],
           },
         ],
       },
@@ -161,7 +177,38 @@ export async function getCourse(ctx: Context): Promise<void> {
     }
   }
 
-  ctx.body = { data: course };
+  // Transform course to apply localization to lessons
+  const courseData = course.toJSON() as Record<string, unknown>;
+
+  if (course.chapters) {
+    courseData.chapters = course.chapters.map((chapter) => {
+      const chapterData = chapter.toJSON() as Record<string, unknown>;
+      if (chapter.lessons) {
+        chapterData.lessons = chapter.lessons.map((lesson) => {
+          const localized = getLocalizedLessonContent(lesson, locale);
+          return {
+            id: lesson.id,
+            title: localized.title,
+            type: lesson.type,
+            duration: lesson.duration,
+            position: lesson.position,
+            isFree: lesson.isFree,
+            videoUrl: localized.videoUrl,
+            videoId: localized.videoId,
+            // Include transcript and description if available
+            ...(localized.transcript && { transcript: localized.transcript }),
+            ...(localized.description && { description: localized.description }),
+          };
+        });
+      }
+      return chapterData;
+    });
+  }
+
+  // Add locale info to response
+  courseData.locale = locale;
+
+  ctx.body = { data: courseData };
 }
 
 /**
@@ -496,6 +543,12 @@ export async function reorderChapters(ctx: Context): Promise<void> {
  */
 export async function listLessons(ctx: Context): Promise<void> {
   const { courseId, chapterId } = ctx.params;
+  const { lang } = ctx.query as { lang?: string };
+
+  const locale = parseLocaleFromRequest(
+    ctx.get('Accept-Language'),
+    lang
+  );
 
   const chapter = await Chapter.findOne({ where: { id: chapterId, courseId } });
   if (!chapter) {
@@ -504,10 +557,114 @@ export async function listLessons(ctx: Context): Promise<void> {
 
   const lessons = await Lesson.findAll({
     where: { chapterId },
+    include: [
+      {
+        model: LessonContent,
+        as: 'contents',
+        required: false,
+      },
+    ],
     order: [['position', 'ASC']],
   });
 
-  ctx.body = { data: lessons };
+  // Apply localization
+  const localizedLessons = lessons.map((lesson) => {
+    const localized = getLocalizedLessonContent(lesson, locale);
+    return {
+      id: lesson.id,
+      title: localized.title,
+      type: lesson.type,
+      duration: lesson.duration,
+      position: lesson.position,
+      isFree: lesson.isFree,
+      videoUrl: localized.videoUrl,
+      videoId: localized.videoId,
+      ...(localized.transcript && { transcript: localized.transcript }),
+      ...(localized.description && { description: localized.description }),
+    };
+  });
+
+  ctx.body = { data: localizedLessons, locale };
+}
+
+/**
+ * Get a single lesson with localized content
+ * GET /lessons/:id
+ */
+export async function getLesson(ctx: Context): Promise<void> {
+  const { id } = ctx.params;
+  const { lang } = ctx.query as { lang?: string };
+
+  const locale = parseLocaleFromRequest(
+    ctx.get('Accept-Language'),
+    lang
+  );
+
+  const lesson = await Lesson.findByPk(id, {
+    include: [
+      {
+        model: LessonContent,
+        as: 'contents',
+        required: false,
+      },
+      {
+        model: Chapter,
+        as: 'chapter',
+        include: [
+          {
+            model: Course,
+            as: 'course',
+            attributes: ['id', 'title', 'slug', 'status'],
+          },
+        ],
+      },
+    ],
+  });
+
+  if (!lesson) {
+    throw AppError.notFound('Lesson not found');
+  }
+
+  // Check if user can view unpublished course lessons
+  const course = lesson.chapter?.course;
+  if (course && course.status !== CourseStatus.PUBLISHED) {
+    const user = ctx.state.user as AuthenticatedUser | undefined;
+    if (!user) {
+      throw AppError.notFound('Lesson not found');
+    }
+    if (!canEditCourse(user, course)) {
+      throw AppError.notFound('Lesson not found');
+    }
+  }
+
+  // Apply localization
+  const localized = getLocalizedLessonContent(lesson, locale);
+
+  ctx.body = {
+    data: {
+      id: lesson.id,
+      title: localized.title,
+      type: lesson.type,
+      duration: lesson.duration,
+      position: lesson.position,
+      isFree: lesson.isFree,
+      requiresPrevious: lesson.requiresPrevious,
+      videoUrl: localized.videoUrl,
+      videoId: localized.videoId,
+      transcript: localized.transcript,
+      description: localized.description,
+      chapter: lesson.chapter ? {
+        id: lesson.chapter.id,
+        title: lesson.chapter.title,
+        course: lesson.chapter.course ? {
+          id: lesson.chapter.course.id,
+          title: lesson.chapter.course.title,
+          slug: lesson.chapter.course.slug,
+        } : null,
+      } : null,
+    },
+    locale,
+  };
 }
 
 /**

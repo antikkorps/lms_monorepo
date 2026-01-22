@@ -3,7 +3,7 @@
  * Handles fetching and managing a single course's data
  */
 
-import type { CourseDetail, ChapterWithLessons, LessonItem } from '@shared/types';
+import type { CourseDetail, LessonItem, ChapterWithLessons } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi } from './useApi';
 
@@ -20,6 +20,7 @@ export interface CourseWithEnrollment extends CourseDetail {
 }
 
 // Mock data for development
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getMockCourse(slug: string): CourseWithEnrollment | null {
   const courses: Record<string, CourseWithEnrollment> = {
     'intro-ml': {
@@ -246,18 +247,78 @@ export function useCourseDetail(slug: string) {
     error.value = null;
 
     try {
-      // TODO: Replace with real API call
-      // const data = await api.get<CourseWithEnrollment>(`/courses/${slug}`);
+      // Fetch course data from API
+      const response = await api.get<{
+        id: string;
+        title: string;
+        slug: string;
+        description: string;
+        thumbnailUrl: string | null;
+        price: string;
+        duration: number;
+        chaptersCount: number;
+        lessonsCount: number;
+        instructor: { id: string; firstName: string; lastName: string; avatarUrl: string | null };
+        chapters: Array<{
+          id: string;
+          title: string;
+          description: string;
+          position: number;
+          lessons: Array<{
+            id: string;
+            title: string;
+            type: 'video' | 'quiz' | 'document' | 'assignment';
+            duration: number;
+            position: number;
+            isFree: boolean;
+          }>;
+        }>;
+      }>(`/courses/${slug}`);
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const data = getMockCourse(slug);
-
-      if (!data) {
+      if (!response) {
         error.value = 'Course not found';
         return;
       }
 
-      course.value = data;
+      // For now, assume enrolled if viewing a course (will be properly implemented with purchases API)
+      // TODO: Implement proper enrollment check via /courses/:id/enrollment endpoint
+      const enrollment: EnrollmentStatus = {
+        isEnrolled: true,
+        progress: 0,
+        completedLessons: [],
+        lastAccessedLessonId: null,
+      };
+
+      // Transform API response to CourseWithEnrollment
+      course.value = {
+        id: response.id,
+        title: response.title,
+        slug: response.slug,
+        description: response.description,
+        thumbnailUrl: response.thumbnailUrl,
+        instructorName: `${response.instructor.firstName} ${response.instructor.lastName}`,
+        price: Number(response.price) * 100, // Convert to cents
+        duration: Math.floor(response.duration / 60), // Convert seconds to minutes
+        chaptersCount: response.chaptersCount,
+        lessonsCount: response.lessonsCount,
+        chapters: response.chapters.map((ch: { id: string; title: string; description: string; position: number; lessons: Array<{ id: string; title: string; type: 'video' | 'quiz' | 'document' | 'assignment'; duration: number; position: number; isFree: boolean }> }) => ({
+          id: ch.id,
+          title: ch.title,
+          description: ch.description,
+          position: ch.position,
+          lessons: ch.lessons.map((l: { id: string; title: string; type: 'video' | 'quiz' | 'document' | 'assignment'; duration: number; position: number; isFree: boolean }) => ({
+            id: l.id,
+            title: l.title,
+            type: l.type,
+            duration: Math.floor(l.duration / 60), // Convert seconds to minutes
+            position: l.position,
+            isFree: l.isFree,
+            isCompleted: enrollment?.completedLessons.includes(l.id) ?? false,
+            isAccessible: enrollment?.isEnrolled || l.isFree,
+          })),
+        })),
+        enrollment,
+      };
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load course';
     } finally {

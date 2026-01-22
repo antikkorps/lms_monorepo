@@ -3,9 +3,9 @@
  * Manages user learning progress across courses
  */
 
-import type { CourseListItem, UserProgress } from '@shared/types';
+import type { CourseListItem } from '@shared/types';
 import { ref, computed } from 'vue';
-import { useApi } from './useApi';
+// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
 
 export interface CourseProgress extends CourseListItem {
   progress: number;
@@ -124,7 +124,7 @@ export type ProgressFilter = 'all' | 'in-progress' | 'completed';
 export type ProgressSortBy = 'recent' | 'progress' | 'title';
 
 export function useProgress() {
-  const api = useApi();
+  // TODO: Replace mock data with real API calls using useApi()
 
   const isLoading = ref(true);
   const error = ref<string | null>(null);
@@ -227,7 +227,7 @@ export function useProgress() {
   /**
    * Update lesson completion
    */
-  async function markLessonComplete(courseId: string, lessonId: string): Promise<boolean> {
+  async function markLessonComplete(courseId: string, _lessonId: string): Promise<boolean> {
     try {
       // TODO: Replace with real API call
       // await api.post(`/courses/${courseId}/lessons/${lessonId}/complete`);

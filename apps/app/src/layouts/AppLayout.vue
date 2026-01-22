@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { UserAvatar } from '@/components/user';
@@ -30,19 +31,21 @@ import {
   CreditCard,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
 
+const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
 
 const isMobileMenuOpen = ref(false);
 
-const navigationItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Courses', href: '/courses', icon: BookOpen },
-  { name: 'My Learning', href: '/learning', icon: GraduationCap },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Badges', href: '/badges', icon: Trophy },
-];
+const navigationItems = computed(() => [
+  { name: t('nav.main.dashboard'), href: '/dashboard', icon: Home },
+  { name: t('nav.main.courses'), href: '/courses', icon: BookOpen },
+  { name: t('nav.main.myLearning'), href: '/learning', icon: GraduationCap },
+  { name: t('nav.main.analytics'), href: '/analytics', icon: BarChart3 },
+  { name: t('nav.main.badges'), href: '/badges', icon: Trophy },
+]);
 
 async function handleLogout() {
   await authStore.logout();
@@ -58,7 +61,7 @@ async function handleLogout() {
         <!-- Logo -->
         <div class="flex h-16 items-center border-b border-sidebar-border px-6">
           <RouterLink to="/dashboard" class="text-xl font-bold text-sidebar-foreground">
-            LMS Platform
+            {{ t('nav.brand') }}
           </RouterLink>
         </div>
 
@@ -66,7 +69,7 @@ async function handleLogout() {
         <nav class="flex-1 space-y-1 px-3 py-4">
           <RouterLink
             v-for="item in navigationItems"
-            :key="item.name"
+            :key="item.href"
             :to="item.href"
             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             active-class="bg-sidebar-accent text-sidebar-accent-foreground"
@@ -79,7 +82,7 @@ async function handleLogout() {
           <template v-if="authStore.hasRole('tenant_admin')">
             <Separator class="my-4" />
             <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Administration
+              {{ t('nav.admin.title') }}
             </p>
             <RouterLink
               to="/admin"
@@ -87,7 +90,7 @@ async function handleLogout() {
               active-class="bg-sidebar-accent text-sidebar-accent-foreground"
             >
               <LayoutDashboard class="h-5 w-5" />
-              Dashboard Admin
+              {{ t('nav.admin.dashboard') }}
             </RouterLink>
             <RouterLink
               to="/admin/members"
@@ -95,7 +98,7 @@ async function handleLogout() {
               active-class="bg-sidebar-accent text-sidebar-accent-foreground"
             >
               <Users class="h-5 w-5" />
-              Team Members
+              {{ t('nav.admin.members') }}
             </RouterLink>
             <RouterLink
               to="/admin/invitations"
@@ -103,7 +106,7 @@ async function handleLogout() {
               active-class="bg-sidebar-accent text-sidebar-accent-foreground"
             >
               <Mail class="h-5 w-5" />
-              Invitations
+              {{ t('nav.admin.invitations') }}
             </RouterLink>
             <RouterLink
               to="/admin/seats"
@@ -111,7 +114,7 @@ async function handleLogout() {
               active-class="bg-sidebar-accent text-sidebar-accent-foreground"
             >
               <CreditCard class="h-5 w-5" />
-              Seat Management
+              {{ t('nav.admin.seats') }}
             </RouterLink>
           </template>
         </nav>
@@ -145,18 +148,18 @@ async function handleLogout() {
         <SheetTrigger as-child>
           <Button variant="ghost" size="icon" class="lg:hidden">
             <Menu class="h-6 w-6" />
-            <span class="sr-only">Toggle menu</span>
+            <span class="sr-only">{{ t('nav.accessibility.toggleMenu') }}</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" class="w-64 p-0">
           <div class="flex h-full flex-col">
             <div class="flex h-16 items-center border-b px-6">
-              <span class="text-xl font-bold">LMS Platform</span>
+              <span class="text-xl font-bold">{{ t('nav.brand') }}</span>
             </div>
             <nav class="flex-1 space-y-1 px-3 py-4">
               <RouterLink
                 v-for="item in navigationItems"
-                :key="item.name"
+                :key="item.href"
                 :to="item.href"
                 class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 active-class="bg-accent text-accent-foreground"
@@ -170,7 +173,7 @@ async function handleLogout() {
               <template v-if="authStore.hasRole('tenant_admin')">
                 <Separator class="my-4" />
                 <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Administration
+                  {{ t('nav.admin.title') }}
                 </p>
                 <RouterLink
                   to="/admin"
@@ -179,7 +182,7 @@ async function handleLogout() {
                   @click="isMobileMenuOpen = false"
                 >
                   <LayoutDashboard class="h-5 w-5" />
-                  Dashboard Admin
+                  {{ t('nav.admin.dashboard') }}
                 </RouterLink>
                 <RouterLink
                   to="/admin/members"
@@ -188,7 +191,7 @@ async function handleLogout() {
                   @click="isMobileMenuOpen = false"
                 >
                   <Users class="h-5 w-5" />
-                  Team Members
+                  {{ t('nav.admin.members') }}
                 </RouterLink>
                 <RouterLink
                   to="/admin/invitations"
@@ -197,7 +200,7 @@ async function handleLogout() {
                   @click="isMobileMenuOpen = false"
                 >
                   <Mail class="h-5 w-5" />
-                  Invitations
+                  {{ t('nav.admin.invitations') }}
                 </RouterLink>
                 <RouterLink
                   to="/admin/seats"
@@ -206,7 +209,7 @@ async function handleLogout() {
                   @click="isMobileMenuOpen = false"
                 >
                   <CreditCard class="h-5 w-5" />
-                  Seat Management
+                  {{ t('nav.admin.seats') }}
                 </RouterLink>
               </template>
             </nav>
@@ -215,10 +218,13 @@ async function handleLogout() {
       </Sheet>
 
       <RouterLink to="/dashboard" class="text-xl font-bold">
-        LMS Platform
+        {{ t('nav.brand') }}
       </RouterLink>
 
       <div class="flex-1" />
+
+      <!-- Language switcher (mobile) -->
+      <LanguageSwitcher />
 
       <!-- Mobile user menu -->
       <DropdownMenu>
@@ -244,13 +250,13 @@ async function handleLogout() {
           <DropdownMenuItem as-child>
             <RouterLink to="/settings" class="flex w-full cursor-pointer items-center">
               <Settings class="mr-2 h-4 w-4" />
-              Settings
+              {{ t('nav.user.settings') }}
             </RouterLink>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem @click="handleLogout" class="cursor-pointer text-destructive focus:text-destructive">
             <LogOut class="mr-2 h-4 w-4" />
-            Logout
+            {{ t('nav.user.logout') }}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -263,10 +269,13 @@ async function handleLogout() {
       </div>
 
       <div class="flex items-center gap-4">
+        <!-- Language switcher -->
+        <LanguageSwitcher />
+
         <!-- Notifications -->
         <Button variant="ghost" size="icon">
           <Bell class="h-5 w-5" />
-          <span class="sr-only">Notifications</span>
+          <span class="sr-only">{{ t('nav.accessibility.notifications') }}</span>
         </Button>
 
         <!-- User dropdown -->
@@ -293,19 +302,19 @@ async function handleLogout() {
             <DropdownMenuItem as-child>
               <RouterLink to="/profile" class="flex w-full cursor-pointer items-center">
                 <User class="mr-2 h-4 w-4" />
-                Profile
+                {{ t('nav.user.profile') }}
               </RouterLink>
             </DropdownMenuItem>
             <DropdownMenuItem as-child>
               <RouterLink to="/settings" class="flex w-full cursor-pointer items-center">
                 <Settings class="mr-2 h-4 w-4" />
-                Settings
+                {{ t('nav.user.settings') }}
               </RouterLink>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem @click="handleLogout" class="cursor-pointer text-destructive focus:text-destructive">
               <LogOut class="mr-2 h-4 w-4" />
-              Logout
+              {{ t('nav.user.logout') }}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -1,0 +1,106 @@
+{
+  "discussions": {
+    "title": "Discussions",
+    "empty": {
+      "title": "Aucune discussion",
+      "message": "Soyez le premier à lancer une discussion !"
+    },
+    "form": {
+      "placeholder": "Partagez vos réflexions ou posez une question...",
+      "submit": "Publier",
+      "submitting": "Publication..."
+    },
+    "item": {
+      "reply": "Répondre",
+      "replies": "{count} réponse | {count} réponses",
+      "showReplies": "Afficher les réponses",
+      "hideReplies": "Masquer les réponses",
+      "delete": "Supprimer",
+      "report": "Signaler",
+      "deleted": "Cette discussion a été supprimée",
+      "you": "Vous"
+    },
+    "reply": {
+      "placeholder": "Écrire une réponse...",
+      "submit": "Répondre",
+      "submitting": "Envoi..."
+    },
+    "report": {
+      "title": "Signaler un contenu",
+      "subtitle": "Aidez-nous à comprendre le problème",
+      "reason": "Motif du signalement",
+      "reasons": {
+        "spam": "Spam",
+        "inappropriate": "Contenu inapproprié",
+        "harassment": "Harcèlement",
+        "offTopic": "Hors sujet",
+        "other": "Autre"
+      },
+      "description": "Détails supplémentaires (optionnel)",
+      "descriptionPlaceholder": "Décrivez le problème...",
+      "submit": "Envoyer le signalement",
+      "submitting": "Envoi...",
+      "success": "Signalement envoyé avec succès",
+      "cancel": "Annuler"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des discussions",
+      "postFailed": "Échec de la publication",
+      "deleteFailed": "Échec de la suppression",
+      "reportFailed": "Échec du signalement",
+      "alreadyReported": "Vous avez déjà signalé ce contenu",
+      "cannotReportOwn": "Vous ne pouvez pas signaler votre propre contenu"
+    }
+  },
+  "notes": {
+    "title": "Notes personnelles",
+    "subtitle": "Seul vous pouvez voir ces notes",
+    "placeholder": "Rédigez vos notes en Markdown...",
+    "unsaved": "Non enregistré",
+    "unsavedChanges": "Vous avez des modifications non enregistrées",
+    "discard": "Annuler",
+    "characters": "{count} caractères",
+    "toolbar": {
+      "bold": "Gras",
+      "italic": "Italique",
+      "heading1": "Titre 1",
+      "heading2": "Titre 2",
+      "bulletList": "Liste à puces",
+      "numberedList": "Liste numérotée",
+      "code": "Code",
+      "quote": "Citation",
+      "link": "Lien",
+      "horizontalRule": "Ligne horizontale"
+    },
+    "tabs": {
+      "edit": "Éditer",
+      "preview": "Aperçu"
+    },
+    "preview": {
+      "empty": "Rien à prévisualiser. Commencez à écrire dans l'onglet Éditer."
+    },
+    "export": {
+      "pdf": "Exporter en PDF",
+      "success": "PDF exporté avec succès",
+      "failed": "Échec de l'export PDF",
+      "empty": "Rien à exporter"
+    },
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette note ?",
+      "success": "Note supprimée"
+    },
+    "save": {
+      "success": "Note enregistrée"
+    },
+    "shortcuts": {
+      "bold": "Gras",
+      "italic": "Italique",
+      "save": "Enregistrer"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement de la note",
+      "saveFailed": "Échec de l'enregistrement",
+      "deleteFailed": "Échec de la suppression"
+    }
+  }
+}

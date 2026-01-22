@@ -1,0 +1,130 @@
+{
+  "dashboard": {
+    "title": "Tableau de bord d'administration",
+    "subtitle": "Vue d'ensemble de l'activité d'apprentissage de votre équipe.",
+    "error": {
+      "loadFailed": "Impossible de charger le tableau de bord",
+      "retry": "Réessayer"
+    },
+    "stats": {
+      "seatsUsage": "Utilisation des sièges",
+      "seatsAvailable": "{count} sièges disponibles",
+      "activeUsers": "Utilisateurs actifs",
+      "ofTotalUsers": "sur {total} utilisateurs au total",
+      "avgCompletionRate": "Taux de complétion moyen",
+      "avgProgress": "{percent}% de progression moyenne",
+      "pendingInvitations": "Invitations en attente",
+      "awaitingResponse": "En attente de réponse"
+    },
+    "charts": {
+      "activity": {
+        "title": "Activité (30 derniers jours)",
+        "description": "Utilisateurs actifs quotidiens et complétions de cours",
+        "activeUsers": "Utilisateurs actifs",
+        "completions": "Complétions"
+      },
+      "composition": {
+        "title": "Composition de l'équipe",
+        "description": "Répartition des rôles dans votre organisation"
+      }
+    },
+    "recentMembers": {
+      "title": "Membres récents",
+      "description": "Derniers membres ajoutés à votre organisation",
+      "viewAll": "Voir tout",
+      "empty": {
+        "title": "Aucun membre",
+        "message": "Commencez à inviter des membres dans votre organisation.",
+        "action": "Inviter des membres"
+      }
+    }
+  },
+  "members": {
+    "title": "Membres de l'équipe",
+    "subtitle": "Gérez les membres de votre organisation.",
+    "inviteMember": "Inviter un membre",
+    "error": {
+      "loadFailed": "Impossible de charger les membres",
+      "retry": "Réessayer"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher par nom ou email...",
+      "allRoles": "Tous les rôles",
+      "learner": "Apprenant",
+      "instructor": "Formateur",
+      "manager": "Manager",
+      "admin": "Admin",
+      "allStatus": "Tous les statuts",
+      "active": "Actif",
+      "pending": "En attente",
+      "inactive": "Inactif",
+      "suspended": "Suspendu",
+      "clear": "Effacer"
+    },
+    "table": {
+      "member": "Membre",
+      "email": "Email",
+      "role": "Rôle",
+      "status": "Statut",
+      "lastLogin": "Dernière connexion",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "Aucun membre",
+      "message": "Commencez à inviter des membres dans votre organisation."
+    },
+    "noResults": {
+      "title": "Aucun membre trouvé",
+      "message": "Essayez de modifier vos critères de recherche ou de filtre.",
+      "clearFilters": "Effacer les filtres"
+    },
+    "pagination": {
+      "showing": "Affichage de {from} à {to} sur {total} membres"
+    },
+    "toast": {
+      "roleUpdated": "Rôle mis à jour vers {role}",
+      "roleUpdateFailed": "Échec de la mise à jour du rôle",
+      "suspended": "{name} a été suspendu",
+      "suspendFailed": "Échec de la suspension du membre",
+      "reactivated": "{name} a été réactivé",
+      "reactivateFailed": "Échec de la réactivation du membre",
+      "removed": "{name} a été supprimé",
+      "removeFailed": "Échec de la suppression du membre",
+      "invitationSent": "Invitation envoyée à {email}",
+      "invitationFailed": "Échec de l'envoi de l'invitation"
+    }
+  },
+  "roles": {
+    "tenant_admin": "Admin tenant",
+    "manager": "Manager",
+    "instructor": "Formateur",
+    "learner": "Apprenant"
+  },
+  "lessonContent": {
+    "title": "Traductions de la leçon",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette traduction ?",
+    "saved": "Enregistré !",
+    "fields": {
+      "title": "Titre",
+      "videoUrl": "URL de la vidéo",
+      "videoId": "ID de la vidéo",
+      "description": "Description",
+      "transcript": "Transcription"
+    },
+    "placeholders": {
+      "title": "Titre localisé de la leçon...",
+      "videoUrl": "https://exemple.com/video.mp4",
+      "videoId": "Identifiant vidéo (YouTube, Vimeo, etc.)",
+      "description": "Brève description de la leçon...",
+      "transcript": "Transcription complète de la vidéo..."
+    },
+    "hints": {
+      "title": "Laissez vide pour utiliser le titre par défaut",
+      "transcript": "Ajouter une transcription améliore l'accessibilité et le SEO"
+    },
+    "actions": {
+      "save": "Enregistrer la traduction",
+      "delete": "Supprimer"
+    }
+  }
+}

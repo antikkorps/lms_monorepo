@@ -3,9 +3,9 @@
  * Manages quiz state, answers, and submission
  */
 
-import type { QuizQuestion, QuizAnswer, SubmitQuizInput } from '@shared/schemas';
+import type { QuizQuestion, QuizAnswer } from '@shared/schemas';
 import { ref, computed } from 'vue';
-import { useApi } from './useApi';
+// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
 
 export interface QuizResult {
   score: number;
@@ -100,7 +100,7 @@ function getMockQuestions(lessonId: string): QuizQuestion[] {
 }
 
 export function useQuiz(lessonId: string) {
-  const api = useApi();
+  // TODO: Replace mock data with real API calls using useApi()
 
   // State
   const isLoading = ref(true);
@@ -235,12 +235,8 @@ export function useQuiz(lessonId: string) {
         answers.push({ questionId, selectedOptionIds });
       }
 
-      const payload: SubmitQuizInput = {
-        lessonId,
-        answers,
-      };
-
-      // TODO: Replace with real API call
+      // TODO: Replace with real API call using useApi()
+      // const payload: SubmitQuizInput = { lessonId, answers };
       // const response = await api.post<QuizResult>(`/lessons/${lessonId}/quiz/submit`, payload);
 
       // Mock grading

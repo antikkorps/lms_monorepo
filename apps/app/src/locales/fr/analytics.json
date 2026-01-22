@@ -1,0 +1,37 @@
+{
+  "title": "Analytiques d'apprentissage",
+  "subtitle": "Suivez vos progrès et votre activité d'apprentissage",
+  "error": {
+    "loadFailed": "Impossible de charger les analytiques",
+    "retry": "Réessayer"
+  },
+  "stats": {
+    "totalLearningTime": "Temps d'apprentissage total",
+    "last30Days": "30 derniers jours",
+    "lessonsCompleted": "Leçons terminées",
+    "ofTotal": "sur {total} leçons au total",
+    "currentStreak": "Série actuelle",
+    "days": "{count} jours",
+    "bestStreak": "Record : {count} jours",
+    "quizAverage": "Moyenne aux quiz",
+    "averageScore": "Score moyen"
+  },
+  "charts": {
+    "activity": {
+      "title": "Activité d'apprentissage",
+      "description": "Minutes passées à apprendre sur les 30 derniers jours"
+    },
+    "lessons": {
+      "title": "Leçons terminées",
+      "description": "Complétion quotidienne des leçons"
+    },
+    "focus": {
+      "title": "Focus d'apprentissage",
+      "description": "Leçons par catégorie"
+    },
+    "progress": {
+      "title": "Progression des cours",
+      "description": "Progression sur les cours inscrits"
+    }
+  }
+}

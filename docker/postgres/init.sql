@@ -19,6 +19,10 @@ CREATE TYPE lesson_type AS ENUM ('video', 'quiz', 'document', 'assignment');
 CREATE TYPE quiz_question_type AS ENUM ('single_choice', 'multiple_choice', 'true_false');
 CREATE TYPE purchase_status AS ENUM ('pending', 'completed', 'refunded', 'failed');
 CREATE TYPE invitation_status AS ENUM ('pending', 'accepted', 'expired', 'revoked');
+CREATE TYPE report_reason AS ENUM ('spam', 'inappropriate', 'harassment', 'off_topic', 'other');
+CREATE TYPE report_status AS ENUM ('pending', 'reviewed', 'dismissed');
+CREATE TYPE discussion_visibility AS ENUM ('tenant_only', 'public_pool');
+CREATE TYPE supported_locale AS ENUM ('en', 'fr');
 
 -- Log successful initialization
 DO $$

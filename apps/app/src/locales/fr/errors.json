@@ -1,0 +1,33 @@
+{
+  "http": {
+    "400": "Requête invalide",
+    "401": "Veuillez vous connecter pour continuer",
+    "403": "Vous n'avez pas la permission d'accéder à ceci",
+    "404": "Introuvable",
+    "409": "Conflit - cette ressource existe déjà",
+    "422": "Erreur de validation",
+    "429": "Trop de requêtes. Veuillez réessayer plus tard.",
+    "500": "Une erreur est survenue. Veuillez réessayer.",
+    "503": "Service temporairement indisponible"
+  },
+  "network": {
+    "offline": "Vous semblez être hors ligne",
+    "timeout": "La requête a expiré. Veuillez réessayer.",
+    "unknown": "Une erreur inattendue est survenue"
+  },
+  "auth": {
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+    "unauthorized": "Vous devez vous connecter pour accéder à cette page"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "action": "Retour à l'accueil"
+  },
+  "generic": {
+    "title": "Oups !",
+    "message": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "goBack": "Retour"
+  }
+}

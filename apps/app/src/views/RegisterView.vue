@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle } from 'lucide-vue-next';
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 
 const firstName = ref('');
@@ -24,12 +26,12 @@ async function handleSubmit() {
   authStore.clearError();
 
   if (password.value !== confirmPassword.value) {
-    localError.value = 'Passwords do not match';
+    localError.value = t('auth.register.errors.passwordMismatch');
     return;
   }
 
   if (password.value.length < 8) {
-    localError.value = 'Password must be at least 8 characters';
+    localError.value = t('auth.register.errors.passwordTooShort');
     return;
   }
 
@@ -49,22 +51,21 @@ async function handleSubmit() {
 <template>
   <Card>
     <CardHeader class="text-center">
-      <CardTitle class="text-2xl">Create Account</CardTitle>
-      <CardDescription>Enter your details to get started</CardDescription>
+      <CardTitle class="text-2xl">{{ t('auth.register.title') }}</CardTitle>
+      <CardDescription>{{ t('auth.register.subtitle') }}</CardDescription>
     </CardHeader>
     <CardContent>
       <!-- Success message -->
       <div v-if="registrationSuccess" class="text-center space-y-4">
         <Alert class="border-green-500 bg-green-50 text-green-700">
           <CheckCircle class="h-4 w-4" />
-          <AlertTitle>Check your email</AlertTitle>
+          <AlertTitle>{{ t('auth.register.success.title') }}</AlertTitle>
           <AlertDescription>
-            We've sent a verification link to <strong>{{ email }}</strong>.
-            Please check your inbox and click the link to activate your account.
+            {{ t('auth.register.success.message', { email }) }}
           </AlertDescription>
         </Alert>
         <RouterLink to="/login">
-          <Button variant="link">Back to Sign In</Button>
+          <Button variant="link">{{ t('auth.register.backToSignIn') }}</Button>
         </RouterLink>
       </div>
 
@@ -76,7 +77,7 @@ async function handleSubmit() {
 
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-2">
-            <Label for="firstName">First Name</Label>
+            <Label for="firstName">{{ t('auth.register.firstName') }}</Label>
             <Input
               id="firstName"
               v-model="firstName"
@@ -86,7 +87,7 @@ async function handleSubmit() {
             />
           </div>
           <div class="space-y-2">
-            <Label for="lastName">Last Name</Label>
+            <Label for="lastName">{{ t('auth.register.lastName') }}</Label>
             <Input
               id="lastName"
               v-model="lastName"
@@ -98,38 +99,38 @@ async function handleSubmit() {
         </div>
 
         <div class="space-y-2">
-          <Label for="email">Email</Label>
+          <Label for="email">{{ t('auth.register.email') }}</Label>
           <Input
             id="email"
             v-model="email"
             type="email"
-            placeholder="you@example.com"
+            :placeholder="t('auth.register.emailPlaceholder')"
             required
             :disabled="authStore.isLoading"
           />
         </div>
 
         <div class="space-y-2">
-          <Label for="password">Password</Label>
+          <Label for="password">{{ t('auth.register.password') }}</Label>
           <Input
             id="password"
             v-model="password"
             type="password"
-            placeholder="••••••••"
+            :placeholder="t('auth.register.passwordPlaceholder')"
             required
             minlength="8"
             :disabled="authStore.isLoading"
           />
-          <p class="text-xs text-muted-foreground">Minimum 8 characters</p>
+          <p class="text-xs text-muted-foreground">{{ t('auth.register.passwordHint') }}</p>
         </div>
 
         <div class="space-y-2">
-          <Label for="confirmPassword">Confirm Password</Label>
+          <Label for="confirmPassword">{{ t('auth.register.confirmPassword') }}</Label>
           <Input
             id="confirmPassword"
             v-model="confirmPassword"
             type="password"
-            placeholder="••••••••"
+            :placeholder="t('auth.register.passwordPlaceholder')"
             required
             :disabled="authStore.isLoading"
           />
@@ -140,14 +141,14 @@ async function handleSubmit() {
           class="w-full"
           :disabled="authStore.isLoading"
         >
-          {{ authStore.isLoading ? 'Creating account...' : 'Create Account' }}
+          {{ authStore.isLoading ? t('auth.register.submitting') : t('auth.register.submit') }}
         </Button>
       </form>
 
       <p v-if="!registrationSuccess" class="mt-6 text-center text-sm text-muted-foreground">
-        Already have an account?
+        {{ t('auth.register.hasAccount') }}
         <RouterLink to="/login" class="font-medium text-primary hover:underline">
-          Sign in
+          {{ t('auth.register.signInLink') }}
         </RouterLink>
       </p>
     </CardContent>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,8 @@ import {
 import CourseCard from '@/components/courses/CourseCard.vue';
 import { CourseCardSkeleton } from '@/components/skeletons';
 import { useCourses, type CourseFilter, type CourseSortBy } from '@/composables/useCourses';
+
+const { t } = useI18n();
 
 const {
   isLoading,
@@ -45,18 +48,18 @@ function handleSearch(event: Event): void {
   }, 300);
 }
 
-const filterOptions: { value: CourseFilter; label: string }[] = [
-  { value: 'all', label: 'All Courses' },
-  { value: 'free', label: 'Free' },
-  { value: 'paid', label: 'Paid' },
-];
+const filterOptions = computed(() => [
+  { value: 'all' as CourseFilter, label: t('courses.catalog.filters.all') },
+  { value: 'free' as CourseFilter, label: t('courses.catalog.filters.free') },
+  { value: 'paid' as CourseFilter, label: t('courses.catalog.filters.paid') },
+]);
 
-const sortOptions: { value: CourseSortBy; label: string }[] = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'popular', label: 'Most Popular' },
-  { value: 'title', label: 'Title A-Z' },
-  { value: 'duration', label: 'Longest' },
-];
+const sortOptions = computed(() => [
+  { value: 'newest' as CourseSortBy, label: t('courses.catalog.sort.newest') },
+  { value: 'popular' as CourseSortBy, label: t('courses.catalog.sort.popular') },
+  { value: 'title' as CourseSortBy, label: t('courses.catalog.sort.title') },
+  { value: 'duration' as CourseSortBy, label: t('courses.catalog.sort.duration') },
+]);
 
 onMounted(() => {
   fetchCourses();
@@ -67,10 +70,10 @@ onMounted(() => {
   <div class="space-y-6">
     <!-- Header -->
     <div>
-      <h1 class="text-3xl font-bold tracking-tight">Course Catalog</h1>
+      <h1 class="text-3xl font-bold tracking-tight">{{ t('courses.catalog.title') }}</h1>
       <p class="text-muted-foreground">
-        Explore our collection of {{ totalCourses }} courses
-        <span v-if="freeCourses > 0">({{ freeCourses }} free)</span>
+        {{ t('courses.catalog.subtitle', { count: totalCourses }) }}
+        <span v-if="freeCourses > 0">{{ t('courses.catalog.subtitleFree', { count: freeCourses }) }}</span>
       </p>
     </div>
 
@@ -81,7 +84,7 @@ onMounted(() => {
         <Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search courses..."
+          :placeholder="t('courses.catalog.searchPlaceholder')"
           class="pl-9"
           :value="searchInput"
           @input="handleSearch"
@@ -126,9 +129,9 @@ onMounted(() => {
       class="flex items-center gap-2 text-sm text-muted-foreground"
     >
       <Filter class="h-4 w-4" />
-      <span>Showing {{ filteredCount }} of {{ totalCourses }} courses</span>
+      <span>{{ t('courses.catalog.showing', { filtered: filteredCount, total: totalCourses }) }}</span>
       <Button variant="ghost" size="sm" class="h-6 px-2 text-xs" @click="clearFilters">
-        Clear filters
+        {{ t('courses.catalog.clearFilters') }}
       </Button>
     </div>
 
@@ -142,10 +145,12 @@ onMounted(() => {
       <CardContent class="flex items-center gap-4 py-6">
         <AlertCircle class="h-8 w-8 text-destructive" />
         <div>
-          <p class="font-medium">Failed to load courses</p>
+          <p class="font-medium">{{ t('courses.catalog.error.title') }}</p>
           <p class="text-sm text-muted-foreground">{{ error }}</p>
         </div>
-        <Button variant="outline" class="ml-auto" @click="fetchCourses">Retry</Button>
+        <Button variant="outline" class="ml-auto" @click="fetchCourses">
+          {{ t('courses.catalog.error.retry') }}
+        </Button>
       </CardContent>
     </Card>
 
@@ -155,16 +160,16 @@ onMounted(() => {
       class="flex flex-col items-center justify-center py-12 text-center"
     >
       <BookOpen class="mb-4 h-12 w-12 text-muted-foreground" />
-      <h3 class="mb-2 text-lg font-semibold">No courses found</h3>
+      <h3 class="mb-2 text-lg font-semibold">{{ t('courses.catalog.empty.title') }}</h3>
       <p class="mb-4 text-muted-foreground">
         {{
           searchQuery || filter !== 'all'
-            ? 'Try adjusting your filters or search query.'
-            : 'Check back later for new courses.'
+            ? t('courses.catalog.empty.messageFiltered')
+            : t('courses.catalog.empty.messageEmpty')
         }}
       </p>
       <Button v-if="searchQuery || filter !== 'all'" variant="outline" @click="clearFilters">
-        Clear filters
+        {{ t('courses.catalog.clearFilters') }}
       </Button>
     </div>
 

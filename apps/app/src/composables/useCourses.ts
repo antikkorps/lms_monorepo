@@ -5,7 +5,7 @@
 
 import type { CourseListItem } from '@shared/types';
 import { ref, computed } from 'vue';
-import { useApi } from './useApi';
+// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
 
 export type CourseFilter = 'all' | 'free' | 'paid';
 export type CourseSortBy = 'newest' | 'popular' | 'title' | 'duration';
@@ -102,7 +102,7 @@ const mockCourses: CourseListItem[] = [
 ];
 
 export function useCourses() {
-  const api = useApi();
+  // TODO: Replace mock data with real API calls using useApi()
 
   const state = ref<CoursesState>({
     courses: [],

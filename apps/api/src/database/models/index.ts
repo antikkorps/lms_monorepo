@@ -15,12 +15,17 @@ export { Group, UserGroup } from './Group.js';
 export { Course } from './Course.js';
 export { Chapter } from './Chapter.js';
 export { Lesson } from './Lesson.js';
+export { LessonContent } from './LessonContent.js';
 export { QuizQuestion } from './QuizQuestion.js';
 export { Purchase } from './Purchase.js';
 export { UserProgress } from './UserProgress.js';
 export { QuizResult } from './QuizResult.js';
 export { Badge, UserBadge } from './Badge.js';
 export { Invitation, InvitationGroup } from './Invitation.js';
+export { Discussion } from './Discussion.js';
+export { DiscussionReply } from './DiscussionReply.js';
+export { DiscussionReport } from './DiscussionReport.js';
+export { Note } from './Note.js';
 
 // Import for associations setup
 import { Tenant } from './Tenant.js';
@@ -29,12 +34,17 @@ import { Group, UserGroup } from './Group.js';
 import { Course } from './Course.js';
 import { Chapter } from './Chapter.js';
 import { Lesson } from './Lesson.js';
+import { LessonContent } from './LessonContent.js';
 import { QuizQuestion } from './QuizQuestion.js';
 import { Purchase } from './Purchase.js';
 import { UserProgress } from './UserProgress.js';
 import { QuizResult } from './QuizResult.js';
 import { Badge, UserBadge } from './Badge.js';
 import { Invitation, InvitationGroup } from './Invitation.js';
+import { Discussion } from './Discussion.js';
+import { DiscussionReply } from './DiscussionReply.js';
+import { DiscussionReport } from './DiscussionReport.js';
+import { Note } from './Note.js';
 
 /**
  * Setup all model associations
@@ -185,6 +195,19 @@ export function setupAssociations(): void {
     as: 'quizResults',
   });
 
+  Lesson.hasMany(LessonContent, {
+    foreignKey: 'lessonId',
+    as: 'contents',
+  });
+
+  // =============================================================================
+  // LessonContent Associations
+  // =============================================================================
+  LessonContent.belongsTo(Lesson, {
+    foreignKey: 'lessonId',
+    as: 'lesson',
+  });
+
   // =============================================================================
   // QuizQuestion Associations
   // =============================================================================
@@ -311,6 +334,128 @@ export function setupAssociations(): void {
     foreignKey: 'tenantId',
     as: 'invitations',
   });
+
+  // =============================================================================
+  // Discussion Associations
+  // =============================================================================
+  Discussion.belongsTo(Lesson, {
+    foreignKey: 'lessonId',
+    as: 'lesson',
+  });
+
+  Discussion.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  Discussion.belongsTo(Tenant, {
+    foreignKey: 'tenantId',
+    as: 'tenant',
+  });
+
+  Discussion.belongsTo(User, {
+    foreignKey: 'deletedById',
+    as: 'deletedBy',
+  });
+
+  Discussion.hasMany(DiscussionReply, {
+    foreignKey: 'discussionId',
+    as: 'replies',
+  });
+
+  Discussion.hasMany(DiscussionReport, {
+    foreignKey: 'discussionId',
+    as: 'reports',
+  });
+
+  Lesson.hasMany(Discussion, {
+    foreignKey: 'lessonId',
+    as: 'discussions',
+  });
+
+  User.hasMany(Discussion, {
+    foreignKey: 'userId',
+    as: 'discussions',
+  });
+
+  Tenant.hasMany(Discussion, {
+    foreignKey: 'tenantId',
+    as: 'discussions',
+  });
+
+  // =============================================================================
+  // DiscussionReply Associations
+  // =============================================================================
+  DiscussionReply.belongsTo(Discussion, {
+    foreignKey: 'discussionId',
+    as: 'discussion',
+  });
+
+  DiscussionReply.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  DiscussionReply.belongsTo(User, {
+    foreignKey: 'deletedById',
+    as: 'deletedBy',
+  });
+
+  DiscussionReply.hasMany(DiscussionReport, {
+    foreignKey: 'replyId',
+    as: 'reports',
+  });
+
+  User.hasMany(DiscussionReply, {
+    foreignKey: 'userId',
+    as: 'discussionReplies',
+  });
+
+  // =============================================================================
+  // DiscussionReport Associations
+  // =============================================================================
+  DiscussionReport.belongsTo(Discussion, {
+    foreignKey: 'discussionId',
+    as: 'discussion',
+  });
+
+  DiscussionReport.belongsTo(DiscussionReply, {
+    foreignKey: 'replyId',
+    as: 'reply',
+  });
+
+  DiscussionReport.belongsTo(User, {
+    foreignKey: 'reportedById',
+    as: 'reportedBy',
+  });
+
+  DiscussionReport.belongsTo(User, {
+    foreignKey: 'reviewedById',
+    as: 'reviewedBy',
+  });
+
+  // =============================================================================
+  // Note Associations
+  // =============================================================================
+  Note.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  Note.belongsTo(Lesson, {
+    foreignKey: 'lessonId',
+    as: 'lesson',
+  });
+
+  User.hasMany(Note, {
+    foreignKey: 'userId',
+    as: 'notes',
+  });
+
+  Lesson.hasMany(Note, {
+    foreignKey: 'lessonId',
+    as: 'notes',
+  });
 }
 
 // All models for easy iteration
@@ -322,6 +467,7 @@ export const models = {
   Course,
   Chapter,
   Lesson,
+  LessonContent,
   QuizQuestion,
   Purchase,
   UserProgress,
@@ -330,4 +476,8 @@ export const models = {
   UserBadge,
   Invitation,
   InvitationGroup,
+  Discussion,
+  DiscussionReply,
+  DiscussionReport,
+  Note,
 } as const;

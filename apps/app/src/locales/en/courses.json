@@ -1,0 +1,136 @@
+{
+  "catalog": {
+    "title": "Course Catalog",
+    "subtitle": "Explore our collection of {count} courses",
+    "subtitleFree": "({count} free)",
+    "searchPlaceholder": "Search courses...",
+    "filters": {
+      "all": "All Courses",
+      "free": "Free",
+      "paid": "Paid",
+      "premium": "Premium courses"
+    },
+    "sort": {
+      "newest": "Newest",
+      "popular": "Most Popular",
+      "title": "Title A-Z",
+      "duration": "Longest",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low"
+    },
+    "showing": "Showing {filtered} of {total} courses",
+    "clearFilters": "Clear filters",
+    "empty": {
+      "title": "No courses found",
+      "messageFiltered": "Try adjusting your filters or search query.",
+      "messageEmpty": "Check back later for new courses."
+    },
+    "error": {
+      "title": "Failed to load courses",
+      "retry": "Retry"
+    }
+  },
+  "card": {
+    "free": "Free",
+    "lessons": "{count} lesson | {count} lessons",
+    "chapters": "{count} chapter | {count} chapters",
+    "duration": "{duration}",
+    "enrolled": "Enrolled",
+    "progress": "{percent}% complete"
+  },
+  "detail": {
+    "backToCourses": "Back to Courses",
+    "aboutCourse": "About this course",
+    "instructor": "Instructor",
+    "curriculum": "Course Curriculum",
+    "reviews": "Reviews",
+    "overview": "Overview",
+    "whatYouWillLearn": "What you'll learn",
+    "requirements": "Requirements",
+    "includes": "This course includes",
+    "videoContent": "{hours} hours of video",
+    "articles": "{count} article | {count} articles",
+    "exercises": "{count} exercise | {count} exercises",
+    "certificate": "Certificate of completion",
+    "lifetime": "Full lifetime access",
+    "mobile": "Access on mobile and desktop",
+    "chapters": "{count} chapters",
+    "lessons": "{count} lessons",
+    "freeLessons": "{count} free lessons",
+    "progress": "Progress",
+    "lessonsCompleted": "{completed} of {total} lessons completed",
+    "courseCompleted": "Course Completed",
+    "error": {
+      "notFound": "Course Not Found",
+      "notFoundMessage": "The course you are looking for does not exist.",
+      "loadFailed": "Failed to load course"
+    },
+    "toast": {
+      "enrollSuccess": "Successfully enrolled in course!",
+      "enrollError": "Failed to enroll. Please try again."
+    }
+  },
+  "enrollment": {
+    "enroll": "Enroll Now",
+    "enrollFree": "Enroll for Free",
+    "startLearning": "Start Learning",
+    "continueLearning": "Continue Learning",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "enrolled": "You're enrolled in this course",
+    "notEnrolled": "Enrollment required",
+    "notEnrolledMessage": "You need to enroll in this course to access the lessons."
+  },
+  "lesson": {
+    "backToCourse": "Back to Course",
+    "lesson": "Lesson",
+    "notes": "Notes",
+    "discussions": "Discussions",
+    "markComplete": "Mark as Complete",
+    "completed": "Completed",
+    "videoPlayer": "Video Player",
+    "comingSoon": "This content type is coming soon.",
+    "notFound": {
+      "title": "Lesson Not Found",
+      "message": "This lesson doesn't exist or has been removed."
+    },
+    "error": {
+      "loadFailed": "Failed to load lesson"
+    },
+    "toast": {
+      "markedComplete": "Lesson marked as complete!"
+    },
+    "nav": {
+      "prev": "Prev",
+      "next": "Next",
+      "previous": "Previous"
+    },
+    "sidebar": {
+      "lessons": "Lessons"
+    },
+    "types": {
+      "video": "Video",
+      "quiz": "Quiz",
+      "document": "Document",
+      "assignment": "Assignment"
+    }
+  },
+  "progress": {
+    "title": "Your Progress",
+    "completed": "{count} of {total} lessons completed",
+    "percentage": "{percent}% complete",
+    "certificate": "Earn your certificate",
+    "certificateReady": "Your certificate is ready!"
+  },
+  "myLearning": {
+    "title": "My Learning",
+    "subtitle": "Continue where you left off",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "empty": {
+      "title": "No courses yet",
+      "message": "Start learning by enrolling in a course",
+      "action": "Browse Courses"
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "catalog": {
+    "title": "Catalogue de cours",
+    "subtitle": "Explorez notre collection de {count} cours",
+    "subtitleFree": "({count} gratuits)",
+    "searchPlaceholder": "Rechercher des cours...",
+    "filters": {
+      "all": "Tous",
+      "free": "Gratuits",
+      "paid": "Payants",
+      "premium": "Cours premium"
+    },
+    "sort": {
+      "newest": "Plus récents",
+      "popular": "Plus populaires",
+      "title": "Titre A-Z",
+      "duration": "Plus longs",
+      "priceAsc": "Prix croissant",
+      "priceDesc": "Prix décroissant"
+    },
+    "showing": "Affichage de {filtered} sur {total} cours",
+    "clearFilters": "Effacer les filtres",
+    "empty": {
+      "title": "Aucun cours trouvé",
+      "messageFiltered": "Essayez de modifier vos filtres ou votre recherche.",
+      "messageEmpty": "Revenez plus tard pour de nouveaux cours."
+    },
+    "error": {
+      "title": "Impossible de charger les cours",
+      "retry": "Réessayer"
+    }
+  },
+  "card": {
+    "free": "Gratuit",
+    "lessons": "{count} leçon | {count} leçons",
+    "chapters": "{count} chapitre | {count} chapitres",
+    "duration": "{duration}",
+    "enrolled": "Inscrit",
+    "progress": "{percent}% terminé"
+  },
+  "detail": {
+    "backToCourses": "Retour aux cours",
+    "aboutCourse": "À propos de ce cours",
+    "instructor": "Formateur",
+    "curriculum": "Programme du cours",
+    "reviews": "Avis",
+    "overview": "Aperçu",
+    "whatYouWillLearn": "Ce que vous apprendrez",
+    "requirements": "Prérequis",
+    "includes": "Ce cours comprend",
+    "videoContent": "{hours} heures de vidéo",
+    "articles": "{count} article | {count} articles",
+    "exercises": "{count} exercice | {count} exercices",
+    "certificate": "Certificat de réussite",
+    "lifetime": "Accès à vie",
+    "mobile": "Accès sur mobile et ordinateur",
+    "chapters": "{count} chapitres",
+    "lessons": "{count} leçons",
+    "freeLessons": "{count} leçons gratuites",
+    "progress": "Progression",
+    "lessonsCompleted": "{completed} sur {total} leçons terminées",
+    "courseCompleted": "Cours terminé",
+    "error": {
+      "notFound": "Cours introuvable",
+      "notFoundMessage": "Le cours que vous recherchez n'existe pas.",
+      "loadFailed": "Impossible de charger le cours"
+    },
+    "toast": {
+      "enrollSuccess": "Inscription au cours réussie !",
+      "enrollError": "Échec de l'inscription. Veuillez réessayer."
+    }
+  },
+  "enrollment": {
+    "enroll": "S'inscrire",
+    "enrollFree": "S'inscrire gratuitement",
+    "startLearning": "Commencer",
+    "continueLearning": "Continuer",
+    "buyNow": "Acheter",
+    "addToCart": "Ajouter au panier",
+    "enrolled": "Vous êtes inscrit à ce cours",
+    "notEnrolled": "Inscription requise",
+    "notEnrolledMessage": "Vous devez vous inscrire à ce cours pour accéder aux leçons."
+  },
+  "lesson": {
+    "backToCourse": "Retour au cours",
+    "lesson": "Leçon",
+    "notes": "Notes",
+    "discussions": "Discussions",
+    "markComplete": "Marquer comme terminé",
+    "completed": "Terminé",
+    "videoPlayer": "Lecteur vidéo",
+    "comingSoon": "Ce type de contenu arrive bientôt.",
+    "notFound": {
+      "title": "Leçon introuvable",
+      "message": "Cette leçon n'existe pas ou a été supprimée."
+    },
+    "error": {
+      "loadFailed": "Impossible de charger la leçon"
+    },
+    "toast": {
+      "markedComplete": "Leçon marquée comme terminée !"
+    },
+    "nav": {
+      "prev": "Préc",
+      "next": "Suiv",
+      "previous": "Précédent"
+    },
+    "sidebar": {
+      "lessons": "Leçons"
+    },
+    "types": {
+      "video": "Vidéo",
+      "quiz": "Quiz",
+      "document": "Document",
+      "assignment": "Exercice"
+    }
+  },
+  "progress": {
+    "title": "Votre progression",
+    "completed": "{count} sur {total} leçons terminées",
+    "percentage": "{percent}% terminé",
+    "certificate": "Obtenez votre certificat",
+    "certificateReady": "Votre certificat est prêt !"
+  },
+  "myLearning": {
+    "title": "Mon apprentissage",
+    "subtitle": "Reprenez là où vous en étiez",
+    "inProgress": "En cours",
+    "completed": "Terminés",
+    "empty": {
+      "title": "Aucun cours",
+      "message": "Commencez à apprendre en vous inscrivant à un cours",
+      "action": "Parcourir les cours"
+    }
+  }
+}
