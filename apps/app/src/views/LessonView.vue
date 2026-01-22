@@ -152,7 +152,7 @@ function navigateToLesson(lesson: LessonItem) {
   <div class="min-h-screen bg-background">
     <!-- Header -->
     <header class="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
-      <div class="container flex h-14 items-center gap-4">
+      <div class="container px-4 sm:px-6 lg:px-8 mx-auto flex h-14 items-center gap-4">
         <RouterLink
           :to="`/courses/${courseSlug}`"
           class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
