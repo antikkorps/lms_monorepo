@@ -1,22 +1,33 @@
 {
   "catalog": {
     "title": "Course Catalog",
-    "subtitle": "Discover courses to advance your skills",
+    "subtitle": "Explore our collection of {count} courses",
+    "subtitleFree": "({count} free)",
     "searchPlaceholder": "Search courses...",
     "filters": {
-      "all": "All courses",
-      "free": "Free courses",
+      "all": "All Courses",
+      "free": "Free",
+      "paid": "Paid",
       "premium": "Premium courses"
     },
     "sort": {
       "newest": "Newest",
-      "popular": "Most popular",
+      "popular": "Most Popular",
+      "title": "Title A-Z",
+      "duration": "Longest",
       "priceAsc": "Price: Low to High",
       "priceDesc": "Price: High to Low"
     },
+    "showing": "Showing {filtered} of {total} courses",
+    "clearFilters": "Clear filters",
     "empty": {
       "title": "No courses found",
-      "message": "Try adjusting your filters or search terms"
+      "messageFiltered": "Try adjusting your filters or search query.",
+      "messageEmpty": "Check back later for new courses."
+    },
+    "error": {
+      "title": "Failed to load courses",
+      "retry": "Retry"
     }
   },
   "card": {
@@ -28,9 +39,10 @@
     "progress": "{percent}% complete"
   },
   "detail": {
+    "backToCourses": "Back to Courses",
     "aboutCourse": "About this course",
     "instructor": "Instructor",
-    "curriculum": "Curriculum",
+    "curriculum": "Course Curriculum",
     "reviews": "Reviews",
     "overview": "Overview",
     "whatYouWillLearn": "What you'll learn",
@@ -41,7 +53,22 @@
     "exercises": "{count} exercise | {count} exercises",
     "certificate": "Certificate of completion",
     "lifetime": "Full lifetime access",
-    "mobile": "Access on mobile and desktop"
+    "mobile": "Access on mobile and desktop",
+    "chapters": "{count} chapters",
+    "lessons": "{count} lessons",
+    "freeLessons": "{count} free lessons",
+    "progress": "Progress",
+    "lessonsCompleted": "{completed} of {total} lessons completed",
+    "courseCompleted": "Course Completed",
+    "error": {
+      "notFound": "Course Not Found",
+      "notFoundMessage": "The course you are looking for does not exist.",
+      "loadFailed": "Failed to load course"
+    },
+    "toast": {
+      "enrollSuccess": "Successfully enrolled in course!",
+      "enrollError": "Failed to enroll. Please try again."
+    }
   },
   "enrollment": {
     "enroll": "Enroll Now",

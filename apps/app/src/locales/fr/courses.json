@@ -1,22 +1,33 @@
 {
   "catalog": {
     "title": "Catalogue de cours",
-    "subtitle": "Découvrez des formations pour développer vos compétences",
+    "subtitle": "Explorez notre collection de {count} cours",
+    "subtitleFree": "({count} gratuits)",
     "searchPlaceholder": "Rechercher des cours...",
     "filters": {
-      "all": "Tous les cours",
-      "free": "Cours gratuits",
+      "all": "Tous",
+      "free": "Gratuits",
+      "paid": "Payants",
       "premium": "Cours premium"
     },
     "sort": {
       "newest": "Plus récents",
       "popular": "Plus populaires",
+      "title": "Titre A-Z",
+      "duration": "Plus longs",
       "priceAsc": "Prix croissant",
       "priceDesc": "Prix décroissant"
     },
+    "showing": "Affichage de {filtered} sur {total} cours",
+    "clearFilters": "Effacer les filtres",
     "empty": {
       "title": "Aucun cours trouvé",
-      "message": "Essayez de modifier vos filtres ou termes de recherche"
+      "messageFiltered": "Essayez de modifier vos filtres ou votre recherche.",
+      "messageEmpty": "Revenez plus tard pour de nouveaux cours."
+    },
+    "error": {
+      "title": "Impossible de charger les cours",
+      "retry": "Réessayer"
     }
   },
   "card": {
@@ -28,9 +39,10 @@
     "progress": "{percent}% terminé"
   },
   "detail": {
+    "backToCourses": "Retour aux cours",
     "aboutCourse": "À propos de ce cours",
     "instructor": "Formateur",
-    "curriculum": "Programme",
+    "curriculum": "Programme du cours",
     "reviews": "Avis",
     "overview": "Aperçu",
     "whatYouWillLearn": "Ce que vous apprendrez",
@@ -41,7 +53,22 @@
     "exercises": "{count} exercice | {count} exercices",
     "certificate": "Certificat de réussite",
     "lifetime": "Accès à vie",
-    "mobile": "Accès sur mobile et ordinateur"
+    "mobile": "Accès sur mobile et ordinateur",
+    "chapters": "{count} chapitres",
+    "lessons": "{count} leçons",
+    "freeLessons": "{count} leçons gratuites",
+    "progress": "Progression",
+    "lessonsCompleted": "{completed} sur {total} leçons terminées",
+    "courseCompleted": "Cours terminé",
+    "error": {
+      "notFound": "Cours introuvable",
+      "notFoundMessage": "Le cours que vous recherchez n'existe pas.",
+      "loadFailed": "Impossible de charger le cours"
+    },
+    "toast": {
+      "enrollSuccess": "Inscription au cours réussie !",
+      "enrollError": "Échec de l'inscription. Veuillez réessayer."
+    }
   },
   "enrollment": {
     "enroll": "S'inscrire",
