@@ -1,0 +1,35 @@
+{
+  "title": "Achievements",
+  "subtitle": "Track your progress and unlock badges",
+  "error": {
+    "loadFailed": "Failed to load badges",
+    "retry": "Retry"
+  },
+  "stats": {
+    "totalProgress": "Total Progress",
+    "badgesEarned": "{earned} of {total} badges earned",
+    "courseBadges": "Course Badges",
+    "quizBadges": "Quiz Badges",
+    "streakBadges": "Streak Badges",
+    "available": "of {total} available"
+  },
+  "grid": {
+    "title": "Your Badges",
+    "description": "Click on a badge to see details"
+  },
+  "filters": {
+    "all": "All",
+    "courses": "Courses",
+    "streaks": "Streaks",
+    "quizzes": "Quizzes",
+    "milestones": "Milestones",
+    "special": "Special",
+    "showLocked": "Show Locked",
+    "hideLocked": "Hide Locked"
+  },
+  "empty": {
+    "title": "No badges found",
+    "messageFiltered": "Try a different category filter.",
+    "messageDefault": "Start learning to earn your first badge!"
+  }
+}

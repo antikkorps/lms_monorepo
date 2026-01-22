@@ -88,9 +88,25 @@
     "discussions": "Discussions",
     "markComplete": "Mark as Complete",
     "completed": "Completed",
+    "videoPlayer": "Video Player",
+    "comingSoon": "This content type is coming soon.",
     "notFound": {
       "title": "Lesson Not Found",
       "message": "This lesson doesn't exist or has been removed."
+    },
+    "error": {
+      "loadFailed": "Failed to load lesson"
+    },
+    "toast": {
+      "markedComplete": "Lesson marked as complete!"
+    },
+    "nav": {
+      "prev": "Prev",
+      "next": "Next",
+      "previous": "Previous"
+    },
+    "sidebar": {
+      "lessons": "Lessons"
     },
     "types": {
       "video": "Video",

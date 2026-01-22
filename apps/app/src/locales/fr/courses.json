@@ -88,9 +88,25 @@
     "discussions": "Discussions",
     "markComplete": "Marquer comme terminé",
     "completed": "Terminé",
+    "videoPlayer": "Lecteur vidéo",
+    "comingSoon": "Ce type de contenu arrive bientôt.",
     "notFound": {
       "title": "Leçon introuvable",
       "message": "Cette leçon n'existe pas ou a été supprimée."
+    },
+    "error": {
+      "loadFailed": "Impossible de charger la leçon"
+    },
+    "toast": {
+      "markedComplete": "Leçon marquée comme terminée !"
+    },
+    "nav": {
+      "prev": "Préc",
+      "next": "Suiv",
+      "previous": "Précédent"
+    },
+    "sidebar": {
+      "lessons": "Leçons"
     },
     "types": {
       "video": "Vidéo",

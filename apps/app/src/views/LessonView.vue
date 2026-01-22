@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,7 @@ import { DiscussionSection } from '@/components/discussions';
 import { NoteEditor } from '@/components/notes';
 import type { LessonItem } from '@shared/types';
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
@@ -137,7 +139,7 @@ async function handleMarkComplete() {
   isMarking.value = false;
 
   if (success) {
-    toast.success('Lesson marked as complete!');
+    toast.success(t('courses.lesson.toast.markedComplete'));
     // Refresh course data to update progress
     fetchCourse();
   }
@@ -158,7 +160,7 @@ function navigateToLesson(lesson: LessonItem) {
           class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft class="h-4 w-4" />
-          <span class="hidden sm:inline">Back to Course</span>
+          <span class="hidden sm:inline">{{ t('courses.lesson.backToCourse') }}</span>
         </RouterLink>
 
         <div v-if="course && currentLesson" class="flex-1 min-w-0">
@@ -177,7 +179,7 @@ function navigateToLesson(lesson: LessonItem) {
             @click="previousLesson && navigateToLesson(previousLesson)"
           >
             <ChevronLeft class="h-4 w-4" />
-            <span class="hidden sm:inline ml-1">Prev</span>
+            <span class="hidden sm:inline ml-1">{{ t('courses.lesson.nav.prev') }}</span>
           </Button>
           <span class="text-xs text-muted-foreground">
             {{ currentIndex + 1 }} / {{ allLessons.length }}
@@ -188,7 +190,7 @@ function navigateToLesson(lesson: LessonItem) {
             :disabled="!nextLesson"
             @click="nextLesson && navigateToLesson(nextLesson)"
           >
-            <span class="hidden sm:inline mr-1">Next</span>
+            <span class="hidden sm:inline mr-1">{{ t('courses.lesson.nav.next') }}</span>
             <ChevronRight class="h-4 w-4" />
           </Button>
         </div>
@@ -206,11 +208,11 @@ function navigateToLesson(lesson: LessonItem) {
         <CardContent class="flex items-center gap-4 py-6">
           <AlertCircle class="h-8 w-8 text-destructive" />
           <div>
-            <p class="font-medium">Failed to load lesson</p>
+            <p class="font-medium">{{ t('courses.lesson.error.loadFailed') }}</p>
             <p class="text-sm text-muted-foreground">{{ courseError }}</p>
           </div>
           <RouterLink :to="`/courses/${courseSlug}`" class="ml-auto">
-            <Button variant="outline">Back to Course</Button>
+            <Button variant="outline">{{ t('courses.lesson.backToCourse') }}</Button>
           </RouterLink>
         </CardContent>
       </Card>
@@ -220,13 +222,13 @@ function navigateToLesson(lesson: LessonItem) {
         <CardContent class="flex items-center gap-4 py-6">
           <AlertCircle class="h-8 w-8 text-yellow-500" />
           <div>
-            <p class="font-medium">Enrollment Required</p>
+            <p class="font-medium">{{ t('courses.enrollment.notEnrolled') }}</p>
             <p class="text-sm text-muted-foreground">
-              You need to enroll in this course to access the lessons.
+              {{ t('courses.enrollment.notEnrolledMessage') }}
             </p>
           </div>
           <RouterLink :to="`/courses/${courseSlug}`" class="ml-auto">
-            <Button>Enroll Now</Button>
+            <Button>{{ t('courses.enrollment.enroll') }}</Button>
           </RouterLink>
         </CardContent>
       </Card>
@@ -236,13 +238,13 @@ function navigateToLesson(lesson: LessonItem) {
         <CardContent class="flex items-center gap-4 py-6">
           <AlertCircle class="h-8 w-8 text-muted-foreground" />
           <div>
-            <p class="font-medium">Lesson Not Found</p>
+            <p class="font-medium">{{ t('courses.lesson.notFound.title') }}</p>
             <p class="text-sm text-muted-foreground">
-              This lesson doesn't exist or has been removed.
+              {{ t('courses.lesson.notFound.message') }}
             </p>
           </div>
           <RouterLink :to="`/courses/${courseSlug}`" class="ml-auto">
-            <Button variant="outline">Back to Course</Button>
+            <Button variant="outline">{{ t('courses.lesson.backToCourse') }}</Button>
           </RouterLink>
         </CardContent>
       </Card>
@@ -261,7 +263,7 @@ function navigateToLesson(lesson: LessonItem) {
               @click="activeTab = 'content'"
             >
               <component :is="getLessonIcon(currentLesson.type)" class="inline h-4 w-4 mr-1.5" />
-              Lesson
+              {{ t('courses.lesson.lesson') }}
             </button>
             <button
               class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
@@ -271,7 +273,7 @@ function navigateToLesson(lesson: LessonItem) {
               @click="activeTab = 'notes'"
             >
               <StickyNote class="inline h-4 w-4 mr-1.5" />
-              Notes
+              {{ t('courses.lesson.notes') }}
             </button>
             <button
               class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
@@ -281,7 +283,7 @@ function navigateToLesson(lesson: LessonItem) {
               @click="activeTab = 'discussions'"
             >
               <MessageSquare class="inline h-4 w-4 mr-1.5" />
-              Discussions
+              {{ t('courses.lesson.discussions') }}
             </button>
           </div>
 
@@ -296,7 +298,7 @@ function navigateToLesson(lesson: LessonItem) {
                   <div class="flex h-full items-center justify-center text-white">
                     <div class="text-center">
                       <PlayCircle class="mx-auto h-16 w-16 opacity-50" />
-                      <p class="mt-4">Video Player</p>
+                      <p class="mt-4">{{ t('courses.lesson.videoPlayer') }}</p>
                       <p class="text-sm opacity-75">{{ currentLesson.title }}</p>
                     </div>
                   </div>
@@ -307,12 +309,12 @@ function navigateToLesson(lesson: LessonItem) {
                   <Button :disabled="isMarking" @click="handleMarkComplete">
                     <Loader2 v-if="isMarking" class="mr-2 h-4 w-4 animate-spin" />
                     <CheckCircle2 v-else class="mr-2 h-4 w-4" />
-                    Mark as Complete
+                    {{ t('courses.lesson.markComplete') }}
                   </Button>
                 </div>
                 <div v-else class="flex items-center justify-end gap-2 text-green-600">
                   <CheckCircle2 class="h-5 w-5" />
-                  <span class="font-medium">Completed</span>
+                  <span class="font-medium">{{ t('courses.lesson.completed') }}</span>
                 </div>
               </div>
 
@@ -330,9 +332,9 @@ function navigateToLesson(lesson: LessonItem) {
                   :is="getLessonIcon(currentLesson.type)"
                   class="mx-auto h-12 w-12 text-muted-foreground"
                 />
-                <h3 class="mt-4 font-medium">{{ currentLesson.type === 'document' ? 'Document' : 'Assignment' }}</h3>
+                <h3 class="mt-4 font-medium">{{ currentLesson.type === 'document' ? t('courses.lesson.types.document') : t('courses.lesson.types.assignment') }}</h3>
                 <p class="mt-2 text-sm text-muted-foreground">
-                  This content type is coming soon.
+                  {{ t('courses.lesson.comingSoon') }}
                 </p>
               </div>
             </div>
@@ -353,7 +355,7 @@ function navigateToLesson(lesson: LessonItem) {
         <div class="hidden lg:block">
           <Card class="sticky top-20">
             <CardContent class="p-4">
-              <h3 class="font-medium mb-4">Lessons</h3>
+              <h3 class="font-medium mb-4">{{ t('courses.lesson.sidebar.lessons') }}</h3>
               <div class="space-y-1 max-h-[60vh] overflow-y-auto">
                 <button
                   v-for="lesson in allLessons"
@@ -399,14 +401,14 @@ function navigateToLesson(lesson: LessonItem) {
           @click="previousLesson && navigateToLesson(previousLesson)"
         >
           <ArrowLeft class="mr-2 h-4 w-4" />
-          Previous
+          {{ t('courses.lesson.nav.previous') }}
         </Button>
         <Button
           class="flex-1"
           :disabled="!nextLesson"
           @click="nextLesson && navigateToLesson(nextLesson)"
         >
-          Next
+          {{ t('courses.lesson.nav.next') }}
           <ArrowRight class="ml-2 h-4 w-4" />
         </Button>
       </div>

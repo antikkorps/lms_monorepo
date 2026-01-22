@@ -49,6 +49,8 @@ async function loadLocaleMessages(locale: SupportedLocale): Promise<Record<strin
     discussions: () => import(`./${locale}/discussions.json`),
     errors: () => import(`./${locale}/errors.json`),
     nav: () => import(`./${locale}/nav.json`),
+    badges: () => import(`./${locale}/badges.json`),
+    analytics: () => import(`./${locale}/analytics.json`),
   };
 
   const messages: Record<string, unknown> = {};

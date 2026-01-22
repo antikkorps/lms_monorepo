@@ -1,0 +1,35 @@
+{
+  "title": "Accomplissements",
+  "subtitle": "Suivez vos progrès et débloquez des badges",
+  "error": {
+    "loadFailed": "Impossible de charger les badges",
+    "retry": "Réessayer"
+  },
+  "stats": {
+    "totalProgress": "Progression totale",
+    "badgesEarned": "{earned} sur {total} badges obtenus",
+    "courseBadges": "Badges de cours",
+    "quizBadges": "Badges de quiz",
+    "streakBadges": "Badges de série",
+    "available": "sur {total} disponibles"
+  },
+  "grid": {
+    "title": "Vos badges",
+    "description": "Cliquez sur un badge pour voir les détails"
+  },
+  "filters": {
+    "all": "Tous",
+    "courses": "Cours",
+    "streaks": "Séries",
+    "quizzes": "Quiz",
+    "milestones": "Jalons",
+    "special": "Spéciaux",
+    "showLocked": "Afficher verrouillés",
+    "hideLocked": "Masquer verrouillés"
+  },
+  "empty": {
+    "title": "Aucun badge trouvé",
+    "messageFiltered": "Essayez un autre filtre de catégorie.",
+    "messageDefault": "Commencez à apprendre pour obtenir votre premier badge !"
+  }
+}
