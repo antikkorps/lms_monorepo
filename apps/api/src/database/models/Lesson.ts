@@ -11,6 +11,7 @@ import { sequelize } from '../sequelize.js';
 import { LessonType } from './enums.js';
 import type { Chapter } from './Chapter.js';
 import type { QuizQuestion } from './QuizQuestion.js';
+import type { LessonContent } from './LessonContent.js';
 
 export class Lesson extends Model<
   InferAttributes<Lesson>,
@@ -32,6 +33,7 @@ export class Lesson extends Model<
   // Associations
   declare chapter?: NonAttribute<Chapter>;
   declare quizQuestions?: NonAttribute<QuizQuestion[]>;
+  declare contents?: NonAttribute<LessonContent[]>;
 
   // Helpers
   get isVideo(): NonAttribute<boolean> {

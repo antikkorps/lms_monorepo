@@ -22,6 +22,7 @@ CREATE TYPE invitation_status AS ENUM ('pending', 'accepted', 'expired', 'revoke
 CREATE TYPE report_reason AS ENUM ('spam', 'inappropriate', 'harassment', 'off_topic', 'other');
 CREATE TYPE report_status AS ENUM ('pending', 'reviewed', 'dismissed');
 CREATE TYPE discussion_visibility AS ENUM ('tenant_only', 'public_pool');
+CREATE TYPE supported_locale AS ENUM ('en', 'fr');
 
 -- Log successful initialization
 DO $$

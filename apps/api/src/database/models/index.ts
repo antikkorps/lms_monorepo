@@ -15,6 +15,7 @@ export { Group, UserGroup } from './Group.js';
 export { Course } from './Course.js';
 export { Chapter } from './Chapter.js';
 export { Lesson } from './Lesson.js';
+export { LessonContent } from './LessonContent.js';
 export { QuizQuestion } from './QuizQuestion.js';
 export { Purchase } from './Purchase.js';
 export { UserProgress } from './UserProgress.js';
@@ -33,6 +34,7 @@ import { Group, UserGroup } from './Group.js';
 import { Course } from './Course.js';
 import { Chapter } from './Chapter.js';
 import { Lesson } from './Lesson.js';
+import { LessonContent } from './LessonContent.js';
 import { QuizQuestion } from './QuizQuestion.js';
 import { Purchase } from './Purchase.js';
 import { UserProgress } from './UserProgress.js';
@@ -191,6 +193,19 @@ export function setupAssociations(): void {
   Lesson.hasMany(QuizResult, {
     foreignKey: 'lessonId',
     as: 'quizResults',
+  });
+
+  Lesson.hasMany(LessonContent, {
+    foreignKey: 'lessonId',
+    as: 'contents',
+  });
+
+  // =============================================================================
+  // LessonContent Associations
+  // =============================================================================
+  LessonContent.belongsTo(Lesson, {
+    foreignKey: 'lessonId',
+    as: 'lesson',
   });
 
   // =============================================================================
@@ -452,6 +467,7 @@ export const models = {
   Course,
   Chapter,
   Lesson,
+  LessonContent,
   QuizQuestion,
   Purchase,
   UserProgress,

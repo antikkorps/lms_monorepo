@@ -89,3 +89,8 @@ export enum DiscussionVisibility {
   TENANT_ONLY = 'tenant_only',
   PUBLIC_POOL = 'public_pool',
 }
+
+export enum SupportedLocale {
+  EN = 'en',
+  FR = 'fr',
+}

@@ -74,6 +74,37 @@ export interface LessonItem {
 
 export type LessonType = 'video' | 'quiz' | 'document' | 'assignment';
 export type CourseStatus = 'draft' | 'published' | 'archived';
+export type SupportedLocale = 'en' | 'fr';
+
+// Lesson content for specific locale
+export interface LessonContent {
+  id: string;
+  lessonId: string;
+  lang: SupportedLocale;
+  title: string | null;
+  videoUrl: string | null;
+  videoId: string | null;
+  transcript: string | null;
+  description: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Localized lesson with content resolved for a specific locale
+export interface LocalizedLesson {
+  id: string;
+  title: string;
+  type: LessonType;
+  videoUrl: string | null;
+  videoId: string | null;
+  duration: number;
+  position: number;
+  isFree: boolean;
+  transcript: string | null;
+  description: string | null;
+  isCompleted?: boolean;
+  isAccessible?: boolean;
+}
 
 // Progress tracking
 export interface UserProgress {
