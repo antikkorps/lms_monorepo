@@ -99,5 +99,32 @@
     "manager": "Manager",
     "instructor": "Instructor",
     "learner": "Learner"
+  },
+  "lessonContent": {
+    "title": "Lesson Translations",
+    "confirmDelete": "Are you sure you want to delete this translation?",
+    "saved": "Saved!",
+    "fields": {
+      "title": "Title",
+      "videoUrl": "Video URL",
+      "videoId": "Video ID",
+      "description": "Description",
+      "transcript": "Transcript"
+    },
+    "placeholders": {
+      "title": "Localized lesson title...",
+      "videoUrl": "https://example.com/video.mp4",
+      "videoId": "Video identifier (YouTube, Vimeo, etc.)",
+      "description": "Brief description of the lesson...",
+      "transcript": "Full transcript of the video..."
+    },
+    "hints": {
+      "title": "Leave empty to use the default lesson title",
+      "transcript": "Adding a transcript improves accessibility and SEO"
+    },
+    "actions": {
+      "save": "Save Translation",
+      "delete": "Delete"
+    }
   }
 }

@@ -99,5 +99,32 @@
     "manager": "Manager",
     "instructor": "Formateur",
     "learner": "Apprenant"
+  },
+  "lessonContent": {
+    "title": "Traductions de la leçon",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette traduction ?",
+    "saved": "Enregistré !",
+    "fields": {
+      "title": "Titre",
+      "videoUrl": "URL de la vidéo",
+      "videoId": "ID de la vidéo",
+      "description": "Description",
+      "transcript": "Transcription"
+    },
+    "placeholders": {
+      "title": "Titre localisé de la leçon...",
+      "videoUrl": "https://exemple.com/video.mp4",
+      "videoId": "Identifiant vidéo (YouTube, Vimeo, etc.)",
+      "description": "Brève description de la leçon...",
+      "transcript": "Transcription complète de la vidéo..."
+    },
+    "hints": {
+      "title": "Laissez vide pour utiliser le titre par défaut",
+      "transcript": "Ajouter une transcription améliore l'accessibilité et le SEO"
+    },
+    "actions": {
+      "save": "Enregistrer la traduction",
+      "delete": "Supprimer"
+    }
   }
 }
