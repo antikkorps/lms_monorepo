@@ -1,0 +1,37 @@
+{
+  "title": "Learning Analytics",
+  "subtitle": "Track your learning progress and activity",
+  "error": {
+    "loadFailed": "Failed to load analytics",
+    "retry": "Retry"
+  },
+  "stats": {
+    "totalLearningTime": "Total Learning Time",
+    "last30Days": "Last 30 days",
+    "lessonsCompleted": "Lessons Completed",
+    "ofTotal": "of {total} total lessons",
+    "currentStreak": "Current Streak",
+    "days": "{count} days",
+    "bestStreak": "Best: {count} days",
+    "quizAverage": "Quiz Average",
+    "averageScore": "Average score"
+  },
+  "charts": {
+    "activity": {
+      "title": "Learning Activity",
+      "description": "Minutes spent learning over the last 30 days"
+    },
+    "lessons": {
+      "title": "Lessons Completed",
+      "description": "Daily lesson completion"
+    },
+    "focus": {
+      "title": "Learning Focus",
+      "description": "Lessons by category"
+    },
+    "progress": {
+      "title": "Course Progress",
+      "description": "Progress on enrolled courses"
+    }
+  }
+}

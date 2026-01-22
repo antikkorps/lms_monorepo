@@ -5,7 +5,7 @@
 
 import type { LearnerDashboardStats, CourseListItem, Badge } from '@shared/types';
 import { ref, computed } from 'vue';
-import { useApi } from './useApi';
+// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
 
 // Extended course type for dashboard with last accessed info
 export interface DashboardCourse extends CourseListItem {
@@ -101,7 +101,7 @@ const mockData: DashboardData = {
 };
 
 export function useDashboard() {
-  const api = useApi();
+  // TODO: Replace mock data with real API calls using useApi()
 
   const isLoading = ref(true);
   const error = ref<string | null>(null);

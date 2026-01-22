@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +19,7 @@ import { DashboardSkeleton } from '@/components/skeletons';
 import { BadgeCard, BadgeModal } from '@/components/badges';
 import type { Badge } from '@/composables/useBadges';
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const {
   isLoading,
@@ -45,9 +47,9 @@ onMounted(() => {
 
 function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 18) return 'Good afternoon';
-  return 'Good evening';
+  if (hour < 12) return t('common.dashboard.greeting.morning');
+  if (hour < 18) return t('common.dashboard.greeting.afternoon');
+  return t('common.dashboard.greeting.evening');
 }
 
 function getProgressColor(progress: number): string {
@@ -65,7 +67,7 @@ function getProgressColor(progress: number): string {
       <h1 class="text-3xl font-bold tracking-tight">
         {{ getGreeting() }}, {{ authStore.user?.firstName || 'Learner' }}
       </h1>
-      <p class="text-muted-foreground">Here's an overview of your learning progress.</p>
+      <p class="text-muted-foreground">{{ t('common.dashboard.subtitle') }}</p>
     </div>
 
     <!-- Loading State -->
@@ -76,10 +78,12 @@ function getProgressColor(progress: number): string {
       <CardContent class="flex items-center gap-4 py-6">
         <AlertCircle class="h-8 w-8 text-destructive" />
         <div>
-          <p class="font-medium">Failed to load dashboard</p>
+          <p class="font-medium">{{ t('common.dashboard.error.title') }}</p>
           <p class="text-sm text-muted-foreground">{{ error }}</p>
         </div>
-        <Button variant="outline" class="ml-auto" @click="fetchDashboard">Retry</Button>
+        <Button variant="outline" class="ml-auto" @click="fetchDashboard">
+          {{ t('common.dashboard.error.retry') }}
+        </Button>
       </CardContent>
     </Card>
 
@@ -89,47 +93,47 @@ function getProgressColor(progress: number): string {
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Enrolled Courses</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('common.dashboard.stats.enrolledCourses') }}</CardTitle>
             <BookOpen class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ stats.enrolledCourses }}</div>
             <p class="text-xs text-muted-foreground">
-              {{ stats.inProgressCourses }} in progress
+              {{ t('common.dashboard.stats.inProgress', { count: stats.inProgressCourses }) }}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Completed</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('common.dashboard.stats.completed') }}</CardTitle>
             <GraduationCap class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ stats.completedCourses }}</div>
-            <p class="text-xs text-muted-foreground">Courses finished</p>
+            <p class="text-xs text-muted-foreground">{{ t('common.dashboard.stats.coursesFinished') }}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Badges Earned</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('common.dashboard.stats.badgesEarned') }}</CardTitle>
             <Trophy class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ stats.totalBadges }}</div>
-            <p class="text-xs text-muted-foreground">Achievements unlocked</p>
+            <p class="text-xs text-muted-foreground">{{ t('common.dashboard.stats.achievementsUnlocked') }}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Learning Time</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('common.dashboard.stats.learningTime') }}</CardTitle>
             <Clock class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ formattedLearningTime }}</div>
-            <p class="text-xs text-muted-foreground">Total time spent</p>
+            <p class="text-xs text-muted-foreground">{{ t('common.dashboard.stats.totalTimeSpent') }}</p>
           </CardContent>
         </Card>
       </div>
@@ -139,12 +143,12 @@ function getProgressColor(progress: number): string {
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
-              <CardTitle>Continue Learning</CardTitle>
-              <CardDescription>Pick up where you left off</CardDescription>
+              <CardTitle>{{ t('common.dashboard.continueLearning.title') }}</CardTitle>
+              <CardDescription>{{ t('common.dashboard.continueLearning.subtitle') }}</CardDescription>
             </div>
             <RouterLink v-if="hasInProgressCourses" to="/learning">
               <Button variant="ghost" size="sm">
-                View All
+                {{ t('common.actions.viewAll') }}
                 <ArrowRight class="ml-1 h-4 w-4" />
               </Button>
             </RouterLink>
@@ -157,13 +161,13 @@ function getProgressColor(progress: number): string {
             class="flex flex-col items-center justify-center py-8 text-center"
           >
             <BookOpen class="mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 class="mb-2 text-lg font-semibold">No courses yet</h3>
+            <h3 class="mb-2 text-lg font-semibold">{{ t('common.dashboard.empty.title') }}</h3>
             <p class="mb-4 text-muted-foreground">
-              Start exploring our catalog to find courses that interest you.
+              {{ t('common.dashboard.empty.message') }}
             </p>
             <RouterLink to="/courses">
               <Button>
-                Browse Courses
+                {{ t('common.dashboard.empty.action') }}
                 <ArrowRight class="ml-2 h-4 w-4" />
               </Button>
             </RouterLink>
@@ -209,14 +213,14 @@ function getProgressColor(progress: number): string {
 
                 <!-- Next lesson -->
                 <p class="mt-1 text-xs text-muted-foreground">
-                  Next: {{ course.nextLessonTitle }}
+                  {{ t('common.dashboard.continueLearning.next') }} {{ course.nextLessonTitle }}
                 </p>
               </div>
 
               <!-- Continue button -->
               <RouterLink :to="`/courses/${course.slug}`" class="shrink-0">
                 <Button size="sm" class="opacity-0 transition-opacity group-hover:opacity-100">
-                  Continue
+                  {{ t('common.dashboard.continueLearning.continue') }}
                 </Button>
               </RouterLink>
             </div>
@@ -229,12 +233,12 @@ function getProgressColor(progress: number): string {
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
-              <CardTitle>Recent Achievements</CardTitle>
-              <CardDescription>Badges you've earned recently</CardDescription>
+              <CardTitle>{{ t('common.dashboard.recentAchievements.title') }}</CardTitle>
+              <CardDescription>{{ t('common.dashboard.recentAchievements.subtitle') }}</CardDescription>
             </div>
             <RouterLink to="/badges">
               <Button variant="ghost" size="sm">
-                View All
+                {{ t('common.actions.viewAll') }}
                 <ArrowRight class="ml-1 h-4 w-4" />
               </Button>
             </RouterLink>

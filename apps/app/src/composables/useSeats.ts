@@ -187,7 +187,7 @@ export function useSeats() {
   /**
    * Request additional seats
    */
-  async function requestSeats(additionalSeats: number): Promise<boolean> {
+  async function requestSeats(_additionalSeats: number): Promise<boolean> {
     try {
       // TODO: Replace with real API call
       // await api.post('/tenant/seats/request', { additionalSeats });

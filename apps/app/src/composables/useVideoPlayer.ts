@@ -39,7 +39,7 @@ export function useVideoPlayer(
   const showControls = ref(true);
 
   let controlsTimeout: ReturnType<typeof setTimeout> | null = null;
-  let progressInterval: ReturnType<typeof setInterval> | null = null;
+  const progressInterval: ReturnType<typeof setInterval> | null = null;
 
   // Computed
   const progress = computed(() => {

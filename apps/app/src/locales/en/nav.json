@@ -1,0 +1,40 @@
+{
+  "brand": "LMS Platform",
+  "main": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "myLearning": "My Learning",
+    "badges": "Badges",
+    "analytics": "Analytics"
+  },
+  "user": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "logout": "Logout"
+  },
+  "admin": {
+    "title": "Administration",
+    "dashboard": "Dashboard Admin",
+    "members": "Team Members",
+    "invitations": "Invitations",
+    "seats": "Seat Management"
+  },
+  "accessibility": {
+    "toggleMenu": "Toggle menu",
+    "notifications": "Notifications"
+  },
+  "footer": {
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "help": "Help Center"
+  },
+  "language": {
+    "title": "Language",
+    "en": "English",
+    "fr": "Français"
+  }
+}

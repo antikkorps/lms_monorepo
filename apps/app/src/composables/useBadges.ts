@@ -4,7 +4,7 @@
  */
 
 import { ref, computed } from 'vue';
-import { useApi } from './useApi';
+// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
 
 export interface Badge {
   id: string;
@@ -152,7 +152,7 @@ const mockBadges: Badge[] = [
 ];
 
 export function useBadges() {
-  const api = useApi();
+  // TODO: Replace mock data with real API calls using useApi()
 
   const isLoading = ref(true);
   const error = ref<string | null>(null);

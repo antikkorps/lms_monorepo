@@ -180,6 +180,12 @@ type:util       - Utility library
 - **Headers**: Helmet.js + strict CORS
 - **Validation**: Zod on all inputs
 - **Session**: Redis-backed blacklist for immediate revocation
+- **Sanitization** (Security by Design):
+  - All user-generated content (discussions, notes, comments) must be sanitized before rendering
+  - Use DOMPurify on frontend for any HTML/Markdown rendering
+  - Escape HTML by default; only allow safe tags when explicitly needed
+  - Store original content in DB, sanitize at display time
+  - Never use `v-html` or `dangerouslySetInnerHTML` without sanitization
 
 ---
 

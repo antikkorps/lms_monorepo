@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, watch, ref } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +24,7 @@ import { useToast } from '@/composables/useToast';
 import { CourseDetailSkeleton } from '@/components/skeletons';
 import type { LessonItem } from '@shared/types';
 
+const { t } = useI18n();
 const route = useRoute();
 const toast = useToast();
 const slug = route.params.slug as string;
@@ -80,9 +82,9 @@ async function handleEnroll() {
   isEnrolling.value = false;
 
   if (success) {
-    toast.success('Successfully enrolled in course!');
+    toast.success(t('courses.detail.toast.enrollSuccess'));
   } else {
-    toast.error('Failed to enroll. Please try again.');
+    toast.error(t('courses.detail.toast.enrollError'));
   }
 }
 
@@ -114,7 +116,7 @@ function getProgressColor(pct: number): string {
     <!-- Back button -->
     <RouterLink to="/courses" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
       <ArrowLeft class="h-4 w-4" />
-      Back to Courses
+      {{ t('courses.detail.backToCourses') }}
     </RouterLink>
 
     <!-- Loading State -->
@@ -125,13 +127,13 @@ function getProgressColor(pct: number): string {
       <CardContent class="flex items-center gap-4 py-6">
         <AlertCircle class="h-8 w-8 text-destructive" />
         <div>
-          <p class="font-medium">{{ error === 'Course not found' ? 'Course Not Found' : 'Failed to load course' }}</p>
+          <p class="font-medium">{{ error === 'Course not found' ? t('courses.detail.error.notFound') : t('courses.detail.error.loadFailed') }}</p>
           <p class="text-sm text-muted-foreground">
-            {{ error === 'Course not found' ? 'The course you are looking for does not exist.' : error }}
+            {{ error === 'Course not found' ? t('courses.detail.error.notFoundMessage') : error }}
           </p>
         </div>
         <RouterLink to="/courses" class="ml-auto">
-          <Button variant="outline">Browse Courses</Button>
+          <Button variant="outline">{{ t('courses.catalog.title') }}</Button>
         </RouterLink>
       </CardContent>
     </Card>
@@ -160,14 +162,14 @@ function getProgressColor(pct: number): string {
             </div>
             <div class="flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-sm">
               <BookOpen class="h-4 w-4" />
-              <span>{{ course.chaptersCount }} chapters</span>
+              <span>{{ t('courses.detail.chapters', { count: course.chaptersCount }) }}</span>
             </div>
             <div class="flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-sm">
               <PlayCircle class="h-4 w-4" />
-              <span>{{ totalLessons }} lessons</span>
+              <span>{{ t('courses.detail.lessons', { count: totalLessons }) }}</span>
             </div>
             <div v-if="freeLessonsCount > 0" class="flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm text-green-700">
-              <span>{{ freeLessonsCount }} free lessons</span>
+              <span>{{ t('courses.detail.freeLessons', { count: freeLessonsCount }) }}</span>
             </div>
           </div>
         </div>
@@ -184,7 +186,7 @@ function getProgressColor(pct: number): string {
               <!-- Progress (if enrolled) -->
               <div v-if="isEnrolled" class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-muted-foreground">Progress</span>
+                  <span class="text-muted-foreground">{{ t('courses.detail.progress') }}</span>
                   <span class="font-medium">{{ progress }}%</span>
                 </div>
                 <div class="h-2 overflow-hidden rounded-full bg-muted">
@@ -195,7 +197,7 @@ function getProgressColor(pct: number): string {
                   />
                 </div>
                 <p class="text-xs text-muted-foreground text-center">
-                  {{ completedLessonsCount }} of {{ totalLessons }} lessons completed
+                  {{ t('courses.detail.lessonsCompleted', { completed: completedLessonsCount, total: totalLessons }) }}
                 </p>
               </div>
 
@@ -204,19 +206,19 @@ function getProgressColor(pct: number): string {
                 <RouterLink v-if="nextLesson" :to="`/courses/${course.slug}/learn/${nextLesson.id}`">
                   <Button class="w-full" size="lg">
                     <PlayCircle class="mr-2 h-5 w-5" />
-                    {{ completedLessonsCount > 0 ? 'Continue Learning' : 'Start Course' }}
+                    {{ completedLessonsCount > 0 ? t('courses.enrollment.continueLearning') : t('courses.enrollment.startLearning') }}
                   </Button>
                 </RouterLink>
                 <Button v-else class="w-full" size="lg" disabled>
                   <CheckCircle2 class="mr-2 h-5 w-5" />
-                  Course Completed
+                  {{ t('courses.detail.courseCompleted') }}
                 </Button>
               </div>
               <div v-else>
                 <Button class="w-full" size="lg" :disabled="isEnrolling" @click="handleEnroll">
                   <Loader2 v-if="isEnrolling" class="mr-2 h-5 w-5 animate-spin" />
                   <template v-else>
-                    {{ isFree ? 'Enroll for Free' : 'Enroll Now' }}
+                    {{ isFree ? t('courses.enrollment.enrollFree') : t('courses.enrollment.enroll') }}
                   </template>
                 </Button>
               </div>
@@ -225,15 +227,15 @@ function getProgressColor(pct: number): string {
               <ul class="space-y-2 text-sm text-muted-foreground">
                 <li class="flex items-center gap-2">
                   <CheckCircle2 class="h-4 w-4 text-green-500" />
-                  Full lifetime access
+                  {{ t('courses.detail.lifetime') }}
                 </li>
                 <li class="flex items-center gap-2">
                   <CheckCircle2 class="h-4 w-4 text-green-500" />
-                  Certificate of completion
+                  {{ t('courses.detail.certificate') }}
                 </li>
                 <li class="flex items-center gap-2">
                   <CheckCircle2 class="h-4 w-4 text-green-500" />
-                  Access on mobile and desktop
+                  {{ t('courses.detail.mobile') }}
                 </li>
               </ul>
             </CardContent>
@@ -244,7 +246,7 @@ function getProgressColor(pct: number): string {
       <!-- Course Curriculum -->
       <Card>
         <CardHeader>
-          <CardTitle>Course Curriculum</CardTitle>
+          <CardTitle>{{ t('courses.detail.curriculum') }}</CardTitle>
         </CardHeader>
         <CardContent class="p-0">
           <div class="divide-y">
@@ -262,7 +264,7 @@ function getProgressColor(pct: number): string {
                   <div>
                     <h3 class="font-medium">{{ chapter.title }}</h3>
                     <p class="text-sm text-muted-foreground">
-                      {{ chapter.lessons.length }} lessons
+                      {{ t('courses.detail.lessons', { count: chapter.lessons.length }) }}
                     </p>
                   </div>
                 </div>
@@ -302,7 +304,7 @@ function getProgressColor(pct: number): string {
                         v-if="lesson.isFree"
                         class="shrink-0 rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700"
                       >
-                        Free
+                        {{ t('courses.card.free') }}
                       </span>
                     </div>
                   </div>

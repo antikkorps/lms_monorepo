@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,6 +15,8 @@ import {
 } from 'lucide-vue-next';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { LineChart, BarChart, DoughnutChart } from '@/components/charts';
+
+const { t } = useI18n();
 
 const {
   isLoading,
@@ -36,8 +39,8 @@ onMounted(() => {
   <div class="space-y-6">
     <!-- Header -->
     <div>
-      <h1 class="text-3xl font-bold tracking-tight">Learning Analytics</h1>
-      <p class="text-muted-foreground">Track your learning progress and activity</p>
+      <h1 class="text-3xl font-bold tracking-tight">{{ t('analytics.title') }}</h1>
+      <p class="text-muted-foreground">{{ t('analytics.subtitle') }}</p>
     </div>
 
     <!-- Loading State -->
@@ -72,10 +75,10 @@ onMounted(() => {
       <CardContent class="flex items-center gap-4 py-6">
         <AlertCircle class="h-8 w-8 text-destructive" />
         <div>
-          <p class="font-medium">Failed to load analytics</p>
+          <p class="font-medium">{{ t('analytics.error.loadFailed') }}</p>
           <p class="text-sm text-muted-foreground">{{ error }}</p>
         </div>
-        <Button variant="outline" class="ml-auto" @click="fetchAnalytics">Retry</Button>
+        <Button variant="outline" class="ml-auto" @click="fetchAnalytics">{{ t('analytics.error.retry') }}</Button>
       </CardContent>
     </Card>
 
@@ -85,49 +88,49 @@ onMounted(() => {
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Total Learning Time</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('analytics.stats.totalLearningTime') }}</CardTitle>
             <Clock class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ formatMinutes(summary.totalMinutes) }}</div>
-            <p class="text-xs text-muted-foreground">Last 30 days</p>
+            <p class="text-xs text-muted-foreground">{{ t('analytics.stats.last30Days') }}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Lessons Completed</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('analytics.stats.lessonsCompleted') }}</CardTitle>
             <BookOpen class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ summary.completedLessons }}</div>
             <p class="text-xs text-muted-foreground">
-              of {{ summary.totalLessons }} total lessons
+              {{ t('analytics.stats.ofTotal', { total: summary.totalLessons }) }}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Current Streak</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('analytics.stats.currentStreak') }}</CardTitle>
             <Flame class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div class="text-2xl font-bold">{{ summary.currentStreak }} days</div>
+            <div class="text-2xl font-bold">{{ t('analytics.stats.days', { count: summary.currentStreak }) }}</div>
             <p class="text-xs text-muted-foreground">
-              Best: {{ summary.longestStreak }} days
+              {{ t('analytics.stats.bestStreak', { count: summary.longestStreak }) }}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Quiz Average</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('analytics.stats.quizAverage') }}</CardTitle>
             <Target class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ summary.averageQuizScore }}%</div>
-            <p class="text-xs text-muted-foreground">Average score</p>
+            <p class="text-xs text-muted-foreground">{{ t('analytics.stats.averageScore') }}</p>
           </CardContent>
         </Card>
       </div>
@@ -139,9 +142,9 @@ onMounted(() => {
           <CardHeader>
             <CardTitle class="flex items-center gap-2">
               <TrendingUp class="h-5 w-5" />
-              Learning Activity
+              {{ t('analytics.charts.activity.title') }}
             </CardTitle>
-            <CardDescription>Minutes spent learning over the last 30 days</CardDescription>
+            <CardDescription>{{ t('analytics.charts.activity.description') }}</CardDescription>
           </CardHeader>
           <CardContent>
             <LineChart :data="activityChartData" :height="300" />
@@ -153,9 +156,9 @@ onMounted(() => {
           <CardHeader>
             <CardTitle class="flex items-center gap-2">
               <BookOpen class="h-5 w-5" />
-              Lessons Completed
+              {{ t('analytics.charts.lessons.title') }}
             </CardTitle>
-            <CardDescription>Daily lesson completion</CardDescription>
+            <CardDescription>{{ t('analytics.charts.lessons.description') }}</CardDescription>
           </CardHeader>
           <CardContent>
             <BarChart :data="lessonsChartData" :height="250" />
@@ -167,9 +170,9 @@ onMounted(() => {
           <CardHeader>
             <CardTitle class="flex items-center gap-2">
               <Trophy class="h-5 w-5" />
-              Learning Focus
+              {{ t('analytics.charts.focus.title') }}
             </CardTitle>
-            <CardDescription>Lessons by category</CardDescription>
+            <CardDescription>{{ t('analytics.charts.focus.description') }}</CardDescription>
           </CardHeader>
           <CardContent>
             <DoughnutChart :data="categoryChartData" :height="250" />
@@ -181,9 +184,9 @@ onMounted(() => {
           <CardHeader>
             <CardTitle class="flex items-center gap-2">
               <Target class="h-5 w-5" />
-              Course Progress
+              {{ t('analytics.charts.progress.title') }}
             </CardTitle>
-            <CardDescription>Progress on enrolled courses</CardDescription>
+            <CardDescription>{{ t('analytics.charts.progress.description') }}</CardDescription>
           </CardHeader>
           <CardContent>
             <BarChart :data="progressChartData" :height="250" horizontal />

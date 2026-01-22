@@ -29,6 +29,10 @@ vi.mock('../database/models/index.js', () => ({
     max: vi.fn(),
     update: vi.fn(),
   },
+  LessonContent: {
+    findAll: vi.fn(),
+    findOne: vi.fn(),
+  },
   User: {},
 }));
 
@@ -78,9 +82,11 @@ interface MockContextOptions {
   query?: Record<string, unknown>;
   body?: Record<string, unknown>;
   state?: Record<string, unknown>;
+  headers?: Record<string, string>;
 }
 
 function createMockContext(options: MockContextOptions = {}): Context {
+  const headers = options.headers || {};
   return {
     params: options.params || {},
     query: options.query || {},
@@ -90,11 +96,12 @@ function createMockContext(options: MockContextOptions = {}): Context {
     state: options.state || {},
     status: 200,
     body: null,
+    get: (name: string) => headers[name.toLowerCase()] || '',
   } as unknown as Context;
 }
 
 function createMockCourse(overrides: Record<string, unknown> = {}) {
-  return {
+  const data = {
     id: 'course-123',
     title: 'Test Course',
     slug: 'test-course',
@@ -107,30 +114,39 @@ function createMockCourse(overrides: Record<string, unknown> = {}) {
     lessonsCount: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
+    ...overrides,
+  };
+  return {
+    ...data,
     update: vi.fn().mockResolvedValue(undefined),
     destroy: vi.fn().mockResolvedValue(undefined),
     increment: vi.fn().mockResolvedValue(undefined),
     decrement: vi.fn().mockResolvedValue(undefined),
-    ...overrides,
+    toJSON: () => data,
   };
 }
 
 function createMockChapter(overrides: Record<string, unknown> = {}) {
-  return {
+  const data = {
     id: 'chapter-123',
     courseId: 'course-123',
     title: 'Test Chapter',
     description: null,
     position: 0,
     lessons: [],
+    ...overrides,
+  };
+  return {
+    ...data,
     update: vi.fn().mockResolvedValue(undefined),
     destroy: vi.fn().mockResolvedValue(undefined),
-    ...overrides,
+    toJSON: () => data,
   };
 }
 
 function createMockLesson(overrides: Record<string, unknown> = {}) {
-  return {
+  const { chapter, ...restOverrides } = overrides;
+  const data = {
     id: 'lesson-123',
     chapterId: 'chapter-123',
     title: 'Test Lesson',
@@ -141,12 +157,15 @@ function createMockLesson(overrides: Record<string, unknown> = {}) {
     position: 0,
     isFree: false,
     requiresPrevious: true,
-    chapter: {
-      course: createMockCourse(),
-    },
+    contents: [], // LessonContent for localization
+    ...restOverrides,
+  };
+  return {
+    ...data,
+    chapter: (chapter as Record<string, unknown>) || { course: createMockCourse() },
     update: vi.fn().mockResolvedValue(undefined),
     destroy: vi.fn().mockResolvedValue(undefined),
-    ...overrides,
+    toJSON: () => data,
   };
 }
 
@@ -227,7 +246,13 @@ describe('Courses Controller', () => {
       });
       await getCourse(ctx);
 
-      expect(ctx.body).toEqual({ data: mockCourse });
+      expect(ctx.body).toEqual({
+        data: expect.objectContaining({
+          id: 'course-123',
+          title: 'Test Course',
+          locale: 'en',
+        }),
+      });
     });
 
     it('should return course by slug', async () => {
@@ -282,7 +307,13 @@ describe('Courses Controller', () => {
       });
       await getCourse(ctx);
 
-      expect(ctx.body).toEqual({ data: mockCourse });
+      expect(ctx.body).toEqual({
+        data: expect.objectContaining({
+          id: 'course-123',
+          status: CourseStatus.DRAFT,
+          locale: 'en',
+        }),
+      });
     });
   });
 
@@ -621,7 +652,15 @@ describe('Courses Controller', () => {
       });
       await listLessons(ctx);
 
-      expect(ctx.body).toEqual({ data: mockLessons });
+      expect(ctx.body).toEqual({
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'lesson-123',
+            title: 'Test Lesson',
+          }),
+        ]),
+        locale: 'en',
+      });
     });
   });
 

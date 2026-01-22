@@ -56,6 +56,9 @@ services:
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
       CORS_ORIGINS: http://localhost:5173,http://localhost:4321
+      # Higher rate limits for development
+      RATE_LIMIT_AUTH_MAX: 100
+      RATE_LIMIT_B2C_MAX: 500
     ports:
       - '${API_PORT:-3000}:3000'
     volumes:
