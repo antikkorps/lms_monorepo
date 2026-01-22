@@ -3,7 +3,7 @@
  * Handles fetching and managing a single course's data
  */
 
-import type { CourseDetail, ChapterWithLessons, LessonItem } from '@shared/types';
+import type { CourseDetail, LessonItem, ChapterWithLessons } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi } from './useApi';
 
@@ -20,6 +20,7 @@ export interface CourseWithEnrollment extends CourseDetail {
 }
 
 // Mock data for development
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getMockCourse(slug: string): CourseWithEnrollment | null {
   const courses: Record<string, CourseWithEnrollment> = {
     'intro-ml': {
@@ -300,12 +301,12 @@ export function useCourseDetail(slug: string) {
         duration: Math.floor(response.duration / 60), // Convert seconds to minutes
         chaptersCount: response.chaptersCount,
         lessonsCount: response.lessonsCount,
-        chapters: response.chapters.map((ch) => ({
+        chapters: response.chapters.map((ch: { id: string; title: string; description: string; position: number; lessons: Array<{ id: string; title: string; type: 'video' | 'quiz' | 'document' | 'assignment'; duration: number; position: number; isFree: boolean }> }) => ({
           id: ch.id,
           title: ch.title,
           description: ch.description,
           position: ch.position,
-          lessons: ch.lessons.map((l) => ({
+          lessons: ch.lessons.map((l: { id: string; title: string; type: 'video' | 'quiz' | 'document' | 'assignment'; duration: number; position: number; isFree: boolean }) => ({
             id: l.id,
             title: l.title,
             type: l.type,

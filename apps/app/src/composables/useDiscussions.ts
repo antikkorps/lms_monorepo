@@ -136,7 +136,7 @@ export function useDiscussions(lessonId?: string) {
    */
   async function deleteDiscussion(
     discussionId: string,
-    reason?: string
+    _reason?: string
   ): Promise<boolean> {
     try {
       await api.delete(`/discussions/${discussionId}`);
