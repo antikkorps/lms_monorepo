@@ -43,6 +43,16 @@ export type ErrorCode =
   | 'GROUPS_REQUIRED'
   | 'INVALID_GROUPS'
   | 'INVALID_TOKEN'
+  // Discussion
+  | 'DISCUSSION_NOT_FOUND'
+  | 'DISCUSSION_DELETED'
+  | 'DISCUSSIONS_DISABLED'
+  | 'ALREADY_REPORTED'
+  | 'CANNOT_REPORT_OWN'
+  | 'REPLY_NOT_FOUND'
+  | 'REPLY_DELETED'
+  // Note
+  | 'NOTE_NOT_FOUND'
   // Allow any string for extensibility
   | (string & {});
 

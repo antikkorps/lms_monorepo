@@ -61,6 +61,12 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: 'app', requiresAuth: true },
   },
   {
+    path: '/courses/:slug/learn/:lessonId',
+    name: 'lesson',
+    component: () => import('../views/LessonView.vue'),
+    meta: { layout: 'minimal', requiresAuth: true },
+  },
+  {
     path: '/learning',
     name: 'my-learning',
     component: () => import('../views/MyLearningView.vue'),

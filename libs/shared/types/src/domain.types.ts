@@ -199,3 +199,80 @@ export interface SeatPlan {
   isCurrent: boolean;
   isRecommended?: boolean;
 }
+
+// Discussion domain
+export type ReportReason = 'spam' | 'inappropriate' | 'harassment' | 'off_topic' | 'other';
+export type ReportStatus = 'pending' | 'reviewed' | 'dismissed';
+export type DiscussionVisibility = 'tenant_only' | 'public_pool';
+
+export interface DiscussionUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatarUrl: string | null;
+}
+
+export interface Discussion {
+  id: string;
+  lessonId: string;
+  content: string;
+  replyCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+  user: DiscussionUser | null;
+  isOwner: boolean;
+}
+
+export interface DiscussionReply {
+  id: string;
+  discussionId: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  user: DiscussionUser | null;
+  isOwner: boolean;
+}
+
+export interface CreateDiscussionInput {
+  lessonId: string;
+  content: string;
+}
+
+export interface CreateReplyInput {
+  content: string;
+}
+
+export interface ReportInput {
+  reason: ReportReason;
+  description?: string;
+}
+
+// Note domain
+export interface Note {
+  id: string;
+  lessonId: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface NoteWithLesson extends Note {
+  lesson: {
+    id: string;
+    title: string;
+    type: LessonType;
+    chapter: {
+      id: string;
+      title: string;
+      course: {
+        id: string;
+        title: string;
+        slug: string;
+      } | null;
+    } | null;
+  } | null;
+}
+
+export interface UpsertNoteInput {
+  content: string;
+}

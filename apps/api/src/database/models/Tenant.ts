@@ -6,7 +6,7 @@ import {
   type CreationOptional,
 } from 'sequelize';
 import { sequelize } from '../sequelize.js';
-import { TenantStatus, SubscriptionStatus, IsolationStrategy } from './enums.js';
+import { TenantStatus, SubscriptionStatus, IsolationStrategy, DiscussionVisibility } from './enums.js';
 
 export interface TenantSSOConfig {
   provider: 'google' | 'microsoft' | 'oidc';
@@ -22,6 +22,8 @@ export interface TenantSettings {
   ssoEnabled?: boolean;
   ssoConfig?: TenantSSOConfig;
   features?: string[];
+  discussionVisibility?: DiscussionVisibility;
+  discussionsEnabled?: boolean;
 }
 
 export class Tenant extends Model<

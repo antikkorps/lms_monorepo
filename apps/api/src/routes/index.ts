@@ -5,6 +5,8 @@ import { authRouter } from '../auth/index.js';
 import { ssoRouter } from '../sso/index.js';
 import { invitationRouter } from '../invitations/index.js';
 import { coursesRouter, lessonsRouter } from '../courses/index.js';
+import { discussionsRouter } from '../discussions/index.js';
+import { notesRouter } from '../notes/index.js';
 
 const apiRouter = new Router({ prefix: '/api/v1' });
 
@@ -20,6 +22,10 @@ apiRouter.use(coursesRouter.routes());
 apiRouter.use(coursesRouter.allowedMethods());
 apiRouter.use(lessonsRouter.routes());
 apiRouter.use(lessonsRouter.allowedMethods());
+apiRouter.use(discussionsRouter.routes());
+apiRouter.use(discussionsRouter.allowedMethods());
+apiRouter.use(notesRouter.routes());
+apiRouter.use(notesRouter.allowedMethods());
 
 export function setupRoutes(app: Koa): void {
   app.use(apiRouter.routes());

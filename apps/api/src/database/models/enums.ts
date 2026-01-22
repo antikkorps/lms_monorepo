@@ -70,3 +70,22 @@ export enum InvitationStatus {
   EXPIRED = 'expired',
   REVOKED = 'revoked',
 }
+
+export enum ReportReason {
+  SPAM = 'spam',
+  INAPPROPRIATE = 'inappropriate',
+  HARASSMENT = 'harassment',
+  OFF_TOPIC = 'off_topic',
+  OTHER = 'other',
+}
+
+export enum ReportStatus {
+  PENDING = 'pending',
+  REVIEWED = 'reviewed',
+  DISMISSED = 'dismissed',
+}
+
+export enum DiscussionVisibility {
+  TENANT_ONLY = 'tenant_only',
+  PUBLIC_POOL = 'public_pool',
+}
