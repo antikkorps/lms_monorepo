@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter, useRoute, RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/composables/useToast';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
@@ -27,7 +29,7 @@ async function handleSubmit() {
   });
 
   if (success) {
-    toast.success('Welcome back!');
+    toast.success(t('auth.login.welcomeBack'));
     const redirect = route.query.redirect as string;
     await router.push(redirect || '/dashboard');
   }
@@ -44,8 +46,8 @@ async function handleSSOLogin(provider: 'google' | 'microsoft') {
 <template>
   <Card>
     <CardHeader class="text-center">
-      <CardTitle class="text-2xl">Sign In</CardTitle>
-      <CardDescription>Enter your credentials to access your account</CardDescription>
+      <CardTitle class="text-2xl">{{ t('auth.login.title') }}</CardTitle>
+      <CardDescription>{{ t('auth.login.subtitle') }}</CardDescription>
     </CardHeader>
     <CardContent>
       <form @submit.prevent="handleSubmit" class="space-y-4">
@@ -54,12 +56,12 @@ async function handleSSOLogin(provider: 'google' | 'microsoft') {
         </Alert>
 
         <div class="space-y-2">
-          <Label for="email">Email</Label>
+          <Label for="email">{{ t('auth.login.email') }}</Label>
           <Input
             id="email"
             v-model="email"
             type="email"
-            placeholder="you@example.com"
+            :placeholder="t('auth.login.emailPlaceholder')"
             required
             :disabled="authStore.isLoading"
           />
@@ -67,19 +69,19 @@ async function handleSSOLogin(provider: 'google' | 'microsoft') {
 
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <Label for="password">Password</Label>
+            <Label for="password">{{ t('auth.login.password') }}</Label>
             <RouterLink
               to="/forgot-password"
               class="text-sm text-primary hover:underline"
             >
-              Forgot password?
+              {{ t('auth.login.forgotPassword') }}
             </RouterLink>
           </div>
           <Input
             id="password"
             v-model="password"
             type="password"
-            placeholder="••••••••"
+            :placeholder="t('auth.login.passwordPlaceholder')"
             required
             :disabled="authStore.isLoading"
           />
@@ -90,7 +92,7 @@ async function handleSSOLogin(provider: 'google' | 'microsoft') {
           class="w-full"
           :disabled="authStore.isLoading"
         >
-          {{ authStore.isLoading ? 'Signing in...' : 'Sign In' }}
+          {{ authStore.isLoading ? t('auth.login.submitting') : t('auth.login.submit') }}
         </Button>
       </form>
 
@@ -99,7 +101,7 @@ async function handleSSOLogin(provider: 'google' | 'microsoft') {
           <Separator class="w-full" />
         </div>
         <div class="relative flex justify-center text-xs uppercase">
-          <span class="bg-card px-2 text-muted-foreground">Or continue with</span>
+          <span class="bg-card px-2 text-muted-foreground">{{ t('auth.login.orContinueWith') }}</span>
         </div>
       </div>
 
@@ -116,7 +118,7 @@ async function handleSSOLogin(provider: 'google' | 'microsoft') {
             <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
             <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
           </svg>
-          Google
+          {{ t('auth.sso.google') }}
         </Button>
         <Button
           type="button"
@@ -127,14 +129,14 @@ async function handleSSOLogin(provider: 'google' | 'microsoft') {
           <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24">
             <path fill="currentColor" d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
           </svg>
-          Microsoft
+          {{ t('auth.sso.microsoft') }}
         </Button>
       </div>
 
       <p class="mt-6 text-center text-sm text-muted-foreground">
-        Don't have an account?
+        {{ t('auth.login.noAccount') }}
         <RouterLink to="/register" class="font-medium text-primary hover:underline">
-          Sign up
+          {{ t('auth.login.signUpLink') }}
         </RouterLink>
       </p>
     </CardContent>

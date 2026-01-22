@@ -1,4 +1,5 @@
 {
+  "brand": "LMS Platform",
   "main": {
     "home": "Accueil",
     "dashboard": "Tableau de bord",
@@ -10,14 +11,19 @@
   "user": {
     "profile": "Profil",
     "settings": "Paramètres",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "logout": "Déconnexion"
   },
   "admin": {
     "title": "Administration",
-    "dashboard": "Tableau de bord admin",
+    "dashboard": "Dashboard Admin",
     "members": "Membres de l'équipe",
     "invitations": "Invitations",
     "seats": "Gestion des places"
+  },
+  "accessibility": {
+    "toggleMenu": "Basculer le menu",
+    "notifications": "Notifications"
   },
   "footer": {
     "about": "À propos",

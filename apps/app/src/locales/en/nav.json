@@ -1,4 +1,5 @@
 {
+  "brand": "LMS Platform",
   "main": {
     "home": "Home",
     "dashboard": "Dashboard",
@@ -10,14 +11,19 @@
   "user": {
     "profile": "Profile",
     "settings": "Settings",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "logout": "Logout"
   },
   "admin": {
     "title": "Administration",
-    "dashboard": "Admin Dashboard",
+    "dashboard": "Dashboard Admin",
     "members": "Team Members",
     "invitations": "Invitations",
     "seats": "Seat Management"
+  },
+  "accessibility": {
+    "toggleMenu": "Toggle menu",
+    "notifications": "Notifications"
   },
   "footer": {
     "about": "About",
