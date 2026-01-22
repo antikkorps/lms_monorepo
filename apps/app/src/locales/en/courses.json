@@ -1,0 +1,93 @@
+{
+  "catalog": {
+    "title": "Course Catalog",
+    "subtitle": "Discover courses to advance your skills",
+    "searchPlaceholder": "Search courses...",
+    "filters": {
+      "all": "All courses",
+      "free": "Free courses",
+      "premium": "Premium courses"
+    },
+    "sort": {
+      "newest": "Newest",
+      "popular": "Most popular",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low"
+    },
+    "empty": {
+      "title": "No courses found",
+      "message": "Try adjusting your filters or search terms"
+    }
+  },
+  "card": {
+    "free": "Free",
+    "lessons": "{count} lesson | {count} lessons",
+    "chapters": "{count} chapter | {count} chapters",
+    "duration": "{duration}",
+    "enrolled": "Enrolled",
+    "progress": "{percent}% complete"
+  },
+  "detail": {
+    "aboutCourse": "About this course",
+    "instructor": "Instructor",
+    "curriculum": "Curriculum",
+    "reviews": "Reviews",
+    "overview": "Overview",
+    "whatYouWillLearn": "What you'll learn",
+    "requirements": "Requirements",
+    "includes": "This course includes",
+    "videoContent": "{hours} hours of video",
+    "articles": "{count} article | {count} articles",
+    "exercises": "{count} exercise | {count} exercises",
+    "certificate": "Certificate of completion",
+    "lifetime": "Full lifetime access",
+    "mobile": "Access on mobile and desktop"
+  },
+  "enrollment": {
+    "enroll": "Enroll Now",
+    "enrollFree": "Enroll for Free",
+    "startLearning": "Start Learning",
+    "continueLearning": "Continue Learning",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "enrolled": "You're enrolled in this course",
+    "notEnrolled": "Enrollment required",
+    "notEnrolledMessage": "You need to enroll in this course to access the lessons."
+  },
+  "lesson": {
+    "backToCourse": "Back to Course",
+    "lesson": "Lesson",
+    "notes": "Notes",
+    "discussions": "Discussions",
+    "markComplete": "Mark as Complete",
+    "completed": "Completed",
+    "notFound": {
+      "title": "Lesson Not Found",
+      "message": "This lesson doesn't exist or has been removed."
+    },
+    "types": {
+      "video": "Video",
+      "quiz": "Quiz",
+      "document": "Document",
+      "assignment": "Assignment"
+    }
+  },
+  "progress": {
+    "title": "Your Progress",
+    "completed": "{count} of {total} lessons completed",
+    "percentage": "{percent}% complete",
+    "certificate": "Earn your certificate",
+    "certificateReady": "Your certificate is ready!"
+  },
+  "myLearning": {
+    "title": "My Learning",
+    "subtitle": "Continue where you left off",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "empty": {
+      "title": "No courses yet",
+      "message": "Start learning by enrolling in a course",
+      "action": "Browse Courses"
+    }
+  }
+}

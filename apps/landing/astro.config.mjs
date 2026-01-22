@@ -10,4 +10,11 @@ export default defineConfig({
     port: 4321,
     host: true,
   },
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'fr'],
+    routing: {
+      prefixDefaultLocale: false, // /about instead of /en/about
+    },
+  },
 });

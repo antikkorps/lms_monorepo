@@ -1,0 +1,106 @@
+{
+  "discussions": {
+    "title": "Discussions",
+    "empty": {
+      "title": "No discussions yet",
+      "message": "Be the first to start a discussion!"
+    },
+    "form": {
+      "placeholder": "Share your thoughts or ask a question...",
+      "submit": "Post Discussion",
+      "submitting": "Posting..."
+    },
+    "item": {
+      "reply": "Reply",
+      "replies": "{count} reply | {count} replies",
+      "showReplies": "Show replies",
+      "hideReplies": "Hide replies",
+      "delete": "Delete",
+      "report": "Report",
+      "deleted": "This discussion has been deleted",
+      "you": "You"
+    },
+    "reply": {
+      "placeholder": "Write a reply...",
+      "submit": "Reply",
+      "submitting": "Posting..."
+    },
+    "report": {
+      "title": "Report Content",
+      "subtitle": "Help us understand the problem",
+      "reason": "Reason for reporting",
+      "reasons": {
+        "spam": "Spam",
+        "inappropriate": "Inappropriate content",
+        "harassment": "Harassment or bullying",
+        "offTopic": "Off-topic",
+        "other": "Other"
+      },
+      "description": "Additional details (optional)",
+      "descriptionPlaceholder": "Provide more context about the issue...",
+      "submit": "Submit Report",
+      "submitting": "Submitting...",
+      "success": "Report submitted successfully",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "loadFailed": "Failed to load discussions",
+      "postFailed": "Failed to post discussion",
+      "deleteFailed": "Failed to delete",
+      "reportFailed": "Failed to submit report",
+      "alreadyReported": "You have already reported this content",
+      "cannotReportOwn": "You cannot report your own content"
+    }
+  },
+  "notes": {
+    "title": "Personal Notes",
+    "subtitle": "Only you can see these notes",
+    "placeholder": "Write your notes using Markdown...",
+    "unsaved": "Unsaved",
+    "unsavedChanges": "You have unsaved changes",
+    "discard": "Discard",
+    "characters": "{count} characters",
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list",
+      "code": "Code",
+      "quote": "Quote",
+      "link": "Link",
+      "horizontalRule": "Horizontal rule"
+    },
+    "tabs": {
+      "edit": "Edit",
+      "preview": "Preview"
+    },
+    "preview": {
+      "empty": "Nothing to preview. Start writing in the Edit tab."
+    },
+    "export": {
+      "pdf": "Export as PDF",
+      "success": "PDF exported successfully",
+      "failed": "Failed to export PDF",
+      "empty": "Nothing to export"
+    },
+    "delete": {
+      "confirm": "Are you sure you want to delete this note?",
+      "success": "Note deleted"
+    },
+    "save": {
+      "success": "Note saved"
+    },
+    "shortcuts": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "save": "Save"
+    },
+    "errors": {
+      "loadFailed": "Failed to load note",
+      "saveFailed": "Failed to save note",
+      "deleteFailed": "Failed to delete note"
+    }
+  }
+}

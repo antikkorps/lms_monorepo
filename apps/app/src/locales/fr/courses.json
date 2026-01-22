@@ -1,0 +1,93 @@
+{
+  "catalog": {
+    "title": "Catalogue de cours",
+    "subtitle": "Découvrez des formations pour développer vos compétences",
+    "searchPlaceholder": "Rechercher des cours...",
+    "filters": {
+      "all": "Tous les cours",
+      "free": "Cours gratuits",
+      "premium": "Cours premium"
+    },
+    "sort": {
+      "newest": "Plus récents",
+      "popular": "Plus populaires",
+      "priceAsc": "Prix croissant",
+      "priceDesc": "Prix décroissant"
+    },
+    "empty": {
+      "title": "Aucun cours trouvé",
+      "message": "Essayez de modifier vos filtres ou termes de recherche"
+    }
+  },
+  "card": {
+    "free": "Gratuit",
+    "lessons": "{count} leçon | {count} leçons",
+    "chapters": "{count} chapitre | {count} chapitres",
+    "duration": "{duration}",
+    "enrolled": "Inscrit",
+    "progress": "{percent}% terminé"
+  },
+  "detail": {
+    "aboutCourse": "À propos de ce cours",
+    "instructor": "Formateur",
+    "curriculum": "Programme",
+    "reviews": "Avis",
+    "overview": "Aperçu",
+    "whatYouWillLearn": "Ce que vous apprendrez",
+    "requirements": "Prérequis",
+    "includes": "Ce cours comprend",
+    "videoContent": "{hours} heures de vidéo",
+    "articles": "{count} article | {count} articles",
+    "exercises": "{count} exercice | {count} exercices",
+    "certificate": "Certificat de réussite",
+    "lifetime": "Accès à vie",
+    "mobile": "Accès sur mobile et ordinateur"
+  },
+  "enrollment": {
+    "enroll": "S'inscrire",
+    "enrollFree": "S'inscrire gratuitement",
+    "startLearning": "Commencer",
+    "continueLearning": "Continuer",
+    "buyNow": "Acheter",
+    "addToCart": "Ajouter au panier",
+    "enrolled": "Vous êtes inscrit à ce cours",
+    "notEnrolled": "Inscription requise",
+    "notEnrolledMessage": "Vous devez vous inscrire à ce cours pour accéder aux leçons."
+  },
+  "lesson": {
+    "backToCourse": "Retour au cours",
+    "lesson": "Leçon",
+    "notes": "Notes",
+    "discussions": "Discussions",
+    "markComplete": "Marquer comme terminé",
+    "completed": "Terminé",
+    "notFound": {
+      "title": "Leçon introuvable",
+      "message": "Cette leçon n'existe pas ou a été supprimée."
+    },
+    "types": {
+      "video": "Vidéo",
+      "quiz": "Quiz",
+      "document": "Document",
+      "assignment": "Exercice"
+    }
+  },
+  "progress": {
+    "title": "Votre progression",
+    "completed": "{count} sur {total} leçons terminées",
+    "percentage": "{percent}% terminé",
+    "certificate": "Obtenez votre certificat",
+    "certificateReady": "Votre certificat est prêt !"
+  },
+  "myLearning": {
+    "title": "Mon apprentissage",
+    "subtitle": "Reprenez là où vous en étiez",
+    "inProgress": "En cours",
+    "completed": "Terminés",
+    "empty": {
+      "title": "Aucun cours",
+      "message": "Commencez à apprendre en vous inscrivant à un cours",
+      "action": "Parcourir les cours"
+    }
+  }
+}

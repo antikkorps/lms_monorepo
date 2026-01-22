@@ -30,6 +30,7 @@ import {
   CreditCard,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -220,6 +221,9 @@ async function handleLogout() {
 
       <div class="flex-1" />
 
+      <!-- Language switcher (mobile) -->
+      <LanguageSwitcher />
+
       <!-- Mobile user menu -->
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
@@ -263,6 +267,9 @@ async function handleLogout() {
       </div>
 
       <div class="flex items-center gap-4">
+        <!-- Language switcher -->
+        <LanguageSwitcher />
+
         <!-- Notifications -->
         <Button variant="ghost" size="icon">
           <Bell class="h-5 w-5" />

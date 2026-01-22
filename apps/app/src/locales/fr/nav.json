@@ -1,0 +1,34 @@
+{
+  "main": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "courses": "Cours",
+    "myLearning": "Mon apprentissage",
+    "badges": "Badges",
+    "analytics": "Statistiques"
+  },
+  "user": {
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "signOut": "Se déconnecter"
+  },
+  "admin": {
+    "title": "Administration",
+    "dashboard": "Tableau de bord admin",
+    "members": "Membres de l'équipe",
+    "invitations": "Invitations",
+    "seats": "Gestion des places"
+  },
+  "footer": {
+    "about": "À propos",
+    "contact": "Contact",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "help": "Centre d'aide"
+  },
+  "language": {
+    "title": "Langue",
+    "en": "English",
+    "fr": "Français"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "submit": "Envoyer",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "refresh": "Actualiser",
+    "loading": "Chargement...",
+    "viewAll": "Voir tout",
+    "learnMore": "En savoir plus",
+    "getStarted": "Commencer",
+    "tryFree": "Essayer gratuitement",
+    "signUp": "S'inscrire",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "download": "Télécharger",
+    "export": "Exporter",
+    "import": "Importer"
+  },
+  "status": {
+    "active": "Actif",
+    "inactive": "Inactif",
+    "pending": "En attente",
+    "completed": "Terminé",
+    "draft": "Brouillon",
+    "published": "Publié",
+    "archived": "Archivé"
+  },
+  "time": {
+    "now": "À l'instant",
+    "minutesAgo": "il y a {count} minute | il y a {count} minutes",
+    "hoursAgo": "il y a {count} heure | il y a {count} heures",
+    "daysAgo": "il y a {count} jour | il y a {count} jours",
+    "weeksAgo": "il y a {count} semaine | il y a {count} semaines"
+  },
+  "pagination": {
+    "page": "Page",
+    "of": "sur",
+    "showing": "Affichage de {from} à {to} sur {total}",
+    "perPage": "Par page"
+  },
+  "validation": {
+    "required": "Ce champ est requis",
+    "email": "Veuillez entrer un email valide",
+    "minLength": "Doit contenir au moins {min} caractères",
+    "maxLength": "Doit contenir au plus {max} caractères",
+    "passwordMatch": "Les mots de passe ne correspondent pas"
+  },
+  "confirm": {
+    "delete": "Êtes-vous sûr de vouloir supprimer ceci ?",
+    "unsavedChanges": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir quitter ?"
+  }
+}
