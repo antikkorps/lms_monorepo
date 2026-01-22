@@ -17,6 +17,7 @@ import {
   updateLesson,
   deleteLesson,
   reorderLessons,
+  getLesson,
 } from './controller.js';
 import { authenticate, optionalAuthenticate, requireRole } from '../auth/middleware.js';
 import { UserRole } from '../database/models/enums.js';
@@ -190,6 +191,9 @@ coursesRouter.patch(
 
 // Lesson routes at root level (for easier access)
 export const lessonsRouter = new Router({ prefix: '/lessons' });
+
+// Get a single lesson with localized content
+lessonsRouter.get('/:id', optionalAuthenticate, getLesson);
 
 lessonsRouter.patch(
   '/:id',
