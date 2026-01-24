@@ -5,6 +5,7 @@
   "delete": "Delete",
   "save": "Save",
   "goBack": "Go Back",
+  "retry": "Retry",
   "dashboard": {
     "greeting": {
       "morning": "Good morning",

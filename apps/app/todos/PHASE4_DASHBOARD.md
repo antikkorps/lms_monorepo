@@ -33,14 +33,18 @@
 - [ ] Implement optimistic updates
 
 ### Pending - Content Creation (Critical)
-- [ ] Course creator/editor page
-- [ ] Chapter management UI (drag & drop)
-- [ ] Lesson editor (video, quiz, document)
-- [ ] Quiz question builder
+- [x] Course creator/editor page (Done: 2026-01-24)
+- [x] Chapter management UI with drag & drop (Done: 2026-01-24)
+- [x] Lesson editor with settings tab (Done: 2026-01-24)
+- [x] Quiz question builder UI (Done: 2026-01-24)
 - [ ] Media upload components (video, images, docs)
 
 ### Recently Completed
 - [x] Discussion & Notes system merged to dev (Done: 2026-01-22)
+- [x] Dark mode with system preference detection (Done: 2026-01-24)
+- [x] Profile page with avatar selector (Done: 2026-01-24)
+- [x] Instructor course builder (chapters, lessons) (Done: 2026-01-24)
+- [x] Quiz question builder with option editor (Done: 2026-01-24)
 
 ---
 

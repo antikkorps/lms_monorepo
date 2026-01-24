@@ -610,11 +610,13 @@ export async function getLesson(ctx: Context): Promise<void> {
       {
         model: Chapter,
         as: 'chapter',
+        required: false,
         include: [
           {
             model: Course,
             as: 'course',
-            attributes: ['id', 'title', 'slug', 'status'],
+            attributes: ['id', 'title', 'slug', 'status', 'instructorId'],
+            required: false,
           },
         ],
       },

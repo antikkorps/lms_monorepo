@@ -186,17 +186,62 @@
       "content": "Contenu",
       "quiz": "Quiz"
     },
+    "quiz": {
+      "title": "Questions du quiz",
+      "description": "Ajoutez des questions pour tester la compréhension des étudiants"
+    },
     "settings": {
       "title": "Paramètres de la leçon",
       "description": "Configurez les paramètres de base de cette leçon",
       "lessonTitle": "Titre",
+      "titleLabel": "Titre",
+      "titlePlaceholder": "Entrez le titre de la leçon...",
       "type": "Type de leçon",
+      "duration": "Durée (minutes)",
       "isFree": "Aperçu gratuit",
       "isFreeDescription": "Permettre aux utilisateurs non inscrits de prévisualiser cette leçon",
       "requiresPrevious": "Exiger la précédente",
       "requiresPreviousDescription": "Les étudiants doivent d'abord terminer la leçon précédente",
       "saveSuccess": "Leçon mise à jour avec succès",
       "saveError": "Échec de la mise à jour de la leçon"
+    }
+  },
+  "quiz": {
+    "questionsCount": "questions",
+    "addQuestion": "Ajouter une question",
+    "editQuestion": "Modifier la question",
+    "addQuestionDescription": "Créer une nouvelle question à choix multiples",
+    "editQuestionDescription": "Mettre à jour la question et ses options",
+    "loadError": "Impossible de charger les questions",
+    "noQuestions": "Aucune question",
+    "noQuestionsDescription": "Ajoutez des questions pour créer votre quiz.",
+    "deleteSuccess": "Question supprimée",
+    "deleteError": "Échec de la suppression de la question",
+    "createSuccess": "Question créée",
+    "createError": "Échec de la création de la question",
+    "updateSuccess": "Question mise à jour",
+    "updateError": "Échec de la mise à jour de la question",
+    "reorderError": "Échec de la réorganisation des questions",
+    "questionLabel": "Question",
+    "questionPlaceholder": "Entrez votre question...",
+    "optionsLabel": "Options",
+    "addOption": "Ajouter une option",
+    "optionPlaceholder": "Entrez le texte de l'option...",
+    "options": "options",
+    "correct": "correcte",
+    "explanation": "Explication :",
+    "explanationLabel": "Explication (optionnelle)",
+    "explanationPlaceholder": "Expliquez pourquoi la bonne réponse est correcte...",
+    "explanationHint": "Ceci sera affiché aux apprenants après leur réponse.",
+    "optionsHint": "Cochez la case à côté des bonnes réponses. Vous pouvez avoir plusieurs réponses correctes.",
+    "deleteDialog": {
+      "title": "Supprimer la question",
+      "description": "Êtes-vous sûr de vouloir supprimer cette question ? Cette action est irréversible."
+    },
+    "errors": {
+      "questionRequired": "La question est requise",
+      "minOptions": "Au moins 2 options sont requises",
+      "noCorrect": "Au moins une option doit être marquée comme correcte"
     }
   },
   "quizBuilder": {

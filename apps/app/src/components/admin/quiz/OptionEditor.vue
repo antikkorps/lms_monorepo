@@ -27,13 +27,15 @@ const { t } = useI18n();
 
 const optionLabel = computed(() => String.fromCharCode(65 + props.index)); // A, B, C, D...
 
-function handleTextChange(event: Event): void {
-  const target = event.target as HTMLInputElement;
-  emit('update', { ...props.option, text: target.value });
-}
+const optionText = computed({
+  get: () => props.option.text,
+  set: (value: string) => {
+    emit('update', { text: value, isCorrect: props.option.isCorrect });
+  },
+});
 
-function handleCorrectChange(checked: boolean): void {
-  emit('update', { ...props.option, isCorrect: checked });
+function handleCorrectChange(value: boolean | 'indeterminate'): void {
+  emit('update', { text: props.option.text, isCorrect: value === true });
 }
 
 function handleDelete(): void {
@@ -59,9 +61,8 @@ function handleDelete(): void {
     <!-- Option Text -->
     <div class="flex-1 space-y-2">
       <Input
-        :value="option.text"
+        v-model="optionText"
         :placeholder="t('instructor.quiz.optionPlaceholder', 'Enter option text...')"
-        @input="handleTextChange"
       />
     </div>
 
@@ -69,8 +70,8 @@ function handleDelete(): void {
     <div class="flex items-center gap-2 mt-2">
       <Checkbox
         :id="`option-correct-${index}`"
-        :checked="option.isCorrect"
-        @update:checked="handleCorrectChange"
+        :model-value="option.isCorrect"
+        @update:model-value="handleCorrectChange"
       />
       <Label :for="`option-correct-${index}`" class="text-sm text-muted-foreground cursor-pointer">
         {{ t('instructor.quiz.correct', 'Correct') }}

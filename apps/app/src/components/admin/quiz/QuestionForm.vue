@@ -104,7 +104,7 @@ function addOption(): void {
 }
 
 function updateOption(index: number, option: OptionInput): void {
-  form.value.options[index] = option;
+  form.value.options.splice(index, 1, option);
 }
 
 function deleteOption(index: number): void {
@@ -124,12 +124,13 @@ function validateForm(): boolean {
   }
 
   const filledOptions = form.value.options.filter((o) => o.text.trim());
+
   if (filledOptions.length < 2) {
     errors.value.options = t(
       'instructor.quiz.errors.minOptions',
       'At least 2 options are required'
     );
-  } else if (!hasCorrectOption.value) {
+  } else if (!filledOptions.some((o) => o.isCorrect)) {
     errors.value.options = t(
       'instructor.quiz.errors.noCorrect',
       'At least one option must be marked as correct'
@@ -195,7 +196,7 @@ function handleClose(): void {
             v-model="form.question"
             :placeholder="t('instructor.quiz.questionPlaceholder', 'Enter your question...')"
             :class="{ 'border-destructive': errors.question }"
-            rows="3"
+            :rows="3"
           />
           <p v-if="errors.question" class="text-sm text-destructive">
             {{ errors.question }}
@@ -255,7 +256,7 @@ function handleClose(): void {
             id="question-explanation"
             v-model="form.explanation"
             :placeholder="t('instructor.quiz.explanationPlaceholder', 'Explain why the correct answer is correct...')"
-            rows="2"
+            :rows="2"
           />
           <p class="text-sm text-muted-foreground">
             {{ t('instructor.quiz.explanationHint', 'This will be shown to learners after they answer the question.') }}
