@@ -1,4 +1,10 @@
 {
+  "cancel": "Annuler",
+  "create": "Créer",
+  "edit": "Modifier",
+  "delete": "Supprimer",
+  "save": "Enregistrer",
+  "goBack": "Retour",
   "dashboard": {
     "greeting": {
       "morning": "Bonjour",
@@ -45,6 +51,7 @@
     "submit": "Envoyer",
     "confirm": "Confirmer",
     "back": "Retour",
+    "goBack": "Retour",
     "next": "Suivant",
     "previous": "Précédent",
     "close": "Fermer",
@@ -62,7 +69,10 @@
     "signOut": "Se déconnecter",
     "download": "Télécharger",
     "export": "Exporter",
-    "import": "Importer"
+    "import": "Importer",
+    "retry": "Réessayer",
+    "clear": "Effacer",
+    "clearFilters": "Effacer les filtres"
   },
   "status": {
     "active": "Actif",

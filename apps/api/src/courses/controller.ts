@@ -9,10 +9,10 @@ import slugify from 'slugify';
 
 // Type for authenticated user from context
 interface AuthenticatedUser {
-  id: string;
+  userId: string;
   email: string;
   role: UserRole;
-  tenantId?: string;
+  tenantId?: string | null;
 }
 
 /**
@@ -33,7 +33,7 @@ function canEditCourse(user: AuthenticatedUser, course: Course): boolean {
   return (
     user.role === UserRole.SUPER_ADMIN ||
     user.role === UserRole.TENANT_ADMIN ||
-    course.instructorId === user.id
+    course.instructorId === user.userId
   );
 }
 
@@ -238,7 +238,7 @@ export async function createCourse(ctx: Context): Promise<void> {
     description: description || null,
     thumbnailUrl: thumbnailUrl || null,
     price: price || 0,
-    instructorId: user.id,
+    instructorId: user.userId,
     status: CourseStatus.DRAFT,
   });
 
@@ -337,7 +337,7 @@ export async function getMyCourses(ctx: Context): Promise<void> {
   };
 
   const offset = (Number(page) - 1) * Number(limit);
-  const where: Record<string, unknown> = { instructorId: user.id };
+  const where: Record<string, unknown> = { instructorId: user.userId };
 
   if (status) {
     where.status = status;

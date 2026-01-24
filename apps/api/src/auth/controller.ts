@@ -30,12 +30,23 @@ import { logger } from '../utils/logger.js';
 import { emailService } from '../services/email/index.js';
 
 // Cookie options for tokens
-const COOKIE_OPTIONS = {
+const COOKIE_OPTIONS: {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: 'lax' | 'strict' | 'none';
+  domain?: string;
+  path?: string;
+} = {
   httpOnly: true,
   secure: config.cookieSecure,
-  sameSite: 'lax' as const,
-  domain: config.cookieDomain,
+  sameSite: 'lax',
+  path: '/',
 };
+
+// Only add domain if explicitly set (undefined domain can cause issues)
+if (config.cookieDomain) {
+  COOKIE_OPTIONS.domain = config.cookieDomain;
+}
 
 /**
  * Set auth cookies on the response

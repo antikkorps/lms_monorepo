@@ -5,6 +5,7 @@ import { AppError } from '../utils/app-error.js';
 import { UserRole } from '../database/models/enums.js';
 import { User } from '../database/models/User.js';
 import { Tenant } from '../database/models/Tenant.js';
+import { logger } from '../utils/logger.js';
 
 // Extend Koa context state with auth info
 declare module 'koa' {
@@ -40,15 +41,27 @@ function extractToken(ctx: Context): string | null {
 export async function authenticate(ctx: Context, next: Next): Promise<void> {
   const token = extractToken(ctx);
 
+  // Debug logging for auth issues
+  logger.debug({
+    path: ctx.path,
+    hasToken: !!token,
+    hasCookieHeader: !!ctx.headers.cookie,
+    cookieHeader: ctx.headers.cookie?.substring(0, 100) + '...',
+  }, 'Auth middleware: extracting token');
+
   if (!token) {
+    logger.warn({ path: ctx.path, headers: Object.keys(ctx.headers) }, 'Auth middleware: no token found');
     throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
   }
 
   try {
+    logger.debug({ path: ctx.path }, 'Auth middleware: verifying token...');
     const payload = verifyAccessToken(token);
+    logger.debug({ path: ctx.path, userId: payload.userId, role: payload.role }, 'Auth middleware: token verified');
 
     // Check if token is blacklisted
     const blacklisted = await isTokenBlacklisted(payload.userId);
+    logger.debug({ path: ctx.path, blacklisted }, 'Auth middleware: blacklist check');
     if (blacklisted) {
       throw new AppError('Token has been revoked', 401, 'TOKEN_REVOKED');
     }
@@ -64,8 +77,10 @@ export async function authenticate(ctx: Context, next: Next): Promise<void> {
       }
     }
 
+    logger.debug({ path: ctx.path }, 'Auth middleware: calling next()');
     await next();
   } catch (error) {
+    logger.warn({ path: ctx.path, error: (error as Error).message, errorName: (error as Error).name }, 'Auth middleware: error');
     if (error instanceof AppError) {
       throw error;
     }

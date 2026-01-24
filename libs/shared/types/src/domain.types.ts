@@ -49,6 +49,118 @@ export interface CourseListItem {
   progress?: number; // User progress percentage (0-100)
 }
 
+// Instructor course management
+export interface InstructorCourse {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  price: number;
+  status: CourseStatus;
+  chaptersCount: number;
+  lessonsCount: number;
+  enrollmentsCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateCourseInput {
+  title: string;
+  slug: string;
+  description?: string | null;
+  price?: number;
+  thumbnailUrl?: string | null;
+}
+
+export interface UpdateCourseInput {
+  title?: string;
+  slug?: string;
+  description?: string | null;
+  price?: number;
+  thumbnailUrl?: string | null;
+  status?: CourseStatus;
+}
+
+// Chapter management
+export interface Chapter {
+  id: string;
+  courseId: string;
+  title: string;
+  description: string | null;
+  position: number;
+  lessonsCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateChapterInput {
+  title: string;
+  description?: string | null;
+}
+
+export interface UpdateChapterInput {
+  title?: string;
+  description?: string | null;
+}
+
+// Lesson management (for instructor)
+export interface Lesson {
+  id: string;
+  chapterId: string;
+  title: string;
+  type: LessonType;
+  duration: number;
+  position: number;
+  isFree: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateLessonInput {
+  title: string;
+  type: LessonType;
+  duration?: number;
+  isFree?: boolean;
+}
+
+export interface UpdateLessonInput {
+  title?: string;
+  type?: LessonType;
+  duration?: number;
+  isFree?: boolean;
+}
+
+// Quiz builder types
+export interface QuizQuestion {
+  id: string;
+  lessonId: string;
+  question: string;
+  options: QuizOption[];
+  explanation: string | null;
+  position: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface QuizOption {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+}
+
+export interface CreateQuestionInput {
+  question: string;
+  options: { text: string; isCorrect: boolean }[];
+  explanation?: string | null;
+}
+
+export interface UpdateQuestionInput {
+  question?: string;
+  options?: { text: string; isCorrect: boolean }[];
+  explanation?: string | null;
+}
+
 export interface CourseDetail extends CourseListItem {
   chapters: ChapterWithLessons[];
 }

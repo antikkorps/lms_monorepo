@@ -117,6 +117,38 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: 'app', requiresAuth: true },
   },
 
+  // Instructor routes (instructors and admins)
+  {
+    path: '/instructor',
+    name: 'instructor-courses',
+    component: () => import('../views/admin/courses/CourseListView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/instructor/courses/new',
+    name: 'instructor-course-create',
+    component: () => import('../views/admin/courses/CourseEditorView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/instructor/courses/:id/edit',
+    name: 'instructor-course-edit',
+    component: () => import('../views/admin/courses/CourseEditorView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/instructor/courses/:id/build',
+    name: 'instructor-course-build',
+    component: () => import('../views/admin/courses/CourseBuilderView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/instructor/lessons/:id',
+    name: 'instructor-lesson-edit',
+    component: () => import('../views/admin/lessons/LessonEditorView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+
   // Catch-all 404
   {
     path: '/:pathMatch(.*)*',

@@ -1,4 +1,10 @@
 {
+  "cancel": "Cancel",
+  "create": "Create",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "goBack": "Go Back",
   "dashboard": {
     "greeting": {
       "morning": "Good morning",
@@ -45,6 +51,7 @@
     "submit": "Submit",
     "confirm": "Confirm",
     "back": "Back",
+    "goBack": "Go Back",
     "next": "Next",
     "previous": "Previous",
     "close": "Close",
@@ -62,7 +69,10 @@
     "signOut": "Sign out",
     "download": "Download",
     "export": "Export",
-    "import": "Import"
+    "import": "Import",
+    "retry": "Retry",
+    "clear": "Clear",
+    "clearFilters": "Clear Filters"
   },
   "status": {
     "active": "Active",
