@@ -28,6 +28,7 @@
     "title": "Oops!",
     "message": "Something went wrong",
     "retry": "Try again",
-    "goBack": "Go back"
+    "goBack": "Go back",
+    "unexpected": "An unexpected error occurred"
   }
 }

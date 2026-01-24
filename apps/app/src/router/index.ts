@@ -84,6 +84,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/AnalyticsView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../views/ProfileView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Admin routes (tenant_admin only)
   {

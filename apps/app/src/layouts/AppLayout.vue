@@ -32,6 +32,7 @@ import {
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
+import DarkModeToggle from '@/components/common/DarkModeToggle.vue';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -226,6 +227,9 @@ async function handleLogout() {
       <!-- Language switcher (mobile) -->
       <LanguageSwitcher />
 
+      <!-- Dark mode toggle (mobile) -->
+      <DarkModeToggle />
+
       <!-- Mobile user menu -->
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
@@ -271,6 +275,9 @@ async function handleLogout() {
       <div class="flex items-center gap-4">
         <!-- Language switcher -->
         <LanguageSwitcher />
+
+        <!-- Dark mode toggle -->
+        <DarkModeToggle />
 
         <!-- Notifications -->
         <Button variant="ghost" size="icon">
