@@ -20,12 +20,36 @@ interface RegisterData {
   lastName: string;
 }
 
+// Use window to persist state across HMR reloads
+const AUTH_WINDOW_KEY = '__authStoreState__';
+const INIT_THROTTLE_MS = 2000;
+
+interface AuthWindowState {
+  initialized: boolean;
+  initPromise: Promise<void> | null;
+  lastInitTime: number;
+  userData: AuthenticatedUser | null;
+}
+
+function getAuthWindowState(): AuthWindowState {
+  if (!(window as unknown as Record<string, unknown>)[AUTH_WINDOW_KEY]) {
+    (window as unknown as Record<string, unknown>)[AUTH_WINDOW_KEY] = {
+      initialized: false,
+      initPromise: null,
+      lastInitTime: 0,
+      userData: null,
+    };
+  }
+  return (window as unknown as Record<string, unknown>)[AUTH_WINDOW_KEY] as AuthWindowState;
+}
+
 export const useAuthStore = defineStore('auth', () => {
-  // State
-  const user = ref<AuthenticatedUser | null>(null);
+  // State - restore from window if available (survives HMR)
+  const windowState = getAuthWindowState();
+  const user = ref<AuthenticatedUser | null>(windowState.userData);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
-  const isInitialized = ref(false);
+  const isInitialized = ref(windowState.initialized);
 
   // Getters
   const isAuthenticated = computed(() => !!user.value);
@@ -49,25 +73,59 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Initialize auth state from server
    * Called on app startup
+   * Uses window-level state to survive HMR and prevent race conditions
    */
-  async function initialize() {
-    if (isInitialized.value) return;
+  async function initialize(): Promise<void> {
+    const now = Date.now();
+    const windowState = getAuthWindowState();
 
-    isLoading.value = true;
-    error.value = null;
-
-    try {
-      // Try to get current user from server (uses httpOnly cookie)
-      const userData = await apiClient.get<AuthenticatedUser>('/auth/me');
-      user.value = userData;
-    } catch (err) {
-      console.error('Auth initialization error:', err);
-      // Not authenticated - that's OK
-      user.value = null;
-    } finally {
-      isLoading.value = false;
+    // Already initialized
+    if (windowState.initialized || isInitialized.value) {
       isInitialized.value = true;
+      return;
     }
+
+    // Throttle: prevent rapid successive calls (e.g., during HMR)
+    if (now - windowState.lastInitTime < INIT_THROTTLE_MS) {
+      console.log('[AuthStore] Skipping init - throttled');
+      isInitialized.value = true;
+      return;
+    }
+
+    // Initialization already in progress - return the existing promise
+    if (windowState.initPromise) {
+      console.log('[AuthStore] Init in progress, waiting...');
+      return windowState.initPromise;
+    }
+
+    windowState.lastInitTime = now;
+
+    // Start initialization
+    windowState.initPromise = (async () => {
+      isLoading.value = true;
+      error.value = null;
+
+      try {
+        console.log('[AuthStore] Initializing...');
+        // Try to get current user from server (uses httpOnly cookie)
+        // API returns { user: AuthenticatedUser, tenant: TenantInfo | null }
+        const response = await apiClient.get<{ user: AuthenticatedUser }>('/auth/me');
+        user.value = response.user;
+        windowState.userData = response.user; // Persist for HMR
+        console.log('[AuthStore] Initialized, user:', response.user?.email);
+      } catch (err) {
+        console.error('[AuthStore] Init error:', err);
+        // Not authenticated - that's OK
+        user.value = null;
+        windowState.userData = null;
+      } finally {
+        isLoading.value = false;
+        isInitialized.value = true;
+        windowState.initialized = true;
+      }
+    })();
+
+    return windowState.initPromise;
   }
 
   /**
@@ -83,6 +141,11 @@ export const useAuthStore = defineStore('auth', () => {
         credentials,
       );
       user.value = response.user;
+      // Persist for HMR and mark as initialized
+      const ws = getAuthWindowState();
+      ws.userData = response.user;
+      ws.initialized = true;
+      isInitialized.value = true;
       return true;
     } catch (err) {
       if (err instanceof ApiRequestError) {
@@ -132,6 +195,11 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       user.value = null;
       isLoading.value = false;
+      // Clear window state
+      const ws = getAuthWindowState();
+      ws.userData = null;
+      ws.initialized = false;
+      isInitialized.value = false;
     }
   }
 
@@ -148,6 +216,11 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       user.value = null;
       isLoading.value = false;
+      // Clear window state
+      const ws = getAuthWindowState();
+      ws.userData = null;
+      ws.initialized = false;
+      isInitialized.value = false;
     }
   }
 

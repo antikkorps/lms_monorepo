@@ -90,15 +90,17 @@ const updateLessonSchema = z.object({
 
 // Public routes (with optional auth for filtering)
 coursesRouter.get('/', optionalAuthenticate, listCourses);
-coursesRouter.get('/:id', optionalAuthenticate, getCourse);
 
 // Protected routes - instructor/admin only
+// IMPORTANT: /my must come BEFORE /:id to avoid being matched as an id
 coursesRouter.get(
   '/my',
   authenticate,
   requireRole(UserRole.INSTRUCTOR, UserRole.TENANT_ADMIN, UserRole.SUPER_ADMIN),
   getMyCourses
 );
+
+coursesRouter.get('/:id', optionalAuthenticate, getCourse);
 
 coursesRouter.post(
   '/',

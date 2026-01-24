@@ -13,6 +13,7 @@ interface RequestOptions {
   params?: Record<string, string | number | boolean | undefined>;
   headers?: Record<string, string>;
   skipAuth?: boolean;
+  _isRetry?: boolean; // Internal flag to prevent infinite retry loops
 }
 
 class ApiClient {
@@ -49,13 +50,16 @@ class ApiClient {
       credentials: 'include', // Include cookies for auth
     });
 
-    // Handle 401 - attempt token refresh
-    if (response.status === 401 && !skipAuth) {
+    // Handle 401 - attempt token refresh (only once to prevent infinite loops)
+    if (response.status === 401 && !skipAuth && !options._isRetry) {
+      console.log('[ApiClient] Got 401, attempting token refresh...');
       const refreshed = await this.handleTokenRefresh();
       if (refreshed) {
-        // Retry the original request
-        return this.request<T>(endpoint, options);
+        console.log('[ApiClient] Token refreshed, retrying request...');
+        // Retry the original request with _isRetry flag to prevent infinite loop
+        return this.request<T>(endpoint, { ...options, _isRetry: true });
       }
+      console.log('[ApiClient] Token refresh failed');
       // Refresh failed - let the error propagate
     }
 
@@ -89,22 +93,41 @@ class ApiClient {
     this.isRefreshing = true;
 
     try {
+      console.log('[ApiClient] Calling /auth/refresh...');
       const response = await fetch(`${API_BASE}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
       });
 
+      console.log('[ApiClient] Refresh response status:', response.status);
+
       if (response.ok) {
+        const data = await response.json();
+        console.log('[ApiClient] Refresh successful, got new token');
+
         // Refresh successful - process queued requests
         this.refreshQueue.forEach((callback) => callback());
         this.refreshQueue = [];
+
+        // Small delay to ensure cookies are set before retry
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         return true;
+      }
+
+      // Log the error response
+      try {
+        const errorData = await response.json();
+        console.error('[ApiClient] Refresh failed:', errorData);
+      } catch {
+        console.error('[ApiClient] Refresh failed with status:', response.status);
       }
 
       // Refresh failed - clear auth state
       this.clearAuthState();
       return false;
-    } catch {
+    } catch (err) {
+      console.error('[ApiClient] Refresh error:', err);
       this.clearAuthState();
       return false;
     } finally {
@@ -118,6 +141,15 @@ class ApiClient {
   private clearAuthState(): void {
     // Clear any client-side state
     localStorage.removeItem('user');
+
+    // Clear the auth store window state to ensure router guard sees user as logged out
+    const AUTH_WINDOW_KEY = '__authStoreState__';
+    const windowState = (window as unknown as Record<string, unknown>)[AUTH_WINDOW_KEY];
+    if (windowState) {
+      (windowState as Record<string, unknown>).initialized = false;
+      (windowState as Record<string, unknown>).userData = null;
+      (windowState as Record<string, unknown>).initPromise = null;
+    }
 
     // Redirect to login if not already there
     if (!window.location.pathname.includes('/login')) {

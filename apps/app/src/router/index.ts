@@ -84,6 +84,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/AnalyticsView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../views/ProfileView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Admin routes (tenant_admin only)
   {
@@ -108,6 +114,38 @@ const routes: RouteRecordRaw[] = [
     path: '/admin/seats',
     name: 'admin-seats',
     component: () => import('../views/admin/SeatManagementView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+
+  // Instructor routes (instructors and admins)
+  {
+    path: '/instructor',
+    name: 'instructor-courses',
+    component: () => import('../views/admin/courses/CourseListView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/instructor/courses/new',
+    name: 'instructor-course-create',
+    component: () => import('../views/admin/courses/CourseEditorView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/instructor/courses/:id/edit',
+    name: 'instructor-course-edit',
+    component: () => import('../views/admin/courses/CourseEditorView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/instructor/courses/:id/build',
+    name: 'instructor-course-build',
+    component: () => import('../views/admin/courses/CourseBuilderView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/instructor/lessons/:id',
+    name: 'instructor-lesson-edit',
+    component: () => import('../views/admin/lessons/LessonEditorView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
 

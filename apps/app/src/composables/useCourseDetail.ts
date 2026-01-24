@@ -3,7 +3,7 @@
  * Handles fetching and managing a single course's data
  */
 
-import type { CourseDetail, LessonItem, ChapterWithLessons } from '@shared/types';
+import type { CourseDetail, LessonItem } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi } from './useApi';
 
