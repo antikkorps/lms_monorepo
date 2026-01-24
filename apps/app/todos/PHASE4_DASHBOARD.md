@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-01-21
+## Modified: 2026-01-24
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -16,16 +16,35 @@
 - [x] Build tenant admin dashboard (Done: 2026-01-21)
 - [x] Implement team management views (Done: 2026-01-21)
 - [x] Implement member invitation system (Done: 2026-01-21)
+- [x] Implement seat management UI (Done: 2026-01-21)
+- [x] Create discussion/comment system (Done: 2026-01-22)
+- [x] Create personal notes system with markdown & PDF export (Done: 2026-01-22)
+- [x] Add internationalization (i18n) EN/FR (Done: 2026-01-22)
+- [x] Implement dark mode toggle + persistence (Done: 2026-01-24)
+- [x] Fix DiceBear avatars not displaying (Done: 2026-01-24)
+- [x] Create profile page with avatar selector component (Done: 2026-01-24)
 
-### In Progress
-(None currently)
-
-### Pending
+### Pending - UX Improvements
 - [ ] Implement lazy loading for videos
-- [ ] Create discussion/comment system
+
+### Pending - API Integration
+- [ ] Integrate real API (replace mock data in composables)
+- [ ] Add error boundaries for API failures
+- [ ] Implement optimistic updates
+
+### Pending - Content Creation (Critical)
+- [x] Course creator/editor page (Done: 2026-01-24)
+- [x] Chapter management UI with drag & drop (Done: 2026-01-24)
+- [x] Lesson editor with settings tab (Done: 2026-01-24)
+- [x] Quiz question builder UI (Done: 2026-01-24)
+- [ ] Media upload components (video, images, docs)
 
 ### Recently Completed
-- [x] Implement seat management UI (Done: 2026-01-21)
+- [x] Discussion & Notes system merged to dev (Done: 2026-01-22)
+- [x] Dark mode with system preference detection (Done: 2026-01-24)
+- [x] Profile page with avatar selector (Done: 2026-01-24)
+- [x] Instructor course builder (chapters, lessons) (Done: 2026-01-24)
+- [x] Quiz question builder with option editor (Done: 2026-01-24)
 
 ---
 
@@ -33,3 +52,4 @@
 - VideoPlayer must support multiple formats (1080p, 720p, 480p)
 - QuizzEngine uses Zod schemas from @shared/schemas
 - Dashboard views differ for Learner vs Tenant Admin
+- Dark mode should use Tailwind's dark: variant with system preference detection

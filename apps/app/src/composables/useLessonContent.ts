@@ -47,10 +47,11 @@ export function useLessonContent(lessonId: string) {
     error.value = null;
 
     try {
-      const response = await api.get<{ data: LessonContentItem[] }>(
+      // useApi already extracts .data from the response
+      const response = await api.get<LessonContentItem[]>(
         `/lessons/${lessonId}/content`
       );
-      contents.value = response.data;
+      contents.value = response;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load lesson content';
       contents.value = [];
@@ -64,7 +65,8 @@ export function useLessonContent(lessonId: string) {
     error.value = null;
 
     try {
-      const response = await api.put<{ data: LessonContentItem }>(
+      // useApi already extracts .data from the response
+      const response = await api.put<LessonContentItem>(
         `/lessons/${lessonId}/content`,
         input
       );
@@ -72,12 +74,12 @@ export function useLessonContent(lessonId: string) {
       // Update local cache
       const index = contents.value.findIndex((c) => c.lang === input.lang);
       if (index >= 0) {
-        contents.value[index] = response.data;
+        contents.value[index] = response;
       } else {
-        contents.value.push(response.data);
+        contents.value.push(response);
       }
 
-      return response.data;
+      return response;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to save lesson content';
       return null;

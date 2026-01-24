@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { computed, ref, watch } from 'vue';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAvatar, type AvatarStyle } from '@/composables/useAvatar';
 import type { HTMLAttributes } from 'vue';
 
@@ -10,22 +10,31 @@ interface Props {
   lastName?: string;
   avatarUrl?: string | null;
   style?: AvatarStyle;
+  variation?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   class?: HTMLAttributes['class'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  style: 'initials',
-  size: 'md',
-});
+const props = defineProps<Props>();
 
-const { avatarUrl: generatedAvatarUrl } = useAvatar(
+// Use global preference if no style/variation is explicitly provided
+const { avatarUrl: generatedAvatarUrl, globalAvatarStyle, globalAvatarVariation } = useAvatar(
   () => props.userId,
   () => props.firstName,
   () => props.lastName,
   () => props.avatarUrl,
-  props.style,
+  () => props.style ?? globalAvatarStyle.value,
+  () => props.variation ?? globalAvatarVariation.value,
 );
+
+const imageLoaded = ref(false);
+const imageError = ref(false);
+
+// Reset image state when URL changes
+watch(generatedAvatarUrl, () => {
+  imageLoaded.value = false;
+  imageError.value = false;
+});
 
 const initials = computed(() => {
   const first = props.firstName?.charAt(0) || '';
@@ -34,7 +43,8 @@ const initials = computed(() => {
 });
 
 const sizeClass = computed(() => {
-  switch (props.size) {
+  const size = props.size ?? 'md';
+  switch (size) {
     case 'xs':
       return 'h-6 w-6 text-xs';
     case 'sm':
@@ -49,11 +59,28 @@ const sizeClass = computed(() => {
       return 'h-10 w-10 text-base';
   }
 });
+
+function onImageLoad() {
+  imageLoaded.value = true;
+  imageError.value = false;
+}
+
+function onImageError() {
+  imageError.value = true;
+  imageLoaded.value = false;
+}
 </script>
 
 <template>
   <Avatar :class="[sizeClass, props.class]">
-    <AvatarImage :src="generatedAvatarUrl" :alt="`${firstName} ${lastName}`" />
-    <AvatarFallback>{{ initials }}</AvatarFallback>
+    <img
+      v-show="imageLoaded && !imageError"
+      :src="generatedAvatarUrl"
+      :alt="`${firstName} ${lastName}`"
+      class="aspect-square size-full object-cover"
+      @load="onImageLoad"
+      @error="onImageError"
+    />
+    <AvatarFallback v-show="!imageLoaded || imageError">{{ initials }}</AvatarFallback>
   </Avatar>
 </template>

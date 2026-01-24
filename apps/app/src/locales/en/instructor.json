@@ -1,0 +1,295 @@
+{
+  "courses": {
+    "title": "My Courses",
+    "subtitle": "Create and manage your courses",
+    "create": "New Course",
+    "loadError": "Failed to load courses",
+    "noCourses": "No courses yet",
+    "noCoursesDescription": "Create your first course to get started.",
+    "noResults": "No courses found",
+    "noResultsDescription": "Try adjusting your search or filter criteria.",
+    "searchPlaceholder": "Search courses...",
+    "allStatus": "All Status",
+    "free": "Free",
+    "chapters": "chapters",
+    "lessons": "lessons",
+    "deleteSuccess": "Course deleted successfully",
+    "deleteError": "Failed to delete course",
+    "publishSuccess": "Course published successfully",
+    "publishError": "Failed to publish course",
+    "archiveSuccess": "Course archived successfully",
+    "archiveError": "Failed to archive course",
+    "table": {
+      "title": "Course",
+      "status": "Status",
+      "content": "Content",
+      "price": "Price",
+      "enrollments": "Enrollments",
+      "updated": "Updated",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit Details",
+      "build": "Build Content",
+      "publish": "Publish",
+      "archive": "Archive",
+      "delete": "Delete"
+    },
+    "deleteDialog": {
+      "title": "Delete Course",
+      "description": "Are you sure you want to delete this course? This action cannot be undone."
+    }
+  },
+  "courseStatus": {
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived"
+  },
+  "chapters": {
+    "lessonsCount": "lessons",
+    "addLesson": "Add Lesson"
+  },
+  "lessons": {
+    "open": "Open Lesson"
+  },
+  "courseEditor": {
+    "createTitle": "Create Course",
+    "editTitle": "Edit Course",
+    "createSubtitle": "Set up your new course",
+    "editSubtitle": "Update your course details",
+    "basicInfo": "Basic Information",
+    "basicInfoDescription": "The essential details about your course",
+    "title": "Title",
+    "titlePlaceholder": "e.g., Introduction to Machine Learning",
+    "slug": "URL Slug",
+    "slugPlaceholder": "intro-machine-learning",
+    "slugHint": "Optional. Will be auto-generated from title if not provided. Only lowercase letters, numbers, and hyphens allowed.",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe what students will learn in this course...",
+    "pricing": "Pricing",
+    "pricingDescription": "Set the price for your course. Leave at 0 for a free course.",
+    "price": "Price",
+    "pricePlaceholder": "0.00",
+    "media": "Media",
+    "mediaDescription": "Add a thumbnail image for your course",
+    "thumbnailUrl": "Thumbnail URL",
+    "thumbnailPlaceholder": "https://example.com/image.jpg",
+    "thumbnailHint": "Recommended size: 1280x720 pixels",
+    "preview": "Preview",
+    "save": "Save Changes",
+    "create": "Create Course",
+    "loadError": "Failed to load course",
+    "createSuccess": "Course created successfully",
+    "createError": "Failed to create course",
+    "updateSuccess": "Course updated successfully",
+    "updateError": "Failed to update course",
+    "errors": {
+      "titleRequired": "Title is required",
+      "slugRequired": "Slug is required",
+      "slugInvalid": "Slug can only contain lowercase letters, numbers, and hyphens",
+      "priceInvalid": "Price cannot be negative"
+    }
+  },
+  "courseBuilder": {
+    "title": "Course Builder",
+    "subtitle": "Manage chapters and lessons",
+    "backToCourses": "Back to Courses",
+    "loadError": "Failed to load course content",
+    "addChapter": "Add Chapter",
+    "editDetails": "Edit Details",
+    "publish": "Publish",
+    "chapters": "Chapters",
+    "noChapters": "No chapters yet",
+    "noChaptersDescription": "Add your first chapter to start building your course content.",
+    "emptyChapters": {
+      "title": "No chapters yet",
+      "message": "Add your first chapter to start building your course."
+    }
+  },
+  "chapterForm": {
+    "createTitle": "New Chapter",
+    "editTitle": "Edit Chapter",
+    "title": "Title",
+    "titlePlaceholder": "e.g., Getting Started",
+    "description": "Description",
+    "descriptionPlaceholder": "Brief description of this chapter...",
+    "cancel": "Cancel",
+    "create": "Create Chapter",
+    "save": "Save Changes",
+    "createSuccess": "Chapter created successfully",
+    "createError": "Failed to create chapter",
+    "updateSuccess": "Chapter updated successfully",
+    "updateError": "Failed to update chapter"
+  },
+  "chapterCard": {
+    "lessons": "{count} lesson | {count} lessons",
+    "noLessons": "No lessons yet",
+    "addLesson": "Add Lesson",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": {
+      "title": "Delete Chapter",
+      "description": "Are you sure you want to delete \"{title}\"? All lessons in this chapter will also be deleted.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "deleteSuccess": "Chapter deleted successfully",
+    "deleteError": "Failed to delete chapter"
+  },
+  "lessonForm": {
+    "createTitle": "New Lesson",
+    "editTitle": "Edit Lesson",
+    "createDescription": "Add a new lesson to this chapter",
+    "editDescription": "Update the lesson details",
+    "title": "Title",
+    "titlePlaceholder": "e.g., Introduction to the Topic",
+    "type": "Type",
+    "typePlaceholder": "Select lesson type",
+    "duration": "Duration (minutes)",
+    "durationPlaceholder": "e.g., 15",
+    "isFree": "Free Preview",
+    "isFreeDescription": "Allow non-enrolled users to preview this lesson",
+    "cancel": "Cancel",
+    "create": "Create Lesson",
+    "save": "Save Changes",
+    "createSuccess": "Lesson created successfully",
+    "createError": "Failed to create lesson",
+    "updateSuccess": "Lesson updated successfully",
+    "updateError": "Failed to update lesson"
+  },
+  "lessonCard": {
+    "free": "Free",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": {
+      "title": "Delete Lesson",
+      "description": "Are you sure you want to delete \"{title}\"?",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "deleteSuccess": "Lesson deleted successfully",
+    "deleteError": "Failed to delete lesson"
+  },
+  "lessonTypes": {
+    "video": "Video",
+    "quiz": "Quiz",
+    "document": "Document",
+    "assignment": "Assignment"
+  },
+  "lessonEditor": {
+    "title": "Lesson Editor",
+    "subtitle": "Edit lesson content and settings",
+    "backToBuilder": "Back to Builder",
+    "loadError": "Failed to load lesson",
+    "tabs": {
+      "settings": "Settings",
+      "content": "Content",
+      "quiz": "Quiz"
+    },
+    "quiz": {
+      "title": "Quiz Questions",
+      "description": "Add questions to test student understanding"
+    },
+    "settings": {
+      "title": "Lesson Settings",
+      "description": "Configure the basic settings for this lesson",
+      "lessonTitle": "Title",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Enter lesson title...",
+      "type": "Lesson Type",
+      "duration": "Duration (minutes)",
+      "isFree": "Free Preview",
+      "isFreeDescription": "Allow non-enrolled users to preview this lesson",
+      "requiresPrevious": "Require Previous",
+      "requiresPreviousDescription": "Students must complete the previous lesson first",
+      "saveSuccess": "Lesson updated successfully",
+      "saveError": "Failed to update lesson"
+    }
+  },
+  "quiz": {
+    "questionsCount": "questions",
+    "addQuestion": "Add Question",
+    "editQuestion": "Edit Question",
+    "addQuestionDescription": "Create a new quiz question with multiple choice options",
+    "editQuestionDescription": "Update the question and its options",
+    "loadError": "Failed to load questions",
+    "noQuestions": "No questions yet",
+    "noQuestionsDescription": "Add questions to create your quiz.",
+    "deleteSuccess": "Question deleted",
+    "deleteError": "Failed to delete question",
+    "createSuccess": "Question created",
+    "createError": "Failed to create question",
+    "updateSuccess": "Question updated",
+    "updateError": "Failed to update question",
+    "reorderError": "Failed to reorder questions",
+    "questionLabel": "Question",
+    "questionPlaceholder": "Enter your question...",
+    "optionsLabel": "Options",
+    "addOption": "Add Option",
+    "optionPlaceholder": "Enter option text...",
+    "options": "options",
+    "correct": "correct",
+    "explanation": "Explanation:",
+    "explanationLabel": "Explanation (optional)",
+    "explanationPlaceholder": "Explain why the correct answer is correct...",
+    "explanationHint": "This will be shown to learners after they answer the question.",
+    "optionsHint": "Check the box next to correct answer(s). You can have multiple correct answers.",
+    "deleteDialog": {
+      "title": "Delete Question",
+      "description": "Are you sure you want to delete this question? This action cannot be undone."
+    },
+    "errors": {
+      "questionRequired": "Question is required",
+      "minOptions": "At least 2 options are required",
+      "noCorrect": "At least one option must be marked as correct"
+    }
+  },
+  "quizBuilder": {
+    "title": "Quiz Questions",
+    "description": "Add questions to test student understanding",
+    "addQuestion": "Add Question",
+    "empty": {
+      "title": "No questions yet",
+      "message": "Add questions to create a quiz for this lesson."
+    },
+    "loadError": "Failed to load questions"
+  },
+  "questionForm": {
+    "createTitle": "New Question",
+    "editTitle": "Edit Question",
+    "questionText": "Question",
+    "questionPlaceholder": "Enter your question...",
+    "options": "Answer Options",
+    "optionPlaceholder": "Option text...",
+    "addOption": "Add Option",
+    "removeOption": "Remove",
+    "correctAnswer": "Correct",
+    "cancel": "Cancel",
+    "create": "Create Question",
+    "save": "Save Changes",
+    "errors": {
+      "questionRequired": "Question text is required",
+      "minOptions": "At least 2 options are required",
+      "correctRequired": "Select at least one correct answer",
+      "emptyOptions": "All options must have text"
+    },
+    "createSuccess": "Question created successfully",
+    "createError": "Failed to create question",
+    "updateSuccess": "Question updated successfully",
+    "updateError": "Failed to update question"
+  },
+  "questionCard": {
+    "options": "{count} option | {count} options",
+    "correct": "{count} correct",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": {
+      "title": "Delete Question",
+      "description": "Are you sure you want to delete this question?",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "deleteSuccess": "Question deleted successfully",
+    "deleteError": "Failed to delete question"
+  }
+}

@@ -29,9 +29,11 @@ import {
   Users,
   Mail,
   CreditCard,
+  PenTool,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
+import DarkModeToggle from '@/components/common/DarkModeToggle.vue';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -77,6 +79,22 @@ async function handleLogout() {
             <component :is="item.icon" class="h-5 w-5" />
             {{ item.name }}
           </RouterLink>
+
+          <!-- Instructor Section (instructor and tenant_admin) -->
+          <template v-if="authStore.hasAnyRole(['instructor', 'tenant_admin'])">
+            <Separator class="my-4" />
+            <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {{ t('nav.instructor.title', 'Instructor') }}
+            </p>
+            <RouterLink
+              to="/instructor"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+            >
+              <PenTool class="h-5 w-5" />
+              {{ t('nav.instructor.myCourses', 'My Courses') }}
+            </RouterLink>
+          </template>
 
           <!-- Admin Section (tenant_admin only) -->
           <template v-if="authStore.hasRole('tenant_admin')">
@@ -169,6 +187,23 @@ async function handleLogout() {
                 {{ item.name }}
               </RouterLink>
 
+              <!-- Instructor Section (instructor and tenant_admin) -->
+              <template v-if="authStore.hasAnyRole(['instructor', 'tenant_admin'])">
+                <Separator class="my-4" />
+                <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {{ t('nav.instructor.title', 'Instructor') }}
+                </p>
+                <RouterLink
+                  to="/instructor"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  active-class="bg-accent text-accent-foreground"
+                  @click="isMobileMenuOpen = false"
+                >
+                  <PenTool class="h-5 w-5" />
+                  {{ t('nav.instructor.myCourses', 'My Courses') }}
+                </RouterLink>
+              </template>
+
               <!-- Admin Section (tenant_admin only) -->
               <template v-if="authStore.hasRole('tenant_admin')">
                 <Separator class="my-4" />
@@ -226,6 +261,9 @@ async function handleLogout() {
       <!-- Language switcher (mobile) -->
       <LanguageSwitcher />
 
+      <!-- Dark mode toggle (mobile) -->
+      <DarkModeToggle />
+
       <!-- Mobile user menu -->
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
@@ -271,6 +309,9 @@ async function handleLogout() {
       <div class="flex items-center gap-4">
         <!-- Language switcher -->
         <LanguageSwitcher />
+
+        <!-- Dark mode toggle -->
+        <DarkModeToggle />
 
         <!-- Notifications -->
         <Button variant="ghost" size="icon">

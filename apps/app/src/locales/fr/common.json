@@ -1,4 +1,11 @@
 {
+  "cancel": "Annuler",
+  "create": "Créer",
+  "edit": "Modifier",
+  "delete": "Supprimer",
+  "save": "Enregistrer",
+  "goBack": "Retour",
+  "retry": "Réessayer",
   "dashboard": {
     "greeting": {
       "morning": "Bonjour",
@@ -45,6 +52,7 @@
     "submit": "Envoyer",
     "confirm": "Confirmer",
     "back": "Retour",
+    "goBack": "Retour",
     "next": "Suivant",
     "previous": "Précédent",
     "close": "Fermer",
@@ -62,7 +70,10 @@
     "signOut": "Se déconnecter",
     "download": "Télécharger",
     "export": "Exporter",
-    "import": "Importer"
+    "import": "Importer",
+    "retry": "Réessayer",
+    "clear": "Effacer",
+    "clearFilters": "Effacer les filtres"
   },
   "status": {
     "active": "Actif",
@@ -96,5 +107,49 @@
   "confirm": {
     "delete": "Êtes-vous sûr de vouloir supprimer ceci ?",
     "unsavedChanges": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir quitter ?"
+  },
+  "theme": {
+    "toggle": "Changer le thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Gérez les paramètres de votre compte et vos préférences",
+    "personalInfo": "Informations personnelles",
+    "personalInfoDesc": "Mettez à jour vos informations personnelles et votre avatar",
+    "accountInfo": "Informations du compte",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Entrez votre prénom",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Entrez votre nom",
+    "email": "Adresse email",
+    "emailNote": "Contactez le support pour changer votre adresse email",
+    "avatarStyle": "Choisissez votre style d'avatar",
+    "changeAvatar": "Changer l'avatar",
+    "chooseAvatar": "Choisissez votre avatar",
+    "chooseAvatarDesc": "Sélectionnez un style et choisissez votre variation préférée",
+    "preview": "Aperçu",
+    "role": "Rôle",
+    "organization": "Organisation",
+    "enterpriseAccount": "Compte entreprise",
+    "accountId": "ID du compte",
+    "changePassword": "Changer le mot de passe",
+    "changePasswordDesc": "Mettez à jour votre mot de passe pour sécuriser votre compte",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le nouveau mot de passe",
+    "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères",
+    "updatePassword": "Mettre à jour le mot de passe",
+    "updateSuccess": "Profil mis à jour avec succès",
+    "passwordChanged": "Mot de passe modifié avec succès",
+    "roles": {
+      "super_admin": "Super administrateur",
+      "tenant_admin": "Administrateur d'organisation",
+      "manager": "Manager",
+      "instructor": "Instructeur",
+      "learner": "Apprenant"
+    }
   }
 }

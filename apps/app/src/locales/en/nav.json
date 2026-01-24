@@ -8,6 +8,10 @@
     "badges": "Badges",
     "analytics": "Analytics"
   },
+  "instructor": {
+    "title": "Instructor",
+    "myCourses": "My Courses"
+  },
   "user": {
     "profile": "Profile",
     "settings": "Settings",

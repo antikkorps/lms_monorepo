@@ -8,6 +8,7 @@ import { coursesRouter, lessonsRouter } from '../courses/index.js';
 import { discussionsRouter } from '../discussions/index.js';
 import { notesRouter } from '../notes/index.js';
 import { lessonContentRouter } from '../lesson-content/index.js';
+import { quizRouter } from '../quiz/index.js';
 
 const apiRouter = new Router({ prefix: '/api/v1' });
 
@@ -29,6 +30,8 @@ apiRouter.use(notesRouter.routes());
 apiRouter.use(notesRouter.allowedMethods());
 apiRouter.use(lessonContentRouter.routes());
 apiRouter.use(lessonContentRouter.allowedMethods());
+apiRouter.use(quizRouter.routes());
+apiRouter.use(quizRouter.allowedMethods());
 
 export function setupRoutes(app: Koa): void {
   app.use(apiRouter.routes());

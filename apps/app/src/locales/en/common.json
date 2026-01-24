@@ -1,4 +1,11 @@
 {
+  "cancel": "Cancel",
+  "create": "Create",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "goBack": "Go Back",
+  "retry": "Retry",
   "dashboard": {
     "greeting": {
       "morning": "Good morning",
@@ -45,6 +52,7 @@
     "submit": "Submit",
     "confirm": "Confirm",
     "back": "Back",
+    "goBack": "Go Back",
     "next": "Next",
     "previous": "Previous",
     "close": "Close",
@@ -62,7 +70,10 @@
     "signOut": "Sign out",
     "download": "Download",
     "export": "Export",
-    "import": "Import"
+    "import": "Import",
+    "retry": "Retry",
+    "clear": "Clear",
+    "clearFilters": "Clear Filters"
   },
   "status": {
     "active": "Active",
@@ -96,5 +107,49 @@
   "confirm": {
     "delete": "Are you sure you want to delete this?",
     "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account settings and preferences",
+    "personalInfo": "Personal Information",
+    "personalInfoDesc": "Update your personal details and avatar",
+    "accountInfo": "Account Information",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter your first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter your last name",
+    "email": "Email Address",
+    "emailNote": "Contact support to change your email address",
+    "avatarStyle": "Choose your avatar style",
+    "changeAvatar": "Change Avatar",
+    "chooseAvatar": "Choose your avatar",
+    "chooseAvatarDesc": "Select a style and pick your favorite variation",
+    "preview": "Preview",
+    "role": "Role",
+    "organization": "Organization",
+    "enterpriseAccount": "Enterprise Account",
+    "accountId": "Account ID",
+    "changePassword": "Change Password",
+    "changePasswordDesc": "Update your password to keep your account secure",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "passwordRequirements": "Password must be at least 8 characters",
+    "updatePassword": "Update Password",
+    "updateSuccess": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully",
+    "roles": {
+      "super_admin": "Super Administrator",
+      "tenant_admin": "Organization Administrator",
+      "manager": "Manager",
+      "instructor": "Instructor",
+      "learner": "Learner"
+    }
   }
 }

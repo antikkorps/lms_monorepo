@@ -1,0 +1,295 @@
+{
+  "courses": {
+    "title": "Mes Cours",
+    "subtitle": "Créez et gérez vos cours",
+    "create": "Nouveau cours",
+    "loadError": "Impossible de charger les cours",
+    "noCourses": "Aucun cours",
+    "noCoursesDescription": "Créez votre premier cours pour commencer.",
+    "noResults": "Aucun cours trouvé",
+    "noResultsDescription": "Essayez de modifier vos critères de recherche ou de filtre.",
+    "searchPlaceholder": "Rechercher des cours...",
+    "allStatus": "Tous les statuts",
+    "free": "Gratuit",
+    "chapters": "chapitres",
+    "lessons": "leçons",
+    "deleteSuccess": "Cours supprimé avec succès",
+    "deleteError": "Échec de la suppression du cours",
+    "publishSuccess": "Cours publié avec succès",
+    "publishError": "Échec de la publication du cours",
+    "archiveSuccess": "Cours archivé avec succès",
+    "archiveError": "Échec de l'archivage du cours",
+    "table": {
+      "title": "Cours",
+      "status": "Statut",
+      "content": "Contenu",
+      "price": "Prix",
+      "enrollments": "Inscriptions",
+      "updated": "Mis à jour",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Modifier les détails",
+      "build": "Construire le contenu",
+      "publish": "Publier",
+      "archive": "Archiver",
+      "delete": "Supprimer"
+    },
+    "deleteDialog": {
+      "title": "Supprimer le cours",
+      "description": "Êtes-vous sûr de vouloir supprimer ce cours ? Cette action est irréversible."
+    }
+  },
+  "courseStatus": {
+    "draft": "Brouillon",
+    "published": "Publié",
+    "archived": "Archivé"
+  },
+  "chapters": {
+    "lessonsCount": "leçons",
+    "addLesson": "Ajouter une leçon"
+  },
+  "lessons": {
+    "open": "Ouvrir la leçon"
+  },
+  "courseEditor": {
+    "createTitle": "Créer un cours",
+    "editTitle": "Modifier le cours",
+    "createSubtitle": "Configurez votre nouveau cours",
+    "editSubtitle": "Mettez à jour les détails de votre cours",
+    "basicInfo": "Informations de base",
+    "basicInfoDescription": "Les détails essentiels de votre cours",
+    "title": "Titre",
+    "titlePlaceholder": "ex: Introduction au Machine Learning",
+    "slug": "Slug URL",
+    "slugPlaceholder": "intro-machine-learning",
+    "slugHint": "Optionnel. Sera généré automatiquement à partir du titre si non fourni. Seules les lettres minuscules, chiffres et tirets sont autorisés.",
+    "description": "Description",
+    "descriptionPlaceholder": "Décrivez ce que les étudiants apprendront dans ce cours...",
+    "pricing": "Tarification",
+    "pricingDescription": "Définissez le prix de votre cours. Laissez à 0 pour un cours gratuit.",
+    "price": "Prix",
+    "pricePlaceholder": "0.00",
+    "media": "Média",
+    "mediaDescription": "Ajoutez une image miniature pour votre cours",
+    "thumbnailUrl": "URL de la miniature",
+    "thumbnailPlaceholder": "https://exemple.com/image.jpg",
+    "thumbnailHint": "Taille recommandée : 1280x720 pixels",
+    "preview": "Aperçu",
+    "save": "Enregistrer",
+    "create": "Créer le cours",
+    "loadError": "Impossible de charger le cours",
+    "createSuccess": "Cours créé avec succès",
+    "createError": "Échec de la création du cours",
+    "updateSuccess": "Cours mis à jour avec succès",
+    "updateError": "Échec de la mise à jour du cours",
+    "errors": {
+      "titleRequired": "Le titre est requis",
+      "slugRequired": "Le slug est requis",
+      "slugInvalid": "Le slug ne peut contenir que des lettres minuscules, des chiffres et des tirets",
+      "priceInvalid": "Le prix ne peut pas être négatif"
+    }
+  },
+  "courseBuilder": {
+    "title": "Constructeur de cours",
+    "subtitle": "Gérez les chapitres et les leçons",
+    "backToCourses": "Retour aux cours",
+    "loadError": "Impossible de charger le contenu du cours",
+    "addChapter": "Ajouter un chapitre",
+    "editDetails": "Modifier les détails",
+    "publish": "Publier",
+    "chapters": "Chapitres",
+    "noChapters": "Aucun chapitre",
+    "noChaptersDescription": "Ajoutez votre premier chapitre pour commencer à construire le contenu de votre cours.",
+    "emptyChapters": {
+      "title": "Aucun chapitre",
+      "message": "Ajoutez votre premier chapitre pour commencer à construire votre cours."
+    }
+  },
+  "chapterForm": {
+    "createTitle": "Nouveau chapitre",
+    "editTitle": "Modifier le chapitre",
+    "title": "Titre",
+    "titlePlaceholder": "ex: Premiers pas",
+    "description": "Description",
+    "descriptionPlaceholder": "Brève description de ce chapitre...",
+    "cancel": "Annuler",
+    "create": "Créer le chapitre",
+    "save": "Enregistrer",
+    "createSuccess": "Chapitre créé avec succès",
+    "createError": "Échec de la création du chapitre",
+    "updateSuccess": "Chapitre mis à jour avec succès",
+    "updateError": "Échec de la mise à jour du chapitre"
+  },
+  "chapterCard": {
+    "lessons": "{count} leçon | {count} leçons",
+    "noLessons": "Aucune leçon",
+    "addLesson": "Ajouter une leçon",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirmDelete": {
+      "title": "Supprimer le chapitre",
+      "description": "Êtes-vous sûr de vouloir supprimer « {title} » ? Toutes les leçons de ce chapitre seront également supprimées.",
+      "cancel": "Annuler",
+      "confirm": "Supprimer"
+    },
+    "deleteSuccess": "Chapitre supprimé avec succès",
+    "deleteError": "Échec de la suppression du chapitre"
+  },
+  "lessonForm": {
+    "createTitle": "Nouvelle leçon",
+    "editTitle": "Modifier la leçon",
+    "createDescription": "Ajouter une nouvelle leçon à ce chapitre",
+    "editDescription": "Mettre à jour les détails de la leçon",
+    "title": "Titre",
+    "titlePlaceholder": "ex: Introduction au sujet",
+    "type": "Type",
+    "typePlaceholder": "Sélectionner le type de leçon",
+    "duration": "Durée (minutes)",
+    "durationPlaceholder": "ex: 15",
+    "isFree": "Aperçu gratuit",
+    "isFreeDescription": "Permettre aux utilisateurs non inscrits de prévisualiser cette leçon",
+    "cancel": "Annuler",
+    "create": "Créer la leçon",
+    "save": "Enregistrer",
+    "createSuccess": "Leçon créée avec succès",
+    "createError": "Échec de la création de la leçon",
+    "updateSuccess": "Leçon mise à jour avec succès",
+    "updateError": "Échec de la mise à jour de la leçon"
+  },
+  "lessonCard": {
+    "free": "Gratuit",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirmDelete": {
+      "title": "Supprimer la leçon",
+      "description": "Êtes-vous sûr de vouloir supprimer « {title} » ?",
+      "cancel": "Annuler",
+      "confirm": "Supprimer"
+    },
+    "deleteSuccess": "Leçon supprimée avec succès",
+    "deleteError": "Échec de la suppression de la leçon"
+  },
+  "lessonTypes": {
+    "video": "Vidéo",
+    "quiz": "Quiz",
+    "document": "Document",
+    "assignment": "Devoir"
+  },
+  "lessonEditor": {
+    "title": "Éditeur de leçon",
+    "subtitle": "Modifier le contenu et les paramètres de la leçon",
+    "backToBuilder": "Retour au constructeur",
+    "loadError": "Impossible de charger la leçon",
+    "tabs": {
+      "settings": "Paramètres",
+      "content": "Contenu",
+      "quiz": "Quiz"
+    },
+    "quiz": {
+      "title": "Questions du quiz",
+      "description": "Ajoutez des questions pour tester la compréhension des étudiants"
+    },
+    "settings": {
+      "title": "Paramètres de la leçon",
+      "description": "Configurez les paramètres de base de cette leçon",
+      "lessonTitle": "Titre",
+      "titleLabel": "Titre",
+      "titlePlaceholder": "Entrez le titre de la leçon...",
+      "type": "Type de leçon",
+      "duration": "Durée (minutes)",
+      "isFree": "Aperçu gratuit",
+      "isFreeDescription": "Permettre aux utilisateurs non inscrits de prévisualiser cette leçon",
+      "requiresPrevious": "Exiger la précédente",
+      "requiresPreviousDescription": "Les étudiants doivent d'abord terminer la leçon précédente",
+      "saveSuccess": "Leçon mise à jour avec succès",
+      "saveError": "Échec de la mise à jour de la leçon"
+    }
+  },
+  "quiz": {
+    "questionsCount": "questions",
+    "addQuestion": "Ajouter une question",
+    "editQuestion": "Modifier la question",
+    "addQuestionDescription": "Créer une nouvelle question à choix multiples",
+    "editQuestionDescription": "Mettre à jour la question et ses options",
+    "loadError": "Impossible de charger les questions",
+    "noQuestions": "Aucune question",
+    "noQuestionsDescription": "Ajoutez des questions pour créer votre quiz.",
+    "deleteSuccess": "Question supprimée",
+    "deleteError": "Échec de la suppression de la question",
+    "createSuccess": "Question créée",
+    "createError": "Échec de la création de la question",
+    "updateSuccess": "Question mise à jour",
+    "updateError": "Échec de la mise à jour de la question",
+    "reorderError": "Échec de la réorganisation des questions",
+    "questionLabel": "Question",
+    "questionPlaceholder": "Entrez votre question...",
+    "optionsLabel": "Options",
+    "addOption": "Ajouter une option",
+    "optionPlaceholder": "Entrez le texte de l'option...",
+    "options": "options",
+    "correct": "correcte",
+    "explanation": "Explication :",
+    "explanationLabel": "Explication (optionnelle)",
+    "explanationPlaceholder": "Expliquez pourquoi la bonne réponse est correcte...",
+    "explanationHint": "Ceci sera affiché aux apprenants après leur réponse.",
+    "optionsHint": "Cochez la case à côté des bonnes réponses. Vous pouvez avoir plusieurs réponses correctes.",
+    "deleteDialog": {
+      "title": "Supprimer la question",
+      "description": "Êtes-vous sûr de vouloir supprimer cette question ? Cette action est irréversible."
+    },
+    "errors": {
+      "questionRequired": "La question est requise",
+      "minOptions": "Au moins 2 options sont requises",
+      "noCorrect": "Au moins une option doit être marquée comme correcte"
+    }
+  },
+  "quizBuilder": {
+    "title": "Questions du quiz",
+    "description": "Ajoutez des questions pour tester la compréhension des étudiants",
+    "addQuestion": "Ajouter une question",
+    "empty": {
+      "title": "Aucune question",
+      "message": "Ajoutez des questions pour créer un quiz pour cette leçon."
+    },
+    "loadError": "Impossible de charger les questions"
+  },
+  "questionForm": {
+    "createTitle": "Nouvelle question",
+    "editTitle": "Modifier la question",
+    "questionText": "Question",
+    "questionPlaceholder": "Entrez votre question...",
+    "options": "Options de réponse",
+    "optionPlaceholder": "Texte de l'option...",
+    "addOption": "Ajouter une option",
+    "removeOption": "Supprimer",
+    "correctAnswer": "Correcte",
+    "cancel": "Annuler",
+    "create": "Créer la question",
+    "save": "Enregistrer",
+    "errors": {
+      "questionRequired": "Le texte de la question est requis",
+      "minOptions": "Au moins 2 options sont requises",
+      "correctRequired": "Sélectionnez au moins une réponse correcte",
+      "emptyOptions": "Toutes les options doivent avoir du texte"
+    },
+    "createSuccess": "Question créée avec succès",
+    "createError": "Échec de la création de la question",
+    "updateSuccess": "Question mise à jour avec succès",
+    "updateError": "Échec de la mise à jour de la question"
+  },
+  "questionCard": {
+    "options": "{count} option | {count} options",
+    "correct": "{count} correcte | {count} correctes",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirmDelete": {
+      "title": "Supprimer la question",
+      "description": "Êtes-vous sûr de vouloir supprimer cette question ?",
+      "cancel": "Annuler",
+      "confirm": "Supprimer"
+    },
+    "deleteSuccess": "Question supprimée avec succès",
+    "deleteError": "Échec de la suppression de la question"
+  }
+}

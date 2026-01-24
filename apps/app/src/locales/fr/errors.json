@@ -28,6 +28,7 @@
     "title": "Oups !",
     "message": "Une erreur est survenue",
     "retry": "Réessayer",
-    "goBack": "Retour"
+    "goBack": "Retour",
+    "unexpected": "Une erreur inattendue est survenue"
   }
 }
