@@ -44,6 +44,11 @@ export enum CourseStatus {
   ARCHIVED = 'archived',
 }
 
+export enum Currency {
+  EUR = 'EUR',
+  USD = 'USD',
+}
+
 export enum LessonType {
   VIDEO = 'video',
   QUIZ = 'quiz',

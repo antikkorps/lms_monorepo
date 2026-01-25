@@ -20,6 +20,7 @@ import { CourseStatusBadge } from '@/components/admin';
 import { useCourseEditor } from '@/composables/useCourseEditor';
 import { useChapterManager } from '@/composables/useChapterManager';
 import { useLessonManager } from '@/composables/useLessonManager';
+import { usePreview } from '@/composables/usePreview';
 import {
   ArrowLeft,
   Plus,
@@ -28,6 +29,7 @@ import {
   BookOpen,
   Pencil,
   Send,
+  Eye,
 } from 'lucide-vue-next';
 import {
   AlertDialog,
@@ -59,6 +61,7 @@ const {
 
 const chapterManager = useChapterManager(courseId.value);
 const lessonManager = useLessonManager(courseId.value);
+const { openCoursePreview } = usePreview();
 
 // Dialog states
 const isChapterFormOpen = ref(false);
@@ -111,6 +114,12 @@ function handleGoBack(): void {
 
 function handleEditCourse(): void {
   router.push({ name: 'instructor-course-edit', params: { id: courseId.value } });
+}
+
+function handlePreviewCourse(): void {
+  if (currentCourse.value?.slug) {
+    openCoursePreview(currentCourse.value.slug);
+  }
 }
 
 async function handlePublishCourse(): Promise<void> {
@@ -269,6 +278,10 @@ async function handleReorderLessons(
         </p>
       </div>
       <div class="flex items-center gap-2">
+        <Button variant="outline" @click="handlePreviewCourse" :disabled="!currentCourse?.slug">
+          <Eye class="mr-2 h-4 w-4" />
+          {{ t('instructor.courseBuilder.preview', 'Preview') }}
+        </Button>
         <Button variant="outline" @click="handleEditCourse">
           <Pencil class="mr-2 h-4 w-4" />
           {{ t('instructor.courseBuilder.editDetails', 'Edit Details') }}

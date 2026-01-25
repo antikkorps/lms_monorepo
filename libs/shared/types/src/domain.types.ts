@@ -34,6 +34,9 @@ export type TenantStatus = 'active' | 'trial' | 'suspended' | 'cancelled';
 export type SubscriptionStatus = 'active' | 'past_due' | 'cancelled' | 'trialing';
 export type IsolationStrategy = 'SHARED' | 'ISOLATED';
 
+// Currency
+export type Currency = 'EUR' | 'USD';
+
 // Course domain
 export interface CourseListItem {
   id: string;
@@ -43,6 +46,7 @@ export interface CourseListItem {
   thumbnailUrl: string | null;
   instructorName: string;
   price: number;
+  currency: Currency;
   duration: number;
   chaptersCount: number;
   lessonsCount: number;
@@ -57,6 +61,7 @@ export interface InstructorCourse {
   description: string | null;
   thumbnailUrl: string | null;
   price: number;
+  currency: Currency;
   status: CourseStatus;
   chaptersCount: number;
   lessonsCount: number;
@@ -70,6 +75,7 @@ export interface CreateCourseInput {
   slug: string;
   description?: string | null;
   price?: number;
+  currency?: Currency;
   thumbnailUrl?: string | null;
 }
 
@@ -78,6 +84,7 @@ export interface UpdateCourseInput {
   slug?: string;
   description?: string | null;
   price?: number;
+  currency?: Currency;
   thumbnailUrl?: string | null;
   status?: CourseStatus;
 }
@@ -182,6 +189,8 @@ export interface LessonItem {
   isFree: boolean;
   isCompleted?: boolean;
   isAccessible?: boolean;
+  videoUrl?: string | null;
+  videoId?: string | null;
 }
 
 export type LessonType = 'video' | 'quiz' | 'document' | 'assignment';

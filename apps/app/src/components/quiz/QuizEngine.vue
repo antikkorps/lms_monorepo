@@ -21,9 +21,12 @@ import QuizResult from './QuizResult.vue';
 interface Props {
   lessonId: string;
   lessonTitle?: string;
+  isPreview?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  isPreview: false,
+});
 
 const emit = defineEmits<{
   (e: 'completed', passed: boolean, score: number): void;
@@ -56,6 +59,7 @@ const {
   isOptionSelected,
   getAnswerResult,
   submitQuiz,
+  submitQuizLocally,
   reviewAnswers,
   resetQuiz,
 } = useQuiz(props.lessonId);
@@ -65,9 +69,16 @@ onMounted(() => {
 });
 
 async function handleSubmit() {
-  const success = await submitQuiz();
+  // Use local submission in preview mode (no API call, no persistence)
+  const success = props.isPreview
+    ? await submitQuizLocally()
+    : await submitQuiz();
+
   if (success && result.value) {
-    emit('completed', result.value.passed, result.value.score);
+    // In preview mode, don't emit completed event (no progress tracking)
+    if (!props.isPreview) {
+      emit('completed', result.value.passed, result.value.score);
+    }
   }
 }
 
@@ -90,6 +101,17 @@ const showResultScreen = computed(() => mode.value === 'completed' && result.val
 
 <template>
   <div class="mx-auto max-w-3xl space-y-6">
+    <!-- Preview Mode Indicator -->
+    <div
+      v-if="isPreview"
+      class="flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 dark:border-amber-700 dark:bg-amber-950/50"
+    >
+      <Eye class="h-4 w-4 text-amber-600 dark:text-amber-400" />
+      <span class="text-sm text-amber-700 dark:text-amber-300">
+        Preview Mode - Quiz results will not be saved
+      </span>
+    </div>
+
     <!-- Header -->
     <div>
       <h2 class="text-2xl font-bold">Quiz</h2>
@@ -118,6 +140,7 @@ const showResultScreen = computed(() => mode.value === 'completed' && result.val
       v-else-if="showResultScreen"
       :result="result!"
       :passing-score="passingScore"
+      :is-preview="isPreview"
       @review="handleReview"
       @retry="handleRetry"
       @close="handleClose"

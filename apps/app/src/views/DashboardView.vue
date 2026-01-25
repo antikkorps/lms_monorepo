@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,9 +36,27 @@ const {
 const selectedBadge = ref<Badge | null>(null);
 const badgeModalOpen = ref(false);
 
+// Transform API badges to match BadgeCard's expected Badge type
+const displayBadges = computed((): Badge[] => {
+  return recentBadges.value.map((badge) => ({
+    id: badge.id,
+    name: badge.name,
+    description: badge.description,
+    imageUrl: badge.imageUrl,
+    category: 'milestone' as const, // Default category for earned badges
+    rarity: 'common' as const, // Default rarity
+    earnedAt: badge.earnedAt,
+  }));
+});
+
 function handleBadgeClick(badge: Badge) {
   selectedBadge.value = badge;
   badgeModalOpen.value = true;
+}
+
+function formatLastAccessed(date: Date | null): string {
+  if (!date) return t('common.dashboard.continueLearning.notStarted', 'Not started');
+  return formatRelativeTime(date);
 }
 
 onMounted(() => {
@@ -195,7 +213,7 @@ function getProgressColor(progress: number): string {
                     <p class="text-sm text-muted-foreground">{{ course.instructorName }}</p>
                   </div>
                   <span class="shrink-0 text-xs text-muted-foreground">
-                    {{ formatRelativeTime(course.lastAccessedAt) }}
+                    {{ formatLastAccessed(course.lastAccessedAt) }}
                   </span>
                 </div>
 
@@ -229,7 +247,7 @@ function getProgressColor(progress: number): string {
       </Card>
 
       <!-- Recent Badges Section -->
-      <Card v-if="recentBadges.length > 0">
+      <Card v-if="displayBadges.length > 0">
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
@@ -247,7 +265,7 @@ function getProgressColor(progress: number): string {
         <CardContent>
           <div class="flex flex-wrap gap-6">
             <BadgeCard
-              v-for="badge in recentBadges"
+              v-for="badge in displayBadges"
               :key="badge.id"
               :badge="badge"
               size="md"

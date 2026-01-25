@@ -27,7 +27,9 @@
   },
   "accessibility": {
     "toggleMenu": "Basculer le menu",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "mobileMenu": "Menu de navigation",
+    "mobileMenuDescription": "Liens de navigation principaux"
   },
   "footer": {
     "about": "À propos",

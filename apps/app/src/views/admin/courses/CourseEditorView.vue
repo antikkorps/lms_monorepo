@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import type { CreateCourseInput, UpdateCourseInput } from '@shared/types';
+import type { CreateCourseInput, UpdateCourseInput, Currency } from '@shared/types';
 import {
   Card,
   CardContent,
@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select } from '@/components/ui/select';
 import { useCourseEditor } from '@/composables/useCourseEditor';
 import { ArrowLeft, Save, Loader2, AlertCircle } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
@@ -38,11 +39,12 @@ const isEditMode = computed(() => !!route.params.id);
 const courseId = computed(() => route.params.id as string | undefined);
 
 // Form state
-const form = ref<CreateCourseInput & UpdateCourseInput>({
+const form = ref<CreateCourseInput & UpdateCourseInput & { currency: Currency }>({
   title: '',
   slug: '',
   description: '',
   price: 0,
+  currency: 'EUR',
   thumbnailUrl: '',
 });
 
@@ -105,7 +107,8 @@ async function handleSubmit(): Promise<void> {
 
   const input: Record<string, unknown> = {
     title: form.value.title.trim(),
-    price: Math.round((form.value.price || 0) * 100), // Convert to cents
+    price: form.value.price || 0, // Price in selected currency
+    currency: form.value.currency,
   };
 
   // Only include optional fields if they have values (backend expects undefined, not null)
@@ -156,7 +159,8 @@ onMounted(async () => {
         title: course.title,
         slug: course.slug,
         description: course.description || '',
-        price: course.price / 100, // Convert from cents
+        price: Number(course.price),
+        currency: (course.currency as Currency) || 'EUR',
         thumbnailUrl: course.thumbnailUrl || '',
       };
       autoSlug.value = false;
@@ -282,13 +286,12 @@ onMounted(async () => {
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-4">
-          <!-- Price -->
-          <div class="space-y-2">
-            <Label for="price">
-              {{ t('instructor.courseEditor.price', 'Price') }}
-            </Label>
-            <div class="flex items-center gap-2 max-w-xs">
-              <span class="text-sm text-muted-foreground">EUR</span>
+          <div class="flex flex-wrap gap-4">
+            <!-- Price -->
+            <div class="space-y-2 flex-1 min-w-[200px]">
+              <Label for="price">
+                {{ t('instructor.courseEditor.price', 'Price') }}
+              </Label>
               <Input
                 id="price"
                 v-model.number="form.price"
@@ -298,8 +301,19 @@ onMounted(async () => {
                 :placeholder="t('instructor.courseEditor.pricePlaceholder', '0.00')"
                 :class="{ 'border-destructive': errors.price }"
               />
+              <p v-if="errors.price" class="text-sm text-destructive">{{ errors.price }}</p>
             </div>
-            <p v-if="errors.price" class="text-sm text-destructive">{{ errors.price }}</p>
+
+            <!-- Currency -->
+            <div class="space-y-2 w-32">
+              <Label for="currency">
+                {{ t('instructor.courseEditor.currency', 'Currency') }}
+              </Label>
+              <Select id="currency" v-model="form.currency">
+                <option value="EUR">EUR (€)</option>
+                <option value="USD">USD ($)</option>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>

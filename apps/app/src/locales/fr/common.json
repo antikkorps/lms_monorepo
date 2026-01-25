@@ -27,7 +27,8 @@
       "title": "Continuer l'apprentissage",
       "subtitle": "Reprenez là où vous en étiez",
       "next": "Suivant :",
-      "continue": "Continuer"
+      "continue": "Continuer",
+      "notStarted": "Non commencé"
     },
     "empty": {
       "title": "Pas de cours",
@@ -56,6 +57,7 @@
     "next": "Suivant",
     "previous": "Précédent",
     "close": "Fermer",
+    "clear": "Effacer",
     "search": "Rechercher",
     "filter": "Filtrer",
     "sort": "Trier",
@@ -113,6 +115,13 @@
     "light": "Clair",
     "dark": "Sombre",
     "system": "Système"
+  },
+  "preview": {
+    "mode": "Mode aperçu",
+    "exit": "Quitter l'aperçu",
+    "coursePreviewDescription": "Vous visualisez ce cours comme un apprenant le verrait.",
+    "startPreview": "Commencer l'aperçu",
+    "progressNotTracked": "Progression non suivie en mode aperçu"
   },
   "profile": {
     "title": "Profil",
