@@ -179,8 +179,9 @@ export function useQuiz(lessonId: string) {
     error.value = null;
 
     try {
-      const response = await api.get<{ data: ApiQuizQuestion[] }>(`/lessons/${lessonId}/questions`);
-      questions.value = response.data.map(transformQuestion);
+      // useApi already unwraps the 'data' property from the API response
+      const questionsData = await api.get<ApiQuizQuestion[]>(`/lessons/${lessonId}/questions`);
+      questions.value = questionsData.map(transformQuestion);
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load quiz';
     } finally {
@@ -201,12 +202,11 @@ export function useQuiz(lessonId: string) {
         answers.push({ questionId, selectedOptionIds });
       }
 
-      const response = await api.post<{ data: ApiQuizSubmitResponse }>(
+      // useApi already unwraps the 'data' property from the API response
+      const apiResult = await api.post<ApiQuizSubmitResponse>(
         `/lessons/${lessonId}/quiz/submit`,
         { answers }
       );
-
-      const apiResult = response.data;
 
       // Transform API response to local format
       const answerResults: QuizAnswerResult[] = apiResult.answers.map((answer) => {

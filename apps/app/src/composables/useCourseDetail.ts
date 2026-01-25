@@ -218,12 +218,12 @@ export function useCourseDetail(slug: string, options: UseCourseDetailOptions = 
   /**
    * Format price
    */
-  function formatPrice(price: number): string {
+  function formatPrice(price: number, currency: string = 'EUR'): string {
     if (price === 0) return 'Free';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'EUR',
-    }).format(price / 100);
+      currency,
+    }).format(price);
   }
 
   /**
@@ -317,7 +317,8 @@ export function useCourseDetail(slug: string, options: UseCourseDetailOptions = 
         description: response.description,
         thumbnailUrl: response.thumbnailUrl,
         instructorName: `${response.instructor.firstName} ${response.instructor.lastName}`,
-        price: Number(response.price) * 100, // Convert to cents
+        price: Number(response.price),
+        currency: (response.currency as 'EUR' | 'USD') || 'EUR',
         duration: Math.floor(response.duration / 60), // Convert seconds to minutes
         chaptersCount: response.chaptersCount,
         lessonsCount: response.lessonsCount,

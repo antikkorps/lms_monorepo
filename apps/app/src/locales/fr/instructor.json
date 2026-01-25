@@ -50,7 +50,8 @@
     "addLesson": "Ajouter une leçon"
   },
   "lessons": {
-    "open": "Ouvrir la leçon"
+    "open": "Ouvrir la leçon",
+    "free": "Gratuit"
   },
   "courseEditor": {
     "createTitle": "Créer un cours",
@@ -70,6 +71,7 @@
     "pricingDescription": "Définissez le prix de votre cours. Laissez à 0 pour un cours gratuit.",
     "price": "Prix",
     "pricePlaceholder": "0.00",
+    "currency": "Devise",
     "media": "Média",
     "mediaDescription": "Ajoutez une image miniature pour votre cours",
     "thumbnailUrl": "URL de la miniature",

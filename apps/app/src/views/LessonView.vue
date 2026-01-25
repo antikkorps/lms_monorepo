@@ -307,11 +307,20 @@ function navigateToLesson(lesson: LessonItem) {
               <!-- Video Player -->
               <div v-if="currentLesson.type === 'video'" class="space-y-4">
                 <div class="aspect-video overflow-hidden rounded-lg bg-black">
-                  <!-- For now, show placeholder. In production, fetch full lesson data with videoUrl -->
-                  <div class="flex h-full items-center justify-center text-white">
+                  <!-- YouTube Player if videoId is available -->
+                  <iframe
+                    v-if="currentLesson.videoId"
+                    :src="`https://www.youtube.com/embed/${currentLesson.videoId}?rel=0&modestbranding=1`"
+                    class="h-full w-full"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                  />
+                  <!-- Placeholder if no video -->
+                  <div v-else class="flex h-full items-center justify-center text-white">
                     <div class="text-center">
                       <PlayCircle class="mx-auto h-16 w-16 opacity-50" />
-                      <p class="mt-4">{{ t('courses.lesson.videoPlayer') }}</p>
+                      <p class="mt-4">{{ t('courses.lesson.videoComingSoon', 'Video coming soon') }}</p>
                       <p class="text-sm opacity-75">{{ currentLesson.title }}</p>
                     </div>
                   </div>

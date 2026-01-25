@@ -5,7 +5,6 @@
 
 import type { CourseListItem } from '@shared/types';
 import { ref, computed } from 'vue';
-import { useApi } from './useApi';
 
 export type CourseFilter = 'all' | 'free' | 'paid';
 export type CourseSortBy = 'newest' | 'popular' | 'title' | 'duration';
@@ -32,6 +31,7 @@ interface ApiCourse {
   description: string | null;
   thumbnailUrl: string | null;
   price: number;
+  currency: string;
   duration: number;
   chaptersCount: number;
   lessonsCount: number;
@@ -43,7 +43,10 @@ interface ApiCourse {
   };
 }
 
-interface CoursesApiResponse {
+// Note: The API returns { data: courses[], pagination: {...} }
+// But useApi unwraps .data, so we get just courses[] back
+// For pagination, we need the raw response
+interface CoursesApiRawResponse {
   data: ApiCourse[];
   pagination: {
     page: number;
@@ -66,7 +69,8 @@ function transformCourse(course: ApiCourse): CourseListItem {
     instructorName: course.instructor
       ? `${course.instructor.firstName} ${course.instructor.lastName}`
       : 'Unknown',
-    price: course.price * 100, // API returns price in dollars, frontend expects cents
+    price: Number(course.price),
+    currency: (course.currency as 'EUR' | 'USD') || 'EUR',
     duration: Math.floor(course.duration / 60), // API returns seconds, frontend expects minutes
     chaptersCount: course.chaptersCount,
     lessonsCount: course.lessonsCount,
@@ -74,8 +78,6 @@ function transformCourse(course: ApiCourse): CourseListItem {
 }
 
 export function useCourses() {
-  const api = useApi();
-
   const state = ref<CoursesState>({
     courses: [],
     isLoading: true,
@@ -140,6 +142,7 @@ export function useCourses() {
 
   /**
    * Fetch courses from API
+   * Note: Using fetch directly because we need both data and pagination from the response
    */
   async function fetchCourses(): Promise<void> {
     state.value.isLoading = true;
@@ -157,10 +160,18 @@ export function useCourses() {
         params.set('search', state.value.searchQuery);
       }
 
-      const response = await api.get<CoursesApiResponse>(`/courses?${params.toString()}`);
+      const response = await fetch(`/api/v1/courses?${params.toString()}`, {
+        credentials: 'include',
+      });
 
-      state.value.courses = response.data.map(transformCourse);
-      state.value.pagination = response.pagination;
+      if (!response.ok) {
+        throw new Error('Failed to fetch courses');
+      }
+
+      const result = (await response.json()) as CoursesApiRawResponse;
+
+      state.value.courses = result.data.map(transformCourse);
+      state.value.pagination = result.pagination;
     } catch (err) {
       state.value.error = err instanceof Error ? err.message : 'Failed to load courses';
     } finally {

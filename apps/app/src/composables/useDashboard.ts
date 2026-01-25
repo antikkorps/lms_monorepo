@@ -1,113 +1,115 @@
 /**
  * Dashboard Composable
- * Handles learner dashboard data fetching and state
+ * Handles learner dashboard data fetching with real API integration
  */
 
 import type { LearnerDashboardStats, CourseListItem, Badge } from '@shared/types';
 import { ref, computed } from 'vue';
-// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
+import { useApi } from './useApi';
 
 // Extended course type for dashboard with last accessed info
 export interface DashboardCourse extends CourseListItem {
-  lastAccessedAt: Date;
-  nextLessonTitle: string;
+  lastAccessedAt: Date | null;
+  nextLessonTitle: string | null;
 }
 
-interface DashboardData {
+interface ApiDashboardCourse {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  instructorName: string;
+  price: number;
+  currency: string;
+  duration: number;
+  chaptersCount: number;
+  lessonsCount: number;
+  progress: number;
+  lastAccessedAt: string | null;
+  nextLessonTitle: string | null;
+}
+
+interface ApiBadge {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  earnedAt: string;
+  courseId?: string;
+}
+
+interface ApiDashboardData {
   stats: LearnerDashboardStats;
-  inProgressCourses: DashboardCourse[];
-  recentBadges: Badge[];
+  inProgressCourses: ApiDashboardCourse[];
+  recentBadges: ApiBadge[];
 }
 
-// Mock data for development (will be replaced by API calls)
-const mockData: DashboardData = {
-  stats: {
-    enrolledCourses: 5,
-    completedCourses: 2,
-    inProgressCourses: 3,
-    totalBadges: 7,
-    totalLearningTime: 1847, // minutes
-  },
-  inProgressCourses: [
-    {
-      id: '1',
-      title: 'Introduction to Machine Learning',
-      slug: 'intro-ml',
-      description: 'Learn the fundamentals of ML',
-      thumbnailUrl: null,
-      instructorName: 'Dr. Sarah Chen',
-      price: 0,
-      duration: 480,
-      chaptersCount: 8,
-      lessonsCount: 32,
-      progress: 65,
-      lastAccessedAt: new Date(Date.now() - 1000 * 60 * 30), // 30 min ago
-      nextLessonTitle: 'Neural Networks Basics',
-    },
-    {
-      id: '2',
-      title: 'Advanced TypeScript Patterns',
-      slug: 'advanced-typescript',
-      description: 'Master TypeScript like a pro',
-      thumbnailUrl: null,
-      instructorName: 'Mike Johnson',
-      price: 0,
-      duration: 360,
-      chaptersCount: 6,
-      lessonsCount: 24,
-      progress: 42,
-      lastAccessedAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-      nextLessonTitle: 'Generic Constraints',
-    },
-    {
-      id: '3',
-      title: 'Vue 3 Composition API Mastery',
-      slug: 'vue3-composition',
-      description: 'Deep dive into Vue 3',
-      thumbnailUrl: null,
-      instructorName: 'Emma Wilson',
-      price: 0,
-      duration: 300,
-      chaptersCount: 5,
-      lessonsCount: 20,
-      progress: 15,
-      lastAccessedAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-      nextLessonTitle: 'Reactive References',
-    },
-  ],
-  recentBadges: [
-    {
-      id: '1',
-      name: 'Quick Learner',
-      description: 'Complete 5 lessons in one day',
-      imageUrl: '/badges/quick-learner.svg',
-      earnedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
-    },
-    {
-      id: '2',
-      name: 'First Course',
-      description: 'Complete your first course',
-      imageUrl: '/badges/first-course.svg',
-      earnedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5),
-    },
-    {
-      id: '3',
-      name: 'Perfect Score',
-      description: 'Get 100% on a quiz',
-      imageUrl: '/badges/perfect-score.svg',
-      earnedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
-    },
-  ],
-};
+function transformCourse(course: ApiDashboardCourse): DashboardCourse {
+  return {
+    id: course.id,
+    title: course.title,
+    slug: course.slug,
+    description: course.description,
+    thumbnailUrl: course.thumbnailUrl,
+    instructorName: course.instructorName,
+    price: course.price,
+    currency: (course.currency as 'EUR' | 'USD') || 'EUR',
+    duration: course.duration,
+    chaptersCount: course.chaptersCount,
+    lessonsCount: course.lessonsCount,
+    progress: course.progress,
+    lastAccessedAt: course.lastAccessedAt ? new Date(course.lastAccessedAt) : null,
+    nextLessonTitle: course.nextLessonTitle,
+  };
+}
+
+function transformBadge(badge: ApiBadge): Badge {
+  return {
+    id: badge.id,
+    name: badge.name,
+    description: badge.description,
+    imageUrl: badge.imageUrl,
+    earnedAt: new Date(badge.earnedAt),
+    courseId: badge.courseId,
+  };
+}
+
+// Use window to persist state across HMR reloads and prevent duplicate fetches
+const WINDOW_KEY = '__dashboardState__';
+const FETCH_THROTTLE_MS = 2000;
+
+interface WindowState {
+  fetchInProgress: boolean;
+  lastFetchTime: number;
+}
+
+function getWindowState(): WindowState {
+  if (!(window as unknown as Record<string, unknown>)[WINDOW_KEY]) {
+    (window as unknown as Record<string, unknown>)[WINDOW_KEY] = {
+      fetchInProgress: false,
+      lastFetchTime: 0,
+    };
+  }
+  return (window as unknown as Record<string, unknown>)[WINDOW_KEY] as WindowState;
+}
+
+// Shared state across all useDashboard() calls
+const sharedIsLoading = ref(false);
+const sharedError = ref<string | null>(null);
+const sharedStats = ref<LearnerDashboardStats | null>(null);
+const sharedInProgressCourses = ref<DashboardCourse[]>([]);
+const sharedRecentBadges = ref<Badge[]>([]);
 
 export function useDashboard() {
-  // TODO: Replace mock data with real API calls using useApi()
+  const api = useApi();
 
-  const isLoading = ref(true);
-  const error = ref<string | null>(null);
-  const stats = ref<LearnerDashboardStats | null>(null);
-  const inProgressCourses = ref<DashboardCourse[]>([]);
-  const recentBadges = ref<Badge[]>([]);
+  // Use shared state instead of creating new state per call
+  const isLoading = sharedIsLoading;
+  const error = sharedError;
+  const stats = sharedStats;
+  const inProgressCourses = sharedInProgressCourses;
+  const recentBadges = sharedRecentBadges;
 
   // Computed helpers
   const formattedLearningTime = computed(() => {
@@ -142,31 +144,44 @@ export function useDashboard() {
 
   /**
    * Fetch dashboard data from API
+   * Protected against rapid successive calls (HMR, multiple component mounts)
    */
   async function fetchDashboard(): Promise<void> {
+    const now = Date.now();
+    const windowState = getWindowState();
+
+    // Prevent rapid successive calls
+    if (windowState.fetchInProgress || now - windowState.lastFetchTime < FETCH_THROTTLE_MS) {
+      console.log('[useDashboard] Skipping fetch - throttled or in progress');
+      return;
+    }
+
+    windowState.fetchInProgress = true;
+    windowState.lastFetchTime = now;
     isLoading.value = true;
     error.value = null;
 
     try {
-      // TODO: Replace with real API calls when endpoints are ready
-      // const data = await api.get<DashboardData>('/learner/dashboard');
+      // useApi already unwraps the 'data' property from the API response
+      const data = await api.get<ApiDashboardData>('/learner/dashboard');
 
-      // Using mock data for now
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      stats.value = mockData.stats;
-      inProgressCourses.value = mockData.inProgressCourses;
-      recentBadges.value = mockData.recentBadges;
+      stats.value = data.stats;
+      inProgressCourses.value = data.inProgressCourses.map(transformCourse);
+      recentBadges.value = data.recentBadges.map(transformBadge);
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load dashboard';
     } finally {
       isLoading.value = false;
+      windowState.fetchInProgress = false;
     }
   }
 
   /**
-   * Refresh dashboard data
+   * Refresh dashboard data (forces refresh by resetting throttle)
    */
   async function refresh(): Promise<void> {
+    const windowState = getWindowState();
+    windowState.lastFetchTime = 0; // Reset throttle to allow immediate fetch
     await fetchDashboard();
   }
 

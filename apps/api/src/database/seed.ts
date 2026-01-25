@@ -32,6 +32,7 @@ import {
   TenantStatus,
   SubscriptionStatus,
   CourseStatus,
+  Currency,
   LessonType,
   QuizQuestionType,
   PurchaseStatus,
@@ -40,6 +41,7 @@ import {
 import type { BadgeCriteria } from './models/Badge.js';
 import { hashPassword } from '../auth/password.js';
 import { randomUUID } from 'crypto';
+import { logger } from '../utils/logger.js';
 
 // =============================================================================
 // Configuration
@@ -99,7 +101,7 @@ const IDS = {
 // =============================================================================
 
 async function seedTenants(): Promise<void> {
-  console.log('Seeding tenants...');
+  logger.info('Seeding tenants...');
 
   await Tenant.create({
     id: IDS.tenant,
@@ -113,7 +115,7 @@ async function seedTenants(): Promise<void> {
 }
 
 async function seedUsers(): Promise<void> {
-  console.log('Seeding users...');
+  logger.info('Seeding users...');
 
   const passwordHash = await hashPassword(DEFAULT_PASSWORD);
 
@@ -185,7 +187,7 @@ async function seedUsers(): Promise<void> {
 }
 
 async function seedCourses(): Promise<void> {
-  console.log('Seeding courses...');
+  logger.info('Seeding courses...');
 
   const courses = [
     {
@@ -205,6 +207,7 @@ You'll learn:
 Perfect for JavaScript developers looking to add type safety to their projects.`,
       status: CourseStatus.PUBLISHED,
       price: 49.99,
+      currency: Currency.EUR,
       instructorId: IDS.instructor,
       thumbnailUrl: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800',
       duration: 7200,
@@ -227,7 +230,8 @@ This course covers:
 
 Build more maintainable and scalable Vue applications.`,
       status: CourseStatus.PUBLISHED,
-      price: 79.99,
+      price: 59.99,
+      currency: Currency.USD,
       instructorId: IDS.instructor,
       thumbnailUrl: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=800',
       duration: 10800,
@@ -243,6 +247,7 @@ Build more maintainable and scalable Vue applications.`,
 Coming soon...`,
       status: CourseStatus.DRAFT,
       price: 0,
+      currency: Currency.EUR,
       instructorId: IDS.instructor,
       thumbnailUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800',
       duration: 0,
@@ -255,7 +260,7 @@ Coming soon...`,
 }
 
 async function seedChaptersAndLessons(): Promise<void> {
-  console.log('Seeding chapters and lessons...');
+  logger.info('Seeding chapters and lessons...');
 
   // Course 1 Chapters
   const chapters = [
@@ -300,7 +305,7 @@ async function seedChaptersAndLessons(): Promise<void> {
 
   // Lessons
   const lessons = [
-    // Course 1 - Chapter 1
+    // Course 1 - Chapter 1 - TypeScript videos from real content creators
     {
       id: IDS.c1l1,
       chapterId: IDS.c1ch1,
@@ -309,8 +314,8 @@ async function seedChaptersAndLessons(): Promise<void> {
       duration: 600,
       position: 0,
       isFree: true,
-      videoUrl: 'https://www.youtube.com/watch?v=d56mG7DezGs',
-      videoId: 'd56mG7DezGs',
+      videoUrl: 'https://www.youtube.com/watch?v=zQnBQ4tB3ZA',
+      videoId: 'zQnBQ4tB3ZA', // Fireship - TypeScript in 100 seconds
     },
     {
       id: IDS.c1l2,
@@ -321,7 +326,7 @@ async function seedChaptersAndLessons(): Promise<void> {
       position: 1,
       isFree: true,
       videoUrl: 'https://www.youtube.com/watch?v=d56mG7DezGs',
-      videoId: 'd56mG7DezGs',
+      videoId: 'd56mG7DezGs', // TypeScript Tutorial
     },
     {
       id: IDS.c1l3,
@@ -331,6 +336,8 @@ async function seedChaptersAndLessons(): Promise<void> {
       duration: 1200,
       position: 2,
       isFree: false,
+      videoUrl: 'https://www.youtube.com/watch?v=ahCwqrYpIuM',
+      videoId: 'ahCwqrYpIuM', // TypeScript basics
     },
     // Course 1 - Chapter 2
     {
@@ -341,6 +348,8 @@ async function seedChaptersAndLessons(): Promise<void> {
       duration: 1500,
       position: 0,
       isFree: false,
+      videoUrl: 'https://www.youtube.com/watch?v=WlxcujsvcIY',
+      videoId: 'WlxcujsvcIY', // TypeScript types
     },
     {
       id: IDS.c1l5,
@@ -350,6 +359,8 @@ async function seedChaptersAndLessons(): Promise<void> {
       duration: 1800,
       position: 1,
       isFree: false,
+      videoUrl: 'https://www.youtube.com/watch?v=1oVyLeRR6Bk',
+      videoId: '1oVyLeRR6Bk', // Arrays & Objects in TS
     },
     {
       id: IDS.c1quiz1,
@@ -369,6 +380,8 @@ async function seedChaptersAndLessons(): Promise<void> {
       duration: 2400,
       position: 0,
       isFree: false,
+      videoUrl: 'https://www.youtube.com/watch?v=nViEqpgwxHE',
+      videoId: 'nViEqpgwxHE', // TypeScript Generics
     },
     {
       id: IDS.c1quiz2,
@@ -379,7 +392,7 @@ async function seedChaptersAndLessons(): Promise<void> {
       position: 1,
       isFree: false,
     },
-    // Course 2 - Chapter 1
+    // Course 2 - Chapter 1 - Vue 3 Composition API videos
     {
       id: IDS.c2l1,
       chapterId: IDS.c2ch1,
@@ -388,6 +401,8 @@ async function seedChaptersAndLessons(): Promise<void> {
       duration: 1200,
       position: 0,
       isFree: true,
+      videoUrl: 'https://www.youtube.com/watch?v=bwItFdPt-6M',
+      videoId: 'bwItFdPt-6M', // Vue 3 Composition API
     },
     {
       id: IDS.c2l2,
@@ -397,6 +412,8 @@ async function seedChaptersAndLessons(): Promise<void> {
       duration: 1800,
       position: 1,
       isFree: false,
+      videoUrl: 'https://www.youtube.com/watch?v=sAj6tdVS2cA',
+      videoId: 'sAj6tdVS2cA', // ref vs reactive explained
     },
     // Course 2 - Chapter 2
     {
@@ -407,6 +424,8 @@ async function seedChaptersAndLessons(): Promise<void> {
       duration: 2100,
       position: 0,
       isFree: false,
+      videoUrl: 'https://www.youtube.com/watch?v=4aIvWMp-dkE',
+      videoId: '4aIvWMp-dkE', // Vue Composables
     },
     {
       id: IDS.c2quiz1,
@@ -423,7 +442,7 @@ async function seedChaptersAndLessons(): Promise<void> {
 }
 
 async function seedLessonContent(): Promise<void> {
-  console.log('Seeding lesson content...');
+  logger.info('Seeding lesson content...');
 
   const contents = [
     {
@@ -462,7 +481,7 @@ async function seedLessonContent(): Promise<void> {
 }
 
 async function seedQuizQuestions(): Promise<void> {
-  console.log('Seeding quiz questions...');
+  logger.info('Seeding quiz questions...');
 
   const questions = [
     // Quiz 1 - Type System Basics
@@ -582,7 +601,7 @@ async function seedQuizQuestions(): Promise<void> {
 }
 
 async function seedBadges(): Promise<void> {
-  console.log('Seeding badges...');
+  logger.info('Seeding badges...');
 
   const badges: Array<{
     id: string;
@@ -618,9 +637,9 @@ async function seedBadges(): Promise<void> {
 }
 
 async function seedPurchasesAndProgress(): Promise<void> {
-  console.log('Seeding purchases and progress...');
+  logger.info('Seeding purchases and progress...');
 
-  // Create purchases for learner1
+  // Create purchases for learner1, soloLearner, and instructor (for demo)
   await Purchase.bulkCreate([
     {
       id: randomUUID(),
@@ -644,6 +663,23 @@ async function seedPurchasesAndProgress(): Promise<void> {
       courseId: IDS.course1,
       tenantId: null,
       amount: 49.99,
+      status: PurchaseStatus.COMPLETED,
+    },
+    // Instructor enrolled in both courses (for demo presentation)
+    {
+      id: randomUUID(),
+      userId: IDS.instructor,
+      courseId: IDS.course1,
+      tenantId: null,
+      amount: 0, // Free for instructor
+      status: PurchaseStatus.COMPLETED,
+    },
+    {
+      id: randomUUID(),
+      userId: IDS.instructor,
+      courseId: IDS.course2,
+      tenantId: null,
+      amount: 0,
       status: PurchaseStatus.COMPLETED,
     },
   ]);
@@ -682,9 +718,34 @@ async function seedPurchasesAndProgress(): Promise<void> {
       completed: true,
       completedAt: new Date(),
     },
+    // Instructor progress (for demo)
+    {
+      id: randomUUID(),
+      userId: IDS.instructor,
+      courseId: IDS.course1,
+      lessonId: IDS.c1l1,
+      completed: true,
+      completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+    },
+    {
+      id: randomUUID(),
+      userId: IDS.instructor,
+      courseId: IDS.course1,
+      lessonId: IDS.c1l2,
+      completed: true,
+      completedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+    },
+    {
+      id: randomUUID(),
+      userId: IDS.instructor,
+      courseId: IDS.course2,
+      lessonId: IDS.c2l1,
+      completed: true,
+      completedAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
+    },
   ]);
 
-  // Award badge to learner1
+  // Award badges to learner1 and instructor
   await UserBadge.bulkCreate([
     {
       id: randomUUID(),
@@ -692,6 +753,14 @@ async function seedPurchasesAndProgress(): Promise<void> {
       badgeId: IDS.badge1,
       courseId: IDS.course1,
       earnedAt: new Date(),
+    },
+    // Instructor badge (for demo)
+    {
+      id: randomUUID(),
+      userId: IDS.instructor,
+      badgeId: IDS.badge1,
+      courseId: IDS.course1,
+      earnedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
     },
   ]);
 }
@@ -701,31 +770,49 @@ async function seedPurchasesAndProgress(): Promise<void> {
 // =============================================================================
 
 async function runSeed(): Promise<void> {
-  console.log('Starting database seed...');
-  console.log(`Default password for all users: ${DEFAULT_PASSWORD}`);
-  console.log('');
+  logger.info('Starting database seed...');
+  logger.info({ defaultPassword: DEFAULT_PASSWORD }, 'Default password for all users');
 
   try {
     // Connect and setup associations
     await sequelize.authenticate();
     setupAssociations();
 
-    console.log('Clearing existing data...');
-    // Disable foreign key checks temporarily
-    await sequelize.query('SET CONSTRAINTS ALL DEFERRED');
+    // Add currency column if it doesn't exist (manual migration for new field)
+    logger.info('Ensuring database schema has currency column...');
+    try {
+      await sequelize.query(`
+        ALTER TABLE courses
+        ADD COLUMN IF NOT EXISTS currency VARCHAR(3) NOT NULL DEFAULT 'EUR'
+      `);
+      logger.info('Currency column ensured');
+    } catch {
+      // Column might already exist with different attributes, that's OK
+      logger.info('Currency column already exists or could not be added');
+    }
 
-    // Clear tables in reverse dependency order
-    await UserBadge.destroy({ where: {}, force: true });
-    await UserProgress.destroy({ where: {}, force: true });
-    await Purchase.destroy({ where: {}, force: true });
-    await QuizQuestion.destroy({ where: {}, force: true });
-    await LessonContent.destroy({ where: {}, force: true });
-    await Lesson.destroy({ where: {}, force: true });
-    await Chapter.destroy({ where: {}, force: true });
-    await Course.destroy({ where: {}, force: true });
-    await Badge.destroy({ where: {}, force: true });
-    await User.destroy({ where: {}, force: true });
-    await Tenant.destroy({ where: {}, force: true });
+    logger.info('Clearing existing data...');
+
+    // Use a transaction for clearing data with deferred constraints
+    await sequelize.transaction(async (t) => {
+      // Disable foreign key checks temporarily within transaction
+      await sequelize.query('SET CONSTRAINTS ALL DEFERRED', { transaction: t });
+
+      // Clear tables in reverse dependency order
+      await UserBadge.destroy({ where: {}, force: true, transaction: t });
+      await UserProgress.destroy({ where: {}, force: true, transaction: t });
+      await Purchase.destroy({ where: {}, force: true, transaction: t });
+      await QuizQuestion.destroy({ where: {}, force: true, transaction: t });
+      await LessonContent.destroy({ where: {}, force: true, transaction: t });
+      await Lesson.destroy({ where: {}, force: true, transaction: t });
+      await Chapter.destroy({ where: {}, force: true, transaction: t });
+      await Course.destroy({ where: {}, force: true, transaction: t });
+      await Badge.destroy({ where: {}, force: true, transaction: t });
+      await User.destroy({ where: {}, force: true, transaction: t });
+      await Tenant.destroy({ where: {}, force: true, transaction: t });
+    });
+
+    logger.info('Existing data cleared, seeding new data...');
 
     // Run seeders
     await seedTenants();
@@ -737,18 +824,19 @@ async function runSeed(): Promise<void> {
     await seedQuizQuestions();
     await seedPurchasesAndProgress();
 
-    console.log('');
-    console.log('Seed completed successfully!');
-    console.log('');
-    console.log('Test accounts:');
-    console.log('  - superadmin@lms.local (Super Admin)');
-    console.log('  - instructor@lms.local (Instructor)');
-    console.log('  - admin@acme-corp.com (Tenant Admin)');
-    console.log('  - learner1@acme-corp.com (Learner with progress)');
-    console.log('  - solo@example.com (B2C Learner)');
-    console.log(`  Password: ${DEFAULT_PASSWORD}`);
+    logger.info('Seed completed successfully!');
+    logger.info({
+      testAccounts: [
+        'superadmin@lms.local (Super Admin)',
+        'instructor@lms.local (Instructor)',
+        'admin@acme-corp.com (Tenant Admin)',
+        'learner1@acme-corp.com (Learner with progress)',
+        'solo@example.com (B2C Learner)',
+      ],
+      password: DEFAULT_PASSWORD,
+    }, 'Test accounts created');
   } catch (error) {
-    console.error('Seed failed:', error);
+    logger.error({ error }, 'Seed failed');
     process.exit(1);
   } finally {
     await sequelize.close();

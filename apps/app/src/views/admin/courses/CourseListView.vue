@@ -151,12 +151,12 @@ function formatDate(date: Date): string {
   });
 }
 
-function formatPrice(price: number): string {
+function formatPrice(price: number, currency: string = 'EUR'): string {
   if (price === 0) return t('instructor.courses.free', 'Free');
   return new Intl.NumberFormat(undefined, {
     style: 'currency',
-    currency: 'EUR',
-  }).format(price / 100);
+    currency,
+  }).format(price);
 }
 
 onMounted(() => {
@@ -334,7 +334,7 @@ onMounted(() => {
                     {{ course.lessonsCount }} {{ t('instructor.courses.lessons', 'lessons') }}
                   </td>
                   <td class="px-6 py-4 text-sm">
-                    {{ formatPrice(course.price) }}
+                    {{ formatPrice(course.price, course.currency) }}
                   </td>
                   <td class="px-6 py-4 text-sm text-muted-foreground">
                     {{ course.enrollmentsCount }}

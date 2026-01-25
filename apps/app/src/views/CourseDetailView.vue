@@ -218,9 +218,19 @@ function getProgressColor(pct: number): string {
 
               <!-- Normal enrollment flow -->
               <template v-else>
-                <!-- Price -->
+                <!-- Enrolled Badge or Price -->
                 <div class="text-center">
-                  <span class="text-3xl font-bold">{{ formatPrice(course.price) }}</span>
+                  <template v-if="isEnrolled">
+                    <div class="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 dark:bg-green-900/50">
+                      <CheckCircle2 class="h-5 w-5 text-green-600 dark:text-green-400" />
+                      <span class="font-semibold text-green-700 dark:text-green-300">
+                        {{ t('courses.detail.enrolled', 'Enrolled') }}
+                      </span>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <span class="text-3xl font-bold">{{ formatPrice(course.price, course.currency) }}</span>
+                  </template>
                 </div>
 
                 <!-- Progress (if enrolled) -->
