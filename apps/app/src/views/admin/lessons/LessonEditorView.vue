@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LessonTranslationEditor, LessonTypeSelector, QuizBuilder } from '@/components/admin';
 import { useApi } from '@/composables/useApi';
+import { usePreview } from '@/composables/usePreview';
 import {
   ArrowLeft,
   Save,
@@ -29,6 +30,7 @@ import {
   Settings,
   Languages,
   HelpCircle,
+  Eye,
 } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -37,6 +39,7 @@ const route = useRoute();
 const router = useRouter();
 const api = useApi();
 const { t } = useI18n();
+const { openLessonPreview } = usePreview();
 
 const lessonId = computed(() => route.params.id as string);
 
@@ -45,6 +48,7 @@ const isLoading = ref(false);
 const isSaving = ref(false);
 const error = ref<string | null>(null);
 const lesson = ref<Lesson | null>(null);
+const courseSlug = ref<string | null>(null);
 
 // Form state
 const form = ref<UpdateLessonInput>({
@@ -92,7 +96,8 @@ async function fetchLesson(): Promise<void> {
   error.value = null;
 
   try {
-    const data = await api.get<Lesson>(`/lessons/${lessonId.value}`);
+    // Fetch lesson with chapter and course info for preview
+    const data = await api.get<Lesson & { chapter?: { course?: { slug: string } } }>(`/lessons/${lessonId.value}`);
     lesson.value = data;
     form.value = {
       title: data.title,
@@ -100,6 +105,11 @@ async function fetchLesson(): Promise<void> {
       duration: data.duration,
       isFree: data.isFree,
     };
+
+    // Extract course slug if available for preview functionality
+    if (data.chapter?.course?.slug) {
+      courseSlug.value = data.chapter.course.slug;
+    }
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Failed to load lesson';
@@ -127,6 +137,12 @@ async function handleSave(): Promise<void> {
 
 function handleGoBack(): void {
   router.back();
+}
+
+function handlePreviewLesson(): void {
+  if (courseSlug.value && lessonId.value) {
+    openLessonPreview(courseSlug.value, lessonId.value);
+  }
 }
 
 function handleContentSaved(): void {
@@ -159,6 +175,10 @@ onMounted(() => {
           {{ t('instructor.lessonEditor.subtitle', 'Edit lesson settings and content') }}
         </p>
       </div>
+      <Button variant="outline" @click="handlePreviewLesson" :disabled="!courseSlug">
+        <Eye class="mr-2 h-4 w-4" />
+        {{ t('instructor.lessonEditor.preview', 'Preview') }}
+      </Button>
     </div>
 
     <!-- Loading State -->

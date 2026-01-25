@@ -114,6 +114,13 @@
     "dark": "Sombre",
     "system": "Système"
   },
+  "preview": {
+    "mode": "Mode aperçu",
+    "exit": "Quitter l'aperçu",
+    "coursePreviewDescription": "Vous visualisez ce cours comme un apprenant le verrait.",
+    "startPreview": "Commencer l'aperçu",
+    "progressNotTracked": "Progression non suivie en mode aperçu"
+  },
   "profile": {
     "title": "Profil",
     "subtitle": "Gérez les paramètres de votre compte et vos préférences",

@@ -98,6 +98,7 @@
     "addChapter": "Add Chapter",
     "editDetails": "Edit Details",
     "publish": "Publish",
+    "preview": "Preview",
     "chapters": "Chapters",
     "noChapters": "No chapters yet",
     "noChaptersDescription": "Add your first chapter to start building your course content.",
@@ -181,6 +182,7 @@
     "subtitle": "Edit lesson content and settings",
     "backToBuilder": "Back to Builder",
     "loadError": "Failed to load lesson",
+    "preview": "Preview",
     "tabs": {
       "settings": "Settings",
       "content": "Content",

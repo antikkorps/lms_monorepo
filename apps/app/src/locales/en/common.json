@@ -114,6 +114,13 @@
     "dark": "Dark",
     "system": "System"
   },
+  "preview": {
+    "mode": "Preview Mode",
+    "exit": "Exit Preview",
+    "coursePreviewDescription": "You are viewing this course as a learner would see it.",
+    "startPreview": "Start Preview",
+    "progressNotTracked": "Progress not tracked in preview"
+  },
   "profile": {
     "title": "Profile",
     "subtitle": "Manage your account settings and preferences",

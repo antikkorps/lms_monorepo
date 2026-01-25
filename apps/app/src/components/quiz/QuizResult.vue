@@ -7,9 +7,12 @@ import { Trophy, XCircle, Eye, RotateCcw, ArrowRight, CheckCircle2 } from 'lucid
 interface Props {
   result: QuizResult;
   passingScore: number;
+  isPreview?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  isPreview: false,
+});
 
 const emit = defineEmits<{
   (e: 'review'): void;
@@ -35,6 +38,19 @@ const incorrectCount = props.result.answers.length - correctCount;
 
 <template>
   <Card>
+    <!-- Preview Mode Notice -->
+    <div
+      v-if="isPreview"
+      class="rounded-t-lg border-b border-amber-300 bg-amber-50 px-4 py-2 text-center dark:border-amber-700 dark:bg-amber-950/50"
+    >
+      <div class="flex items-center justify-center gap-2">
+        <Eye class="h-4 w-4 text-amber-600 dark:text-amber-400" />
+        <span class="text-sm text-amber-700 dark:text-amber-300">
+          Preview Mode - These results are not saved
+        </span>
+      </div>
+    </div>
+
     <CardHeader class="text-center">
       <!-- Result Icon -->
       <div class="mx-auto mb-4">
