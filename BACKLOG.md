@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-01-24
+## Modified: 2026-01-25
 
 ---
 
@@ -20,7 +20,7 @@
 - [x] Lesson editor with settings/content/quiz tabs (Done: 2026-01-24)
 - [x] Quiz question builder UI (Done: 2026-01-24)
 - [x] Quiz API endpoints (apps/api/src/quiz/) (Done: 2026-01-24)
-- [ ] Content preview mode (learner view from instructor)
+- [x] Content preview mode (learner view from instructor) (Done: 2026-01-25)
 
 ### Media Uploads
 
@@ -32,7 +32,11 @@
 
 ### API Integration (Frontend)
 
-- [ ] Replace mock data with real API calls in composables
+- [x] Replace mock data with real API calls in composables (Partial - Done: 2026-01-25)
+  - [x] Dashboard API (useDashboard)
+  - [x] Progress API (useProgress)
+  - [x] Quiz API (useQuiz)
+  - [ ] Remaining composables
 - [ ] Add error boundaries for API failures
 - [ ] Implement optimistic updates for better UX
 - [ ] Add retry logic with exponential backoff

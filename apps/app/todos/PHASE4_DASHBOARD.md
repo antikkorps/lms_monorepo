@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-01-24
+## Modified: 2026-01-25
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -28,7 +28,10 @@
 - [ ] Implement lazy loading for videos
 
 ### Pending - API Integration
-- [ ] Integrate real API (replace mock data in composables)
+- [x] Integrate real API for dashboard (useDashboard) (Done: 2026-01-25)
+- [x] Integrate real API for progress (useProgress) (Done: 2026-01-25)
+- [x] Integrate real API for quizzes (useQuiz) (Done: 2026-01-25)
+- [ ] Integrate remaining composables
 - [ ] Add error boundaries for API failures
 - [ ] Implement optimistic updates
 
@@ -45,6 +48,12 @@
 - [x] Profile page with avatar selector (Done: 2026-01-24)
 - [x] Instructor course builder (chapters, lessons) (Done: 2026-01-24)
 - [x] Quiz question builder with option editor (Done: 2026-01-24)
+- [x] Content preview mode for instructors (Done: 2026-01-25)
+- [x] YouTube video support in lesson view (Done: 2026-01-25)
+- [x] Modern sidebar redesign with animations (Done: 2026-01-25)
+- [x] "Enrolled" badge display for enrolled users (Done: 2026-01-25)
+- [x] Multi-currency support (EUR/USD) (Done: 2026-01-25)
+- [x] Fix quiz loading bug (useQuiz) (Done: 2026-01-25)
 
 ---
 
