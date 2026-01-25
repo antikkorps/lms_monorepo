@@ -59,6 +59,7 @@ const {
   isOptionSelected,
   getAnswerResult,
   submitQuiz,
+  submitQuizLocally,
   reviewAnswers,
   resetQuiz,
 } = useQuiz(props.lessonId);
@@ -68,7 +69,11 @@ onMounted(() => {
 });
 
 async function handleSubmit() {
-  const success = await submitQuiz();
+  // Use local submission in preview mode (no API call, no persistence)
+  const success = props.isPreview
+    ? await submitQuizLocally()
+    : await submitQuiz();
+
   if (success && result.value) {
     // In preview mode, don't emit completed event (no progress tracking)
     if (!props.isPreview) {

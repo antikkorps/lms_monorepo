@@ -1,11 +1,11 @@
 /**
  * Courses Composable
- * Handles course listing and filtering
+ * Handles course listing and filtering with real API integration
  */
 
 import type { CourseListItem } from '@shared/types';
 import { ref, computed } from 'vue';
-// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
+import { useApi } from './useApi';
 
 export type CourseFilter = 'all' | 'free' | 'paid';
 export type CourseSortBy = 'newest' | 'popular' | 'title' | 'duration';
@@ -17,92 +17,64 @@ interface CoursesState {
   filter: CourseFilter;
   sortBy: CourseSortBy;
   searchQuery: string;
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }
 
-// Mock data for development
-const mockCourses: CourseListItem[] = [
-  {
-    id: '1',
-    title: 'Introduction to Machine Learning',
-    slug: 'intro-ml',
-    description:
-      'Learn the fundamentals of machine learning, from basic concepts to practical implementations with Python.',
-    thumbnailUrl: null,
-    instructorName: 'Dr. Sarah Chen',
-    price: 4900,
-    duration: 480,
-    chaptersCount: 8,
-    lessonsCount: 32,
-  },
-  {
-    id: '2',
-    title: 'Advanced TypeScript Patterns',
-    slug: 'advanced-typescript',
-    description:
-      'Master TypeScript with advanced patterns, generics, and type manipulation techniques.',
-    thumbnailUrl: null,
-    instructorName: 'Mike Johnson',
-    price: 0,
-    duration: 360,
-    chaptersCount: 6,
-    lessonsCount: 24,
-  },
-  {
-    id: '3',
-    title: 'Vue 3 Composition API Mastery',
-    slug: 'vue3-composition',
-    description:
-      'Deep dive into Vue 3 Composition API with real-world examples and best practices.',
-    thumbnailUrl: null,
-    instructorName: 'Emma Wilson',
-    price: 3900,
-    duration: 300,
-    chaptersCount: 5,
-    lessonsCount: 20,
-  },
-  {
-    id: '4',
-    title: 'Building RESTful APIs with Node.js',
-    slug: 'nodejs-rest-api',
-    description:
-      'Create production-ready REST APIs using Node.js, Express, and PostgreSQL.',
-    thumbnailUrl: null,
-    instructorName: 'James Brown',
-    price: 5900,
-    duration: 540,
-    chaptersCount: 10,
-    lessonsCount: 45,
-  },
-  {
-    id: '5',
-    title: 'Docker & Kubernetes Fundamentals',
-    slug: 'docker-kubernetes',
-    description:
-      'Learn containerization and orchestration from scratch with hands-on exercises.',
-    thumbnailUrl: null,
-    instructorName: 'Lisa Park',
-    price: 0,
-    duration: 420,
-    chaptersCount: 7,
-    lessonsCount: 28,
-  },
-  {
-    id: '6',
-    title: 'PostgreSQL Performance Optimization',
-    slug: 'postgresql-performance',
-    description:
-      'Optimize your PostgreSQL database for maximum performance and scalability.',
-    thumbnailUrl: null,
-    instructorName: 'David Lee',
-    price: 2900,
-    duration: 240,
-    chaptersCount: 4,
-    lessonsCount: 16,
-  },
-];
+interface ApiCourse {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  price: number;
+  duration: number;
+  chaptersCount: number;
+  lessonsCount: number;
+  instructor?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+  };
+}
+
+interface CoursesApiResponse {
+  data: ApiCourse[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+/**
+ * Transform API course to CourseListItem
+ */
+function transformCourse(course: ApiCourse): CourseListItem {
+  return {
+    id: course.id,
+    title: course.title,
+    slug: course.slug,
+    description: course.description || '',
+    thumbnailUrl: course.thumbnailUrl,
+    instructorName: course.instructor
+      ? `${course.instructor.firstName} ${course.instructor.lastName}`
+      : 'Unknown',
+    price: course.price * 100, // API returns price in dollars, frontend expects cents
+    duration: Math.floor(course.duration / 60), // API returns seconds, frontend expects minutes
+    chaptersCount: course.chaptersCount,
+    lessonsCount: course.lessonsCount,
+  };
+}
 
 export function useCourses() {
-  // TODO: Replace mock data with real API calls using useApi()
+  const api = useApi();
 
   const state = ref<CoursesState>({
     courses: [],
@@ -111,13 +83,19 @@ export function useCourses() {
     filter: 'all',
     sortBy: 'newest',
     searchQuery: '',
+    pagination: {
+      page: 1,
+      limit: 20,
+      total: 0,
+      totalPages: 0,
+    },
   });
 
-  // Filtered and sorted courses
+  // Filtered and sorted courses (client-side filtering)
   const filteredCourses = computed(() => {
     let result = [...state.value.courses];
 
-    // Apply search filter
+    // Apply search filter (client-side supplement to server search)
     if (state.value.searchQuery) {
       const query = state.value.searchQuery.toLowerCase();
       result = result.filter(
@@ -144,18 +122,19 @@ export function useCourses() {
         result.sort((a, b) => b.duration - a.duration);
         break;
       case 'popular':
-        // In real app, would sort by enrollment count
+        // Sort by lessons count as proxy for popularity
+        result.sort((a, b) => b.lessonsCount - a.lessonsCount);
         break;
       case 'newest':
       default:
-        // In real app, would sort by createdAt
+        // Keep API order (newest first by default)
         break;
     }
 
     return result;
   });
 
-  const totalCourses = computed(() => state.value.courses.length);
+  const totalCourses = computed(() => state.value.pagination.total);
   const filteredCount = computed(() => filteredCourses.value.length);
   const freeCourses = computed(() => state.value.courses.filter((c) => c.price === 0).length);
 
@@ -167,12 +146,21 @@ export function useCourses() {
     state.value.error = null;
 
     try {
-      // TODO: Replace with real API call when endpoint is ready
-      // const courses = await api.get<CourseListItem[]>('/courses');
+      const params = new URLSearchParams();
+      params.set('page', state.value.pagination.page.toString());
+      params.set('limit', state.value.pagination.limit.toString());
+      params.set('sort', 'createdAt');
+      params.set('order', 'DESC');
 
-      // Using mock data for now
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      state.value.courses = mockCourses;
+      // Add search to API call if present
+      if (state.value.searchQuery) {
+        params.set('search', state.value.searchQuery);
+      }
+
+      const response = await api.get<CoursesApiResponse>(`/courses?${params.toString()}`);
+
+      state.value.courses = response.data.map(transformCourse);
+      state.value.pagination = response.pagination;
     } catch (err) {
       state.value.error = err instanceof Error ? err.message : 'Failed to load courses';
     } finally {
@@ -210,6 +198,14 @@ export function useCourses() {
     state.value.searchQuery = '';
   }
 
+  /**
+   * Go to a specific page
+   */
+  function goToPage(page: number): void {
+    state.value.pagination.page = page;
+    fetchCourses();
+  }
+
   return {
     // State
     isLoading: computed(() => state.value.isLoading),
@@ -218,6 +214,7 @@ export function useCourses() {
     filter: computed(() => state.value.filter),
     sortBy: computed(() => state.value.sortBy),
     searchQuery: computed(() => state.value.searchQuery),
+    pagination: computed(() => state.value.pagination),
 
     // Computed
     totalCourses,
@@ -230,5 +227,6 @@ export function useCourses() {
     setSortBy,
     setSearchQuery,
     clearFilters,
+    goToPage,
   };
 }

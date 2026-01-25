@@ -1,11 +1,11 @@
 /**
  * Quiz Composable
- * Manages quiz state, answers, and submission
+ * Manages quiz state, answers, and submission with real API integration
  */
 
 import type { QuizQuestion, QuizAnswer } from '@shared/schemas';
 import { ref, computed } from 'vue';
-// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
+import { useApi } from './useApi';
 
 export interface QuizResult {
   score: number;
@@ -25,82 +25,36 @@ export interface QuizAnswerResult {
 
 export type QuizMode = 'taking' | 'reviewing' | 'completed';
 
-// Mock questions for development
-function getMockQuestions(lessonId: string): QuizQuestion[] {
-  return [
-    {
-      id: 'q1',
-      lessonId,
-      question: 'What is the primary purpose of machine learning?',
-      type: 'single_choice',
-      options: [
-        { id: 'q1-a', text: 'To replace all human workers', isCorrect: false },
-        { id: 'q1-b', text: 'To enable computers to learn from data without explicit programming', isCorrect: true },
-        { id: 'q1-c', text: 'To make computers faster', isCorrect: false },
-        { id: 'q1-d', text: 'To store more data', isCorrect: false },
-      ],
-      points: 10,
-      position: 1,
-    },
-    {
-      id: 'q2',
-      lessonId,
-      question: 'Which of the following are types of machine learning? (Select all that apply)',
-      type: 'multiple_choice',
-      options: [
-        { id: 'q2-a', text: 'Supervised Learning', isCorrect: true },
-        { id: 'q2-b', text: 'Unsupervised Learning', isCorrect: true },
-        { id: 'q2-c', text: 'Reinforcement Learning', isCorrect: true },
-        { id: 'q2-d', text: 'Mechanical Learning', isCorrect: false },
-      ],
-      points: 15,
-      position: 2,
-    },
-    {
-      id: 'q3',
-      lessonId,
-      question: 'Neural networks are inspired by the human brain.',
-      type: 'true_false',
-      options: [
-        { id: 'q3-a', text: 'True', isCorrect: true },
-        { id: 'q3-b', text: 'False', isCorrect: false },
-      ],
-      points: 5,
-      position: 3,
-    },
-    {
-      id: 'q4',
-      lessonId,
-      question: 'What is overfitting in machine learning?',
-      type: 'single_choice',
-      options: [
-        { id: 'q4-a', text: 'When a model performs well on training data but poorly on new data', isCorrect: true },
-        { id: 'q4-b', text: 'When a model is too simple to capture patterns', isCorrect: false },
-        { id: 'q4-c', text: 'When the training data is too large', isCorrect: false },
-        { id: 'q4-d', text: 'When the model trains too quickly', isCorrect: false },
-      ],
-      points: 10,
-      position: 4,
-    },
-    {
-      id: 'q5',
-      lessonId,
-      question: 'Which techniques can help prevent overfitting? (Select all that apply)',
-      type: 'multiple_choice',
-      options: [
-        { id: 'q5-a', text: 'Cross-validation', isCorrect: true },
-        { id: 'q5-b', text: 'Regularization', isCorrect: true },
-        { id: 'q5-c', text: 'Using more training data', isCorrect: true },
-        { id: 'q5-d', text: 'Removing all validation data', isCorrect: false },
-      ],
-      points: 15,
-      position: 5,
-    },
-  ];
+interface ApiQuizQuestion {
+  id: string;
+  lessonId: string;
+  question: string;
+  type: 'single_choice' | 'multiple_choice' | 'true_false';
+  options: Array<{ id: string; text: string; isCorrect: boolean }>;
+  points: number;
+  position: number;
+}
+
+interface ApiQuizSubmitResponse {
+  id: string;
+  score: number;
+  maxScore: number;
+  scorePercentage: number;
+  passed: boolean;
+  attemptNumber: number;
+  correctAnswersCount: number;
+  totalQuestions: number;
+  answers: Array<{
+    questionId: string;
+    selectedOptionIds: string[];
+    isCorrect: boolean;
+    pointsEarned: number;
+  }>;
+  completedAt: string;
 }
 
 export function useQuiz(lessonId: string) {
-  // TODO: Replace mock data with real API calls using useApi()
+  const api = useApi();
 
   // State
   const isLoading = ref(true);
@@ -205,16 +159,28 @@ export function useQuiz(lessonId: string) {
     return answerResult?.isCorrect ?? null;
   }
 
+  /**
+   * Transform API question to local format
+   */
+  function transformQuestion(apiQuestion: ApiQuizQuestion): QuizQuestion {
+    return {
+      id: apiQuestion.id,
+      lessonId: apiQuestion.lessonId,
+      question: apiQuestion.question,
+      type: apiQuestion.type,
+      options: apiQuestion.options,
+      points: apiQuestion.points,
+      position: apiQuestion.position,
+    };
+  }
+
   async function fetchQuestions(): Promise<void> {
     isLoading.value = true;
     error.value = null;
 
     try {
-      // TODO: Replace with real API call
-      // const data = await api.get<QuizQuestion[]>(`/lessons/${lessonId}/quiz`);
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      questions.value = getMockQuestions(lessonId);
+      const response = await api.get<{ data: ApiQuizQuestion[] }>(`/lessons/${lessonId}/questions`);
+      questions.value = response.data.map(transformQuestion);
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load quiz';
     } finally {
@@ -235,12 +201,57 @@ export function useQuiz(lessonId: string) {
         answers.push({ questionId, selectedOptionIds });
       }
 
-      // TODO: Replace with real API call using useApi()
-      // const payload: SubmitQuizInput = { lessonId, answers };
-      // const response = await api.post<QuizResult>(`/lessons/${lessonId}/quiz/submit`, payload);
+      const response = await api.post<{ data: ApiQuizSubmitResponse }>(
+        `/lessons/${lessonId}/quiz/submit`,
+        { answers }
+      );
 
-      // Mock grading
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const apiResult = response.data;
+
+      // Transform API response to local format
+      const answerResults: QuizAnswerResult[] = apiResult.answers.map((answer) => {
+        const question = questions.value.find((q) => q.id === answer.questionId);
+        const correctOptionIds = question?.options.filter((o) => o.isCorrect).map((o) => o.id) ?? [];
+
+        return {
+          questionId: answer.questionId,
+          isCorrect: answer.isCorrect,
+          correctOptionIds,
+          selectedOptionIds: answer.selectedOptionIds,
+          pointsEarned: answer.pointsEarned,
+        };
+      });
+
+      result.value = {
+        score: apiResult.score,
+        maxScore: apiResult.maxScore,
+        percentage: apiResult.scorePercentage,
+        passed: apiResult.passed,
+        answers: answerResults,
+      };
+
+      mode.value = 'completed';
+      return true;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Failed to submit quiz';
+      return false;
+    } finally {
+      isSubmitting.value = false;
+    }
+  }
+
+  /**
+   * Submit quiz locally without API call (for preview mode)
+   */
+  async function submitQuizLocally(): Promise<boolean> {
+    if (!canSubmit.value) return false;
+
+    isSubmitting.value = true;
+    error.value = null;
+
+    try {
+      // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       let totalScore = 0;
       const answerResults: QuizAnswerResult[] = [];
@@ -331,6 +342,7 @@ export function useQuiz(lessonId: string) {
     getAnswerResult,
     isAnswerCorrect,
     submitQuiz,
+    submitQuizLocally,
     reviewAnswers,
     resetQuiz,
   };
