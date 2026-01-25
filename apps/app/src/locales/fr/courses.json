@@ -60,6 +60,7 @@
     "progress": "Progression",
     "lessonsCompleted": "{completed} sur {total} leçons terminées",
     "courseCompleted": "Cours terminé",
+    "enrolled": "Inscrit",
     "error": {
       "notFound": "Cours introuvable",
       "notFoundMessage": "Le cours que vous recherchez n'existe pas.",
@@ -89,6 +90,7 @@
     "markComplete": "Marquer comme terminé",
     "completed": "Terminé",
     "videoPlayer": "Lecteur vidéo",
+    "videoComingSoon": "Vidéo à venir",
     "comingSoon": "Ce type de contenu arrive bientôt.",
     "notFound": {
       "title": "Leçon introuvable",

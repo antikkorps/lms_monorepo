@@ -5,7 +5,8 @@ import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { UserAvatar } from '@/components/user';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { VisuallyHidden } from 'reka-ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,10 +61,13 @@ async function handleLogout() {
     <!-- Desktop Sidebar -->
     <aside class="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r border-sidebar-border bg-sidebar lg:block">
       <div class="flex h-full flex-col">
-        <!-- Logo -->
+        <!-- Logo with gradient accent -->
         <div class="flex h-16 items-center border-b border-sidebar-border px-6">
-          <RouterLink to="/dashboard" class="text-xl font-bold text-sidebar-foreground">
-            {{ t('nav.brand') }}
+          <RouterLink to="/dashboard" class="group flex items-center gap-2 text-xl font-bold text-sidebar-foreground">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 text-primary-foreground transition-transform duration-200 group-hover:scale-110">
+              <GraduationCap class="h-5 w-5" />
+            </div>
+            <span class="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">{{ t('nav.brand') }}</span>
           </RouterLink>
         </div>
 
@@ -73,80 +77,151 @@ async function handleLogout() {
             v-for="item in navigationItems"
             :key="item.href"
             :to="item.href"
-            class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+            v-slot="{ isActive }"
+            custom
           >
-            <component :is="item.icon" class="h-5 w-5" />
-            {{ item.name }}
+            <a
+              :href="item.href"
+              :class="[
+                'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                isActive
+                  ? 'bg-primary/10 text-primary dark:bg-primary/20'
+                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
+              ]"
+              @click.prevent="router.push(item.href)"
+            >
+              <!-- Active indicator bar -->
+              <div
+                :class="[
+                  'absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full transition-all duration-200',
+                  isActive ? 'bg-primary' : 'bg-transparent group-hover:bg-sidebar-accent-foreground/20'
+                ]"
+              />
+              <component
+                :is="item.icon"
+                :class="[
+                  'h-5 w-5 transition-transform duration-200 group-hover:scale-110',
+                  isActive ? 'text-primary' : ''
+                ]"
+              />
+              <span>{{ item.name }}</span>
+              <!-- Subtle glow on active -->
+              <div
+                v-if="isActive"
+                class="absolute inset-0 -z-10 rounded-lg bg-primary/5 blur-sm"
+              />
+            </a>
           </RouterLink>
 
           <!-- Instructor Section (instructor and tenant_admin) -->
           <template v-if="authStore.hasAnyRole(['instructor', 'tenant_admin'])">
-            <Separator class="my-4" />
-            <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <div class="my-4 px-3">
+              <div class="h-px bg-gradient-to-r from-transparent via-sidebar-border to-transparent" />
+            </div>
+            <p class="mb-2 flex items-center gap-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <PenTool class="h-3 w-3" />
               {{ t('nav.instructor.title', 'Instructor') }}
             </p>
             <RouterLink
               to="/instructor"
-              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+              v-slot="{ isActive }"
+              custom
             >
-              <PenTool class="h-5 w-5" />
-              {{ t('nav.instructor.myCourses', 'My Courses') }}
+              <a
+                href="/instructor"
+                :class="[
+                  'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                  isActive
+                    ? 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
+                ]"
+                @click.prevent="router.push('/instructor')"
+              >
+                <div
+                  :class="[
+                    'absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full transition-all duration-200',
+                    isActive ? 'bg-amber-500' : 'bg-transparent group-hover:bg-sidebar-accent-foreground/20'
+                  ]"
+                />
+                <BookOpen
+                  :class="[
+                    'h-5 w-5 transition-transform duration-200 group-hover:scale-110',
+                    isActive ? 'text-amber-500' : ''
+                  ]"
+                />
+                <span>{{ t('nav.instructor.myCourses', 'My Courses') }}</span>
+              </a>
             </RouterLink>
           </template>
 
           <!-- Admin Section (tenant_admin only) -->
           <template v-if="authStore.hasRole('tenant_admin')">
-            <Separator class="my-4" />
-            <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <div class="my-4 px-3">
+              <div class="h-px bg-gradient-to-r from-transparent via-sidebar-border to-transparent" />
+            </div>
+            <p class="mb-2 flex items-center gap-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <Settings class="h-3 w-3" />
               {{ t('nav.admin.title') }}
             </p>
             <RouterLink
-              to="/admin"
-              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+              v-for="adminItem in [
+                { href: '/admin', icon: LayoutDashboard, name: t('nav.admin.dashboard') },
+                { href: '/admin/members', icon: Users, name: t('nav.admin.members') },
+                { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
+                { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
+              ]"
+              :key="adminItem.href"
+              :to="adminItem.href"
+              v-slot="{ isActive }"
+              custom
             >
-              <LayoutDashboard class="h-5 w-5" />
-              {{ t('nav.admin.dashboard') }}
-            </RouterLink>
-            <RouterLink
-              to="/admin/members"
-              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
-            >
-              <Users class="h-5 w-5" />
-              {{ t('nav.admin.members') }}
-            </RouterLink>
-            <RouterLink
-              to="/admin/invitations"
-              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
-            >
-              <Mail class="h-5 w-5" />
-              {{ t('nav.admin.invitations') }}
-            </RouterLink>
-            <RouterLink
-              to="/admin/seats"
-              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              active-class="bg-sidebar-accent text-sidebar-accent-foreground"
-            >
-              <CreditCard class="h-5 w-5" />
-              {{ t('nav.admin.seats') }}
+              <a
+                :href="adminItem.href"
+                :class="[
+                  'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                  isActive
+                    ? 'bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400'
+                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
+                ]"
+                @click.prevent="router.push(adminItem.href)"
+              >
+                <div
+                  :class="[
+                    'absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full transition-all duration-200',
+                    isActive ? 'bg-violet-500' : 'bg-transparent group-hover:bg-sidebar-accent-foreground/20'
+                  ]"
+                />
+                <component
+                  :is="adminItem.icon"
+                  :class="[
+                    'h-5 w-5 transition-transform duration-200 group-hover:scale-110',
+                    isActive ? 'text-violet-500' : ''
+                  ]"
+                />
+                <span>{{ adminItem.name }}</span>
+              </a>
             </RouterLink>
           </template>
         </nav>
 
-        <!-- User section at bottom -->
+        <!-- User section at bottom with improved design -->
         <div class="border-t border-sidebar-border p-4">
-          <div class="flex items-center gap-3">
-            <UserAvatar
-              :user-id="authStore.user?.id || ''"
-              :first-name="authStore.user?.firstName"
-              :last-name="authStore.user?.lastName"
-              :avatar-url="authStore.user?.avatarUrl"
-              size="sm"
-            />
+          <RouterLink
+            to="/profile"
+            class="group flex items-center gap-3 rounded-lg p-2 transition-all duration-200 hover:bg-sidebar-accent"
+          >
+            <div class="relative">
+              <UserAvatar
+                :user-id="authStore.user?.id || ''"
+                :first-name="authStore.user?.firstName"
+                :last-name="authStore.user?.lastName"
+                :avatar-url="authStore.user?.avatarUrl"
+                size="sm"
+                class="ring-2 ring-sidebar-border transition-all duration-200 group-hover:ring-primary/50"
+              />
+              <!-- Online indicator -->
+              <div class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-sidebar bg-green-500" />
+            </div>
             <div class="flex-1 overflow-hidden">
               <p class="truncate text-sm font-medium text-sidebar-foreground">
                 {{ authStore.fullName }}
@@ -155,7 +230,8 @@ async function handleLogout() {
                 {{ authStore.user?.email }}
               </p>
             </div>
-          </div>
+            <Settings class="h-4 w-4 text-muted-foreground opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+          </RouterLink>
         </div>
       </div>
     </aside>
@@ -169,85 +245,160 @@ async function handleLogout() {
             <span class="sr-only">{{ t('nav.accessibility.toggleMenu') }}</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" class="w-64 p-0">
-          <div class="flex h-full flex-col">
-            <div class="flex h-16 items-center border-b px-6">
-              <span class="text-xl font-bold">{{ t('nav.brand') }}</span>
+        <SheetContent side="left" class="w-72 p-0">
+          <VisuallyHidden>
+            <SheetTitle>{{ t('nav.accessibility.mobileMenu') }}</SheetTitle>
+            <SheetDescription>{{ t('nav.accessibility.mobileMenuDescription') }}</SheetDescription>
+          </VisuallyHidden>
+          <div class="flex h-full flex-col bg-sidebar">
+            <!-- Logo with gradient accent -->
+            <div class="flex h-16 items-center border-b border-sidebar-border px-6">
+              <div class="flex items-center gap-2 text-xl font-bold">
+                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 text-primary-foreground">
+                  <GraduationCap class="h-5 w-5" />
+                </div>
+                <span>{{ t('nav.brand') }}</span>
+              </div>
             </div>
-            <nav class="flex-1 space-y-1 px-3 py-4">
+            <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
               <RouterLink
                 v-for="item in navigationItems"
                 :key="item.href"
                 :to="item.href"
-                class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                active-class="bg-accent text-accent-foreground"
-                @click="isMobileMenuOpen = false"
+                v-slot="{ isActive }"
+                custom
               >
-                <component :is="item.icon" class="h-5 w-5" />
-                {{ item.name }}
+                <a
+                  :href="item.href"
+                  :class="[
+                    'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                    isActive
+                      ? 'bg-primary/10 text-primary dark:bg-primary/20'
+                      : 'text-foreground/70 hover:bg-accent hover:text-foreground'
+                  ]"
+                  @click.prevent="router.push(item.href); isMobileMenuOpen = false"
+                >
+                  <div
+                    :class="[
+                      'absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full transition-all duration-200',
+                      isActive ? 'bg-primary' : 'bg-transparent'
+                    ]"
+                  />
+                  <component
+                    :is="item.icon"
+                    :class="['h-5 w-5', isActive ? 'text-primary' : '']"
+                  />
+                  <span>{{ item.name }}</span>
+                </a>
               </RouterLink>
 
               <!-- Instructor Section (instructor and tenant_admin) -->
               <template v-if="authStore.hasAnyRole(['instructor', 'tenant_admin'])">
-                <Separator class="my-4" />
-                <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <div class="my-4 px-3">
+                  <div class="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                </div>
+                <p class="mb-2 flex items-center gap-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <PenTool class="h-3 w-3" />
                   {{ t('nav.instructor.title', 'Instructor') }}
                 </p>
                 <RouterLink
                   to="/instructor"
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                  active-class="bg-accent text-accent-foreground"
-                  @click="isMobileMenuOpen = false"
+                  v-slot="{ isActive }"
+                  custom
                 >
-                  <PenTool class="h-5 w-5" />
-                  {{ t('nav.instructor.myCourses', 'My Courses') }}
+                  <a
+                    href="/instructor"
+                    :class="[
+                      'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                      isActive
+                        ? 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+                        : 'text-foreground/70 hover:bg-accent hover:text-foreground'
+                    ]"
+                    @click.prevent="router.push('/instructor'); isMobileMenuOpen = false"
+                  >
+                    <div
+                      :class="[
+                        'absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full transition-all duration-200',
+                        isActive ? 'bg-amber-500' : 'bg-transparent'
+                      ]"
+                    />
+                    <BookOpen :class="['h-5 w-5', isActive ? 'text-amber-500' : '']" />
+                    <span>{{ t('nav.instructor.myCourses', 'My Courses') }}</span>
+                  </a>
                 </RouterLink>
               </template>
 
               <!-- Admin Section (tenant_admin only) -->
               <template v-if="authStore.hasRole('tenant_admin')">
-                <Separator class="my-4" />
-                <p class="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <div class="my-4 px-3">
+                  <div class="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                </div>
+                <p class="mb-2 flex items-center gap-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Settings class="h-3 w-3" />
                   {{ t('nav.admin.title') }}
                 </p>
                 <RouterLink
-                  to="/admin"
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                  active-class="bg-accent text-accent-foreground"
-                  @click="isMobileMenuOpen = false"
+                  v-for="adminItem in [
+                    { href: '/admin', icon: LayoutDashboard, name: t('nav.admin.dashboard') },
+                    { href: '/admin/members', icon: Users, name: t('nav.admin.members') },
+                    { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
+                    { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
+                  ]"
+                  :key="adminItem.href"
+                  :to="adminItem.href"
+                  v-slot="{ isActive }"
+                  custom
                 >
-                  <LayoutDashboard class="h-5 w-5" />
-                  {{ t('nav.admin.dashboard') }}
-                </RouterLink>
-                <RouterLink
-                  to="/admin/members"
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                  active-class="bg-accent text-accent-foreground"
-                  @click="isMobileMenuOpen = false"
-                >
-                  <Users class="h-5 w-5" />
-                  {{ t('nav.admin.members') }}
-                </RouterLink>
-                <RouterLink
-                  to="/admin/invitations"
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                  active-class="bg-accent text-accent-foreground"
-                  @click="isMobileMenuOpen = false"
-                >
-                  <Mail class="h-5 w-5" />
-                  {{ t('nav.admin.invitations') }}
-                </RouterLink>
-                <RouterLink
-                  to="/admin/seats"
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                  active-class="bg-accent text-accent-foreground"
-                  @click="isMobileMenuOpen = false"
-                >
-                  <CreditCard class="h-5 w-5" />
-                  {{ t('nav.admin.seats') }}
+                  <a
+                    :href="adminItem.href"
+                    :class="[
+                      'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                      isActive
+                        ? 'bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400'
+                        : 'text-foreground/70 hover:bg-accent hover:text-foreground'
+                    ]"
+                    @click.prevent="router.push(adminItem.href); isMobileMenuOpen = false"
+                  >
+                    <div
+                      :class="[
+                        'absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full transition-all duration-200',
+                        isActive ? 'bg-violet-500' : 'bg-transparent'
+                      ]"
+                    />
+                    <component :is="adminItem.icon" :class="['h-5 w-5', isActive ? 'text-violet-500' : '']" />
+                    <span>{{ adminItem.name }}</span>
+                  </a>
                 </RouterLink>
               </template>
             </nav>
+
+            <!-- User section at bottom -->
+            <div class="border-t border-sidebar-border p-4">
+              <div
+                class="flex items-center gap-3 rounded-lg p-2"
+                @click="router.push('/profile'); isMobileMenuOpen = false"
+              >
+                <div class="relative">
+                  <UserAvatar
+                    :user-id="authStore.user?.id || ''"
+                    :first-name="authStore.user?.firstName"
+                    :last-name="authStore.user?.lastName"
+                    :avatar-url="authStore.user?.avatarUrl"
+                    size="sm"
+                    class="ring-2 ring-sidebar-border"
+                  />
+                  <div class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-sidebar bg-green-500" />
+                </div>
+                <div class="flex-1 overflow-hidden">
+                  <p class="truncate text-sm font-medium">
+                    {{ authStore.fullName }}
+                  </p>
+                  <p class="truncate text-xs text-muted-foreground">
+                    {{ authStore.user?.email }}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </SheetContent>
       </Sheet>

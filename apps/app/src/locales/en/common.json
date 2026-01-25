@@ -27,7 +27,8 @@
       "title": "Continue Learning",
       "subtitle": "Pick up where you left off",
       "next": "Next:",
-      "continue": "Continue"
+      "continue": "Continue",
+      "notStarted": "Not started"
     },
     "empty": {
       "title": "No courses yet",
@@ -56,6 +57,7 @@
     "next": "Next",
     "previous": "Previous",
     "close": "Close",
+    "clear": "Clear",
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort",
@@ -113,6 +115,13 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "preview": {
+    "mode": "Preview Mode",
+    "exit": "Exit Preview",
+    "coursePreviewDescription": "You are viewing this course as a learner would see it.",
+    "startPreview": "Start Preview",
+    "progressNotTracked": "Progress not tracked in preview"
   },
   "profile": {
     "title": "Profile",

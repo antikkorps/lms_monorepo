@@ -50,7 +50,8 @@
     "addLesson": "Add Lesson"
   },
   "lessons": {
-    "open": "Open Lesson"
+    "open": "Open Lesson",
+    "free": "Free"
   },
   "courseEditor": {
     "createTitle": "Create Course",
@@ -70,6 +71,7 @@
     "pricingDescription": "Set the price for your course. Leave at 0 for a free course.",
     "price": "Price",
     "pricePlaceholder": "0.00",
+    "currency": "Currency",
     "media": "Media",
     "mediaDescription": "Add a thumbnail image for your course",
     "thumbnailUrl": "Thumbnail URL",
@@ -98,6 +100,7 @@
     "addChapter": "Add Chapter",
     "editDetails": "Edit Details",
     "publish": "Publish",
+    "preview": "Preview",
     "chapters": "Chapters",
     "noChapters": "No chapters yet",
     "noChaptersDescription": "Add your first chapter to start building your course content.",
@@ -181,6 +184,7 @@
     "subtitle": "Edit lesson content and settings",
     "backToBuilder": "Back to Builder",
     "loadError": "Failed to load lesson",
+    "preview": "Preview",
     "tabs": {
       "settings": "Settings",
       "content": "Content",

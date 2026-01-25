@@ -22,12 +22,12 @@ function formatDuration(minutes: number): string {
   return `${hours}h ${mins}m`;
 }
 
-function formatPrice(price: number): string {
+function formatPrice(price: number, currency: string = 'EUR'): string {
   if (price === 0) return 'Free';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'EUR',
-  }).format(price / 100);
+    currency,
+  }).format(price);
 }
 
 function getProgressColor(progress: number): string {
@@ -59,7 +59,7 @@ function getProgressColor(progress: number): string {
       <div
         class="absolute right-2 top-2 rounded-full bg-background/90 px-2 py-1 text-sm font-semibold backdrop-blur-sm"
       >
-        {{ formatPrice(course.price) }}
+        {{ formatPrice(course.price, course.currency) }}
       </div>
     </div>
 

@@ -20,11 +20,13 @@ import {
   AlertCircle,
 } from 'lucide-vue-next';
 import { useCourseDetail } from '@/composables/useCourseDetail';
+import { usePreview } from '@/composables/usePreview';
 import { useProgress } from '@/composables/useProgress';
 import { useToast } from '@/composables/useToast';
 import { QuizEngine } from '@/components/quiz';
 import { DiscussionSection } from '@/components/discussions';
 import { NoteEditor } from '@/components/notes';
+import { PreviewBanner } from '@/components/preview';
 import type { LessonItem } from '@shared/types';
 
 const { t } = useI18n();
@@ -35,6 +37,9 @@ const toast = useToast();
 const courseSlug = computed(() => route.params.slug as string);
 const lessonId = computed(() => route.params.lessonId as string);
 
+// Preview mode
+const { isPreviewMode, exitPreview } = usePreview();
+
 const {
   isLoading: courseLoading,
   error: courseError,
@@ -43,7 +48,7 @@ const {
   fetchCourse,
   formatDuration,
   isLessonCompleted,
-} = useCourseDetail(courseSlug.value);
+} = useCourseDetail(courseSlug.value, { previewMode: isPreviewMode.value });
 
 const { markLessonComplete } = useProgress();
 const isMarking = ref(false);
@@ -146,14 +151,22 @@ async function handleMarkComplete() {
 }
 
 function navigateToLesson(lesson: LessonItem) {
-  router.push(`/courses/${courseSlug.value}/learn/${lesson.id}`);
+  const basePath = `/courses/${courseSlug.value}/learn/${lesson.id}`;
+  router.push(isPreviewMode.value ? `${basePath}?preview=true` : basePath);
 }
 </script>
 
 <template>
   <div class="min-h-screen bg-background">
+    <!-- Preview Banner -->
+    <PreviewBanner
+      v-if="isPreviewMode"
+      :course-title="course?.title"
+      @exit="exitPreview"
+    />
+
     <!-- Header -->
-    <header class="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
+    <header class="sticky z-40 border-b bg-background/95 backdrop-blur" :class="isPreviewMode ? 'top-[49px]' : 'top-0'">
       <div class="container px-4 sm:px-6 lg:px-8 mx-auto flex h-14 items-center gap-4">
         <RouterLink
           :to="`/courses/${courseSlug}`"
@@ -294,19 +307,31 @@ function navigateToLesson(lesson: LessonItem) {
               <!-- Video Player -->
               <div v-if="currentLesson.type === 'video'" class="space-y-4">
                 <div class="aspect-video overflow-hidden rounded-lg bg-black">
-                  <!-- For now, show placeholder. In production, fetch full lesson data with videoUrl -->
-                  <div class="flex h-full items-center justify-center text-white">
+                  <!-- YouTube Player if videoId is available -->
+                  <iframe
+                    v-if="currentLesson.videoId"
+                    :src="`https://www.youtube.com/embed/${currentLesson.videoId}?rel=0&modestbranding=1`"
+                    class="h-full w-full"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                  />
+                  <!-- Placeholder if no video -->
+                  <div v-else class="flex h-full items-center justify-center text-white">
                     <div class="text-center">
                       <PlayCircle class="mx-auto h-16 w-16 opacity-50" />
-                      <p class="mt-4">{{ t('courses.lesson.videoPlayer') }}</p>
+                      <p class="mt-4">{{ t('courses.lesson.videoComingSoon', 'Video coming soon') }}</p>
                       <p class="text-sm opacity-75">{{ currentLesson.title }}</p>
                     </div>
                   </div>
                 </div>
 
                 <!-- Mark complete button -->
-                <div v-if="!isCompleted" class="flex justify-end">
-                  <Button :disabled="isMarking" @click="handleMarkComplete">
+                <div v-if="!isCompleted" class="flex items-center justify-end gap-3">
+                  <span v-if="isPreviewMode" class="text-sm text-amber-600 dark:text-amber-400">
+                    {{ t('common.preview.progressNotTracked', 'Progress not tracked in preview') }}
+                  </span>
+                  <Button :disabled="isMarking || isPreviewMode" @click="handleMarkComplete">
                     <Loader2 v-if="isMarking" class="mr-2 h-4 w-4 animate-spin" />
                     <CheckCircle2 v-else class="mr-2 h-4 w-4" />
                     {{ t('courses.lesson.markComplete') }}
@@ -322,6 +347,7 @@ function navigateToLesson(lesson: LessonItem) {
               <div v-else-if="currentLesson.type === 'quiz'">
                 <QuizEngine
                   :lesson-id="currentLesson.id"
+                  :is-preview="isPreviewMode"
                   @complete="handleMarkComplete"
                 />
               </div>

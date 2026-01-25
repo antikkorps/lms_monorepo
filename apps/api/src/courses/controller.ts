@@ -1,7 +1,7 @@
 import type { Context } from 'koa';
 import { Op } from 'sequelize';
 import { Course, Chapter, Lesson, User, LessonContent } from '../database/models/index.js';
-import { CourseStatus, UserRole, LessonType } from '../database/models/enums.js';
+import { CourseStatus, UserRole, LessonType, Currency } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { parseLocaleFromRequest, getLocalizedLessonContent } from '../utils/locale.js';
@@ -217,12 +217,13 @@ export async function getCourse(ctx: Context): Promise<void> {
  */
 export async function createCourse(ctx: Context): Promise<void> {
   const user = getAuthenticatedUser(ctx);
-  const { title, slug, description, thumbnailUrl, price } = ctx.request.body as {
+  const { title, slug, description, thumbnailUrl, price, currency } = ctx.request.body as {
     title: string;
     slug?: string;
     description?: string;
     thumbnailUrl?: string;
     price?: number;
+    currency?: Currency;
   };
 
   const courseSlug = slug || slugify(title, { lower: true, strict: true });
@@ -238,6 +239,7 @@ export async function createCourse(ctx: Context): Promise<void> {
     description: description || null,
     thumbnailUrl: thumbnailUrl || null,
     price: price || 0,
+    currency: currency || Currency.EUR,
     instructorId: user.userId,
     status: CourseStatus.DRAFT,
   });
@@ -259,6 +261,7 @@ export async function updateCourse(ctx: Context): Promise<void> {
     thumbnailUrl?: string | null;
     status?: CourseStatus;
     price?: number;
+    currency?: Currency;
   };
 
   const course = await Course.findByPk(id);

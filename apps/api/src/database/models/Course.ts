@@ -8,7 +8,7 @@ import {
   type NonAttribute,
 } from 'sequelize';
 import { sequelize } from '../sequelize.js';
-import { CourseStatus } from './enums.js';
+import { CourseStatus, Currency } from './enums.js';
 import type { User } from './User.js';
 import type { Chapter } from './Chapter.js';
 
@@ -23,6 +23,7 @@ export class Course extends Model<
   declare thumbnailUrl: CreationOptional<string | null>;
   declare status: CreationOptional<CourseStatus>;
   declare price: CreationOptional<number>;
+  declare currency: CreationOptional<Currency>;
   declare instructorId: ForeignKey<User['id']>;
   declare duration: CreationOptional<number>;
   declare chaptersCount: CreationOptional<number>;
@@ -87,6 +88,11 @@ Course.init(
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       defaultValue: 0,
+    },
+    currency: {
+      type: DataTypes.STRING(3),
+      allowNull: false,
+      defaultValue: Currency.EUR,
     },
     instructorId: {
       type: DataTypes.UUID,

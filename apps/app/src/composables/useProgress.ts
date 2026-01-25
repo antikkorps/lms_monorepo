@@ -5,7 +5,7 @@
 
 import type { CourseListItem } from '@shared/types';
 import { ref, computed } from 'vue';
-// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
+import { useApi } from './useApi';
 
 export interface CourseProgress extends CourseListItem {
   progress: number;
@@ -27,109 +27,93 @@ export interface ProgressStats {
   longestStreak: number;
 }
 
-// Mock data for development
-const mockProgressData: CourseProgress[] = [
-  {
-    id: '1',
-    title: 'Introduction to Machine Learning',
-    slug: 'intro-ml',
-    description: 'Learn the fundamentals of ML',
-    thumbnailUrl: null,
-    instructorName: 'Dr. Sarah Chen',
-    price: 4900,
-    duration: 480,
-    chaptersCount: 8,
-    lessonsCount: 32,
-    progress: 65,
-    completedLessons: 21,
-    totalLessons: 32,
-    lastAccessedAt: new Date(Date.now() - 1000 * 60 * 30),
-    completedAt: null,
-    nextLessonId: 'l22',
-    nextLessonTitle: 'Neural Networks Basics',
-    estimatedTimeLeft: 168,
-  },
-  {
-    id: '2',
-    title: 'Advanced TypeScript Patterns',
-    slug: 'advanced-typescript',
-    description: 'Master TypeScript like a pro',
-    thumbnailUrl: null,
-    instructorName: 'Mike Johnson',
-    price: 0,
-    duration: 360,
-    chaptersCount: 6,
-    lessonsCount: 24,
-    progress: 42,
-    completedLessons: 10,
-    totalLessons: 24,
-    lastAccessedAt: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    completedAt: null,
-    nextLessonId: 'l11',
-    nextLessonTitle: 'Generic Constraints',
-    estimatedTimeLeft: 209,
-  },
-  {
-    id: '3',
-    title: 'Vue 3 Composition API Mastery',
-    slug: 'vue3-composition',
-    description: 'Deep dive into Vue 3',
-    thumbnailUrl: null,
-    instructorName: 'Emma Wilson',
-    price: 3900,
-    duration: 300,
-    chaptersCount: 5,
-    lessonsCount: 20,
-    progress: 100,
-    completedLessons: 20,
-    totalLessons: 20,
-    lastAccessedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
-    completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
-    nextLessonId: null,
-    nextLessonTitle: null,
-    estimatedTimeLeft: 0,
-  },
-  {
-    id: '4',
-    title: 'Docker & Kubernetes Fundamentals',
-    slug: 'docker-kubernetes',
-    description: 'Learn containerization and orchestration',
-    thumbnailUrl: null,
-    instructorName: 'Lisa Park',
-    price: 0,
-    duration: 420,
-    chaptersCount: 7,
-    lessonsCount: 28,
-    progress: 15,
-    completedLessons: 4,
-    totalLessons: 28,
-    lastAccessedAt: new Date(Date.now() - 1000 * 60 * 60 * 24),
-    completedAt: null,
-    nextLessonId: 'l5',
-    nextLessonTitle: 'Docker Compose',
-    estimatedTimeLeft: 357,
-  },
-];
+interface ApiCourseProgress {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  instructorName: string;
+  price: number;
+  currency: string;
+  duration: number;
+  chaptersCount: number;
+  lessonsCount: number;
+  progress: number;
+  completedLessons: number;
+  totalLessons: number;
+  lastAccessedAt: string | null;
+  completedAt: string | null;
+  nextLessonId: string | null;
+  nextLessonTitle: string | null;
+  estimatedTimeLeft: number;
+}
 
-const mockStats: ProgressStats = {
-  totalCourses: 4,
-  inProgressCourses: 3,
-  completedCourses: 1,
-  totalLearningTime: 1847,
-  currentStreak: 5,
-  longestStreak: 12,
-};
+interface ApiProgressData {
+  courses: ApiCourseProgress[];
+  stats: ProgressStats;
+}
+
+function transformCourse(course: ApiCourseProgress): CourseProgress {
+  return {
+    id: course.id,
+    title: course.title,
+    slug: course.slug,
+    description: course.description,
+    thumbnailUrl: course.thumbnailUrl,
+    instructorName: course.instructorName,
+    price: course.price,
+    currency: (course.currency as 'EUR' | 'USD') || 'EUR',
+    duration: course.duration,
+    chaptersCount: course.chaptersCount,
+    lessonsCount: course.lessonsCount,
+    progress: course.progress,
+    completedLessons: course.completedLessons,
+    totalLessons: course.totalLessons,
+    lastAccessedAt: course.lastAccessedAt ? new Date(course.lastAccessedAt) : new Date(),
+    completedAt: course.completedAt ? new Date(course.completedAt) : null,
+    nextLessonId: course.nextLessonId,
+    nextLessonTitle: course.nextLessonTitle,
+    estimatedTimeLeft: course.estimatedTimeLeft,
+  };
+}
 
 export type ProgressFilter = 'all' | 'in-progress' | 'completed';
 export type ProgressSortBy = 'recent' | 'progress' | 'title';
 
-export function useProgress() {
-  // TODO: Replace mock data with real API calls using useApi()
+// Shared state to prevent duplicate fetches
+const WINDOW_KEY = '__progressState__';
+const FETCH_THROTTLE_MS = 2000;
 
-  const isLoading = ref(true);
-  const error = ref<string | null>(null);
-  const courses = ref<CourseProgress[]>([]);
-  const stats = ref<ProgressStats | null>(null);
+interface WindowState {
+  fetchInProgress: boolean;
+  lastFetchTime: number;
+}
+
+function getWindowState(): WindowState {
+  if (!(window as unknown as Record<string, unknown>)[WINDOW_KEY]) {
+    (window as unknown as Record<string, unknown>)[WINDOW_KEY] = {
+      fetchInProgress: false,
+      lastFetchTime: 0,
+    };
+  }
+  return (window as unknown as Record<string, unknown>)[WINDOW_KEY] as WindowState;
+}
+
+// Shared state across all useProgress() calls
+const sharedIsLoading = ref(false);
+const sharedError = ref<string | null>(null);
+const sharedCourses = ref<CourseProgress[]>([]);
+const sharedStats = ref<ProgressStats | null>(null);
+
+export function useProgress() {
+  const api = useApi();
+
+  // Use shared state instead of creating new state per call
+  const isLoading = sharedIsLoading;
+  const error = sharedError;
+  const courses = sharedCourses;
+  const stats = sharedStats;
   const filter = ref<ProgressFilter>('all');
   const sortBy = ref<ProgressSortBy>('recent');
 
@@ -204,35 +188,51 @@ export function useProgress() {
   }
 
   /**
-   * Fetch user progress data
+   * Fetch user progress data from API
    */
   async function fetchProgress(): Promise<void> {
+    const now = Date.now();
+    const windowState = getWindowState();
+
+    // Prevent rapid successive calls
+    if (windowState.fetchInProgress || now - windowState.lastFetchTime < FETCH_THROTTLE_MS) {
+      console.log('[useProgress] Skipping fetch - throttled or in progress');
+      return;
+    }
+
+    windowState.fetchInProgress = true;
+    windowState.lastFetchTime = now;
     isLoading.value = true;
     error.value = null;
 
     try {
-      // TODO: Replace with real API call
-      // const data = await api.get<{ courses: CourseProgress[], stats: ProgressStats }>('/user/progress');
+      const data = await api.get<ApiProgressData>('/learner/progress');
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      courses.value = mockProgressData;
-      stats.value = mockStats;
+      courses.value = data.courses.map(transformCourse);
+      stats.value = data.stats;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load progress';
     } finally {
       isLoading.value = false;
+      windowState.fetchInProgress = false;
     }
+  }
+
+  /**
+   * Refresh progress data (forces refresh by resetting throttle)
+   */
+  async function refresh(): Promise<void> {
+    const windowState = getWindowState();
+    windowState.lastFetchTime = 0;
+    await fetchProgress();
   }
 
   /**
    * Update lesson completion
    */
-  async function markLessonComplete(courseId: string, _lessonId: string): Promise<boolean> {
+  async function markLessonComplete(courseId: string, lessonId: string): Promise<boolean> {
     try {
-      // TODO: Replace with real API call
-      // await api.post(`/courses/${courseId}/lessons/${lessonId}/complete`);
-
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await api.post(`/courses/${courseId}/lessons/${lessonId}/complete`, {});
 
       // Update local state
       const course = courses.value.find((c) => c.id === courseId);
@@ -277,6 +277,7 @@ export function useProgress() {
 
     // Methods
     fetchProgress,
+    refresh,
     markLessonComplete,
     setFilter,
     setSortBy,

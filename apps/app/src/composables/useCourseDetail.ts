@@ -149,15 +149,27 @@ function getMockCourse(slug: string): CourseWithEnrollment | null {
   return courses[slug] || null;
 }
 
-export function useCourseDetail(slug: string) {
+export interface UseCourseDetailOptions {
+  previewMode?: boolean;
+}
+
+export function useCourseDetail(slug: string, options: UseCourseDetailOptions = {}) {
   const api = useApi();
+  const { previewMode = false } = options;
 
   const isLoading = ref(true);
   const error = ref<string | null>(null);
   const course = ref<CourseWithEnrollment | null>(null);
 
+  // In preview mode, we simulate being enrolled
+  const isInPreviewMode = ref(previewMode);
+
   // Computed helpers
-  const isEnrolled = computed(() => course.value?.enrollment?.isEnrolled ?? false);
+  // In preview mode, consider the user as enrolled
+  const isEnrolled = computed(() => {
+    if (isInPreviewMode.value) return true;
+    return course.value?.enrollment?.isEnrolled ?? false;
+  });
   const progress = computed(() => course.value?.enrollment?.progress ?? 0);
   const isFree = computed(() => course.value?.price === 0);
 
@@ -206,12 +218,12 @@ export function useCourseDetail(slug: string) {
   /**
    * Format price
    */
-  function formatPrice(price: number): string {
+  function formatPrice(price: number, currency: string = 'EUR'): string {
     if (price === 0) return 'Free';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'EUR',
-    }).format(price / 100);
+      currency,
+    }).format(price);
   }
 
   /**
@@ -282,12 +294,20 @@ export function useCourseDetail(slug: string) {
 
       // For now, assume enrolled if viewing a course (will be properly implemented with purchases API)
       // TODO: Implement proper enrollment check via /courses/:id/enrollment endpoint
-      const enrollment: EnrollmentStatus = {
-        isEnrolled: true,
-        progress: 0,
-        completedLessons: [],
-        lastAccessedLessonId: null,
-      };
+      // In preview mode, we simulate enrollment but without real progress
+      const enrollment: EnrollmentStatus = previewMode
+        ? {
+            isEnrolled: true,
+            progress: 0,
+            completedLessons: [],
+            lastAccessedLessonId: null,
+          }
+        : {
+            isEnrolled: true,
+            progress: 0,
+            completedLessons: [],
+            lastAccessedLessonId: null,
+          };
 
       // Transform API response to CourseWithEnrollment
       course.value = {
@@ -297,7 +317,8 @@ export function useCourseDetail(slug: string) {
         description: response.description,
         thumbnailUrl: response.thumbnailUrl,
         instructorName: `${response.instructor.firstName} ${response.instructor.lastName}`,
-        price: Number(response.price) * 100, // Convert to cents
+        price: Number(response.price),
+        currency: (response.currency as 'EUR' | 'USD') || 'EUR',
         duration: Math.floor(response.duration / 60), // Convert seconds to minutes
         chaptersCount: response.chaptersCount,
         lessonsCount: response.lessonsCount,
@@ -313,8 +334,9 @@ export function useCourseDetail(slug: string) {
             duration: Math.floor(l.duration / 60), // Convert seconds to minutes
             position: l.position,
             isFree: l.isFree,
-            isCompleted: enrollment?.completedLessons.includes(l.id) ?? false,
-            isAccessible: enrollment?.isEnrolled || l.isFree,
+            isCompleted: previewMode ? false : (enrollment?.completedLessons.includes(l.id) ?? false),
+            // In preview mode, all lessons are accessible
+            isAccessible: previewMode ? true : (enrollment?.isEnrolled || l.isFree),
           })),
         })),
         enrollment,
@@ -358,6 +380,7 @@ export function useCourseDetail(slug: string) {
     isLoading,
     error,
     course,
+    isInPreviewMode,
 
     // Computed
     isEnrolled,
