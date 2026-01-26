@@ -15,9 +15,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 import { useCourseEditor } from '@/composables/useCourseEditor';
+import { UploadZone } from '@/components/upload';
 import { ArrowLeft, Save, Loader2, AlertCircle } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
+import type { UploadResult } from '@/composables/useUpload';
 
 const route = useRoute();
 const router = useRouter();
@@ -148,6 +150,10 @@ async function handleSubmit(): Promise<void> {
 
 function handleCancel(): void {
   router.push({ name: 'instructor-courses' });
+}
+
+function handleThumbnailUpload(result: UploadResult): void {
+  form.value.thumbnailUrl = result.url;
 }
 
 // Load course data for edit mode
@@ -326,6 +332,32 @@ onMounted(async () => {
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-4">
+          <!-- Thumbnail Upload -->
+          <div class="space-y-2">
+            <Label>{{ t('instructor.courseEditor.thumbnail', 'Thumbnail Image') }}</Label>
+            <UploadZone
+              category="image"
+              :label="t('instructor.courseEditor.dropThumbnail', 'Drop thumbnail image here')"
+              :show-preview="false"
+              @upload="handleThumbnailUpload"
+            />
+            <p class="text-sm text-muted-foreground">
+              {{ t('instructor.courseEditor.thumbnailHint', 'Recommended size: 1280x720 pixels') }}
+            </p>
+          </div>
+
+          <!-- Or enter URL manually -->
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <span class="w-full border-t" />
+            </div>
+            <div class="relative flex justify-center text-xs uppercase">
+              <span class="bg-background px-2 text-muted-foreground">
+                {{ t('common.or', 'or') }}
+              </span>
+            </div>
+          </div>
+
           <!-- Thumbnail URL -->
           <div class="space-y-2">
             <Label for="thumbnailUrl">
@@ -337,9 +369,6 @@ onMounted(async () => {
               type="url"
               :placeholder="t('instructor.courseEditor.thumbnailPlaceholder', 'https://example.com/image.jpg')"
             />
-            <p class="text-sm text-muted-foreground">
-              {{ t('instructor.courseEditor.thumbnailHint', 'Recommended size: 1280x720 pixels') }}
-            </p>
           </div>
 
           <!-- Preview -->

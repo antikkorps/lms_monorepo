@@ -299,6 +299,7 @@ onMounted(() => {
           <LessonTranslationEditor
             :lesson-id="lessonId"
             :lesson-title="lesson.title"
+            :lesson-type="lesson.type"
             @saved="handleContentSaved"
           />
         </TabsContent>

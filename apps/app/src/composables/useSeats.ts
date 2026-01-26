@@ -5,7 +5,7 @@
 
 import type { SeatOverview, SeatAllocation, SeatUsageHistory, SeatPlan } from '@shared/types';
 import { ref, computed } from 'vue';
-// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
+import { useApi } from './useApi';
 
 // Mock data for development
 const mockOverview: SeatOverview = {
@@ -164,19 +164,18 @@ export function useSeats() {
     error.value = null;
 
     try {
-      // TODO: Replace with real API calls when endpoints are ready
-      // const [overviewData, allocationsData, historyData, plansData] = await Promise.all([
-      //   api.get<SeatOverview>('/tenant/seats'),
-      //   api.get<SeatAllocation[]>('/tenant/seats/allocations'),
-      //   api.get<SeatUsageHistory[]>('/tenant/seats/history'),
-      //   api.get<SeatPlan[]>('/tenant/seats/plans'),
-      // ]);
+      const api = useApi();
+      const [overviewData, allocationsData, historyData, plansData] = await Promise.all([
+        api.get<SeatOverview>('/tenant/seats'),
+        api.get<SeatAllocation[]>('/tenant/seats/allocations'),
+        api.get<SeatUsageHistory[]>('/tenant/seats/history'),
+        api.get<SeatPlan[]>('/tenant/seats/plans'),
+      ]);
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      overview.value = mockOverview;
-      allocations.value = mockAllocations;
-      usageHistory.value = mockUsageHistory;
-      plans.value = mockPlans;
+      overview.value = overviewData;
+      allocations.value = allocationsData;
+      usageHistory.value = historyData;
+      plans.value = plansData;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load seat data';
     } finally {
@@ -187,13 +186,15 @@ export function useSeats() {
   /**
    * Request additional seats
    */
-  async function requestSeats(_additionalSeats: number): Promise<boolean> {
+  async function requestSeats(additionalSeats: number): Promise<boolean> {
     try {
-      // TODO: Replace with real API call
-      // await api.post('/tenant/seats/request', { additionalSeats });
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      // Simulate success
+      const api = useApi();
+      const response = await api.post<{ seatsPurchased: number }>('/tenant/seats/request', { additionalSeats });
+      if (overview.value) {
+        overview.value.seatsPurchased = response.seatsPurchased;
+        overview.value.seatsAvailable = response.seatsPurchased - overview.value.seatsUsed;
+        overview.value.usagePercentage = Math.round((overview.value.seatsUsed / response.seatsPurchased) * 100);
+      }
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to request seats';
@@ -206,15 +207,15 @@ export function useSeats() {
    */
   async function upgradePlan(planId: string): Promise<boolean> {
     try {
-      // TODO: Replace with real API call
-      // await api.post('/tenant/seats/upgrade', { planId });
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      // Simulate success - update local state
+      const api = useApi();
+      await api.post('/tenant/seats/upgrade', { planId });
+      // Update local state
       plans.value = plans.value.map((p) => ({
         ...p,
         isCurrent: p.id === planId,
       }));
+      // Refresh seats data
+      await fetchSeats();
       return true;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to upgrade plan';

@@ -55,6 +55,22 @@ export const config = {
     },
   },
 
+  // Cloudflare (shared account ID for R2/Stream)
+  cloudflare: {
+    accountId: process.env.CLOUDFLARE_ACCOUNT_ID || '',
+    apiToken: process.env.CLOUDFLARE_API_TOKEN || '',
+  },
+
+  // Storage (file uploads)
+  storage: {
+    provider: process.env.STORAGE_PROVIDER || 'local', // 'local' | 'r2'
+    localPath: process.env.STORAGE_LOCAL_PATH || './uploads',
+    r2AccessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+    r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+    r2BucketName: process.env.R2_BUCKET_NAME || '',
+    r2PublicUrl: process.env.R2_PUBLIC_URL || '',
+  },
+
   // Rate limiting (defaults, can be overridden per tier in middleware)
   rateLimit: {
     b2c: {
