@@ -28,8 +28,8 @@
 - [x] Document upload (PDF, slides) (Done: 2026-01-26)
 - [x] Thumbnail/image upload (Done: 2026-01-26)
 - [x] Integration with cloud storage (Cloudflare R2) (Done: 2026-01-26)
+- [x] Intégrer UploadZone dans lesson editor (vidéos) et course builder (thumbnails) (Done: 2026-01-26)
 - [ ] Tester R2 avec credentials réels
-- [ ] Intégrer UploadZone dans lesson editor (vidéos) et course builder (thumbnails)
 - [ ] Video transcoding pipeline
 
 ### API Integration (Frontend)
@@ -43,9 +43,9 @@
   - [x] Tenant Dashboard API (useTenantDashboard) (Done: 2026-01-26)
   - [x] Tenant Members API (useTenantMembers) (Done: 2026-01-26)
   - [x] Seats API (useSeats) (Done: 2026-01-26)
-- [ ] Add error boundaries for API failures
+- [x] Add error boundaries for API failures (Done: 2026-01-26)
 - [ ] Implement optimistic updates for better UX
-- [ ] Add retry logic with exponential backoff
+- [x] Add retry logic with exponential backoff (Done: 2026-01-26)
 
 ---
 
@@ -145,3 +145,11 @@ Architecture flexible avec interface abstraite:
 Composables/Components:
 - `useUpload.ts` - Progress tracking avec XHR
 - `UploadZone.vue` - Drag & drop avec preview
+
+**Error Handling (2026-01-26)**
+
+- `useApi.ts` - Retry automatique avec exponential backoff (max 3 retries)
+  - Retries sur: network errors, 408, 429, 500, 502, 503, 504
+  - Délai: 1s base, max 10s, avec jitter ±25%
+- `ErrorBoundary.vue` - Capture erreurs de rendu dans les composants enfants
+- `AsyncLoader.vue` - États loading/error/empty avec retry button
