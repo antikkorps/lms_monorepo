@@ -6,7 +6,7 @@
 import type { TenantMember, UserStatus } from '@shared/types';
 import type { Role } from '@shared/types';
 import { ref, computed, watch } from 'vue';
-// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
+import { useApi } from './useApi';
 
 export interface MemberFilters {
   search: string;
@@ -239,17 +239,44 @@ export function useTenantMembers() {
     error.value = null;
 
     try {
-      // TODO: Replace with real API call
-      // const data = await api.get<{ members: TenantMember[], total: number }>('/tenant/members', {
-      //   page: pagination.value.page,
-      //   limit: pagination.value.limit,
-      //   ...filters.value,
-      // });
+      const api = useApi();
+      interface ApiMember {
+        id: string;
+        email: string;
+        firstName: string;
+        lastName: string;
+        fullName: string;
+        avatarUrl: string | null;
+        role: Role;
+        status: UserStatus;
+        lastLoginAt: string | null;
+        createdAt: string;
+      }
+      interface ApiResponse {
+        members: ApiMember[];
+        pagination: {
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
+        };
+      }
+      const params: Record<string, string | number | boolean | undefined> = {
+        page: pagination.value.page,
+        limit: pagination.value.limit,
+      };
+      if (filters.value.search) params.search = filters.value.search;
+      if (filters.value.role !== 'all') params.role = filters.value.role;
+      if (filters.value.status !== 'all') params.status = filters.value.status;
 
-      // Using mock data for now
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      members.value = mockMembers;
-      pagination.value.total = mockMembers.length;
+      const data = await api.get<ApiResponse>('/tenant/members', params);
+      // Transform dates from strings
+      members.value = data.members.map((m) => ({
+        ...m,
+        lastLoginAt: m.lastLoginAt ? new Date(m.lastLoginAt) : null,
+        createdAt: new Date(m.createdAt),
+      }));
+      pagination.value.total = data.pagination.total;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load members';
     } finally {
@@ -262,10 +289,8 @@ export function useTenantMembers() {
    */
   async function updateMemberRole(memberId: string, newRole: Role): Promise<boolean> {
     try {
-      // TODO: Replace with real API call
-      // await api.patch(`/tenant/members/${memberId}/role`, { role: newRole });
-
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      const api = useApi();
+      await api.patch(`/tenant/members/${memberId}/role`, { role: newRole });
       const member = members.value.find((m) => m.id === memberId);
       if (member) {
         member.role = newRole;
@@ -282,10 +307,8 @@ export function useTenantMembers() {
    */
   async function suspendMember(memberId: string): Promise<boolean> {
     try {
-      // TODO: Replace with real API call
-      // await api.patch(`/tenant/members/${memberId}/suspend`);
-
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      const api = useApi();
+      await api.patch(`/tenant/members/${memberId}/suspend`, {});
       const member = members.value.find((m) => m.id === memberId);
       if (member) {
         member.status = 'suspended';
@@ -302,10 +325,8 @@ export function useTenantMembers() {
    */
   async function reactivateMember(memberId: string): Promise<boolean> {
     try {
-      // TODO: Replace with real API call
-      // await api.patch(`/tenant/members/${memberId}/reactivate`);
-
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      const api = useApi();
+      await api.patch(`/tenant/members/${memberId}/reactivate`, {});
       const member = members.value.find((m) => m.id === memberId);
       if (member) {
         member.status = 'active';
@@ -322,10 +343,8 @@ export function useTenantMembers() {
    */
   async function removeMember(memberId: string): Promise<boolean> {
     try {
-      // TODO: Replace with real API call
-      // await api.delete(`/tenant/members/${memberId}`);
-
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      const api = useApi();
+      await api.delete(`/tenant/members/${memberId}`);
       members.value = members.value.filter((m) => m.id !== memberId);
       pagination.value.total = members.value.length;
       return true;

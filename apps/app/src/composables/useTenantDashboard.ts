@@ -5,7 +5,7 @@
 
 import type { TenantDashboardStats, TenantMember } from '@shared/types';
 import { ref, computed } from 'vue';
-// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
+import { useApi } from './useApi';
 
 // Activity data point for charts
 export interface ActivityDataPoint {
@@ -180,15 +180,35 @@ export function useTenantDashboard() {
     error.value = null;
 
     try {
-      // TODO: Replace with real API calls when endpoints are ready
-      // const data = await api.get<TenantDashboardData>('/tenant/dashboard');
-
-      // Using mock data for now
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      stats.value = mockData.stats;
-      recentMembers.value = mockData.recentMembers;
-      activityData.value = mockData.activityData;
-      roleDistribution.value = mockData.roleDistribution;
+      const api = useApi();
+      interface ApiTenantMember {
+        id: string;
+        email: string;
+        firstName: string;
+        lastName: string;
+        fullName: string;
+        avatarUrl: string | null;
+        role: string;
+        status: string;
+        lastLoginAt: string | null;
+        createdAt: string;
+      }
+      interface ApiDashboardData {
+        stats: TenantDashboardStats;
+        recentMembers: ApiTenantMember[];
+        activityData: ActivityDataPoint[];
+        roleDistribution: RoleDistribution[];
+      }
+      const data = await api.get<ApiDashboardData>('/tenant/dashboard');
+      stats.value = data.stats;
+      // Transform dates from strings
+      recentMembers.value = data.recentMembers.map((m) => ({
+        ...m,
+        lastLoginAt: m.lastLoginAt ? new Date(m.lastLoginAt) : null,
+        createdAt: new Date(m.createdAt),
+      })) as TenantMember[];
+      activityData.value = data.activityData;
+      roleDistribution.value = data.roleDistribution;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load dashboard';
     } finally {

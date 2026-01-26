@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-01-25
+## Modified: 2026-01-26
 
 ---
 
@@ -32,11 +32,15 @@
 
 ### API Integration (Frontend)
 
-- [x] Replace mock data with real API calls in composables (Partial - Done: 2026-01-25)
-  - [x] Dashboard API (useDashboard)
-  - [x] Progress API (useProgress)
-  - [x] Quiz API (useQuiz)
-  - [ ] Remaining composables
+- [x] Replace mock data with real API calls in composables (Done: 2026-01-26)
+  - [x] Dashboard API (useDashboard) (Done: 2026-01-25)
+  - [x] Progress API (useProgress) (Done: 2026-01-25)
+  - [x] Quiz API (useQuiz) (Done: 2026-01-25)
+  - [x] Analytics API (useAnalytics) (Done: 2026-01-26)
+  - [x] Badges API (useBadges) (Done: 2026-01-26)
+  - [x] Tenant Dashboard API (useTenantDashboard) (Done: 2026-01-26)
+  - [x] Tenant Members API (useTenantMembers) (Done: 2026-01-26)
+  - [x] Seats API (useSeats) (Done: 2026-01-26)
 - [ ] Add error boundaries for API failures
 - [ ] Implement optimistic updates for better UX
 - [ ] Add retry logic with exponential backoff
@@ -108,3 +112,15 @@
 - Critical items block production launch
 - Important items improve quality but not blockers
 - Nice-to-have are future roadmap items
+
+## Pour info
+
+**Tous les composables sont maintenant connectés aux APIs réelles (2026-01-26)**
+
+| Composable | Description | API |
+|------------|-------------|-----|
+| useAnalytics.ts | Analytics learner | GET /learner/analytics |
+| useBadges.ts | Badges/achievements | GET /user/badges |
+| useSeats.ts | Gestion sièges B2B | GET/POST /tenant/seats/* |
+| useTenantDashboard.ts | Dashboard admin tenant | GET /tenant/dashboard |
+| useTenantMembers.ts | Membres du tenant | CRUD /tenant/members/* |

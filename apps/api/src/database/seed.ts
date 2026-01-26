@@ -38,7 +38,7 @@ import {
   PurchaseStatus,
   SupportedLocale,
 } from './models/enums.js';
-import type { BadgeCriteria } from './models/Badge.js';
+import type { BadgeCriteria, BadgeCategory, BadgeRarity } from './models/Badge.js';
 import { hashPassword } from '../auth/password.js';
 import { randomUUID } from 'crypto';
 import { logger } from '../utils/logger.js';
@@ -608,6 +608,8 @@ async function seedBadges(): Promise<void> {
     name: string;
     description: string;
     imageUrl: string;
+    category: BadgeCategory;
+    rarity: BadgeRarity;
     criteria: BadgeCriteria;
   }> = [
     {
@@ -615,6 +617,8 @@ async function seedBadges(): Promise<void> {
       name: 'First Steps',
       description: 'Complete your first lesson',
       imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=first-steps',
+      category: 'milestone',
+      rarity: 'common',
       criteria: { type: 'lessons_completed', threshold: 1, description: 'Complete 1 lesson' },
     },
     {
@@ -622,6 +626,8 @@ async function seedBadges(): Promise<void> {
       name: 'TypeScript Master',
       description: 'Complete the TypeScript course',
       imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=typescript',
+      category: 'course',
+      rarity: 'rare',
       criteria: { type: 'course_completion', courseId: IDS.course1, description: 'Complete the TypeScript course' },
     },
     {
@@ -629,7 +635,72 @@ async function seedBadges(): Promise<void> {
       name: 'Quiz Champion',
       description: 'Pass 5 quizzes with a score of 80% or higher',
       imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=quiz-champion',
+      category: 'quiz',
+      rarity: 'epic',
       criteria: { type: 'quiz_score', threshold: 80, description: 'Score 80% or higher on 5 quizzes' },
+    },
+    {
+      id: '00000000-0000-0000-0000-000000000503',
+      name: 'Quick Learner',
+      description: 'Complete 5 lessons in one day',
+      imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=quick-learner',
+      category: 'milestone',
+      rarity: 'uncommon',
+      criteria: { type: 'lessons_completed', threshold: 5, description: 'Complete 5 lessons in one day' },
+    },
+    {
+      id: '00000000-0000-0000-0000-000000000504',
+      name: 'Week Warrior',
+      description: 'Maintain a 7-day learning streak',
+      imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=week-warrior',
+      category: 'streak',
+      rarity: 'rare',
+      criteria: { type: 'streak', threshold: 7, description: 'Learn for 7 consecutive days' },
+    },
+    {
+      id: '00000000-0000-0000-0000-000000000505',
+      name: 'Month Master',
+      description: 'Maintain a 30-day learning streak',
+      imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=month-master',
+      category: 'streak',
+      rarity: 'epic',
+      criteria: { type: 'streak', threshold: 30, description: 'Learn for 30 consecutive days' },
+    },
+    {
+      id: '00000000-0000-0000-0000-000000000506',
+      name: 'Centurion',
+      description: 'Complete 100 lessons',
+      imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=centurion',
+      category: 'milestone',
+      rarity: 'epic',
+      criteria: { type: 'lessons_completed', threshold: 100, description: 'Complete 100 lessons total' },
+    },
+    {
+      id: '00000000-0000-0000-0000-000000000507',
+      name: 'Perfectionist',
+      description: 'Get 100% on 5 quizzes in a row',
+      imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=perfectionist',
+      category: 'quiz',
+      rarity: 'epic',
+      criteria: { type: 'quiz_score', threshold: 100, description: 'Score 100% on 5 consecutive quizzes' },
+    },
+    {
+      id: '00000000-0000-0000-0000-000000000508',
+      name: 'Scholar',
+      description: 'Complete 5 courses',
+      imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=scholar',
+      category: 'course',
+      rarity: 'epic',
+      criteria: { type: 'course_completion', threshold: 5, description: 'Complete 5 courses' },
+    },
+    {
+      id: '00000000-0000-0000-0000-000000000509',
+      name: 'Legend',
+      description: 'Earn all other badges',
+      imageUrl: 'https://api.dicebear.com/7.x/shapes/svg?seed=legend',
+      category: 'special',
+      rarity: 'legendary',
+      criteria: { type: 'custom', description: 'Earn all other badges' },
     },
   ];
 

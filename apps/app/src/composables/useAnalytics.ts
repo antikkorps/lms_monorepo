@@ -4,6 +4,7 @@
  */
 
 import { ref, computed } from 'vue';
+import { useApi } from './useApi';
 
 export interface DailyActivity {
   date: string;
@@ -258,31 +259,9 @@ export function useAnalytics() {
     error.value = null;
 
     try {
-      // TODO: Replace with real API call
-      // const response = await api.get<AnalyticsData>('/user/analytics');
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      const dailyActivity = generateMockDailyActivity();
-      const totalMinutes = dailyActivity.reduce((sum, d) => sum + d.minutesSpent, 0);
-      const totalLessons = dailyActivity.reduce((sum, d) => sum + d.lessonsCompleted, 0);
-
-      data.value = {
-        dailyActivity,
-        courseProgress: generateMockCourseProgress(),
-        categoryDistribution: generateMockCategoryDistribution(),
-        weeklyStreaks: generateMockWeeklyStreaks(),
-        summary: {
-          totalCourses: 5,
-          completedCourses: 1,
-          totalLessons: 100,
-          completedLessons: totalLessons,
-          totalMinutes,
-          averageQuizScore: 82,
-          currentStreak: 7,
-          longestStreak: 14,
-        },
-      };
+      const api = useApi();
+      const response = await api.get<AnalyticsData>('/learner/analytics');
+      data.value = response;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load analytics';
     } finally {

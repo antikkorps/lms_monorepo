@@ -10,6 +10,9 @@ import { notesRouter } from '../notes/index.js';
 import { lessonContentRouter } from '../lesson-content/index.js';
 import { quizRouter } from '../quiz/index.js';
 import { dashboardRouter } from '../dashboard/index.js';
+import { analyticsRouter } from '../analytics/index.js';
+import { badgesRouter } from '../badges/index.js';
+import { tenantRouter } from '../tenant/index.js';
 
 const apiRouter = new Router({ prefix: '/api/v1' });
 
@@ -35,6 +38,12 @@ apiRouter.use(quizRouter.routes());
 apiRouter.use(quizRouter.allowedMethods());
 apiRouter.use(dashboardRouter.routes());
 apiRouter.use(dashboardRouter.allowedMethods());
+apiRouter.use(analyticsRouter.routes());
+apiRouter.use(analyticsRouter.allowedMethods());
+apiRouter.use(badgesRouter.routes());
+apiRouter.use(badgesRouter.allowedMethods());
+apiRouter.use(tenantRouter.routes());
+apiRouter.use(tenantRouter.allowedMethods());
 
 export function setupRoutes(app: Koa): void {
   app.use(apiRouter.routes());
