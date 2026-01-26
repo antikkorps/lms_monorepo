@@ -28,6 +28,8 @@
 - [x] Document upload (PDF, slides) (Done: 2026-01-26)
 - [x] Thumbnail/image upload (Done: 2026-01-26)
 - [x] Integration with cloud storage (Cloudflare R2) (Done: 2026-01-26)
+- [ ] Tester R2 avec credentials réels
+- [ ] Intégrer UploadZone dans lesson editor (vidéos) et course builder (thumbnails)
 - [ ] Video transcoding pipeline
 
 ### API Integration (Frontend)
