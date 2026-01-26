@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { UploadZone } from '@/components/upload';
 import {
   Loader2,
   Save,
@@ -13,13 +15,17 @@ import {
   Globe,
   CheckCircle2,
   AlertCircle,
+  Upload,
+  Link,
 } from 'lucide-vue-next';
 import { useLessonContent, type UpsertLessonContentInput } from '@/composables/useLessonContent';
-import type { SupportedLocale } from '@shared/types';
+import type { SupportedLocale, LessonType } from '@shared/types';
+import type { UploadResult } from '@/composables/useUpload';
 
 const props = defineProps<{
   lessonId: string;
   lessonTitle: string;
+  lessonType?: LessonType;
 }>();
 
 const emit = defineEmits<{
@@ -42,6 +48,11 @@ const {
 
 const activeLocale = ref<SupportedLocale>('en');
 const saveSuccess = ref(false);
+const videoSourceMode = ref<'upload' | 'url'>('url');
+
+// Check if lesson type supports video/document upload
+const showVideoUpload = computed(() => props.lessonType === 'video');
+const showDocumentUpload = computed(() => props.lessonType === 'document');
 
 // Form state for current locale
 const formData = ref<UpsertLessonContentInput>({
@@ -112,6 +123,18 @@ async function handleDelete() {
   }
 }
 
+function handleVideoUpload(result: UploadResult) {
+  formData.value.videoUrl = result.url;
+  // Extract video ID from key for reference
+  formData.value.videoId = result.key;
+}
+
+function handleDocumentUpload(result: UploadResult) {
+  // For documents, we store the URL in videoUrl field (reusing existing field)
+  formData.value.videoUrl = result.url;
+  formData.value.videoId = result.key;
+}
+
 onMounted(async () => {
   await fetchContents();
   loadLocaleData(activeLocale.value);
@@ -179,26 +202,103 @@ onMounted(async () => {
             </p>
           </div>
 
-          <!-- Video URL -->
-          <div class="space-y-2">
-            <Label for="videoUrl">{{ t('admin.lessonContent.fields.videoUrl') }}</Label>
-            <Input
-              id="videoUrl"
-              v-model="formData.videoUrl"
-              type="url"
-              :placeholder="t('admin.lessonContent.placeholders.videoUrl')"
-            />
+          <!-- Video/Document Upload Section -->
+          <div v-if="showVideoUpload || showDocumentUpload" class="space-y-3">
+            <Label>
+              {{ showVideoUpload
+                ? t('admin.lessonContent.fields.videoSource', 'Video Source')
+                : t('admin.lessonContent.fields.documentSource', 'Document Source')
+              }}
+            </Label>
+
+            <Tabs v-model="videoSourceMode" class="w-full">
+              <TabsList class="grid w-full grid-cols-2">
+                <TabsTrigger value="upload" class="flex items-center gap-2">
+                  <Upload class="h-4 w-4" />
+                  {{ t('admin.lessonContent.uploadFile', 'Upload') }}
+                </TabsTrigger>
+                <TabsTrigger value="url" class="flex items-center gap-2">
+                  <Link class="h-4 w-4" />
+                  {{ t('admin.lessonContent.externalUrl', 'External URL') }}
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="upload" class="mt-3">
+                <UploadZone
+                  v-if="showVideoUpload"
+                  category="video"
+                  :label="t('admin.lessonContent.dropVideo', 'Drop video here')"
+                  @upload="handleVideoUpload"
+                />
+                <UploadZone
+                  v-else-if="showDocumentUpload"
+                  category="document"
+                  :label="t('admin.lessonContent.dropDocument', 'Drop document here')"
+                  @upload="handleDocumentUpload"
+                />
+                <p v-if="formData.videoUrl && videoSourceMode === 'upload'" class="mt-2 text-sm text-muted-foreground">
+                  {{ t('admin.lessonContent.currentFile', 'Current file:') }} {{ formData.videoId }}
+                </p>
+              </TabsContent>
+
+              <TabsContent value="url" class="mt-3 space-y-3">
+                <!-- Video/Document URL -->
+                <div class="space-y-2">
+                  <Label for="videoUrl">
+                    {{ showVideoUpload
+                      ? t('admin.lessonContent.fields.videoUrl', 'Video URL')
+                      : t('admin.lessonContent.fields.documentUrl', 'Document URL')
+                    }}
+                  </Label>
+                  <Input
+                    id="videoUrl"
+                    v-model="formData.videoUrl"
+                    type="url"
+                    :placeholder="showVideoUpload
+                      ? t('admin.lessonContent.placeholders.videoUrl', 'https://youtube.com/watch?v=... or video URL')
+                      : t('admin.lessonContent.placeholders.documentUrl', 'https://example.com/document.pdf')"
+                  />
+                </div>
+
+                <!-- Video ID (only for videos) -->
+                <div v-if="showVideoUpload" class="space-y-2">
+                  <Label for="videoId">{{ t('admin.lessonContent.fields.videoId', 'Video ID') }}</Label>
+                  <Input
+                    id="videoId"
+                    v-model="formData.videoId"
+                    :placeholder="t('admin.lessonContent.placeholders.videoId', 'YouTube or Cloudflare Stream ID')"
+                  />
+                  <p class="text-xs text-muted-foreground">
+                    {{ t('admin.lessonContent.hints.videoId', 'For YouTube: the video ID from the URL. For Cloudflare Stream: the stream ID.') }}
+                  </p>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
 
-          <!-- Video ID -->
-          <div class="space-y-2">
-            <Label for="videoId">{{ t('admin.lessonContent.fields.videoId') }}</Label>
-            <Input
-              id="videoId"
-              v-model="formData.videoId"
-              :placeholder="t('admin.lessonContent.placeholders.videoId')"
-            />
-          </div>
+          <!-- Fallback for other lesson types (quiz, assignment) - just URL fields -->
+          <template v-else>
+            <!-- Video URL -->
+            <div class="space-y-2">
+              <Label for="videoUrl">{{ t('admin.lessonContent.fields.videoUrl') }}</Label>
+              <Input
+                id="videoUrl"
+                v-model="formData.videoUrl"
+                type="url"
+                :placeholder="t('admin.lessonContent.placeholders.videoUrl')"
+              />
+            </div>
+
+            <!-- Video ID -->
+            <div class="space-y-2">
+              <Label for="videoId">{{ t('admin.lessonContent.fields.videoId') }}</Label>
+              <Input
+                id="videoId"
+                v-model="formData.videoId"
+                :placeholder="t('admin.lessonContent.placeholders.videoId')"
+              />
+            </div>
+          </template>
 
           <!-- Description -->
           <div class="space-y-2">
