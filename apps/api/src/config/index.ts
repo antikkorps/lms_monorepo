@@ -55,6 +55,17 @@ export const config = {
     },
   },
 
+  // Storage (file uploads)
+  storage: {
+    provider: process.env.STORAGE_PROVIDER || 'local', // 'local' | 'r2'
+    localPath: process.env.STORAGE_LOCAL_PATH || './uploads',
+    r2AccountId: process.env.R2_ACCOUNT_ID || '',
+    r2AccessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+    r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+    r2BucketName: process.env.R2_BUCKET_NAME || '',
+    r2PublicUrl: process.env.R2_PUBLIC_URL || '',
+  },
+
   // Rate limiting (defaults, can be overridden per tier in middleware)
   rateLimit: {
     b2c: {

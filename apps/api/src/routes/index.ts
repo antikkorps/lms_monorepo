@@ -13,6 +13,7 @@ import { dashboardRouter } from '../dashboard/index.js';
 import { analyticsRouter } from '../analytics/index.js';
 import { badgesRouter } from '../badges/index.js';
 import { tenantRouter } from '../tenant/index.js';
+import { uploadsRouter } from '../uploads/index.js';
 
 const apiRouter = new Router({ prefix: '/api/v1' });
 
@@ -44,6 +45,8 @@ apiRouter.use(badgesRouter.routes());
 apiRouter.use(badgesRouter.allowedMethods());
 apiRouter.use(tenantRouter.routes());
 apiRouter.use(tenantRouter.allowedMethods());
+apiRouter.use(uploadsRouter.routes());
+apiRouter.use(uploadsRouter.allowedMethods());
 
 export function setupRoutes(app: Koa): void {
   app.use(apiRouter.routes());
