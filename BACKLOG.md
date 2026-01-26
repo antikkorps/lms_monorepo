@@ -24,10 +24,10 @@
 
 ### Media Uploads
 
-- [ ] Video upload with progress indicator
-- [ ] Document upload (PDF, slides)
-- [ ] Thumbnail/image upload
-- [ ] Integration with cloud storage (S3/Cloudinary)
+- [x] Video upload with progress indicator (Done: 2026-01-26)
+- [x] Document upload (PDF, slides) (Done: 2026-01-26)
+- [x] Thumbnail/image upload (Done: 2026-01-26)
+- [x] Integration with cloud storage (Cloudflare R2) (Done: 2026-01-26)
 - [ ] Video transcoding pipeline
 
 ### API Integration (Frontend)
@@ -124,3 +124,22 @@
 | useSeats.ts | Gestion sièges B2B | GET/POST /tenant/seats/* |
 | useTenantDashboard.ts | Dashboard admin tenant | GET /tenant/dashboard |
 | useTenantMembers.ts | Membres du tenant | CRUD /tenant/members/* |
+
+**Upload System (2026-01-26)**
+
+Architecture flexible avec interface abstraite:
+- `LocalStorageProvider` pour dev (fichiers locaux)
+- `R2StorageProvider` pour prod (Cloudflare R2 / S3-compatible)
+
+| Endpoint | Description |
+|----------|-------------|
+| POST /uploads/image | Upload image (max 10MB) |
+| POST /uploads/video | Upload vidéo (max 2GB) |
+| POST /uploads/document | Upload document (max 100MB) |
+| POST /uploads/signed-url | URL signée pour upload direct |
+| GET /uploads/:key | Info fichier + URL signée |
+| DELETE /uploads/:key | Supprimer fichier |
+
+Composables/Components:
+- `useUpload.ts` - Progress tracking avec XHR
+- `UploadZone.vue` - Drag & drop avec preview
