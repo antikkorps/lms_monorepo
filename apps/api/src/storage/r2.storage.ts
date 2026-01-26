@@ -23,14 +23,14 @@ export class R2StorageProvider implements StorageProvider {
   private publicUrl: string;
 
   constructor() {
-    const accountId = config.storage?.r2AccountId;
+    const accountId = config.cloudflare?.accountId;
     const accessKeyId = config.storage?.r2AccessKeyId;
     const secretAccessKey = config.storage?.r2SecretAccessKey;
     const bucket = config.storage?.r2BucketName;
     const publicUrl = config.storage?.r2PublicUrl;
 
     if (!accountId || !accessKeyId || !secretAccessKey || !bucket) {
-      throw new Error('R2 storage configuration missing. Check R2_* environment variables.');
+      throw new Error('R2 storage configuration missing. Check CLOUDFLARE_ACCOUNT_ID and R2_* environment variables.');
     }
 
     this.bucket = bucket;
