@@ -1,0 +1,42 @@
+{
+  "name": "e2e",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "e2e",
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright test",
+        "cwd": "e2e"
+      },
+      "configurations": {
+        "ci": {
+          "command": "npx playwright test --project=chromium"
+        },
+        "headed": {
+          "command": "npx playwright test --headed"
+        },
+        "debug": {
+          "command": "npx playwright test --debug"
+        },
+        "ui": {
+          "command": "npx playwright test --ui"
+        }
+      }
+    },
+    "e2e-report": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright show-report",
+        "cwd": "e2e"
+      }
+    },
+    "install-browsers": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright install"
+      }
+    }
+  }
+}

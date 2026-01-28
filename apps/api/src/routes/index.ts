@@ -14,6 +14,7 @@ import { analyticsRouter } from '../analytics/index.js';
 import { badgesRouter } from '../badges/index.js';
 import { tenantRouter } from '../tenant/index.js';
 import { uploadsRouter } from '../uploads/index.js';
+import { certificateRoutes } from '../certificates/index.js';
 
 const apiRouter = new Router({ prefix: '/api/v1' });
 
@@ -47,6 +48,8 @@ apiRouter.use(tenantRouter.routes());
 apiRouter.use(tenantRouter.allowedMethods());
 apiRouter.use(uploadsRouter.routes());
 apiRouter.use(uploadsRouter.allowedMethods());
+apiRouter.use(certificateRoutes.routes());
+apiRouter.use(certificateRoutes.allowedMethods());
 
 export function setupRoutes(app: Koa): void {
   app.use(apiRouter.routes());

@@ -5,7 +5,12 @@
  * to avoid needing a real database connection.
  */
 
+import { config as dotenvConfig } from 'dotenv';
+import { resolve } from 'path';
 import { vi, beforeEach } from 'vitest';
+
+// Load .env from monorepo root for integration tests
+dotenvConfig({ path: resolve(__dirname, '../../../../.env') });
 import { emailServiceMock } from './mocks/email.mock.js';
 
 // =============================================================================
@@ -62,6 +67,19 @@ vi.mock('../config/index.js', () => ({
     },
     database: {
       url: 'postgres://test:test@localhost:5432/test',
+    },
+    // Cloudflare & Storage - use real env vars for integration tests
+    cloudflare: {
+      accountId: process.env.CLOUDFLARE_ACCOUNT_ID || '',
+      apiToken: process.env.CLOUDFLARE_API_TOKEN || '',
+    },
+    storage: {
+      provider: process.env.STORAGE_PROVIDER || 'local',
+      localPath: process.env.STORAGE_LOCAL_PATH || './uploads',
+      r2AccessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+      r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+      r2BucketName: process.env.R2_BUCKET_NAME || '',
+      r2PublicUrl: process.env.R2_PUBLIC_URL || '',
     },
   },
 }));

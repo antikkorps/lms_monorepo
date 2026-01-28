@@ -29,7 +29,7 @@
 - [x] Thumbnail/image upload (Done: 2026-01-26)
 - [x] Integration with cloud storage (Cloudflare R2) (Done: 2026-01-26)
 - [x] Intégrer UploadZone dans lesson editor (vidéos) et course builder (thumbnails) (Done: 2026-01-26)
-- [ ] Tester R2 avec credentials réels (tests prêts: `R2_INTEGRATION_TEST=true`)
+- [x] Tester R2 avec credentials réels (Done: 2026-01-28)
 - [ ] Video transcoding pipeline
 
 ### API Integration (Frontend)
@@ -60,7 +60,7 @@
 
 ### Testing & Quality
 
-- [ ] E2E tests with Playwright (critical user flows)
+- [x] E2E tests with Playwright setup (Done: 2026-01-28)
 - [ ] Auth controller unit tests
 - [ ] Redis session tests
 - [ ] Integration tests (API + DB)
@@ -85,7 +85,7 @@
 
 ### Gamification & Engagement
 
-- [ ] Course completion certificates (PDF generation)
+- [x] Course completion certificates (PDF generation) (Done: 2026-01-28)
 - [ ] Leaderboards (per course, global)
 - [ ] Course reviews & ratings
 - [ ] Achievement streaks
