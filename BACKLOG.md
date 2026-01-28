@@ -85,7 +85,7 @@
 
 ### Gamification & Engagement
 
-- [ ] Course completion certificates (PDF generation)
+- [x] Course completion certificates (PDF generation) (Done: 2026-01-28)
 - [ ] Leaderboards (per course, global)
 - [ ] Course reviews & ratings
 - [ ] Achievement streaks
