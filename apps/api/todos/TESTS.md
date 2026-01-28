@@ -1,6 +1,6 @@
 # API - Tests
 
-## Modified: 2026-01-15
+## Modified: 2026-01-26
 
 ### Test Setup
 
@@ -20,8 +20,13 @@
 | Email Templates | `templates.spec.ts` | 14 | Done |
 | Email Service | `email.service.spec.ts` | 5 | Done |
 | Circuit Breaker | `circuit-breaker.spec.ts` | 6 | Done |
+| Storage Validation | `storage/index.spec.ts` | 5 | Done |
+| Local Storage | `storage/local.storage.spec.ts` | 12 | Done |
+| Storage Integration | `storage/storage.integration.spec.ts` | 8 | Skipped* |
 
-**Total: 108 tests**
+**Total: 133 tests** (125 run, 8 skipped)
+
+*Integration tests: run with `R2_INTEGRATION_TEST=true`
 
 ### Mocks Disponibles
 

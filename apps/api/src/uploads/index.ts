@@ -36,6 +36,7 @@ uploadsRouter.post('/document', upload.single('file'), uploadDocument);
 // Direct upload (get signed URL for client-side upload)
 uploadsRouter.post('/signed-url', getSignedUploadUrl);
 
-// File management
-uploadsRouter.get('/:key(.*)', getFileInfo);
-uploadsRouter.delete('/:key(.*)', deleteFile);
+// File management - use wildcard syntax for path-to-regexp v8+
+// *key captures the full path including slashes (e.g., "images/abc123.jpg")
+uploadsRouter.get('/*key', getFileInfo);
+uploadsRouter.delete('/*key', deleteFile);

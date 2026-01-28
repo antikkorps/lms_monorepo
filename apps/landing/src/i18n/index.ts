@@ -2,6 +2,7 @@ export { translations, languages, defaultLang, type TranslationKey } from './tra
 export {
   getLangFromUrl,
   useTranslations,
+  getTranslation,
   getLocalizedPath,
   getAlternateLinks,
   type Lang,

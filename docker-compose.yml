@@ -60,6 +60,14 @@ services:
       # Higher rate limits for development
       RATE_LIMIT_AUTH_MAX: 100
       RATE_LIMIT_B2C_MAX: 500
+      # Storage (R2)
+      STORAGE_PROVIDER: ${STORAGE_PROVIDER:-local}
+      STORAGE_LOCAL_PATH: ${STORAGE_LOCAL_PATH:-./uploads}
+      CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME:-}
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL:-}
     ports:
       - '${API_PORT:-3000}:3000'
     volumes:

@@ -1,0 +1,149 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/sections/Hero.astro';
+import CTA from '../../components/sections/CTA.astro';
+import Card from '../../components/ui/Card.astro';
+import { useTranslations } from '../../i18n';
+
+const t = useTranslations('fr');
+
+const values = [
+  {
+    icon: '🎯',
+    title: 'L\'Apprentissage d\'Abord',
+    description: 'Tout ce que nous construisons commence par une question : cela aide-t-il les gens a mieux apprendre ? Nous privilegions les resultats educatifs aux metriques d\'engagement.',
+  },
+  {
+    icon: '🤝',
+    title: 'Accessibilite',
+    description: 'L\'education devrait etre accessible a tous. Nous concevons notre plateforme pour qu\'elle soit accessible, abordable et disponible en plusieurs langues.',
+  },
+  {
+    icon: '🔬',
+    title: 'Base sur la Science',
+    description: 'Nos methodologies d\'apprentissage sont ancrees dans les sciences cognitives et la recherche educative. Nous testons et ameliorons continuellement.',
+  },
+  {
+    icon: '🌱',
+    title: 'Croissance Continue',
+    description: 'L\'apprentissage ne s\'arrete jamais. Nous encourageons notre equipe et nos utilisateurs a embrasser l\'apprentissage tout au long de la vie.',
+  },
+];
+
+const stats = [
+  { value: '500K+', label: 'Apprenants Actifs' },
+  { value: '10K+', label: 'Cours' },
+  { value: '150+', label: 'Pays' },
+  { value: '95%', label: 'Taux de Satisfaction' },
+];
+---
+
+<Layout
+  title="A Propos - LMS Platform"
+  description="Decouvrez notre mission de democratiser l'education grace a l'apprentissage par IA. Rencontrez l'equipe derriere LMS Platform."
+  lang="fr"
+  canonicalPath="/fr/about"
+>
+  <Hero
+    title={t('about.title')}
+    subtitle={t('about.subtitle')}
+    size="md"
+  />
+
+  <section class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-bold text-foreground mb-6">
+            {t('about.story.title')}
+          </h2>
+          <div class="space-y-4 text-muted-foreground">
+            <p>
+              LMS Platform a ete fonde avec un objectif simple mais ambitieux : rendre l'education de qualite accessible a tous, partout. Nous avons vu comment l'apprentissage traditionnel etait souvent uniforme, couteux et deconnecte des besoins reels.
+            </p>
+            <p>
+              Nous avons commence a construire une plateforme capable de s'adapter aux besoins uniques de chaque apprenant, en exploitant l'IA pour creer des experiences d'apprentissage personnalisees a grande echelle.
+            </p>
+            <p>
+              Aujourd'hui, nous continuons a repousser les limites du possible en education en ligne. Notre equipe d'educateurs, d'ingenieurs et de chercheurs en IA travaille ensemble pour creer des experiences d'apprentissage engageantes, efficaces et accessibles a tous.
+            </p>
+          </div>
+        </div>
+        <div class="aspect-video bg-muted rounded-xl flex items-center justify-center">
+          <svg class="w-24 h-24 text-muted-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-muted">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        {stats.map((stat) => (
+          <div class="text-center">
+            <p class="text-4xl sm:text-5xl font-bold text-primary">{stat.value}</p>
+            <p class="mt-2 text-muted-foreground">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold text-foreground">
+          {t('about.values.title')}
+        </h2>
+        <p class="mt-4 text-lg text-muted-foreground">
+          Ces principes guident tout ce que nous faisons, des decisions produit a notre facon de travailler ensemble.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {values.map((value, index) => (
+          <Card padding="lg" class={`animate-slide-up stagger-${index + 1}`}>
+            <div class="text-4xl mb-4">{value.icon}</div>
+            <h3 class="text-xl font-semibold text-foreground mb-2">
+              {value.title}
+            </h3>
+            <p class="text-muted-foreground">
+              {value.description}
+            </p>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 sm:py-28 bg-muted">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold text-foreground">
+          {t('about.team.title')}
+        </h2>
+        <p class="mt-4 text-lg text-muted-foreground">
+          {t('about.team.subtitle')}
+        </p>
+        <a
+          href="/fr/careers"
+          class="mt-8 inline-flex items-center gap-2 text-primary hover:underline font-medium"
+        >
+          {t('about.team.cta')}
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <CTA
+    title="Pret a commencer votre parcours d'apprentissage ?"
+    subtitle="Rejoignez des centaines de milliers d'apprenants qui developpent leurs competences avec LMS Platform."
+    primaryCta={{ text: 'Commencer Gratuitement', href: '/app/register' }}
+    variant="gradient"
+  />
+</Layout>

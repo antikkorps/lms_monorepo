@@ -1,0 +1,200 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const lastUpdated = '15 janvier 2026';
+
+const sections = [
+  {
+    id: 'introduction',
+    title: 'Introduction',
+    content: `
+      <p>Chez LMS Platform ("nous", "notre" ou "nos"), nous nous engageons a proteger votre vie privee et a assurer la securite de vos informations personnelles. Cette Politique de Confidentialite explique comment nous collectons, utilisons, divulguons et protegeons vos informations lorsque vous utilisez notre plateforme et services associes.</p>
+      <p>En accedant ou en utilisant LMS Platform, vous acceptez les termes de cette Politique de Confidentialite. Si vous n'etes pas d'accord avec nos politiques et pratiques, veuillez ne pas utiliser nos services.</p>
+    `,
+  },
+  {
+    id: 'information-collected',
+    title: 'Informations Collectees',
+    content: `
+      <p>Nous collectons des informations de la maniere suivante :</p>
+      <h4>Informations que vous fournissez</h4>
+      <ul>
+        <li><strong>Informations de compte :</strong> Nom, adresse email, mot de passe et informations de profil lors de la creation de votre compte.</li>
+        <li><strong>Informations de paiement :</strong> Adresse de facturation et details de paiement lors de votre abonnement. Note : Le traitement des paiements est gere par des processeurs tiers securises.</li>
+        <li><strong>Donnees d'apprentissage :</strong> Progression des cours, reponses aux quiz, certifications obtenues et preferences d'apprentissage.</li>
+        <li><strong>Communications :</strong> Messages que vous nous envoyez, demandes de support et commentaires.</li>
+      </ul>
+      <h4>Informations collectees automatiquement</h4>
+      <ul>
+        <li><strong>Donnees d'utilisation :</strong> Pages visitees, fonctionnalites utilisees, temps passe sur la plateforme et habitudes d'interaction.</li>
+        <li><strong>Informations sur l'appareil :</strong> Type de navigateur, systeme d'exploitation, type d'appareil et identifiants uniques.</li>
+        <li><strong>Donnees de journal :</strong> Adresse IP, heures d'acces et URLs de provenance.</li>
+        <li><strong>Cookies :</strong> Nous utilisons des cookies et technologies similaires pour la fonctionnalite, l'analyse et la personnalisation.</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'how-we-use',
+    title: 'Utilisation de vos Informations',
+    content: `
+      <p>Nous utilisons les informations collectees pour :</p>
+      <ul>
+        <li>Fournir, maintenir et ameliorer nos services</li>
+        <li>Personnaliser votre experience d'apprentissage avec des recommandations IA</li>
+        <li>Traiter les transactions et envoyer les informations associees</li>
+        <li>Envoyer des messages administratifs, mises a jour et alertes de securite</li>
+        <li>Repondre a vos commentaires, questions et demandes de support</li>
+        <li>Analyser les habitudes d'utilisation pour ameliorer notre plateforme</li>
+        <li>Detecter, prevenir et resoudre les problemes techniques et la fraude</li>
+        <li>Nous conformer aux obligations legales</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'sharing',
+    title: 'Partage des Informations',
+    content: `
+      <p>Nous ne vendons pas vos informations personnelles. Nous pouvons partager vos informations dans les circonstances suivantes :</p>
+      <ul>
+        <li><strong>Prestataires de services :</strong> Avec des fournisseurs tiers qui nous aident a exploiter notre plateforme (hebergement, analyses, traitement des paiements).</li>
+        <li><strong>Pour les equipes :</strong> Les administrateurs d'equipe peuvent voir la progression d'apprentissage de leurs membres.</li>
+        <li><strong>Exigences legales :</strong> Lorsque requis par la loi, ordonnance judiciaire ou autorite gouvernementale.</li>
+        <li><strong>Transferts d'entreprise :</strong> En lien avec une fusion, acquisition ou vente d'actifs.</li>
+        <li><strong>Avec votre consentement :</strong> Lorsque vous nous autorisez explicitement a partager des informations.</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'data-security',
+    title: 'Securite des Donnees',
+    content: `
+      <p>Nous mettons en oeuvre des mesures techniques et organisationnelles appropriees pour proteger vos informations personnelles, notamment :</p>
+      <ul>
+        <li>Chiffrement des donnees en transit (TLS) et au repos (AES-256)</li>
+        <li>Evaluations de securite et tests de penetration reguliers</li>
+        <li>Controles d'acces et formation des employes</li>
+        <li>Certification SOC 2 Type II</li>
+        <li>Sauvegardes regulieres et procedures de reprise apres sinistre</li>
+      </ul>
+      <p>Bien que nous nous efforcions de proteger vos informations, aucune methode de transmission sur Internet n'est securisee a 100%. Nous ne pouvons garantir une securite absolue.</p>
+    `,
+  },
+  {
+    id: 'data-retention',
+    title: 'Conservation des Donnees',
+    content: `
+      <p>Nous conservons vos informations personnelles aussi longtemps que necessaire pour :</p>
+      <ul>
+        <li>Vous fournir nos services</li>
+        <li>Nous conformer aux obligations legales</li>
+        <li>Resoudre les litiges et faire respecter les accords</li>
+        <li>Maintenir les registres commerciaux requis par la loi</li>
+      </ul>
+      <p>Lorsque vous supprimez votre compte, nous supprimerons ou anonymiserons vos informations personnelles dans les 30 jours, sauf si la conservation est requise par la loi.</p>
+    `,
+  },
+  {
+    id: 'your-rights',
+    title: 'Vos Droits',
+    content: `
+      <p>Selon votre localisation, vous pouvez avoir les droits suivants :</p>
+      <ul>
+        <li><strong>Acces :</strong> Demander une copie de vos informations personnelles.</li>
+        <li><strong>Rectification :</strong> Demander la correction d'informations inexactes.</li>
+        <li><strong>Suppression :</strong> Demander la suppression de vos informations personnelles.</li>
+        <li><strong>Portabilite :</strong> Demander vos donnees dans un format portable.</li>
+        <li><strong>Desinscription :</strong> Vous desinscrire des communications marketing.</li>
+        <li><strong>Restriction :</strong> Demander la restriction du traitement.</li>
+      </ul>
+      <p>Pour exercer ces droits, contactez-nous a privacy@lms-platform.com. Nous repondrons dans les 30 jours.</p>
+    `,
+  },
+  {
+    id: 'international',
+    title: 'Transferts Internationaux',
+    content: `
+      <p>Vos informations peuvent etre transferees et traitees dans des pays autres que votre pays de residence. Nous assurons des garanties appropriees, notamment :</p>
+      <ul>
+        <li>Clauses Contractuelles Types approuvees par la Commission Europeenne</li>
+        <li>Accords de Traitement des Donnees avec tous les sous-traitants</li>
+        <li>Conformite aux lois applicables sur la protection des donnees</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'children',
+    title: 'Protection des Mineurs',
+    content: `
+      <p>Nos services ne sont pas destines aux enfants de moins de 13 ans. Nous ne collectons pas sciemment d'informations personnelles d'enfants de moins de 13 ans. Si nous apprenons que nous avons collecte des informations d'un enfant de moins de 13 ans, nous les supprimerons rapidement.</p>
+      <p>Pour les utilisateurs entre 13 et 18 ans, nous recommandons une supervision parentale lors de l'utilisation de notre plateforme.</p>
+    `,
+  },
+  {
+    id: 'changes',
+    title: 'Modifications de cette Politique',
+    content: `
+      <p>Nous pouvons mettre a jour cette Politique de Confidentialite de temps en temps. Nous vous informerons de tout changement materiel par :</p>
+      <ul>
+        <li>Publication de la nouvelle politique sur cette page</li>
+        <li>Mise a jour de la date "Derniere mise a jour"</li>
+        <li>Envoi d'une notification par email pour les changements significatifs</li>
+      </ul>
+      <p>Votre utilisation continue de la plateforme apres la publication des modifications constitue une acceptation de la politique mise a jour.</p>
+    `,
+  },
+  {
+    id: 'contact',
+    title: 'Nous Contacter',
+    content: `
+      <p>Si vous avez des questions sur cette Politique de Confidentialite ou nos pratiques de donnees, veuillez nous contacter :</p>
+      <ul>
+        <li><strong>Email :</strong> privacy@lms-platform.com</li>
+        <li><strong>Courrier :</strong> LMS Platform, 123 Learning Street, San Francisco, CA 94102, USA</li>
+      </ul>
+      <p>Pour les residents de l'UE, vous pouvez egalement contacter votre autorite de protection des donnees locale si vous avez des preoccupations concernant nos pratiques de donnees.</p>
+    `,
+  },
+];
+---
+
+<Layout
+  title="Politique de Confidentialite - LMS Platform"
+  description="Decouvrez comment LMS Platform collecte, utilise et protege vos informations personnelles. Lisez notre politique de confidentialite complete."
+  lang="fr"
+  canonicalPath="/fr/privacy"
+>
+  <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-muted">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl sm:text-5xl font-bold text-foreground">Politique de Confidentialite</h1>
+      <p class="mt-4 text-muted-foreground">Derniere mise a jour : {lastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="mb-12 p-6 bg-muted rounded-lg">
+        <h2 class="font-semibold text-foreground mb-4">Table des Matieres</h2>
+        <ul class="space-y-2">
+          {sections.map((section, index) => (
+            <li>
+              <a href={`#${section.id}`} class="text-muted-foreground hover:text-primary transition-colors">
+                {index + 1}. {section.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="prose prose-gray dark:prose-invert max-w-none">
+        {sections.map((section, index) => (
+          <div id={section.id} class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold text-foreground mb-4">
+              {index + 1}. {section.title}
+            </h2>
+            <div class="text-muted-foreground space-y-4 [&_h4]:text-foreground [&_h4]:font-semibold [&_h4]:mt-6 [&_h4]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:text-muted-foreground [&_strong]:text-foreground" set:html={section.content} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
