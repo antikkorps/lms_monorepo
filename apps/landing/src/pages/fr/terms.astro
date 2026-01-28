@@ -1,0 +1,206 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const lastUpdated = '15 janvier 2026';
+
+const sections = [
+  {
+    id: 'acceptance',
+    title: 'Acceptation des Conditions',
+    content: `
+      <p>En accedant ou en utilisant LMS Platform ("le Service"), vous acceptez d'etre lie par ces Conditions d'Utilisation ("Conditions"). Si vous n'etes pas d'accord avec une partie de ces conditions, vous ne pouvez pas acceder au Service.</p>
+      <p>Ces Conditions s'appliquent a tous les visiteurs, utilisateurs et autres personnes qui accedent ou utilisent le Service. En utilisant le Service, vous certifiez avoir au moins 13 ans, ou l'age de la majorite dans votre juridiction, selon le plus eleve.</p>
+    `,
+  },
+  {
+    id: 'accounts',
+    title: 'Comptes',
+    content: `
+      <p>Lorsque vous creez un compte chez nous, vous devez fournir des informations exactes, completes et a jour. Le non-respect de cette obligation constitue une violation des Conditions, pouvant entrainer la resiliation immediate de votre compte.</p>
+      <p>Vous etes responsable de :</p>
+      <ul>
+        <li>La protection du mot de passe que vous utilisez pour acceder au Service</li>
+        <li>Toutes les activites qui se produisent sous votre compte</li>
+        <li>Nous informer immediatement de tout acces ou utilisation non autorise</li>
+      </ul>
+      <p>Vous ne pouvez pas utiliser comme nom d'utilisateur le nom d'une autre personne ou entite qui n'est pas legalement disponible, ou un nom ou marque soumis aux droits d'une autre personne ou entite sans autorisation appropriee.</p>
+    `,
+  },
+  {
+    id: 'subscriptions',
+    title: 'Abonnements et Paiements',
+    content: `
+      <h4>Facturation</h4>
+      <p>Certaines parties du Service sont facturees sur une base d'abonnement. Vous serez facture a l'avance de maniere recurrente et periodique (mensuelle ou annuelle), selon le plan que vous selectionnez.</p>
+      <h4>Essai Gratuit</h4>
+      <p>Nous pouvons offrir une periode d'essai gratuite pour certains plans. A la fin de l'essai, vous serez automatiquement facture sauf si vous annulez avant la fin de l'essai.</p>
+      <h4>Changements de Prix</h4>
+      <p>Nous nous reservons le droit de modifier les prix des abonnements. Tout changement de prix prendra effet au debut de la prochaine periode d'abonnement suivant la notification.</p>
+      <h4>Remboursements</h4>
+      <p>Nous offrons une garantie de remboursement de 30 jours pour tous les plans payants. Les demandes de remboursement effectuees apres 30 jours seront examinees au cas par cas.</p>
+    `,
+  },
+  {
+    id: 'content',
+    title: 'Contenu',
+    content: `
+      <h4>Votre Contenu</h4>
+      <p>Vous conservez tous les droits sur le contenu que vous soumettez, publiez ou affichez sur le Service. En soumettant du contenu, vous nous accordez une licence mondiale, non exclusive et libre de droits pour utiliser, reproduire et distribuer votre contenu en relation avec le Service.</p>
+      <h4>Notre Contenu</h4>
+      <p>Le Service et son contenu original (excluant le contenu fourni par les utilisateurs), ses fonctionnalites et fonctions sont et resteront la propriete exclusive de LMS Platform. Le Service est protege par le droit d'auteur, les marques et autres lois.</p>
+      <h4>Contenu Interdit</h4>
+      <p>Vous acceptez de ne pas publier de contenu qui :</p>
+      <ul>
+        <li>Est illegal, nuisible, menacant, abusif ou harcelant</li>
+        <li>Enfreint tout brevet, marque, droit d'auteur ou autre droit de propriete intellectuelle</li>
+        <li>Contient des virus logiciels ou du code malveillant</li>
+        <li>Viole la vie privee d'autrui</li>
+        <li>Est du spam, de la publicite ou du materiel promotionnel non autorise par nous</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'use',
+    title: 'Utilisation Acceptable',
+    content: `
+      <p>Vous acceptez de ne pas :</p>
+      <ul>
+        <li>Utiliser le Service a des fins illegales</li>
+        <li>Tenter d'obtenir un acces non autorise a toute partie du Service</li>
+        <li>Interferer ou perturber le Service ou les serveurs connectes au Service</li>
+        <li>Utiliser tout robot, spider ou autre dispositif automatise pour acceder au Service</li>
+        <li>Decompiler, desassembler ou faire de l'ingenierie inverse sur toute partie du Service</li>
+        <li>Partager vos identifiants de compte avec d'autres</li>
+        <li>Utiliser le Service pour envoyer du spam ou des messages non sollicites</li>
+        <li>Usurper l'identite d'une personne ou entite</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'intellectual-property',
+    title: 'Propriete Intellectuelle',
+    content: `
+      <p>Le Service, y compris tous les materiaux de cours, videos, quiz et autres contenus educatifs, est protege par les lois sur la propriete intellectuelle. Vous ne pouvez pas :</p>
+      <ul>
+        <li>Copier, modifier ou distribuer tout contenu sans autorisation</li>
+        <li>Utiliser le contenu a des fins commerciales en dehors du Service</li>
+        <li>Supprimer tout avis de droit d'auteur ou de propriete</li>
+        <li>Creer des oeuvres derivees basees sur le contenu</li>
+      </ul>
+      <p>Les certificats obtenus via le Service peuvent etre partages sur les reseaux professionnels et avec les employeurs pour verifier vos accomplissements.</p>
+    `,
+  },
+  {
+    id: 'termination',
+    title: 'Resiliation',
+    content: `
+      <p>Nous pouvons resilier ou suspendre votre compte immediatement, sans preavis ni responsabilite, pour quelque raison que ce soit, y compris sans limitation si vous violez les Conditions.</p>
+      <p>En cas de resiliation :</p>
+      <ul>
+        <li>Votre droit d'utiliser le Service cessera immediatement</li>
+        <li>Nous pouvons supprimer votre compte et toutes les donnees associees</li>
+        <li>Vous restez responsable de tout paiement en suspens</li>
+      </ul>
+      <p>Vous pouvez egalement demander la suppression de votre compte a tout moment via les parametres du compte ou en contactant le support.</p>
+    `,
+  },
+  {
+    id: 'disclaimers',
+    title: 'Avertissements',
+    content: `
+      <p>Le Service est fourni "EN L'ETAT" et "SELON DISPONIBILITE". Nous declinons toutes garanties de quelque nature que ce soit, expresses ou implicites, y compris mais sans s'y limiter :</p>
+      <ul>
+        <li>La qualite marchande et l'adequation a un usage particulier</li>
+        <li>La non-contrefacon</li>
+        <li>Que le Service sera ininterrompu, securise ou sans erreur</li>
+        <li>L'exactitude, la fiabilite ou l'exhaustivite de tout contenu</li>
+      </ul>
+      <p>Le contenu educatif est fourni a titre informatif uniquement et ne constitue pas un conseil professionnel. Nous ne garantissons aucun resultat specifique de l'utilisation du Service.</p>
+    `,
+  },
+  {
+    id: 'limitation',
+    title: 'Limitation de Responsabilite',
+    content: `
+      <p>En aucun cas LMS Platform, ni ses administrateurs, employes, partenaires, agents, fournisseurs ou affilies, ne seront responsables de dommages indirects, accessoires, speciaux, consecutifs ou punitifs, y compris sans limitation :</p>
+      <ul>
+        <li>Perte de profits, de donnees, d'utilisation, de goodwill ou d'autres pertes intangibles</li>
+        <li>Resultant de votre acces ou utilisation (ou incapacite d'acceder ou d'utiliser) le Service</li>
+        <li>Toute conduite ou contenu de tout tiers sur le Service</li>
+        <li>Tout contenu obtenu du Service</li>
+        <li>Acces non autorise, utilisation ou modification de vos transmissions ou contenu</li>
+      </ul>
+      <p>Notre responsabilite totale ne depassera pas le montant que vous nous avez paye dans les 12 mois precedant la reclamation.</p>
+    `,
+  },
+  {
+    id: 'governing-law',
+    title: 'Loi Applicable',
+    content: `
+      <p>Ces Conditions seront regies et interpretees conformement aux lois de l'Etat de Californie, Etats-Unis, sans tenir compte de ses dispositions sur les conflits de lois.</p>
+      <p>Tout litige decoulant de ces Conditions ou du Service sera resolu devant les tribunaux d'Etat ou federaux situes dans le comte de San Francisco, Californie, et vous consentez a la juridiction personnelle de ces tribunaux.</p>
+    `,
+  },
+  {
+    id: 'changes',
+    title: 'Modifications des Conditions',
+    content: `
+      <p>Nous nous reservons le droit de modifier ou remplacer ces Conditions a tout moment. Si une revision est materielle, nous fournirons un preavis d'au moins 30 jours avant que les nouvelles conditions ne prennent effet.</p>
+      <p>Ce qui constitue un changement materiel sera determine a notre seule discretion. En continuant a acceder ou a utiliser notre Service apres que ces revisions prennent effet, vous acceptez d'etre lie par les conditions revisees.</p>
+    `,
+  },
+  {
+    id: 'contact',
+    title: 'Nous Contacter',
+    content: `
+      <p>Si vous avez des questions concernant ces Conditions, veuillez nous contacter :</p>
+      <ul>
+        <li><strong>Email :</strong> legal@lms-platform.com</li>
+        <li><strong>Courrier :</strong> LMS Platform, 123 Learning Street, San Francisco, CA 94102, USA</li>
+      </ul>
+    `,
+  },
+];
+---
+
+<Layout
+  title="Conditions d'Utilisation - LMS Platform"
+  description="Lisez les termes et conditions regissant votre utilisation de LMS Platform. Comprenez vos droits et responsabilites en tant qu'utilisateur."
+  lang="fr"
+  canonicalPath="/fr/terms"
+>
+  <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-muted">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl sm:text-5xl font-bold text-foreground">Conditions d'Utilisation</h1>
+      <p class="mt-4 text-muted-foreground">Derniere mise a jour : {lastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="mb-12 p-6 bg-muted rounded-lg">
+        <h2 class="font-semibold text-foreground mb-4">Table des Matieres</h2>
+        <ul class="space-y-2">
+          {sections.map((section, index) => (
+            <li>
+              <a href={`#${section.id}`} class="text-muted-foreground hover:text-primary transition-colors">
+                {index + 1}. {section.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="prose prose-gray dark:prose-invert max-w-none">
+        {sections.map((section, index) => (
+          <div id={section.id} class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold text-foreground mb-4">
+              {index + 1}. {section.title}
+            </h2>
+            <div class="text-muted-foreground space-y-4 [&_h4]:text-foreground [&_h4]:font-semibold [&_h4]:mt-6 [&_h4]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:text-muted-foreground [&_strong]:text-foreground" set:html={section.content} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

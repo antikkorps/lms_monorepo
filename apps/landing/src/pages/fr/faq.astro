@@ -1,0 +1,146 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import FAQ from '../../components/sections/FAQ.astro';
+import CTA from '../../components/sections/CTA.astro';
+
+const faqCategories = [
+  {
+    name: 'General',
+    items: [
+      {
+        question: 'Qu\'est-ce que LMS Platform ?',
+        answer: 'LMS Platform est un systeme de gestion de l\'apprentissage moderne propulse par l\'IA. Il aide les individus et les organisations a acquerir de nouvelles competences grace a des parcours personnalises, du contenu interactif et un suivi complet des progres.',
+      },
+      {
+        question: 'A qui s\'adresse LMS Platform ?',
+        answer: 'LMS Platform est concu pour tous ceux qui veulent apprendre. Les apprenants individuels peuvent l\'utiliser pour faire progresser leur carriere, tandis que les organisations peuvent l\'utiliser pour former leurs equipes. Nous avons des forfaits pour les individus, les petites equipes et les entreprises.',
+      },
+      {
+        question: 'Comment fonctionne l\'apprentissage par IA ?',
+        answer: 'Notre IA analyse vos objectifs d\'apprentissage, votre niveau actuel et vos habitudes de progression pour creer des recommandations personnalisees. Elle adapte votre parcours au fur et a mesure de votre progression.',
+      },
+      {
+        question: 'Puis-je apprendre a mon propre rythme ?',
+        answer: 'Absolument ! Tous nos cours sont en auto-formation. Vous pouvez commencer, mettre en pause et reprendre l\'apprentissage quand cela vous convient. Votre progression est automatiquement sauvegardee.',
+      },
+    ],
+  },
+  {
+    name: 'Facturation & Forfaits',
+    items: [
+      {
+        question: 'Qu\'est-ce qui est inclus dans le forfait gratuit ?',
+        answer: 'Le forfait gratuit inclut l\'acces a notre bibliotheque de cours gratuits, le suivi de progression basique, les forums communautaires et l\'acces a l\'application mobile. C\'est un excellent moyen de commencer et d\'explorer la plateforme.',
+      },
+      {
+        question: 'Puis-je annuler mon abonnement a tout moment ?',
+        answer: 'Oui, vous pouvez annuler votre abonnement a tout moment. Votre acces continuera jusqu\'a la fin de votre periode de facturation actuelle. Nous ne vous engageons pas dans des contrats a long terme.',
+      },
+      {
+        question: 'Proposez-vous des remboursements ?',
+        answer: 'Nous offrons une garantie de remboursement de 30 jours pour tous les forfaits payants. Si vous n\'etes pas satisfait dans les 30 premiers jours, contactez notre equipe support pour un remboursement complet.',
+      },
+      {
+        question: 'Quels modes de paiement acceptez-vous ?',
+        answer: 'Nous acceptons toutes les principales cartes de credit (Visa, MasterCard, American Express), PayPal, et les virements bancaires pour les forfaits entreprise annuels.',
+      },
+    ],
+  },
+  {
+    name: 'Fonctionnalites & Contenu',
+    items: [
+      {
+        question: 'Quels types de cours sont disponibles ?',
+        answer: 'Nous proposons des cours dans de nombreuses categories : technologie, business, design, marketing, science des donnees et developpement personnel. Notre contenu inclut des lecons video, des exercices interactifs, des quiz et des projets pratiques.',
+      },
+      {
+        question: 'Les certificats sont-ils reconnus ?',
+        answer: 'Oui, nos certificats sont reconnus par de nombreux employeurs et peuvent etre partages sur LinkedIn et autres reseaux professionnels. Certaines de nos certifications avancees sont egalement accreditees par l\'industrie.',
+      },
+      {
+        question: 'Puis-je telecharger des cours pour l\'apprentissage hors ligne ?',
+        answer: 'Oui, les membres Pro et Equipe peuvent telecharger des cours pour un acces hors ligne via notre application mobile. C\'est parfait pour apprendre pendant les trajets ou sans connexion internet.',
+      },
+      {
+        question: 'A quelle frequence du nouveau contenu est-il ajoute ?',
+        answer: 'Nous ajoutons de nouveaux cours et mettons a jour le contenu existant regulierement. En moyenne, nous publions plus de 50 nouveaux cours par mois dans diverses categories. Tous les cours existants sont revises et mis a jour au moins annuellement.',
+      },
+    ],
+  },
+  {
+    name: 'Technique',
+    items: [
+      {
+        question: 'Quels appareils puis-je utiliser ?',
+        answer: 'LMS Platform fonctionne sur tout appareil avec un navigateur web moderne. Nous avons egalement des applications natives pour iOS et Android. Votre progression se synchronise automatiquement sur tous vos appareils.',
+      },
+      {
+        question: 'Prenez-vous en charge le SSO ?',
+        answer: 'Oui, les forfaits Equipe et Entreprise prennent en charge l\'authentification unique (SSO) via SAML 2.0 et OAuth 2.0. Nous nous integrons avec les fournisseurs d\'identite populaires comme Okta, Azure AD et Google Workspace.',
+      },
+      {
+        question: 'Mes donnees sont-elles securisees ?',
+        answer: 'La securite est notre priorite absolue. Nous utilisons le chiffrement standard de l\'industrie, sommes certifies SOC 2 Type II et conformes au RGPD. Vos donnees sont stockees dans des centres de donnees securises et redondants.',
+      },
+      {
+        question: 'Avez-vous une API ?',
+        answer: 'Oui, les forfaits Equipe et Entreprise incluent l\'acces a l\'API pour des integrations personnalisees. Vous pouvez integrer LMS Platform avec vos systemes RH, outils de communication et workflows existants.',
+      },
+    ],
+  },
+  {
+    name: 'Pour les Equipes',
+    items: [
+      {
+        question: 'Comment ajouter des membres a mon equipe ?',
+        answer: 'Les administrateurs d\'equipe peuvent facilement ajouter des membres via le tableau de bord par invitation email ou en partageant un lien d\'invitation. Vous pouvez aussi importer des utilisateurs en masse via CSV ou vous integrer a votre systeme RH.',
+      },
+      {
+        question: 'Puis-je assigner des cours specifiques a mon equipe ?',
+        answer: 'Oui, vous pouvez creer des parcours d\'apprentissage et assigner des cours ou curricula specifiques a des individus ou groupes. Vous pouvez definir des dates limites et suivre les taux de completion depuis votre tableau de bord admin.',
+      },
+      {
+        question: 'Quelles analyses sont disponibles ?',
+        answer: 'Les administrateurs d\'equipe ont acces a des analyses completes incluant les taux de completion, le temps passe a apprendre, les evaluations de competences et les rapports de progression. Vous pouvez exporter les donnees et planifier des rapports automatiques.',
+      },
+      {
+        question: 'Pouvons-nous ajouter notre propre contenu ?',
+        answer: 'Les forfaits Entreprise incluent la possibilite de telecharger et gerer votre propre contenu proprietaire aux cotes de notre bibliotheque de cours. Vous pouvez creer des cours personnalises avec nos outils d\'auteur.',
+      },
+    ],
+  },
+];
+---
+
+<Layout
+  title="FAQ - LMS Platform"
+  description="Trouvez des reponses aux questions frequemment posees sur LMS Platform, les tarifs, les fonctionnalites et les exigences techniques."
+  lang="fr"
+  canonicalPath="/fr/faq"
+>
+  <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-muted">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold text-foreground">
+        Questions Frequentes
+      </h1>
+      <p class="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+        Trouvez des reponses aux questions courantes sur LMS Platform. Vous ne trouvez pas ce que vous cherchez ? Contactez notre equipe support.
+      </p>
+    </div>
+  </section>
+
+  <FAQ
+    title=""
+    categories={faqCategories}
+    ctaText="Vous avez encore des questions ? Nous sommes la pour vous aider."
+    ctaHref="/fr/contact"
+  />
+
+  <CTA
+    title="Pret a commencer a apprendre ?"
+    subtitle="Rejoignez des milliers d'apprenants et d'equipes qui utilisent deja LMS Platform."
+    primaryCta={{ text: 'Commencer Gratuitement', href: '/app/register' }}
+    secondaryCta={{ text: 'Contacter les Ventes', href: '/fr/contact?type=sales' }}
+    variant="subtle"
+  />
+</Layout>

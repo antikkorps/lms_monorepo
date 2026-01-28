@@ -1,0 +1,57 @@
+---
+interface Props {
+  name: string;
+  id?: string;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  value?: string;
+  label?: string;
+  error?: string;
+  rows?: number;
+  class?: string;
+}
+
+const {
+  name,
+  id = name,
+  placeholder,
+  required = false,
+  disabled = false,
+  value,
+  label,
+  error,
+  rows = 4,
+  class: className = '',
+} = Astro.props;
+
+const textareaClasses = [
+  'w-full px-3 py-2 text-sm rounded-lg border transition-colors resize-none',
+  'bg-background text-foreground placeholder:text-muted-foreground',
+  'focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent',
+  'disabled:opacity-50 disabled:cursor-not-allowed',
+  error ? 'border-destructive' : 'border-input hover:border-muted-foreground/50',
+  className,
+].filter(Boolean).join(' ');
+---
+
+<div class="space-y-1.5">
+  {label && (
+    <label for={id} class="block text-sm font-medium text-foreground">
+      {label}
+      {required && <span class="text-destructive ml-1">*</span>}
+    </label>
+  )}
+  <textarea
+    name={name}
+    id={id}
+    placeholder={placeholder}
+    required={required}
+    disabled={disabled}
+    rows={rows}
+    class={textareaClasses}
+  >{value}</textarea>
+  {error && (
+    <p class="text-sm text-destructive">{error}</p>
+  )}
+</div>

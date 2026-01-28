@@ -1,14 +1,14 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/sections/Hero.astro';
-import Features from '../components/sections/Features.astro';
-import Pricing from '../components/sections/Pricing.astro';
-import Testimonials from '../components/sections/Testimonials.astro';
-import CTA from '../components/sections/CTA.astro';
-import { useTranslations, getTranslation } from '../i18n';
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/sections/Hero.astro';
+import Features from '../../components/sections/Features.astro';
+import Pricing from '../../components/sections/Pricing.astro';
+import Testimonials from '../../components/sections/Testimonials.astro';
+import CTA from '../../components/sections/CTA.astro';
+import { useTranslations, getTranslation } from '../../i18n';
 
-const t = useTranslations('en');
-const lang = 'en';
+const t = useTranslations('fr');
+const lang = 'fr';
 
 const features = [
   {
@@ -71,36 +71,37 @@ const pricingPlans = [
     description: t('pricing.team.description'),
     features: getTranslation(lang, 'pricing.team.features') as string[],
     cta: t('pricing.team.cta'),
-    ctaHref: '/contact?type=sales',
+    ctaHref: '/fr/contact?type=sales',
   },
 ];
 
 const testimonials = [
   {
-    quote: "LMS Platform has transformed how our team learns. The AI-powered recommendations are incredibly accurate and save us hours of searching for the right content.",
-    author: "Sarah Chen",
-    role: "Learning & Development Manager",
-    company: "TechCorp",
+    quote: "LMS Platform a transforme la facon dont notre equipe apprend. Les recommandations IA sont incroyablement precises et nous font gagner des heures de recherche.",
+    author: "Sophie Martin",
+    role: "Responsable Formation",
+    company: "TechCorp France",
   },
   {
-    quote: "I've tried many learning platforms, but this one stands out. The personalized learning paths helped me advance my career faster than I ever thought possible.",
-    author: "Marcus Johnson",
-    role: "Software Engineer",
+    quote: "J'ai essaye de nombreuses plateformes, mais celle-ci se demarque. Les parcours personnalises m'ont permis de progresser plus vite que je ne l'aurais imagine.",
+    author: "Thomas Dubois",
+    role: "Developpeur Senior",
     company: "StartupXYZ",
   },
   {
-    quote: "The team features are exceptional. We can track progress, assign courses, and see real results. Our onboarding time has decreased by 40%.",
-    author: "Emily Rodriguez",
-    role: "HR Director",
+    quote: "Les fonctionnalites d'equipe sont exceptionnelles. Nous pouvons suivre les progres et mesurer les resultats. Notre temps d'integration a diminue de 40%.",
+    author: "Marie Laurent",
+    role: "Directrice RH",
     company: "GlobalTech",
   },
 ];
 ---
 
 <Layout
-  title="LMS Platform - Modern Learning Management System"
-  description="The AI-powered learning platform that empowers individuals and teams to master new skills. Start learning today with personalized courses and certifications."
-  canonicalPath="/"
+  title="LMS Platform - Plateforme d'Apprentissage Moderne"
+  description="La plateforme d'apprentissage alimentee par l'IA qui permet aux individus et aux equipes de maitriser de nouvelles competences. Commencez a apprendre aujourd'hui."
+  lang="fr"
+  canonicalPath="/fr"
 >
   <Hero
     title={t('hero.title')}
@@ -121,98 +122,98 @@ const testimonials = [
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-16">
         <h2 class="text-3xl sm:text-4xl font-bold text-foreground">
-          Built for everyone
+          Concu pour tous
         </h2>
         <p class="mt-4 text-lg text-muted-foreground">
-          Whether you're an individual learner or managing a team, we have the right solution for you.
+          Que vous appreniez seul ou que vous geriez une equipe, nous avons la solution adaptee.
         </p>
       </div>
 
       <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
-        <!-- For Individuals -->
+        <!-- Pour les Individus -->
         <div class="bg-card border border-border rounded-2xl p-8 lg:p-10">
           <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-6">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          <h3 class="text-2xl font-bold text-foreground mb-4">For Individuals</h3>
+          <h3 class="text-2xl font-bold text-foreground mb-4">Pour les Individus</h3>
           <p class="text-muted-foreground mb-6">
-            Advance your career with personalized learning paths, AI-powered recommendations, and industry-recognized certifications.
+            Faites progresser votre carriere avec des parcours personnalises, des recommandations IA et des certifications reconnues.
           </p>
           <ul class="space-y-3 mb-8">
             <li class="flex items-center gap-3 text-sm text-muted-foreground">
               <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Personalized learning paths
+              Parcours d'apprentissage personnalises
             </li>
             <li class="flex items-center gap-3 text-sm text-muted-foreground">
               <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              AI-powered content recommendations
+              Recommandations de contenus par IA
             </li>
             <li class="flex items-center gap-3 text-sm text-muted-foreground">
               <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Earn recognized certificates
+              Obtenez des certificats reconnus
             </li>
             <li class="flex items-center gap-3 text-sm text-muted-foreground">
               <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Learn at your own pace
+              Apprenez a votre rythme
             </li>
           </ul>
           <a href="/app/register" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">
-            Start learning for free
+            Commencer gratuitement
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </a>
         </div>
 
-        <!-- For Teams -->
+        <!-- Pour les Equipes -->
         <div class="bg-card border border-border rounded-2xl p-8 lg:p-10">
           <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-6">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
-          <h3 class="text-2xl font-bold text-foreground mb-4">For Teams & Enterprises</h3>
+          <h3 class="text-2xl font-bold text-foreground mb-4">Pour les Equipes & Entreprises</h3>
           <p class="text-muted-foreground mb-6">
-            Upskill your workforce with custom learning programs, team analytics, and enterprise-grade security.
+            Developpez les competences de vos equipes avec des programmes personnalises, des analyses et une securite entreprise.
           </p>
           <ul class="space-y-3 mb-8">
             <li class="flex items-center gap-3 text-sm text-muted-foreground">
               <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Team management dashboard
+              Tableau de bord de gestion d'equipe
             </li>
             <li class="flex items-center gap-3 text-sm text-muted-foreground">
               <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Advanced analytics & reporting
+              Analyses et rapports avances
             </li>
             <li class="flex items-center gap-3 text-sm text-muted-foreground">
               <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              SSO & enterprise integrations
+              SSO & integrations entreprise
             </li>
             <li class="flex items-center gap-3 text-sm text-muted-foreground">
               <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Dedicated account manager
+              Gestionnaire de compte dedie
             </li>
           </ul>
-          <a href="/contact?type=sales" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">
-            Contact sales
+          <a href="/fr/contact?type=sales" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">
+            Contacter les ventes
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -233,8 +234,8 @@ const testimonials = [
     subtitle={t('pricing.subtitle')}
     plans={pricingPlans}
     billingToggle={{
-      monthly: 'Monthly',
-      annual: 'Annual',
+      monthly: 'Mensuel',
+      annual: 'Annuel',
       annualDiscount: '-20%',
     }}
   />

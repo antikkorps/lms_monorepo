@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-01-26
+## Modified: 2026-01-28
 
 ---
 
@@ -153,3 +153,29 @@ Composables/Components:
   - Délai: 1s base, max 10s, avec jitter ±25%
 - `ErrorBoundary.vue` - Capture erreurs de rendu dans les composants enfants
 - `AsyncLoader.vue` - États loading/error/empty avec retry button
+
+**Landing Page Complete (2026-01-28)**
+
+16 pages statiques (8 EN + 8 FR) avec design system unifié:
+
+| Page | EN | FR |
+|------|----|----|
+| Home | `/` | `/fr` |
+| Pricing | `/pricing` | `/fr/pricing` |
+| Features | `/features` | `/fr/features` |
+| FAQ | `/faq` | `/fr/faq` |
+| About | `/about` | `/fr/about` |
+| Contact | `/contact` | `/fr/contact` |
+| Privacy | `/privacy` | `/fr/privacy` |
+| Terms | `/terms` | `/fr/terms` |
+
+Composants créés:
+- UI: Button, Card, Input, Textarea, Badge
+- Sections: Hero, Features, Pricing, FAQ, Testimonials, CTA
+
+Features:
+- Design system shadcn-compatible (OKLCH colors)
+- Dark mode avec localStorage
+- Menu mobile full-screen slide-in
+- Touch targets 44px+ pour mobile
+- SEO: meta tags, OG, Twitter cards, hreflang, sitemap

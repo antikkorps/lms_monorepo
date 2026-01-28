@@ -1,0 +1,92 @@
+---
+import Button from '../ui/Button.astro';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  primaryCta: {
+    text: string;
+    href: string;
+  };
+  secondaryCta?: {
+    text: string;
+    href: string;
+  };
+  note?: string;
+  variant?: 'default' | 'gradient' | 'subtle';
+}
+
+const {
+  title,
+  subtitle,
+  primaryCta,
+  secondaryCta,
+  note,
+  variant = 'gradient',
+} = Astro.props;
+
+const sectionClasses = {
+  default: 'bg-card border-y border-border',
+  gradient: 'hero-gradient text-white',
+  subtle: 'bg-muted',
+};
+
+const titleClasses = {
+  default: 'text-foreground',
+  gradient: 'text-white',
+  subtle: 'text-foreground',
+};
+
+const subtitleClasses = {
+  default: 'text-muted-foreground',
+  gradient: 'text-white/80',
+  subtle: 'text-muted-foreground',
+};
+
+const noteClasses = {
+  default: 'text-muted-foreground',
+  gradient: 'text-white/60',
+  subtle: 'text-muted-foreground',
+};
+---
+
+<section class={`py-20 sm:py-24 ${sectionClasses[variant]}`}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class={`text-3xl sm:text-4xl font-bold ${titleClasses[variant]}`}>
+      {title}
+    </h2>
+
+    {subtitle && (
+      <p class={`mt-4 text-lg ${subtitleClasses[variant]}`}>
+        {subtitle}
+      </p>
+    )}
+
+    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+      <Button
+        href={primaryCta.href}
+        size="lg"
+        class={variant === 'gradient' ? 'bg-white text-primary hover:bg-white/90' : ''}
+      >
+        {primaryCta.text}
+      </Button>
+
+      {secondaryCta && (
+        <Button
+          href={secondaryCta.href}
+          size="lg"
+          variant="outline"
+          class={variant === 'gradient' ? 'border-white/30 text-white hover:bg-white/10' : ''}
+        >
+          {secondaryCta.text}
+        </Button>
+      )}
+    </div>
+
+    {note && (
+      <p class={`mt-4 text-sm ${noteClasses[variant]}`}>
+        {note}
+      </p>
+    )}
+  </div>
+</section>

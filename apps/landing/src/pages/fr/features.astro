@@ -1,0 +1,236 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/sections/Hero.astro';
+import Features from '../../components/sections/Features.astro';
+import CTA from '../../components/sections/CTA.astro';
+import Card from '../../components/ui/Card.astro';
+import { useTranslations } from '../../i18n';
+
+const t = useTranslations('fr');
+
+const coreFeatures = [
+  {
+    icon: 'ai',
+    title: t('features.ai.title'),
+    description: t('features.ai.description'),
+  },
+  {
+    icon: 'content',
+    title: t('features.content.title'),
+    description: t('features.content.description'),
+  },
+  {
+    icon: 'progress',
+    title: t('features.progress.title'),
+    description: t('features.progress.description'),
+  },
+  {
+    icon: 'collab',
+    title: t('features.collab.title'),
+    description: t('features.collab.description'),
+  },
+  {
+    icon: 'certificate',
+    title: t('features.certificate.title'),
+    description: t('features.certificate.description'),
+  },
+  {
+    icon: 'mobile',
+    title: t('features.mobile.title'),
+    description: t('features.mobile.description'),
+  },
+];
+
+const detailedFeatures = [
+  {
+    title: 'Parcours d\'Apprentissage par IA',
+    description: 'Notre IA avancee analyse vos objectifs, competences actuelles et habitudes d\'apprentissage pour creer un programme personnalise. Au fil de votre progression, le systeme s\'adapte et optimise votre parcours.',
+    benefits: [
+      'Recommandations de cours personnalisees',
+      'Ajustement adaptatif de la difficulte',
+      'Analyse intelligente des lacunes',
+      'Predictions de progression',
+    ],
+    reverse: false,
+  },
+  {
+    title: 'Bibliotheque de Contenus Riche',
+    description: 'Accedez a des milliers de cours de qualite couvrant les competences techniques et comportementales. Notre contenu est cree par des experts et mis a jour regulierement.',
+    benefits: [
+      'Lecons video avec sous-titres',
+      'Exercices interactifs',
+      'Ressources telechargeables',
+      'Projets pratiques',
+    ],
+    reverse: true,
+  },
+  {
+    title: 'Gestion d\'Equipe',
+    description: 'Donnez a votre organisation des outils puissants de gestion d\'equipe. Assignez des cours, suivez les progres et mesurez l\'impact de l\'apprentissage sur votre entreprise.',
+    benefits: [
+      'Controle d\'acces par roles',
+      'Tableau de bord analytique',
+      'Parcours personnalises',
+      'Gestion groupee des utilisateurs',
+    ],
+    reverse: false,
+  },
+  {
+    title: 'Integrations Entreprise',
+    description: 'Integrez facilement vos outils et workflows existants. Notre plateforme se connecte aux systemes RH, outils de communication et fournisseurs d\'identite populaires.',
+    benefits: [
+      'SSO avec SAML & OAuth',
+      'Integration Slack & Teams',
+      'API pour integrations personnalisees',
+      'Notifications webhook',
+    ],
+    reverse: true,
+  },
+];
+---
+
+<Layout
+  title="Fonctionnalites - LMS Platform"
+  description="Decouvrez toutes les fonctionnalites qui font de LMS Platform le meilleur choix pour l'apprentissage moderne. Parcours IA, contenu riche, gestion d'equipe et plus."
+  lang="fr"
+  canonicalPath="/fr/features"
+>
+  <Hero
+    title="Des fonctionnalites puissantes pour l'apprentissage moderne"
+    subtitle="Tout ce dont vous avez besoin pour apprendre, evoluer et reussir - en une seule plateforme."
+    primaryCta={{ text: 'Commencer Gratuitement', href: '/app/register' }}
+    secondaryCta={{ text: 'Voir les Tarifs', href: '/fr/pricing' }}
+    size="md"
+  />
+
+  <Features
+    title={t('features.title')}
+    subtitle={t('features.subtitle')}
+    features={coreFeatures}
+  />
+
+  <section class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="space-y-24 lg:space-y-32">
+        {detailedFeatures.map((feature) => (
+          <div class={`flex flex-col ${feature.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-12 lg:gap-16 items-center`}>
+            <div class="flex-1">
+              <h3 class="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+                {feature.title}
+              </h3>
+              <p class="text-lg text-muted-foreground mb-6">
+                {feature.description}
+              </p>
+              <ul class="space-y-3">
+                {feature.benefits.map((benefit) => (
+                  <li class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span class="text-muted-foreground">{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="flex-1">
+              <div class="aspect-video bg-muted rounded-xl flex items-center justify-center">
+                <svg class="w-24 h-24 text-muted-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="integrations" class="py-20 sm:py-28 bg-muted">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold text-foreground">
+          Concu pour tous
+        </h2>
+        <p class="mt-4 text-lg text-muted-foreground">
+          Que vous appreniez seul ou geriez une equipe, nous avons les fonctionnalites adaptees.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <Card padding="lg">
+          <h3 class="text-xl font-bold text-foreground mb-4">Pour les Apprenants</h3>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              <div>
+                <p class="font-medium text-foreground">Recommandations IA personnalisees</p>
+                <p class="text-sm text-muted-foreground">Des suggestions de cours adaptees a vos objectifs</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+              <div>
+                <p class="font-medium text-foreground">Obtenez des certificats</p>
+                <p class="text-sm text-muted-foreground">Valorisez vos competences avec des certifications reconnues</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              <div>
+                <p class="font-medium text-foreground">Apprenez partout</p>
+                <p class="text-sm text-muted-foreground">Accedez aux cours sur tout appareil, meme hors ligne</p>
+              </div>
+            </li>
+          </ul>
+        </Card>
+
+        <Card padding="lg">
+          <h3 class="text-xl font-bold text-foreground mb-4">Pour les Equipes</h3>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <div>
+                <p class="font-medium text-foreground">Gestion d'equipe</p>
+                <p class="text-sm text-muted-foreground">Gerez facilement utilisateurs, roles et permissions</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <div>
+                <p class="font-medium text-foreground">Analyses avancees</p>
+                <p class="text-sm text-muted-foreground">Suivez les progres et mesurez l'impact de l'apprentissage</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <div>
+                <p class="font-medium text-foreground">Securite entreprise</p>
+                <p class="text-sm text-muted-foreground">SSO, conformite SOC 2 et plus</p>
+              </div>
+            </li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <CTA
+    title="Pret a transformer votre apprentissage ?"
+    subtitle="Commencez votre essai gratuit et decouvrez le futur de l'education."
+    primaryCta={{ text: 'Essai Gratuit', href: '/app/register' }}
+    secondaryCta={{ text: 'Contacter les Ventes', href: '/fr/contact?type=sales' }}
+    variant="gradient"
+  />
+</Layout>

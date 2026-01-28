@@ -1,0 +1,212 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Pricing from '../components/sections/Pricing.astro';
+import FAQ from '../components/sections/FAQ.astro';
+import CTA from '../components/sections/CTA.astro';
+import { useTranslations, getTranslation } from '../i18n';
+
+const t = useTranslations('en');
+const lang = 'en';
+
+const pricingPlans = [
+  {
+    name: t('pricing.free.name'),
+    price: t('pricing.free.price'),
+    period: t('pricing.free.period'),
+    description: t('pricing.free.description'),
+    features: getTranslation(lang, 'pricing.free.features') as string[],
+    cta: t('pricing.free.cta'),
+    ctaHref: '/app/register',
+  },
+  {
+    name: t('pricing.pro.name'),
+    price: t('pricing.pro.price'),
+    period: t('pricing.pro.period'),
+    description: t('pricing.pro.description'),
+    features: getTranslation(lang, 'pricing.pro.features') as string[],
+    cta: t('pricing.pro.cta'),
+    ctaHref: '/app/register?plan=pro',
+    popular: true,
+    badge: t('pricing.pro.badge'),
+  },
+  {
+    name: t('pricing.team.name'),
+    price: t('pricing.team.price'),
+    period: t('pricing.team.period'),
+    description: t('pricing.team.description'),
+    features: getTranslation(lang, 'pricing.team.features') as string[],
+    cta: t('pricing.team.cta'),
+    ctaHref: '/contact?type=sales',
+  },
+];
+
+const pricingFaq = [
+  {
+    question: 'Can I switch plans later?',
+    answer: 'Yes, you can upgrade or downgrade your plan at any time. When upgrading, you\'ll be charged the prorated difference. When downgrading, the change takes effect at your next billing cycle.',
+  },
+  {
+    question: 'Is there a free trial for Pro?',
+    answer: 'Yes! We offer a 14-day free trial for the Pro plan. No credit card required. You can explore all Pro features and decide if it\'s right for you.',
+  },
+  {
+    question: 'What payment methods do you accept?',
+    answer: 'We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and bank transfers for annual plans. Enterprise customers can also pay via invoice.',
+  },
+  {
+    question: 'Can I get a refund?',
+    answer: 'We offer a 30-day money-back guarantee for all paid plans. If you\'re not satisfied, contact our support team within 30 days of purchase for a full refund.',
+  },
+  {
+    question: 'What happens when my team grows?',
+    answer: 'For Team plans, you can add or remove team members at any time. You\'ll be charged prorated amounts for new members added mid-cycle.',
+  },
+  {
+    question: 'Do you offer discounts for nonprofits or education?',
+    answer: 'Yes, we offer special pricing for registered nonprofits, educational institutions, and students. Contact our sales team to learn more about our discount programs.',
+  },
+];
+
+// Feature comparison table
+const featureComparison = [
+  { feature: 'Access to free courses', free: true, pro: true, team: true },
+  { feature: 'Basic progress tracking', free: true, pro: true, team: true },
+  { feature: 'Community forums', free: true, pro: true, team: true },
+  { feature: 'Mobile app access', free: true, pro: true, team: true },
+  { feature: 'Unlimited courses', free: false, pro: true, team: true },
+  { feature: 'AI-powered recommendations', free: false, pro: true, team: true },
+  { feature: 'Certificates', free: false, pro: true, team: true },
+  { feature: 'Priority support', free: false, pro: true, team: true },
+  { feature: 'Team management', free: false, pro: false, team: true },
+  { feature: 'Custom branding', free: false, pro: false, team: true },
+  { feature: 'SSO integration', free: false, pro: false, team: true },
+  { feature: 'Analytics dashboard', free: false, pro: false, team: true },
+  { feature: 'Dedicated support', free: false, pro: false, team: true },
+  { feature: 'API access', free: false, pro: false, team: true },
+];
+---
+
+<Layout
+  title="Pricing - LMS Platform"
+  description="Simple, transparent pricing for individuals and teams. Start free, upgrade when you're ready."
+  canonicalPath="/pricing"
+>
+  <!-- Hero Section -->
+  <section class="pt-24 pb-12 sm:pt-32 sm:pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold text-foreground">
+        {t('pricing.title')}
+      </h1>
+      <p class="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+        {t('pricing.subtitle')}
+      </p>
+    </div>
+  </section>
+
+  <Pricing
+    title=""
+    subtitle=""
+    plans={pricingPlans}
+    billingToggle={{
+      monthly: 'Monthly',
+      annual: 'Annual',
+      annualDiscount: '-20%',
+    }}
+  />
+
+  <!-- Enterprise Section -->
+  <section class="py-16 bg-muted">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+        Need a custom solution?
+      </h2>
+      <p class="text-muted-foreground mb-8 max-w-2xl mx-auto">
+        For large organizations with specific requirements, we offer custom enterprise solutions with dedicated support, custom integrations, and flexible pricing.
+      </p>
+      <a
+        href="/contact?type=enterprise"
+        class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
+      >
+        Contact Enterprise Sales
+      </a>
+    </div>
+  </section>
+
+  <!-- Feature Comparison Table -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl sm:text-3xl font-bold text-foreground text-center mb-12">
+        Compare all features
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="border-b border-border">
+              <th class="py-4 px-4 text-left text-sm font-semibold text-foreground">Feature</th>
+              <th class="py-4 px-4 text-center text-sm font-semibold text-foreground">Free</th>
+              <th class="py-4 px-4 text-center text-sm font-semibold text-foreground">Pro</th>
+              <th class="py-4 px-4 text-center text-sm font-semibold text-foreground">Team</th>
+            </tr>
+          </thead>
+          <tbody>
+            {featureComparison.map((row, index) => (
+              <tr class={`border-b border-border ${index % 2 === 0 ? 'bg-muted/50' : ''}`}>
+                <td class="py-4 px-4 text-sm text-muted-foreground">{row.feature}</td>
+                <td class="py-4 px-4 text-center">
+                  {row.free ? (
+                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg class="w-5 h-5 text-muted-foreground/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                </td>
+                <td class="py-4 px-4 text-center">
+                  {row.pro ? (
+                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg class="w-5 h-5 text-muted-foreground/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                </td>
+                <td class="py-4 px-4 text-center">
+                  {row.team ? (
+                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg class="w-5 h-5 text-muted-foreground/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <FAQ
+    title="Pricing FAQ"
+    subtitle="Have questions about our pricing? We've got answers."
+    items={pricingFaq}
+    ctaText="Still have questions?"
+    ctaHref="/contact"
+  />
+
+  <CTA
+    title="Start learning today"
+    subtitle="Join thousands of learners advancing their careers with LMS Platform."
+    primaryCta={{ text: 'Get Started for Free', href: '/app/register' }}
+    note="No credit card required"
+    variant="gradient"
+  />
+</Layout>

@@ -1,0 +1,31 @@
+---
+interface Props {
+  class?: string;
+  hover?: boolean;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+}
+
+const {
+  class: className = '',
+  hover = false,
+  padding = 'md',
+} = Astro.props;
+
+const paddingClasses = {
+  none: '',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
+};
+
+const classes = [
+  'bg-card text-card-foreground rounded-xl border border-border shadow-sm',
+  hover && 'card-hover cursor-pointer',
+  paddingClasses[padding],
+  className,
+].filter(Boolean).join(' ');
+---
+
+<div class={classes}>
+  <slot />
+</div>
