@@ -7,24 +7,85 @@ import type { ApiResponse, ApiError, HttpMethod } from '@shared/types';
 
 const API_BASE = '/api/v1';
 
+interface RetryConfig {
+  /** Maximum number of retries (default: 3) */
+  maxRetries?: number;
+  /** Base delay in ms (default: 1000) */
+  baseDelay?: number;
+  /** Maximum delay in ms (default: 10000) */
+  maxDelay?: number;
+  /** Retry on these status codes (default: [408, 429, 500, 502, 503, 504]) */
+  retryStatusCodes?: number[];
+}
+
 interface RequestOptions {
   method?: HttpMethod;
   body?: unknown;
   params?: Record<string, string | number | boolean | undefined>;
   headers?: Record<string, string>;
   skipAuth?: boolean;
+  /** Retry configuration. Set to false to disable retries. */
+  retry?: RetryConfig | false;
   _isRetry?: boolean; // Internal flag to prevent infinite retry loops
+  _retryCount?: number; // Internal retry counter
 }
+
+const DEFAULT_RETRY_CONFIG: Required<RetryConfig> = {
+  maxRetries: 3,
+  baseDelay: 1000,
+  maxDelay: 10000,
+  retryStatusCodes: [408, 429, 500, 502, 503, 504],
+};
 
 class ApiClient {
   private isRefreshing = false;
   private refreshQueue: Array<() => void> = [];
 
   /**
+   * Calculate delay with exponential backoff and jitter
+   */
+  private calculateRetryDelay(attempt: number, config: Required<RetryConfig>): number {
+    // Exponential backoff: baseDelay * 2^attempt
+    const exponentialDelay = config.baseDelay * Math.pow(2, attempt);
+    // Add jitter (±25%)
+    const jitter = exponentialDelay * 0.25 * (Math.random() * 2 - 1);
+    // Clamp to maxDelay
+    return Math.min(exponentialDelay + jitter, config.maxDelay);
+  }
+
+  /**
+   * Determine if request should be retried
+   */
+  private shouldRetry(
+    error: unknown,
+    status: number | null,
+    retryCount: number,
+    config: Required<RetryConfig>
+  ): boolean {
+    if (retryCount >= config.maxRetries) return false;
+
+    // Network errors (fetch throws)
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      return true;
+    }
+
+    // Retry on specific status codes
+    if (status && config.retryStatusCodes.includes(status)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Make an API request
    */
   async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     const { method = 'GET', body, params, headers = {}, skipAuth = false } = options;
+    const retryCount = options._retryCount || 0;
+    const retryConfig = options.retry === false
+      ? null
+      : { ...DEFAULT_RETRY_CONFIG, ...options.retry };
 
     // Build URL with query params
     const url = new URL(`${API_BASE}${endpoint}`, window.location.origin);
@@ -42,13 +103,26 @@ class ApiClient {
       ...headers,
     };
 
-    // Make the request
-    const response = await fetch(url.toString(), {
-      method,
-      headers: requestHeaders,
-      body: body ? JSON.stringify(body) : undefined,
-      credentials: 'include', // Include cookies for auth
-    });
+    let response: Response;
+
+    try {
+      // Make the request
+      response = await fetch(url.toString(), {
+        method,
+        headers: requestHeaders,
+        body: body ? JSON.stringify(body) : undefined,
+        credentials: 'include', // Include cookies for auth
+      });
+    } catch (fetchError) {
+      // Network error - check if we should retry
+      if (retryConfig && this.shouldRetry(fetchError, null, retryCount, retryConfig)) {
+        const delay = this.calculateRetryDelay(retryCount, retryConfig);
+        console.log(`[ApiClient] Network error, retrying in ${delay}ms (attempt ${retryCount + 1}/${retryConfig.maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return this.request<T>(endpoint, { ...options, _retryCount: retryCount + 1 });
+      }
+      throw fetchError;
+    }
 
     // Handle 401 - attempt token refresh (only once to prevent infinite loops)
     if (response.status === 401 && !skipAuth && !options._isRetry) {
@@ -61,6 +135,14 @@ class ApiClient {
       }
       console.log('[ApiClient] Token refresh failed');
       // Refresh failed - let the error propagate
+    }
+
+    // Check if we should retry on server errors (5xx)
+    if (retryConfig && this.shouldRetry(null, response.status, retryCount, retryConfig)) {
+      const delay = this.calculateRetryDelay(retryCount, retryConfig);
+      console.log(`[ApiClient] Server error ${response.status}, retrying in ${delay}ms (attempt ${retryCount + 1}/${retryConfig.maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return this.request<T>(endpoint, { ...options, _retryCount: retryCount + 1 });
     }
 
     // Parse response

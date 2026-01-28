@@ -4,7 +4,7 @@
  */
 
 import { ref, computed } from 'vue';
-// import { useApi } from './useApi'; // TODO: Uncomment when API endpoints are ready
+import { useApi } from './useApi';
 
 export interface Badge {
   id: string;
@@ -305,11 +305,24 @@ export function useBadges() {
     error.value = null;
 
     try {
-      // TODO: Replace with real API call
-      // const data = await api.get<Badge[]>('/user/badges');
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      badges.value = mockBadges;
+      const api = useApi();
+      interface ApiBadge {
+        id: string;
+        name: string;
+        description: string | null;
+        imageUrl: string;
+        category: BadgeCategory;
+        rarity: BadgeRarity;
+        earnedAt: string | null;
+        progress?: number;
+        requirement?: string;
+      }
+      const data = await api.get<ApiBadge[]>('/user/badges');
+      // Transform earnedAt string to Date
+      badges.value = data.map((b) => ({
+        ...b,
+        earnedAt: b.earnedAt ? new Date(b.earnedAt) : null,
+      }));
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load badges';
     } finally {

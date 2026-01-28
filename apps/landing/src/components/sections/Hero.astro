@@ -1,0 +1,82 @@
+---
+import Button from '../ui/Button.astro';
+
+interface Props {
+  title: string;
+  subtitle: string;
+  primaryCta?: {
+    text: string;
+    href: string;
+  };
+  secondaryCta?: {
+    text: string;
+    href: string;
+  };
+  trustedText?: string;
+  centered?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  title,
+  subtitle,
+  primaryCta,
+  secondaryCta,
+  trustedText,
+  centered = true,
+  size = 'lg',
+} = Astro.props;
+
+const sizeClasses = {
+  sm: 'py-16 sm:py-20',
+  md: 'py-20 sm:py-28',
+  lg: 'py-24 sm:py-32 lg:py-40',
+};
+---
+
+<section class={`relative overflow-hidden hero-gradient text-white ${sizeClasses[size]}`}>
+  <!-- Background decoration -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-white/5 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-white/5 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${centered ? 'text-center' : ''}`}>
+    <div class={centered ? 'max-w-4xl mx-auto' : 'max-w-2xl'}>
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in">
+        {title}
+      </h1>
+      <p class="mt-6 text-lg sm:text-xl md:text-2xl text-white/80 animate-slide-up stagger-1">
+        {subtitle}
+      </p>
+
+      {(primaryCta || secondaryCta) && (
+        <div class={`mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up stagger-2 ${centered ? 'justify-center' : ''}`}>
+          {primaryCta && (
+            <Button href={primaryCta.href} size="lg" class="bg-white text-primary hover:bg-white/90">
+              {primaryCta.text}
+            </Button>
+          )}
+          {secondaryCta && (
+            <Button href={secondaryCta.href} size="lg" variant="outline" class="border-white/30 text-white hover:bg-white/10">
+              {secondaryCta.text}
+            </Button>
+          )}
+        </div>
+      )}
+
+      {trustedText && (
+        <div class="mt-12 animate-fade-in stagger-3">
+          <p class="text-sm text-white/60 mb-4">{trustedText}</p>
+          <div class="flex flex-wrap justify-center gap-8 opacity-60">
+            <!-- Placeholder logos -->
+            <div class="h-8 w-24 bg-white/20 rounded"></div>
+            <div class="h-8 w-28 bg-white/20 rounded"></div>
+            <div class="h-8 w-20 bg-white/20 rounded"></div>
+            <div class="h-8 w-32 bg-white/20 rounded"></div>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</section>

@@ -2,6 +2,8 @@ import type Koa from 'koa';
 import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
+import serve from 'koa-static';
+import mount from 'koa-mount';
 import { config } from '../config/index.js';
 import { errorHandler } from './error-handler.js';
 import { requestLogger } from './request-logger.js';
@@ -43,6 +45,12 @@ export function setupMiddlewares(app: Koa): void {
 
   // Request logging
   app.use(requestLogger);
+
+  // Serve uploaded files in development (local storage)
+  if (config.storage?.provider === 'local') {
+    const uploadPath = config.storage.localPath || './uploads';
+    app.use(mount('/uploads', serve(uploadPath)));
+  }
 }
 
 export { authRateLimiter } from './rate-limiter.js';

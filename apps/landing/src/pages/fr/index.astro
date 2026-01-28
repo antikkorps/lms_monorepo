@@ -1,0 +1,250 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/sections/Hero.astro';
+import Features from '../../components/sections/Features.astro';
+import Pricing from '../../components/sections/Pricing.astro';
+import Testimonials from '../../components/sections/Testimonials.astro';
+import CTA from '../../components/sections/CTA.astro';
+import { useTranslations, getTranslation } from '../../i18n';
+
+const t = useTranslations('fr');
+const lang = 'fr';
+
+const features = [
+  {
+    icon: 'ai',
+    title: t('features.ai.title'),
+    description: t('features.ai.description'),
+  },
+  {
+    icon: 'content',
+    title: t('features.content.title'),
+    description: t('features.content.description'),
+  },
+  {
+    icon: 'progress',
+    title: t('features.progress.title'),
+    description: t('features.progress.description'),
+  },
+  {
+    icon: 'collab',
+    title: t('features.collab.title'),
+    description: t('features.collab.description'),
+  },
+  {
+    icon: 'certificate',
+    title: t('features.certificate.title'),
+    description: t('features.certificate.description'),
+  },
+  {
+    icon: 'mobile',
+    title: t('features.mobile.title'),
+    description: t('features.mobile.description'),
+  },
+];
+
+const pricingPlans = [
+  {
+    name: t('pricing.free.name'),
+    price: t('pricing.free.price'),
+    period: t('pricing.free.period'),
+    description: t('pricing.free.description'),
+    features: getTranslation(lang, 'pricing.free.features') as string[],
+    cta: t('pricing.free.cta'),
+    ctaHref: '/app/register',
+  },
+  {
+    name: t('pricing.pro.name'),
+    price: t('pricing.pro.price'),
+    period: t('pricing.pro.period'),
+    description: t('pricing.pro.description'),
+    features: getTranslation(lang, 'pricing.pro.features') as string[],
+    cta: t('pricing.pro.cta'),
+    ctaHref: '/app/register?plan=pro',
+    popular: true,
+    badge: t('pricing.pro.badge'),
+  },
+  {
+    name: t('pricing.team.name'),
+    price: t('pricing.team.price'),
+    period: t('pricing.team.period'),
+    description: t('pricing.team.description'),
+    features: getTranslation(lang, 'pricing.team.features') as string[],
+    cta: t('pricing.team.cta'),
+    ctaHref: '/fr/contact?type=sales',
+  },
+];
+
+const testimonials = [
+  {
+    quote: "LMS Platform a transforme la facon dont notre equipe apprend. Les recommandations IA sont incroyablement precises et nous font gagner des heures de recherche.",
+    author: "Sophie Martin",
+    role: "Responsable Formation",
+    company: "TechCorp France",
+  },
+  {
+    quote: "J'ai essaye de nombreuses plateformes, mais celle-ci se demarque. Les parcours personnalises m'ont permis de progresser plus vite que je ne l'aurais imagine.",
+    author: "Thomas Dubois",
+    role: "Developpeur Senior",
+    company: "StartupXYZ",
+  },
+  {
+    quote: "Les fonctionnalites d'equipe sont exceptionnelles. Nous pouvons suivre les progres et mesurer les resultats. Notre temps d'integration a diminue de 40%.",
+    author: "Marie Laurent",
+    role: "Directrice RH",
+    company: "GlobalTech",
+  },
+];
+---
+
+<Layout
+  title="LMS Platform - Plateforme d'Apprentissage Moderne"
+  description="La plateforme d'apprentissage alimentee par l'IA qui permet aux individus et aux equipes de maitriser de nouvelles competences. Commencez a apprendre aujourd'hui."
+  lang="fr"
+  canonicalPath="/fr"
+>
+  <Hero
+    title={t('hero.title')}
+    subtitle={t('hero.subtitle')}
+    primaryCta={{ text: t('hero.cta.primary'), href: '/app/register' }}
+    secondaryCta={{ text: t('hero.cta.secondary'), href: '#features' }}
+    trustedText={t('hero.trusted')}
+  />
+
+  <Features
+    title={t('features.title')}
+    subtitle={t('features.subtitle')}
+    features={features}
+  />
+
+  <!-- B2C vs B2B Section -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold text-foreground">
+          Concu pour tous
+        </h2>
+        <p class="mt-4 text-lg text-muted-foreground">
+          Que vous appreniez seul ou que vous geriez une equipe, nous avons la solution adaptee.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <!-- Pour les Individus -->
+        <div class="bg-card border border-border rounded-2xl p-8 lg:p-10">
+          <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-foreground mb-4">Pour les Individus</h3>
+          <p class="text-muted-foreground mb-6">
+            Faites progresser votre carriere avec des parcours personnalises, des recommandations IA et des certifications reconnues.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3 text-sm text-muted-foreground">
+              <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Parcours d'apprentissage personnalises
+            </li>
+            <li class="flex items-center gap-3 text-sm text-muted-foreground">
+              <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Recommandations de contenus par IA
+            </li>
+            <li class="flex items-center gap-3 text-sm text-muted-foreground">
+              <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Obtenez des certificats reconnus
+            </li>
+            <li class="flex items-center gap-3 text-sm text-muted-foreground">
+              <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Apprenez a votre rythme
+            </li>
+          </ul>
+          <a href="/app/register" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">
+            Commencer gratuitement
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Pour les Equipes -->
+        <div class="bg-card border border-border rounded-2xl p-8 lg:p-10">
+          <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-foreground mb-4">Pour les Equipes & Entreprises</h3>
+          <p class="text-muted-foreground mb-6">
+            Developpez les competences de vos equipes avec des programmes personnalises, des analyses et une securite entreprise.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3 text-sm text-muted-foreground">
+              <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Tableau de bord de gestion d'equipe
+            </li>
+            <li class="flex items-center gap-3 text-sm text-muted-foreground">
+              <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Analyses et rapports avances
+            </li>
+            <li class="flex items-center gap-3 text-sm text-muted-foreground">
+              <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              SSO & integrations entreprise
+            </li>
+            <li class="flex items-center gap-3 text-sm text-muted-foreground">
+              <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Gestionnaire de compte dedie
+            </li>
+          </ul>
+          <a href="/fr/contact?type=sales" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">
+            Contacter les ventes
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Testimonials
+    title={t('testimonials.title')}
+    subtitle={t('testimonials.subtitle')}
+    testimonials={testimonials}
+  />
+
+  <Pricing
+    title={t('pricing.title')}
+    subtitle={t('pricing.subtitle')}
+    plans={pricingPlans}
+    billingToggle={{
+      monthly: 'Mensuel',
+      annual: 'Annuel',
+      annualDiscount: '-20%',
+    }}
+  />
+
+  <CTA
+    title={t('cta.title')}
+    subtitle={t('cta.subtitle')}
+    primaryCta={{ text: t('cta.button'), href: '/app/register' }}
+    note={t('cta.note')}
+    variant="gradient"
+  />
+</Layout>

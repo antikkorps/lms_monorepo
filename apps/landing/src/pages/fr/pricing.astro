@@ -1,0 +1,209 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Pricing from '../../components/sections/Pricing.astro';
+import FAQ from '../../components/sections/FAQ.astro';
+import CTA from '../../components/sections/CTA.astro';
+import { useTranslations, getTranslation } from '../../i18n';
+
+const t = useTranslations('fr');
+const lang = 'fr';
+
+const pricingPlans = [
+  {
+    name: t('pricing.free.name'),
+    price: t('pricing.free.price'),
+    period: t('pricing.free.period'),
+    description: t('pricing.free.description'),
+    features: getTranslation(lang, 'pricing.free.features') as string[],
+    cta: t('pricing.free.cta'),
+    ctaHref: '/app/register',
+  },
+  {
+    name: t('pricing.pro.name'),
+    price: t('pricing.pro.price'),
+    period: t('pricing.pro.period'),
+    description: t('pricing.pro.description'),
+    features: getTranslation(lang, 'pricing.pro.features') as string[],
+    cta: t('pricing.pro.cta'),
+    ctaHref: '/app/register?plan=pro',
+    popular: true,
+    badge: t('pricing.pro.badge'),
+  },
+  {
+    name: t('pricing.team.name'),
+    price: t('pricing.team.price'),
+    period: t('pricing.team.period'),
+    description: t('pricing.team.description'),
+    features: getTranslation(lang, 'pricing.team.features') as string[],
+    cta: t('pricing.team.cta'),
+    ctaHref: '/fr/contact?type=sales',
+  },
+];
+
+const pricingFaq = [
+  {
+    question: 'Puis-je changer de forfait plus tard ?',
+    answer: 'Oui, vous pouvez passer a un forfait superieur ou inferieur a tout moment. Lors d\'une mise a niveau, vous serez facture au prorata. Lors d\'une retrogradation, le changement prend effet au prochain cycle de facturation.',
+  },
+  {
+    question: 'Y a-t-il un essai gratuit pour Pro ?',
+    answer: 'Oui ! Nous offrons un essai gratuit de 14 jours pour le forfait Pro. Aucune carte de credit requise. Vous pouvez explorer toutes les fonctionnalites Pro et decider si cela vous convient.',
+  },
+  {
+    question: 'Quels modes de paiement acceptez-vous ?',
+    answer: 'Nous acceptons toutes les principales cartes de credit (Visa, MasterCard, American Express), PayPal, et les virements bancaires pour les forfaits annuels. Les clients entreprise peuvent aussi payer par facture.',
+  },
+  {
+    question: 'Puis-je obtenir un remboursement ?',
+    answer: 'Nous offrons une garantie de remboursement de 30 jours pour tous les forfaits payants. Si vous n\'etes pas satisfait, contactez notre equipe support dans les 30 jours suivant l\'achat pour un remboursement complet.',
+  },
+  {
+    question: 'Que se passe-t-il quand mon equipe grandit ?',
+    answer: 'Pour les forfaits Equipe, vous pouvez ajouter ou supprimer des membres a tout moment. Vous serez facture au prorata pour les nouveaux membres ajoutes en cours de cycle.',
+  },
+  {
+    question: 'Offrez-vous des reductions pour les associations ou l\'education ?',
+    answer: 'Oui, nous offrons des tarifs speciaux pour les associations, les etablissements d\'enseignement et les etudiants. Contactez notre equipe commerciale pour en savoir plus sur nos programmes de reduction.',
+  },
+];
+
+const featureComparison = [
+  { feature: 'Acces aux cours gratuits', free: true, pro: true, team: true },
+  { feature: 'Suivi de progression basique', free: true, pro: true, team: true },
+  { feature: 'Forums communautaires', free: true, pro: true, team: true },
+  { feature: 'Acces application mobile', free: true, pro: true, team: true },
+  { feature: 'Cours illimites', free: false, pro: true, team: true },
+  { feature: 'Recommandations IA', free: false, pro: true, team: true },
+  { feature: 'Certificats', free: false, pro: true, team: true },
+  { feature: 'Support prioritaire', free: false, pro: true, team: true },
+  { feature: 'Gestion d\'equipe', free: false, pro: false, team: true },
+  { feature: 'Personnalisation', free: false, pro: false, team: true },
+  { feature: 'Integration SSO', free: false, pro: false, team: true },
+  { feature: 'Tableau de bord analytique', free: false, pro: false, team: true },
+  { feature: 'Support dedie', free: false, pro: false, team: true },
+  { feature: 'Acces API', free: false, pro: false, team: true },
+];
+---
+
+<Layout
+  title="Tarifs - LMS Platform"
+  description="Tarification simple et transparente pour les individus et les equipes. Commencez gratuitement, passez a un forfait superieur quand vous etes pret."
+  lang="fr"
+  canonicalPath="/fr/pricing"
+>
+  <section class="pt-24 pb-12 sm:pt-32 sm:pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold text-foreground">
+        {t('pricing.title')}
+      </h1>
+      <p class="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+        {t('pricing.subtitle')}
+      </p>
+    </div>
+  </section>
+
+  <Pricing
+    title=""
+    subtitle=""
+    plans={pricingPlans}
+    billingToggle={{
+      monthly: 'Mensuel',
+      annual: 'Annuel',
+      annualDiscount: '-20%',
+    }}
+  />
+
+  <section class="py-16 bg-muted">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+        Besoin d'une solution personnalisee ?
+      </h2>
+      <p class="text-muted-foreground mb-8 max-w-2xl mx-auto">
+        Pour les grandes organisations avec des besoins specifiques, nous proposons des solutions entreprise personnalisees avec support dedie, integrations sur mesure et tarification flexible.
+      </p>
+      <a
+        href="/fr/contact?type=enterprise"
+        class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
+      >
+        Contacter les Ventes Entreprise
+      </a>
+    </div>
+  </section>
+
+  <section class="py-20 sm:py-28">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl sm:text-3xl font-bold text-foreground text-center mb-12">
+        Comparer toutes les fonctionnalites
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="border-b border-border">
+              <th class="py-4 px-4 text-left text-sm font-semibold text-foreground">Fonctionnalite</th>
+              <th class="py-4 px-4 text-center text-sm font-semibold text-foreground">Gratuit</th>
+              <th class="py-4 px-4 text-center text-sm font-semibold text-foreground">Pro</th>
+              <th class="py-4 px-4 text-center text-sm font-semibold text-foreground">Equipe</th>
+            </tr>
+          </thead>
+          <tbody>
+            {featureComparison.map((row, index) => (
+              <tr class={`border-b border-border ${index % 2 === 0 ? 'bg-muted/50' : ''}`}>
+                <td class="py-4 px-4 text-sm text-muted-foreground">{row.feature}</td>
+                <td class="py-4 px-4 text-center">
+                  {row.free ? (
+                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg class="w-5 h-5 text-muted-foreground/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                </td>
+                <td class="py-4 px-4 text-center">
+                  {row.pro ? (
+                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg class="w-5 h-5 text-muted-foreground/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                </td>
+                <td class="py-4 px-4 text-center">
+                  {row.team ? (
+                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg class="w-5 h-5 text-muted-foreground/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <FAQ
+    title="FAQ Tarifs"
+    subtitle="Des questions sur nos tarifs ? Nous avons les reponses."
+    items={pricingFaq}
+    ctaText="Vous avez encore des questions ?"
+    ctaHref="/fr/contact"
+  />
+
+  <CTA
+    title="Commencez a apprendre aujourd'hui"
+    subtitle="Rejoignez des milliers d'apprenants qui font progresser leur carriere avec LMS Platform."
+    primaryCta={{ text: 'Commencer Gratuitement', href: '/app/register' }}
+    note="Aucune carte de credit requise"
+    variant="gradient"
+  />
+</Layout>

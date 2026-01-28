@@ -18,6 +18,9 @@ export interface BadgeCriteria {
   description?: string;
 }
 
+export type BadgeCategory = 'course' | 'streak' | 'quiz' | 'milestone' | 'special';
+export type BadgeRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+
 export class Badge extends Model<
   InferAttributes<Badge>,
   InferCreationAttributes<Badge>
@@ -26,6 +29,8 @@ export class Badge extends Model<
   declare name: string;
   declare description: CreationOptional<string | null>;
   declare imageUrl: string;
+  declare category: CreationOptional<BadgeCategory>;
+  declare rarity: CreationOptional<BadgeRarity>;
   declare criteria: BadgeCriteria;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -49,6 +54,16 @@ Badge.init(
     imageUrl: {
       type: DataTypes.TEXT,
       allowNull: false,
+    },
+    category: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: 'milestone',
+    },
+    rarity: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: 'common',
     },
     criteria: {
       type: DataTypes.JSONB,

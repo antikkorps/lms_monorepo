@@ -41,6 +41,14 @@ export function useTranslations(lang: Lang) {
 }
 
 /**
+ * Get raw translation value (for arrays)
+ */
+export function getTranslation(lang: Lang, key: TranslationKey): string | string[] {
+  const value = translations[lang][key] ?? translations[defaultLang][key];
+  return value as string | string[];
+}
+
+/**
  * Get translated route path
  */
 export function getLocalizedPath(path: string, lang: Lang): string {

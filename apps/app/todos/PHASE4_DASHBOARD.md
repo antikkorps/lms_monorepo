@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-01-25
+## Modified: 2026-01-26
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -31,7 +31,11 @@
 - [x] Integrate real API for dashboard (useDashboard) (Done: 2026-01-25)
 - [x] Integrate real API for progress (useProgress) (Done: 2026-01-25)
 - [x] Integrate real API for quizzes (useQuiz) (Done: 2026-01-25)
-- [ ] Integrate remaining composables
+- [x] Integrate real API for analytics (useAnalytics) (Done: 2026-01-26)
+- [x] Integrate real API for badges (useBadges) (Done: 2026-01-26)
+- [x] Integrate real API for tenant dashboard (useTenantDashboard) (Done: 2026-01-26)
+- [x] Integrate real API for tenant members (useTenantMembers) (Done: 2026-01-26)
+- [x] Integrate real API for seats (useSeats) (Done: 2026-01-26)
 - [ ] Add error boundaries for API failures
 - [ ] Implement optimistic updates
 
