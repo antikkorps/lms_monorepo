@@ -1,7 +1,7 @@
 import type { Context } from 'koa';
 import { Op } from 'sequelize';
-import { Course, Chapter, Lesson, User, LessonContent } from '../database/models/index.js';
-import { CourseStatus, UserRole, LessonType, Currency } from '../database/models/enums.js';
+import { Course, Chapter, Lesson, User, LessonContent, Purchase, UserProgress } from '../database/models/index.js';
+import { CourseStatus, UserRole, LessonType, Currency, PurchaseStatus } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { parseLocaleFromRequest, getLocalizedLessonContent } from '../utils/locale.js';
@@ -207,6 +207,56 @@ export async function getCourse(ctx: Context): Promise<void> {
 
   // Add locale info to response
   courseData.locale = locale;
+
+  // Check enrollment status if user is authenticated
+  let enrollment = null;
+  if (user) {
+    // Check if user has a completed purchase for this course
+    const purchase = await Purchase.findOne({
+      where: {
+        userId: user.userId,
+        courseId: course.id,
+        status: PurchaseStatus.COMPLETED,
+      },
+    });
+
+    // Also check if the course is free (free courses don't need purchase)
+    const isEnrolled = !!purchase || course.isFree;
+
+    if (isEnrolled) {
+      // Get user progress for this course
+      const progressRecords = await UserProgress.findAll({
+        where: {
+          userId: user.userId,
+          courseId: course.id,
+          completed: true,
+        },
+        attributes: ['lessonId'],
+      });
+
+      const completedLessons = progressRecords.map((p) => p.lessonId);
+      const totalLessons = course.lessonsCount;
+      const progressPercent = totalLessons > 0
+        ? Math.round((completedLessons.length / totalLessons) * 100)
+        : 0;
+
+      enrollment = {
+        isEnrolled: true,
+        progress: progressPercent,
+        completedLessons,
+        lastAccessedLessonId: null, // TODO: track this
+      };
+    } else {
+      enrollment = {
+        isEnrolled: false,
+        progress: 0,
+        completedLessons: [],
+        lastAccessedLessonId: null,
+      };
+    }
+  }
+
+  courseData.enrollment = enrollment;
 
   ctx.body = { data: courseData };
 }

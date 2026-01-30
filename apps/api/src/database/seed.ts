@@ -710,7 +710,8 @@ async function seedBadges(): Promise<void> {
 async function seedPurchasesAndProgress(): Promise<void> {
   logger.info('Seeding purchases and progress...');
 
-  // Create purchases for learner1, soloLearner, and instructor (for demo)
+  // Create purchases for learner1 and instructor (for demo)
+  // Note: soloLearner has NO purchases so we can test Stripe payment flow
   await Purchase.bulkCreate([
     {
       id: randomUUID(),
@@ -726,14 +727,6 @@ async function seedPurchasesAndProgress(): Promise<void> {
       courseId: IDS.course2,
       tenantId: IDS.tenant,
       amount: 79.99,
-      status: PurchaseStatus.COMPLETED,
-    },
-    {
-      id: randomUUID(),
-      userId: IDS.soloLearner,
-      courseId: IDS.course1,
-      tenantId: null,
-      amount: 49.99,
       status: PurchaseStatus.COMPLETED,
     },
     // Instructor enrolled in both courses (for demo presentation)
@@ -849,18 +842,10 @@ async function runSeed(): Promise<void> {
     await sequelize.authenticate();
     setupAssociations();
 
-    // Add currency column if it doesn't exist (manual migration for new field)
-    logger.info('Ensuring database schema has currency column...');
-    try {
-      await sequelize.query(`
-        ALTER TABLE courses
-        ADD COLUMN IF NOT EXISTS currency VARCHAR(3) NOT NULL DEFAULT 'EUR'
-      `);
-      logger.info('Currency column ensured');
-    } catch {
-      // Column might already exist with different attributes, that's OK
-      logger.info('Currency column already exists or could not be added');
-    }
+    // Sync database schema - create tables if they don't exist
+    logger.info('Syncing database schema (creating tables if needed)...');
+    await sequelize.sync({ alter: true });
+    logger.info('Database schema synchronized');
 
     logger.info('Clearing existing data...');
 
@@ -907,7 +892,16 @@ async function runSeed(): Promise<void> {
       password: DEFAULT_PASSWORD,
     }, 'Test accounts created');
   } catch (error) {
-    logger.error({ error }, 'Seed failed');
+    // Log full error details
+    if (error instanceof Error) {
+      logger.error({
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+      }, 'Seed failed');
+    } else {
+      logger.error({ error: String(error) }, 'Seed failed');
+    }
     process.exit(1);
   } finally {
     await sequelize.close();

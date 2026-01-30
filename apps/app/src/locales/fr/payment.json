@@ -1,0 +1,31 @@
+{
+  "invalidSession": "Session de paiement invalide ou manquante",
+  "verifying": "Vérification de votre paiement...",
+  "success": {
+    "title": "Paiement réussi",
+    "description": "Merci pour votre achat !",
+    "confirmed": "Paiement confirmé",
+    "accessGranted": "Vous avez maintenant accès à ce cours.",
+    "purchasedCourse": "Cours acheté",
+    "startLearning": "Commencer l'apprentissage",
+    "backToDashboard": "Retour au tableau de bord"
+  },
+  "cancelled": {
+    "title": "Paiement annulé",
+    "description": "Votre paiement n'a pas été finalisé.",
+    "notCharged": "Aucun prélèvement effectué",
+    "noChargeMessage": "Votre moyen de paiement n'a pas été débité. Vous pouvez réessayer quand vous le souhaitez.",
+    "readyWhenYouAre": "Nous serons là quand vous serez prêt à continuer votre apprentissage.",
+    "tryAgain": "Réessayer",
+    "browseCourses": "Parcourir les cours",
+    "backToDashboard": "Retour au tableau de bord"
+  },
+  "error": {
+    "title": "Échec de la vérification",
+    "verificationFailed": "Nous n'avons pas pu vérifier votre paiement. Contactez le support si vous avez été débité.",
+    "browseCourses": "Parcourir les cours",
+    "contactSupport": "Si vous pensez qu'il s'agit d'une erreur, veuillez contacter notre équipe support."
+  },
+  "processing": "Traitement du paiement...",
+  "alreadyPurchased": "Vous avez déjà acheté ce cours"
+}

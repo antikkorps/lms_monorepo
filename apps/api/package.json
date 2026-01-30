@@ -27,7 +27,8 @@
     "pino": "^10.3.0",
     "pino-pretty": "^13.0.0",
     "postmark": "^4.0.5",
-    "sequelize": "^6.37.0"
+    "sequelize": "^6.37.0",
+    "stripe": "^20.3.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",

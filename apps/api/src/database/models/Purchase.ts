@@ -1,6 +1,7 @@
 import {
   Model,
   DataTypes,
+  Op,
   type InferAttributes,
   type InferCreationAttributes,
   type CreationOptional,
@@ -122,7 +123,7 @@ Purchase.init(
       {
         fields: ['stripe_checkout_session_id'],
         unique: true,
-        where: { stripe_checkout_session_id: { $ne: null } },
+        where: { stripe_checkout_session_id: { [Op.ne]: null } },
       },
     ],
   }

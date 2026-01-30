@@ -53,6 +53,16 @@ export type ErrorCode =
   | 'REPLY_DELETED'
   // Note
   | 'NOTE_NOT_FOUND'
+  // Payment/Stripe
+  | 'PAYMENT_FAILED'
+  | 'PAYMENT_CANCELLED'
+  | 'PAYMENT_REQUIRED'
+  | 'STRIPE_ERROR'
+  | 'WEBHOOK_SIGNATURE_INVALID'
+  | 'CHECKOUT_SESSION_INVALID'
+  | 'SUBSCRIPTION_NOT_FOUND'
+  | 'SUBSCRIPTION_INACTIVE'
+  | 'ALREADY_PURCHASED'
   // Allow any string for extensibility
   | (string & {});
 
@@ -110,5 +120,17 @@ export class AppError extends Error {
 
   static serviceUnavailable(message = 'Service temporarily unavailable'): AppError {
     return new AppError(message, 503, 'SERVICE_UNAVAILABLE');
+  }
+
+  static paymentFailed(message = 'Payment failed', details?: Record<string, unknown>): AppError {
+    return new AppError(message, 402, 'PAYMENT_FAILED', details);
+  }
+
+  static paymentRequired(message = 'Payment required'): AppError {
+    return new AppError(message, 402, 'PAYMENT_REQUIRED');
+  }
+
+  static stripeError(message: string, details?: Record<string, unknown>): AppError {
+    return new AppError(message, 500, 'STRIPE_ERROR', details);
   }
 }

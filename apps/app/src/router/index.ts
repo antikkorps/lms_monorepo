@@ -91,6 +91,20 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: 'app', requiresAuth: true },
   },
 
+  // Payment routes
+  {
+    path: '/payment/success',
+    name: 'payment-success',
+    component: () => import('../views/PaymentSuccessView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/payment/cancel',
+    name: 'payment-cancel',
+    component: () => import('../views/PaymentCancelView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+
   // Admin routes (tenant_admin only)
   {
     path: '/admin',

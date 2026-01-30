@@ -267,6 +267,7 @@ export function useCourseDetail(slug: string, options: UseCourseDetailOptions = 
         description: string;
         thumbnailUrl: string | null;
         price: string;
+        currency?: string;
         duration: number;
         chaptersCount: number;
         lessonsCount: number;
@@ -285,6 +286,12 @@ export function useCourseDetail(slug: string, options: UseCourseDetailOptions = 
             isFree: boolean;
           }>;
         }>;
+        enrollment: {
+          isEnrolled: boolean;
+          progress: number;
+          completedLessons: string[];
+          lastAccessedLessonId: string | null;
+        } | null;
       }>(`/courses/${slug}`);
 
       if (!response) {
@@ -292,22 +299,16 @@ export function useCourseDetail(slug: string, options: UseCourseDetailOptions = 
         return;
       }
 
-      // For now, assume enrolled if viewing a course (will be properly implemented with purchases API)
-      // TODO: Implement proper enrollment check via /courses/:id/enrollment endpoint
-      // In preview mode, we simulate enrollment but without real progress
-      const enrollment: EnrollmentStatus = previewMode
+      // Get enrollment status from API response (or simulate for preview mode)
+      const apiEnrollment = response.enrollment as EnrollmentStatus | null;
+      const enrollment: EnrollmentStatus | null = previewMode
         ? {
             isEnrolled: true,
             progress: 0,
             completedLessons: [],
             lastAccessedLessonId: null,
           }
-        : {
-            isEnrolled: true,
-            progress: 0,
-            completedLessons: [],
-            lastAccessedLessonId: null,
-          };
+        : apiEnrollment;
 
       // Transform API response to CourseWithEnrollment
       course.value = {
@@ -334,9 +335,9 @@ export function useCourseDetail(slug: string, options: UseCourseDetailOptions = 
             duration: Math.floor(l.duration / 60), // Convert seconds to minutes
             position: l.position,
             isFree: l.isFree,
-            isCompleted: previewMode ? false : (enrollment?.completedLessons.includes(l.id) ?? false),
-            // In preview mode, all lessons are accessible
-            isAccessible: previewMode ? true : (enrollment?.isEnrolled || l.isFree),
+            isCompleted: previewMode ? false : (enrollment?.completedLessons?.includes(l.id) ?? false),
+            // In preview mode, all lessons are accessible; otherwise, accessible if enrolled or lesson is free
+            isAccessible: previewMode ? true : (enrollment?.isEnrolled ?? false) || l.isFree,
           })),
         })),
         enrollment,
