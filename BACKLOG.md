@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-01-28
+## Modified: 2026-01-30
 
 ---
 
@@ -8,10 +8,14 @@
 
 ### Payments & Billing
 
-- [ ] Implement Stripe webhook handlers (payment success, failure, refund)
-- [ ] Create checkout flow UI
+- [x] Stripe service with Circuit Breaker pattern (Done: 2026-01-30)
+- [x] Implement Stripe webhook handlers (payment success, failure) (Done: 2026-01-30)
+- [x] Create checkout flow UI (B2C course purchases) (Done: 2026-01-30)
+- [x] Payment success/cancel pages (Done: 2026-01-30)
+- [x] Enrollment status check in course API (Done: 2026-01-30)
 - [ ] Handle subscription lifecycle (B2B seats)
 - [ ] Invoice generation
+- [ ] Refund handling
 
 ### Content Creation UI
 
@@ -179,3 +183,31 @@ Features:
 - Menu mobile full-screen slide-in
 - Touch targets 44px+ pour mobile
 - SEO: meta tags, OG, Twitter cards, hreflang, sitemap
+
+**Stripe Integration B2C (2026-01-30)**
+
+Architecture avec Circuit Breaker (opossum):
+- `apps/api/src/services/stripe/` - Service Stripe singleton
+- `apps/api/src/payments/` - Routes et controllers
+
+| Endpoint | Description |
+|----------|-------------|
+| POST /payments/checkout/course | Créer session Checkout Stripe |
+| POST /payments/verify | Vérifier un achat après paiement |
+| GET /payments/purchases | Liste des achats de l'utilisateur |
+| POST /webhooks/stripe | Webhook Stripe (raw body) |
+
+Frontend:
+- `usePayments.ts` - Composable pour les achats
+- `PaymentSuccessView.vue` - Page de succès après paiement
+- `PaymentCancelView.vue` - Page d'annulation
+- Bouton "Acheter" dans CourseDetailView (si non inscrit)
+
+Webhook events gérés:
+- `checkout.session.completed` → Finalise l'achat (Purchase.status = COMPLETED)
+- `payment_intent.payment_failed` → Log l'échec
+
+À faire (B2B):
+- Subscriptions pour les tenants (seats)
+- Customer Portal pour gérer les abonnements
+- Facturation récurrente
