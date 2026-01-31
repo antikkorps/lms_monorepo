@@ -1,6 +1,6 @@
 # API - Tests
 
-## Modified: 2026-01-28
+## Modified: 2026-01-31
 
 ### Test Setup
 
@@ -23,8 +23,17 @@
 | Storage Validation | `storage/index.spec.ts` | 5 | Done |
 | Local Storage | `storage/local.storage.spec.ts` | 12 | Done |
 | Storage Integration | `storage/storage.integration.spec.ts` | 8 | Skipped* |
+| Course Access | `utils/course-access.spec.ts` | 25 | Done |
+| Course Access MW | `middlewares/course-access.middleware.spec.ts` | 13 | Done |
+| Refund | `payments/refund.spec.ts` | 13 | Done |
+| Courses Controller | `courses/controller.spec.ts` | 57 | Done |
+| Notifications Controller | `notifications/controller.spec.ts` | 12 | Done |
+| Notification Service | `services/notifications/notification.service.spec.ts` | 18 | Done |
+| Preference Service | `services/notifications/preference.service.spec.ts` | 10 | Done |
+| Notification Worker | `queue/workers/notification.worker.spec.ts` | 8 | Done |
+| Certificate Generator | `certificates/generator.spec.ts` | 6 | Done |
 
-**Total: 133 tests** (125 run, 8 skipped)
+**Total: 301 tests** (293 passed, 8 skipped)
 
 *Integration tests: run with `R2_INTEGRATION_TEST=true`
 

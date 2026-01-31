@@ -28,6 +28,8 @@ export class Course extends Model<
   declare duration: CreationOptional<number>;
   declare chaptersCount: CreationOptional<number>;
   declare lessonsCount: CreationOptional<number>;
+  declare stripeProductId: CreationOptional<string | null>;
+  declare stripePriceId: CreationOptional<string | null>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare deletedAt: CreationOptional<Date | null>;
@@ -42,7 +44,7 @@ export class Course extends Model<
   }
 
   get isFree(): NonAttribute<boolean> {
-    return this.price === 0;
+    return Number(this.price) === 0;
   }
 
   get formattedDuration(): NonAttribute<string> {
@@ -116,6 +118,14 @@ Course.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
+    },
+    stripeProductId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    stripePriceId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,

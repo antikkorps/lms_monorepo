@@ -17,6 +17,7 @@ import {
 } from '../database/models/index.js';
 import { CourseStatus, PurchaseStatus, UserRole } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
+import { checkTenantAccess } from '../utils/course-access.js';
 
 interface AuthenticatedUser {
   userId: string;
@@ -40,6 +41,18 @@ function getAuthenticatedUser(ctx: Context): AuthenticatedUser {
 export async function getLearnerDashboard(ctx: Context): Promise<void> {
   const user = getAuthenticatedUser(ctx);
   const userId = user.userId;
+
+  // For B2B users, verify tenant subscription is active
+  if (user.tenantId) {
+    const tenantAccess = await checkTenantAccess(user.tenantId, userId);
+    if (!tenantAccess.hasAccess) {
+      throw new AppError(
+        tenantAccess.reason || 'Your organization subscription is not active',
+        403,
+        'TENANT_INACTIVE'
+      );
+    }
+  }
 
   // Get user's enrolled courses (purchases with status completed)
   const purchases = await Purchase.findAll({
@@ -241,6 +254,18 @@ export async function getLearnerDashboard(ctx: Context): Promise<void> {
 export async function getLearnerProgress(ctx: Context): Promise<void> {
   const user = getAuthenticatedUser(ctx);
   const userId = user.userId;
+
+  // For B2B users, verify tenant subscription is active
+  if (user.tenantId) {
+    const tenantAccess = await checkTenantAccess(user.tenantId, userId);
+    if (!tenantAccess.hasAccess) {
+      throw new AppError(
+        tenantAccess.reason || 'Your organization subscription is not active',
+        403,
+        'TENANT_INACTIVE'
+      );
+    }
+  }
 
   // Get user's enrolled courses (purchases with status completed)
   const purchases = await Purchase.findAll({

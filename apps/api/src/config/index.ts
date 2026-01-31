@@ -71,6 +71,13 @@ export const config = {
     r2PublicUrl: process.env.R2_PUBLIC_URL || '',
   },
 
+  // Queue (BullMQ)
+  queue: {
+    concurrency: Number.parseInt(process.env.QUEUE_CONCURRENCY || '5', 10),
+    maxRetries: Number.parseInt(process.env.QUEUE_MAX_RETRIES || '3', 10),
+    digestCron: process.env.DIGEST_CRON || '0 8 * * 1', // Monday 8am by default
+  },
+
   // Rate limiting (defaults, can be overridden per tier in middleware)
   rateLimit: {
     b2c: {

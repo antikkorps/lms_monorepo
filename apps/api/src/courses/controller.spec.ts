@@ -219,7 +219,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         query: { page: 1, limit: 20, status: CourseStatus.DRAFT },
         state: {
-          user: { id: 'user-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'user-123', role: UserRole.INSTRUCTOR },
         },
       });
       await listCourses(ctx);
@@ -302,7 +302,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         params: { id: 'course-123' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await getCourse(ctx);
@@ -330,7 +330,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         body: { title: 'New Course', description: 'Course description' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await createCourse(ctx);
@@ -361,7 +361,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         body: { title: 'Existing Course' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
 
@@ -382,7 +382,7 @@ describe('Courses Controller', () => {
         params: { id: 'course-123' },
         body: { title: 'Updated Title' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await updateCourse(ctx);
@@ -398,7 +398,7 @@ describe('Courses Controller', () => {
         params: { id: 'course-123' },
         body: { title: 'Updated Title' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
 
@@ -413,7 +413,7 @@ describe('Courses Controller', () => {
         params: { id: 'course-123' },
         body: { title: 'Updated Title' },
         state: {
-          user: { id: 'admin-123', role: UserRole.TENANT_ADMIN },
+          user: { userId: 'admin-123', role: UserRole.TENANT_ADMIN },
         },
       });
       await updateCourse(ctx);
@@ -429,7 +429,7 @@ describe('Courses Controller', () => {
         params: { id: 'course-123' },
         body: { status: CourseStatus.PUBLISHED },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
 
@@ -449,7 +449,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         params: { id: 'course-123' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await deleteCourse(ctx);
@@ -474,7 +474,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         params: { id: 'course-123' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await publishCourse(ctx);
@@ -492,7 +492,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         params: { id: 'course-123' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
 
@@ -515,7 +515,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         query: { page: 1, limit: 20 },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await getMyCourses(ctx);
@@ -559,7 +559,7 @@ describe('Courses Controller', () => {
         params: { courseId: 'course-123' },
         body: { title: 'New Chapter' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await createChapter(ctx);
@@ -587,7 +587,7 @@ describe('Courses Controller', () => {
         params: { courseId: 'course-123', id: 'chapter-123' },
         body: { title: 'Updated Chapter' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await updateChapter(ctx);
@@ -606,7 +606,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         params: { courseId: 'course-123', id: 'chapter-123' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await deleteChapter(ctx);
@@ -627,7 +627,7 @@ describe('Courses Controller', () => {
         params: { courseId: 'course-123' },
         body: { order: ['chapter-2', 'chapter-1', 'chapter-3'] },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await reorderChapters(ctx);
@@ -677,7 +677,7 @@ describe('Courses Controller', () => {
         params: { courseId: 'course-123', chapterId: 'chapter-123' },
         body: { title: 'New Lesson', duration: 300 },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await createLesson(ctx);
@@ -709,7 +709,7 @@ describe('Courses Controller', () => {
         params: { id: 'lesson-123' },
         body: { title: 'Updated Lesson', duration: 200 },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await updateLesson(ctx);
@@ -731,7 +731,7 @@ describe('Courses Controller', () => {
       const ctx = createMockContext({
         params: { id: 'lesson-123' },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await deleteLesson(ctx);
@@ -753,7 +753,7 @@ describe('Courses Controller', () => {
         params: { courseId: 'course-123', chapterId: 'chapter-123' },
         body: { order: ['lesson-2', 'lesson-1', 'lesson-3'] },
         state: {
-          user: { id: 'instructor-123', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
         },
       });
       await reorderLessons(ctx);

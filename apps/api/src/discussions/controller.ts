@@ -22,6 +22,7 @@ import type {
   ReportInput,
   DeleteDiscussionInput,
 } from './schemas.js';
+import { onDiscussionReply } from '../triggers/notification.triggers.js';
 
 interface AuthenticatedUser {
   userId: string;
@@ -397,6 +398,12 @@ export async function createReply(ctx: Context): Promise<void> {
       },
     ],
   });
+
+  // Send notification to discussion author
+  if (fullReply?.user) {
+    const authorName = `${fullReply.user.firstName} ${fullReply.user.lastName}`;
+    onDiscussionReply(reply, discussion, authorName);
+  }
 
   ctx.status = 201;
   ctx.body = {

@@ -1,6 +1,6 @@
 /**
  * Locale Composable
- * Easy access to i18n functionality
+ * Easy access to i18n functionality with backend sync
  */
 
 import { computed } from 'vue';
@@ -11,6 +11,8 @@ import {
   SUPPORTED_LOCALES,
   type SupportedLocale,
 } from '@/locales';
+import { apiClient } from './useApi';
+import { useAuthStore } from '@/stores/auth';
 
 export interface LocaleOption {
   code: SupportedLocale;
@@ -25,6 +27,7 @@ export const LOCALE_OPTIONS: LocaleOption[] = [
 
 export function useLocale() {
   const { t, locale } = useI18n();
+  const authStore = useAuthStore();
 
   const currentLocale = computed(() => getCurrentLocale());
 
@@ -36,9 +39,48 @@ export function useLocale() {
     LOCALE_OPTIONS.filter((l) => l.code !== currentLocale.value)
   );
 
+  /**
+   * Change locale and sync with backend if authenticated
+   */
   async function changeLocale(newLocale: SupportedLocale): Promise<void> {
     if (newLocale !== currentLocale.value) {
+      // Update frontend locale
       await setLocale(newLocale);
+
+      // Sync with backend if user is authenticated
+      if (authStore.isAuthenticated) {
+        try {
+          await apiClient.patch('/auth/me/locale', { locale: newLocale });
+        } catch (error) {
+          // Log but don't fail - local locale change is more important
+          console.warn('[useLocale] Failed to sync locale with backend:', error);
+        }
+      }
+    }
+  }
+
+  /**
+   * Sync frontend locale from user's backend preference
+   * Call this after login or when user data is loaded
+   */
+  async function syncFromUser(): Promise<void> {
+    const userLocale = authStore.user?.locale as SupportedLocale | undefined;
+    if (userLocale && SUPPORTED_LOCALES.includes(userLocale) && userLocale !== currentLocale.value) {
+      await setLocale(userLocale);
+    }
+  }
+
+  /**
+   * Sync backend with current frontend locale
+   * Call this after login when frontend locale should take precedence
+   */
+  async function syncToBackend(): Promise<void> {
+    if (authStore.isAuthenticated && currentLocale.value) {
+      try {
+        await apiClient.patch('/auth/me/locale', { locale: currentLocale.value });
+      } catch (error) {
+        console.warn('[useLocale] Failed to sync locale to backend:', error);
+      }
     }
   }
 
@@ -51,5 +93,7 @@ export function useLocale() {
     localeOptions: LOCALE_OPTIONS,
     supportedLocales: SUPPORTED_LOCALES,
     changeLocale,
+    syncFromUser,
+    syncToBackend,
   };
 }

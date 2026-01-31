@@ -144,6 +144,8 @@
     "organization": "Organisation",
     "enterpriseAccount": "Compte entreprise",
     "accountId": "ID du compte",
+    "purchaseHistory": "Historique des achats",
+    "purchaseHistoryDesc": "Consultez vos achats et demandez un remboursement",
     "changePassword": "Changer le mot de passe",
     "changePasswordDesc": "Mettez à jour votre mot de passe pour sécuriser votre compte",
     "currentPassword": "Mot de passe actuel",

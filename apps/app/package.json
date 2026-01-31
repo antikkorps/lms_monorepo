@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@stripe/stripe-js": "^8.7.0",
     "@vueuse/core": "^12.8.2",
     "chart.js": "^4.5.1",
     "date-fns": "^4.1.0",
