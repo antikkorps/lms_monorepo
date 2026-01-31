@@ -99,3 +99,26 @@ export enum SupportedLocale {
   EN = 'en',
   FR = 'fr',
 }
+
+export enum NotificationType {
+  LESSON_COMPLETED = 'lesson_completed',
+  COURSE_COMPLETED = 'course_completed',
+  QUIZ_PASSED = 'quiz_passed',
+  BADGE_EARNED = 'badge_earned',
+  DISCUSSION_REPLY = 'discussion_reply',
+  PURCHASE_CONFIRMED = 'purchase_confirmed',
+}
+
+export enum DigestFrequency {
+  NEVER = 'never',
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+}
+
+export enum RefundRequestStatus {
+  NONE = 'none',
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  AUTO_APPROVED = 'auto_approved',
+}

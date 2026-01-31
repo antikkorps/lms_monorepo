@@ -38,6 +38,8 @@ interface PurchaseVerification {
   completedAt: string | null;
 }
 
+type RefundRequestStatus = 'none' | 'pending' | 'approved' | 'rejected' | 'auto_approved';
+
 interface Purchase {
   id: string;
   courseId: string;
@@ -46,6 +48,9 @@ interface Purchase {
   status: 'pending' | 'completed' | 'failed' | 'refunded';
   purchasedAt: string | null;
   createdAt: string;
+  refundRequestStatus?: RefundRequestStatus;
+  refundRequestedAt?: string | null;
+  refundRejectionReason?: string | null;
   course: {
     id: string;
     title: string;
@@ -54,8 +59,22 @@ interface Purchase {
   } | null;
 }
 
-interface PaginatedPurchases {
-  data: Purchase[];
+interface RefundRequestResult {
+  id: string;
+  status: string;
+  refundRequestStatus: RefundRequestStatus;
+  message: string;
+  refundId?: string;
+  refundAmount?: number;
+  course: {
+    id: string;
+    title: string;
+    slug: string;
+  } | null;
+}
+
+interface PurchasesResponse {
+  purchases: Purchase[];
   pagination: {
     page: number;
     limit: number;
@@ -138,14 +157,14 @@ export function usePayments() {
     page = 1,
     limit = 20,
     status?: string
-  ): Promise<PaginatedPurchases | null> {
+  ): Promise<PurchasesResponse | null> {
     try {
       const params: Record<string, string | number> = { page, limit };
       if (status) {
         params.status = status;
       }
 
-      const response = await api.get<PaginatedPurchases>('/payments/purchases', params);
+      const response = await api.get<PurchasesResponse>('/payments/purchases', params);
       return response;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load purchases';
@@ -174,6 +193,46 @@ export function usePayments() {
     return stripe !== null;
   }
 
+  /**
+   * Request a refund for a purchase
+   * If < 1 hour since purchase: auto-refund
+   * If > 1 hour: pending admin approval
+   */
+  async function requestRefund(
+    purchaseId: string,
+    reason: string
+  ): Promise<RefundRequestResult | null> {
+    isProcessing.value = true;
+    error.value = null;
+
+    try {
+      const response = await api.post<RefundRequestResult>(
+        `/payments/${purchaseId}/request-refund`,
+        { reason }
+      );
+      return response;
+    } catch (err) {
+      if (err instanceof ApiRequestError) {
+        error.value = err.message;
+      } else {
+        error.value = err instanceof Error ? err.message : 'Refund request failed';
+      }
+      return null;
+    } finally {
+      isProcessing.value = false;
+    }
+  }
+
+  /**
+   * Check if a purchase is eligible for auto-refund (within 1 hour)
+   */
+  function isEligibleForAutoRefund(purchase: Purchase): boolean {
+    if (!purchase.purchasedAt) return false;
+    const purchaseDate = new Date(purchase.purchasedAt);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    return purchaseDate > oneHourAgo;
+  }
+
   return {
     // State
     isProcessing,
@@ -185,5 +244,7 @@ export function usePayments() {
     getPurchases,
     getPurchase,
     isStripeConfigured,
+    requestRefund,
+    isEligibleForAutoRefund,
   };
 }

@@ -5,6 +5,7 @@ import { PurchaseStatus, TenantStatus } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { stripeService } from '../services/stripe/index.js';
 import { logger } from '../utils/logger.js';
+import { onPurchaseConfirmed } from '../triggers/notification.triggers.js';
 
 /**
  * Handle Stripe webhook events
@@ -136,6 +137,9 @@ async function handleCheckoutSessionCompleted(
         : session.payment_intent?.id,
     purchasedAt: new Date(),
   });
+
+  // Send purchase confirmation notification
+  onPurchaseConfirmed(purchase);
 
   logger.info(
     { purchaseId: purchase.id, courseId, userId },

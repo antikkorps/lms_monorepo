@@ -1,11 +1,18 @@
 import type { Context } from 'koa';
+import { Op } from 'sequelize';
 import { Course, Purchase, User } from '../database/models/index.js';
-import { CourseStatus, PurchaseStatus, UserRole } from '../database/models/enums.js';
+import { CourseStatus, PurchaseStatus, RefundRequestStatus, UserRole } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { stripeService } from '../services/stripe/index.js';
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
-import type { CreateCourseCheckoutBody, VerifyPurchaseBody, ProcessRefundBody } from './schemas.js';
+import type {
+  CreateCourseCheckoutBody,
+  VerifyPurchaseBody,
+  ProcessRefundBody,
+  RequestRefundBody,
+  ReviewRefundRequestBody,
+} from './schemas.js';
 
 interface AuthenticatedUser {
   userId: string;
@@ -199,12 +206,36 @@ export async function listPurchases(ctx: Context): Promise<void> {
   });
 
   ctx.body = {
-    data: purchases,
-    pagination: {
-      page: Number(page),
-      limit: Number(limit),
-      total: count,
-      totalPages: Math.ceil(count / Number(limit)),
+    success: true,
+    data: {
+      purchases: purchases.map((p) => ({
+        id: p.id,
+        courseId: p.courseId,
+        amount: p.amount,
+        currency: p.currency,
+        status: p.status,
+        purchasedAt: p.purchasedAt,
+        createdAt: p.createdAt,
+        // Refund request fields
+        refundRequestStatus: p.refundRequestStatus,
+        refundRequestedAt: p.refundRequestedAt,
+        refundRejectionReason: p.refundRejectionReason,
+        // Course info
+        course: p.course
+          ? {
+              id: p.course.id,
+              title: p.course.title,
+              slug: p.course.slug,
+              thumbnailUrl: p.course.thumbnailUrl,
+            }
+          : null,
+      })),
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: count,
+        totalPages: Math.ceil(count / Number(limit)),
+      },
     },
   };
 }
@@ -332,4 +363,377 @@ export async function processRefund(ctx: Context): Promise<void> {
         : null,
     },
   };
+}
+
+/**
+ * Request a refund (for learners)
+ * POST /payments/:purchaseId/request-refund
+ *
+ * If purchase was made < 1 hour ago: auto-refund
+ * If purchase was made > 1 hour ago: create pending request for admin review
+ */
+export async function requestRefund(ctx: Context): Promise<void> {
+  const user = getAuthenticatedUser(ctx);
+  const { purchaseId } = ctx.params;
+  const { reason } = ctx.request.body as RequestRefundBody;
+
+  // Find purchase belonging to user
+  const purchase = await Purchase.findOne({
+    where: {
+      id: purchaseId,
+      userId: user.userId,
+    },
+    include: [{ model: Course, as: 'course' }],
+  });
+
+  if (!purchase) {
+    throw AppError.notFound('Purchase not found');
+  }
+
+  // Only completed purchases can be refunded
+  if (purchase.status !== PurchaseStatus.COMPLETED) {
+    throw new AppError(
+      `Cannot request refund for a purchase with status: ${purchase.status}`,
+      400,
+      'INVALID_PURCHASE_STATUS'
+    );
+  }
+
+  // Check if already has a pending refund request
+  if (purchase.refundRequestStatus === RefundRequestStatus.PENDING) {
+    throw new AppError(
+      'A refund request is already pending for this purchase',
+      400,
+      'REFUND_REQUEST_PENDING'
+    );
+  }
+
+  // Check if already refunded
+  if (purchase.refundRequestStatus === RefundRequestStatus.APPROVED ||
+      purchase.refundRequestStatus === RefundRequestStatus.AUTO_APPROVED) {
+    throw new AppError(
+      'This purchase has already been refunded',
+      400,
+      'ALREADY_REFUNDED'
+    );
+  }
+
+  // Check if eligible for auto-refund (within 1 hour)
+  const isAutoRefund = purchase.isEligibleForAutoRefund;
+
+  if (isAutoRefund) {
+    // Auto-refund: process immediately
+    if (!purchase.stripePaymentIntentId) {
+      throw new AppError(
+        'Purchase has no associated payment intent',
+        400,
+        'NO_PAYMENT_INTENT'
+      );
+    }
+
+    // Create refund in Stripe
+    const refundResult = await stripeService.createRefund({
+      paymentIntentId: purchase.stripePaymentIntentId,
+      reason: 'requested_by_customer',
+      metadata: {
+        purchaseId: purchase.id,
+        userId: purchase.userId,
+        courseId: purchase.courseId,
+        autoRefund: 'true',
+      },
+    });
+
+    // Update purchase
+    const refundAmountInCurrency = refundResult.amount / 100;
+    await purchase.update({
+      status: PurchaseStatus.REFUNDED,
+      stripeRefundId: refundResult.refundId,
+      refundedAt: new Date(),
+      refundReason: reason,
+      refundAmount: refundAmountInCurrency,
+      isPartialRefund: false,
+      refundRequestStatus: RefundRequestStatus.AUTO_APPROVED,
+      refundRequestedAt: new Date(),
+      refundRequestReason: reason,
+    });
+
+    logger.info(
+      {
+        purchaseId: purchase.id,
+        refundId: refundResult.refundId,
+        amount: refundAmountInCurrency,
+        autoRefund: true,
+      },
+      'Auto-refund processed'
+    );
+
+    ctx.body = {
+      data: {
+        id: purchase.id,
+        status: 'refunded',
+        refundRequestStatus: RefundRequestStatus.AUTO_APPROVED,
+        message: 'Refund processed automatically',
+        refundId: refundResult.refundId,
+        refundAmount: refundAmountInCurrency,
+        course: purchase.course
+          ? {
+              id: purchase.course.id,
+              title: purchase.course.title,
+              slug: purchase.course.slug,
+            }
+          : null,
+      },
+    };
+  } else {
+    // Manual review required
+    await purchase.update({
+      refundRequestStatus: RefundRequestStatus.PENDING,
+      refundRequestedAt: new Date(),
+      refundRequestReason: reason,
+    });
+
+    logger.info(
+      {
+        purchaseId: purchase.id,
+        userId: user.userId,
+      },
+      'Refund request submitted for review'
+    );
+
+    ctx.body = {
+      data: {
+        id: purchase.id,
+        status: purchase.status,
+        refundRequestStatus: RefundRequestStatus.PENDING,
+        message: 'Refund request submitted for review',
+        course: purchase.course
+          ? {
+              id: purchase.course.id,
+              title: purchase.course.title,
+              slug: purchase.course.slug,
+            }
+          : null,
+      },
+    };
+  }
+}
+
+/**
+ * List pending refund requests (admin only)
+ * GET /payments/refund-requests
+ */
+export async function listRefundRequests(ctx: Context): Promise<void> {
+  const user = getAuthenticatedUser(ctx);
+  const { status = 'pending', page = 1, limit = 20 } = ctx.query as {
+    status?: string;
+    page?: number;
+    limit?: number;
+  };
+
+  // Verify super admin permissions (refunds are B2C only)
+  if (user.role !== UserRole.SUPER_ADMIN) {
+    throw AppError.forbidden('Super admin access required');
+  }
+
+  const offset = (Number(page) - 1) * Number(limit);
+  const where: Record<string, unknown> = {
+    // Only B2C purchases (no tenant) can have refund requests
+    tenantId: null,
+  };
+
+  if (status === 'pending') {
+    where.refundRequestStatus = RefundRequestStatus.PENDING;
+  } else if (status === 'all') {
+    where.refundRequestStatus = {
+      [Op.ne]: RefundRequestStatus.NONE,
+    };
+  } else if (status === 'reviewed') {
+    where.refundRequestStatus = {
+      [Op.in]: [RefundRequestStatus.APPROVED, RefundRequestStatus.REJECTED, RefundRequestStatus.AUTO_APPROVED],
+    };
+  }
+
+  const { rows: purchases, count } = await Purchase.findAndCountAll({
+    where,
+    include: [
+      {
+        model: Course,
+        as: 'course',
+        attributes: ['id', 'title', 'slug'],
+      },
+      {
+        model: User,
+        as: 'user',
+        attributes: ['id', 'email', 'firstName', 'lastName'],
+      },
+    ],
+    order: [['refundRequestedAt', 'DESC']],
+    limit: Number(limit),
+    offset,
+  });
+
+  ctx.body = {
+    success: true,
+    data: {
+      requests: purchases.map((p) => ({
+        id: p.id,
+        amount: Number(p.amount),
+        currency: p.currency,
+        status: p.status,
+        refundRequestStatus: p.refundRequestStatus,
+        refundRequestedAt: p.refundRequestedAt,
+        refundRequestReason: p.refundRequestReason,
+        purchasedAt: p.purchasedAt,
+        user: p.user
+          ? {
+              id: p.user.id,
+              email: p.user.email,
+              firstName: p.user.firstName,
+              lastName: p.user.lastName,
+            }
+          : null,
+        course: p.course
+          ? {
+              id: p.course.id,
+              title: p.course.title,
+              slug: p.course.slug,
+            }
+          : null,
+      })),
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: count,
+        totalPages: Math.ceil(count / Number(limit)),
+      },
+    },
+  };
+}
+
+/**
+ * Review a refund request (admin only)
+ * POST /payments/:purchaseId/review-refund
+ */
+export async function reviewRefundRequest(ctx: Context): Promise<void> {
+  const user = getAuthenticatedUser(ctx);
+  const { purchaseId } = ctx.params;
+  const { action, rejectionReason } = ctx.request.body as ReviewRefundRequestBody;
+
+  // Verify super admin permissions (refunds are B2C only)
+  if (user.role !== UserRole.SUPER_ADMIN) {
+    throw AppError.forbidden('Super admin access required');
+  }
+
+  // Find purchase
+  const purchase = await Purchase.findByPk(purchaseId, {
+    include: [{ model: Course, as: 'course' }],
+  });
+
+  if (!purchase) {
+    throw AppError.notFound('Purchase not found');
+  }
+
+  // Only B2C purchases can be refunded through this flow
+  if (purchase.tenantId) {
+    throw AppError.forbidden('Tenant purchases cannot be refunded through this flow');
+  }
+
+  // Verify it's a pending request
+  if (purchase.refundRequestStatus !== RefundRequestStatus.PENDING) {
+    throw new AppError(
+      `Cannot review a refund request with status: ${purchase.refundRequestStatus}`,
+      400,
+      'INVALID_REQUEST_STATUS'
+    );
+  }
+
+  if (action === 'approve') {
+    // Process the refund
+    if (!purchase.stripePaymentIntentId) {
+      throw new AppError(
+        'Purchase has no associated payment intent',
+        400,
+        'NO_PAYMENT_INTENT'
+      );
+    }
+
+    // Create refund in Stripe
+    const refundResult = await stripeService.createRefund({
+      paymentIntentId: purchase.stripePaymentIntentId,
+      reason: 'requested_by_customer',
+      metadata: {
+        purchaseId: purchase.id,
+        userId: purchase.userId,
+        courseId: purchase.courseId,
+        approvedBy: user.userId,
+      },
+    });
+
+    // Update purchase
+    const refundAmountInCurrency = refundResult.amount / 100;
+    await purchase.update({
+      status: PurchaseStatus.REFUNDED,
+      stripeRefundId: refundResult.refundId,
+      refundedAt: new Date(),
+      refundReason: purchase.refundRequestReason,
+      refundAmount: refundAmountInCurrency,
+      isPartialRefund: false,
+      refundRequestStatus: RefundRequestStatus.APPROVED,
+      refundReviewedBy: user.userId,
+      refundReviewedAt: new Date(),
+    });
+
+    logger.info(
+      {
+        purchaseId: purchase.id,
+        refundId: refundResult.refundId,
+        approvedBy: user.userId,
+      },
+      'Refund request approved'
+    );
+
+    ctx.body = {
+      data: {
+        id: purchase.id,
+        status: PurchaseStatus.REFUNDED,
+        refundRequestStatus: RefundRequestStatus.APPROVED,
+        refundId: refundResult.refundId,
+        refundAmount: refundAmountInCurrency,
+      },
+    };
+  } else {
+    // Reject the request
+    if (!rejectionReason) {
+      throw new AppError(
+        'Rejection reason is required',
+        400,
+        'REJECTION_REASON_REQUIRED'
+      );
+    }
+
+    await purchase.update({
+      refundRequestStatus: RefundRequestStatus.REJECTED,
+      refundReviewedBy: user.userId,
+      refundReviewedAt: new Date(),
+      refundRejectionReason: rejectionReason,
+    });
+
+    logger.info(
+      {
+        purchaseId: purchase.id,
+        rejectedBy: user.userId,
+        reason: rejectionReason,
+      },
+      'Refund request rejected'
+    );
+
+    ctx.body = {
+      data: {
+        id: purchase.id,
+        status: purchase.status,
+        refundRequestStatus: RefundRequestStatus.REJECTED,
+        rejectionReason,
+      },
+    };
+  }
 }

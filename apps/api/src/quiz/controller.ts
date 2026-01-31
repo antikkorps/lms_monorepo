@@ -6,6 +6,7 @@ import { UserRole, QuizQuestionType } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { checkCourseAccessFromLesson } from '../utils/course-access.js';
+import { onQuizPassed } from '../triggers/notification.triggers.js';
 
 // Default passing threshold (70%)
 const PASSING_THRESHOLD = 0.7;
@@ -385,6 +386,24 @@ export async function submitQuiz(ctx: Context): Promise<void> {
     attemptNumber,
     completedAt: new Date(),
   });
+
+  // Send notification if quiz passed
+  if (passed) {
+    // Get course ID from lesson
+    const lessonWithCourse = await Lesson.findByPk(lessonId, {
+      include: [
+        {
+          model: Chapter,
+          as: 'chapter',
+          include: [{ model: Course, as: 'course', attributes: ['id'] }],
+        },
+      ],
+    });
+    const courseId = lessonWithCourse?.chapter?.course?.id;
+    if (courseId) {
+      onQuizPassed(user.userId, lessonId, courseId, Math.round((totalScore / maxScore) * 100));
+    }
+  }
 
   ctx.status = 201;
   ctx.body = {

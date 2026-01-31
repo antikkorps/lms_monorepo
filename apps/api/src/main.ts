@@ -5,6 +5,13 @@ import { setupRoutes } from './routes/index.js';
 import { logger } from './utils/logger.js';
 import { connectRedis, disconnectRedis } from './utils/redis.js';
 import { initializeDatabase, shutdownDatabase } from './database/index.js';
+import {
+  startNotificationWorker,
+  stopNotificationWorker,
+  startDigestWorker,
+  stopDigestWorker,
+} from './queue/index.js';
+import { disconnectPublisher } from './services/notifications/index.js';
 
 const app = new Koa();
 
@@ -24,6 +31,11 @@ async function bootstrap() {
     await connectRedis();
     logger.info('Redis connection established');
 
+    // Start queue workers
+    startNotificationWorker();
+    startDigestWorker();
+    logger.info('Queue workers started');
+
     // Start HTTP server
     const server = app.listen(config.port, () => {
       logger.info(`API server running on port ${config.port}`);
@@ -38,6 +50,14 @@ async function bootstrap() {
         logger.info('HTTP server closed');
 
         try {
+          // Stop queue workers
+          await stopNotificationWorker();
+          await stopDigestWorker();
+          logger.info('Queue workers stopped');
+
+          // Close notification pub/sub
+          await disconnectPublisher();
+
           // Close Redis connections
           await disconnectRedis();
 

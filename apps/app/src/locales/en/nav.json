@@ -14,6 +14,7 @@
   },
   "user": {
     "profile": "Profile",
+    "purchases": "My Purchases",
     "settings": "Settings",
     "signOut": "Sign out",
     "logout": "Logout"
@@ -23,7 +24,8 @@
     "dashboard": "Dashboard Admin",
     "members": "Team Members",
     "invitations": "Invitations",
-    "seats": "Seat Management"
+    "seats": "Seat Management",
+    "refunds": "Refund Requests"
   },
   "accessibility": {
     "toggleMenu": "Toggle menu",

@@ -27,8 +27,13 @@
 | Course Access MW | `middlewares/course-access.middleware.spec.ts` | 13 | Done |
 | Refund | `payments/refund.spec.ts` | 13 | Done |
 | Courses Controller | `courses/controller.spec.ts` | 57 | Done |
+| Notifications Controller | `notifications/controller.spec.ts` | 12 | Done |
+| Notification Service | `services/notifications/notification.service.spec.ts` | 18 | Done |
+| Preference Service | `services/notifications/preference.service.spec.ts` | 10 | Done |
+| Notification Worker | `queue/workers/notification.worker.spec.ts` | 8 | Done |
+| Certificate Generator | `certificates/generator.spec.ts` | 6 | Done |
 
-**Total: 241 tests** (233 run, 8 skipped)
+**Total: 301 tests** (293 passed, 8 skipped)
 
 *Integration tests: run with `R2_INTEGRATION_TEST=true`
 

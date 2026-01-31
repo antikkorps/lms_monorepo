@@ -1,6 +1,35 @@
 {
   "invalidSession": "Session de paiement invalide ou manquante",
   "verifying": "Vérification de votre paiement...",
+  "history": {
+    "title": "Historique des achats",
+    "subtitle": "Consultez vos achats et demandez un remboursement",
+    "empty": "Aucun achat",
+    "emptyDescription": "Vos achats de cours apparaîtront ici.",
+    "browseCourses": "Parcourir les cours",
+    "unknownCourse": "Cours inconnu",
+    "purchasedOn": "Acheté le",
+    "viewCourse": "Voir le cours"
+  },
+  "refund": {
+    "request": "Demander un remboursement",
+    "statusPending": "Remboursement en attente",
+    "statusApproved": "Remboursé",
+    "statusRejected": "Remboursement refusé",
+    "rejectionReason": "Motif",
+    "dialogTitle": "Demander un remboursement",
+    "autoEligible": "Votre achat est éligible à un remboursement immédiat.",
+    "manualReview": "Votre demande sera examinée par notre équipe. Cela prend généralement 1 à 2 jours ouvrés.",
+    "instantInfo": "Comme vous avez acheté il y a moins d'une heure, votre remboursement sera traité immédiatement.",
+    "reviewInfo": "Plus d'une heure s'étant écoulée, votre demande devra être validée par un administrateur.",
+    "reasonLabel": "Pourquoi souhaitez-vous un remboursement ?",
+    "reasonPlaceholder": "Expliquez la raison de votre demande de remboursement...",
+    "reasonHint": "Minimum 10 caractères",
+    "submitInstant": "Obtenir le remboursement",
+    "submitReview": "Envoyer la demande",
+    "autoApproved": "Votre remboursement a été traité automatiquement.",
+    "requestSubmitted": "Votre demande de remboursement a été envoyée pour examen."
+  },
   "success": {
     "title": "Paiement réussi",
     "description": "Merci pour votre achat !",

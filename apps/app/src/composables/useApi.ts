@@ -145,6 +145,11 @@ class ApiClient {
       return this.request<T>(endpoint, { ...options, _retryCount: retryCount + 1 });
     }
 
+    // Handle 204 No Content responses (e.g., DELETE operations)
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
     // Parse response
     const data = await response.json();
 

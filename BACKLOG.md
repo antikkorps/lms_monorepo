@@ -16,6 +16,9 @@
 - [ ] Handle subscription lifecycle (B2B seats)
 - [ ] Invoice generation
 - [x] Refund handling (Done: 2026-01-31)
+- [x] Purchase history page for learners (Done: 2026-01-31)
+- [x] Refund request flow (auto < 1h, admin approval > 1h) (Done: 2026-01-31)
+- [x] Admin refund requests management (super admin only, B2C) (Done: 2026-01-31)
 
 ### Content Creation UI
 
@@ -55,12 +58,15 @@
 
 ## Important (Post-MVP)
 
-### Notifications ⬅️ NEXT (branche feat/notifications)
+### Notifications (branche feat/notifications) ✅
 
-- [ ] Email notifications (course updates, new content)
-- [ ] In-app notification system
-- [ ] Notification preferences UI
-- [ ] Digest emails (weekly progress)
+- [x] In-app notification system avec SSE temps réel (Done: 2026-01-31)
+- [x] Email notifications (lesson/course completed, quiz passed, badge earned) (Done: 2026-01-31)
+- [x] Notification preferences UI (email, in-app, digest) (Done: 2026-01-31)
+- [x] Digest emails (weekly summary) avec BullMQ scheduler (Done: 2026-01-31)
+- [x] Notification bell avec dropdown dans navbar (Done: 2026-01-31)
+- [x] Page notifications complète avec pagination (Done: 2026-01-31)
+- [ ] i18n des notifications et emails (EN/FR) - Plan créé
 
 ### Testing & Quality
 
@@ -211,3 +217,55 @@ Webhook events gérés:
 - Subscriptions pour les tenants (seats)
 - Customer Portal pour gérer les abonnements
 - Facturation récurrente
+
+**Notifications System (2026-01-31)**
+
+Architecture avec BullMQ et SSE:
+- `apps/api/src/notifications/` - Controller et routes
+- `apps/api/src/services/notifications/` - Service de création
+- `apps/api/src/queue/` - Jobs BullMQ (email, digest)
+- `apps/api/src/triggers/` - Hooks Sequelize pour auto-trigger
+
+| Endpoint | Description |
+|----------|-------------|
+| GET /notifications | Liste paginée des notifications |
+| GET /notifications/unread-count | Compteur non lues |
+| GET /notifications/stream | SSE temps réel |
+| PATCH /notifications/:id/read | Marquer comme lue |
+| POST /notifications/mark-all-read | Tout marquer comme lu |
+| DELETE /notifications/:id | Supprimer une notification |
+| GET /notifications/preferences | Préférences utilisateur |
+| PATCH /notifications/preferences | Modifier préférences |
+
+Types de notifications:
+- `lesson_completed` - Leçon terminée
+- `course_completed` - Cours terminé
+- `quiz_passed` - Quiz réussi
+- `badge_earned` - Badge obtenu
+- `discussion_reply` - Réponse discussion
+- `purchase_confirmed` - Achat confirmé
+
+Frontend:
+- `useNotifications.ts` - SSE + CRUD notifications
+- `useNotificationPreferences.ts` - Préférences
+- `NotificationBell.vue` - Cloche avec badge
+- `NotificationDropdown.vue` - Mini-centre
+- `NotificationsView.vue` - Page complète
+- `NotificationSettingsView.vue` - Préférences
+
+**Refund System (2026-01-31)**
+
+Flux de remboursement B2C:
+- Demande < 1h après achat → Auto-remboursement via Stripe
+- Demande > 1h après achat → En attente d'approbation admin
+- Super admin peut approuver/rejeter les demandes
+
+| Endpoint | Description |
+|----------|-------------|
+| POST /payments/:id/request-refund | Demander remboursement |
+| GET /payments/refund-requests | Liste demandes (super admin) |
+| POST /payments/:id/review-refund | Approuver/rejeter (super admin) |
+
+Frontend:
+- `PurchaseHistoryView.vue` - Historique achats + demande refund
+- `RefundRequestsView.vue` - Admin gestion demandes

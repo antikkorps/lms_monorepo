@@ -8,7 +8,7 @@ import {
   type NonAttribute,
 } from 'sequelize';
 import { sequelize } from '../sequelize.js';
-import { UserRole, UserStatus } from './enums.js';
+import { UserRole, UserStatus, SupportedLocale } from './enums.js';
 import type { Tenant } from './Tenant.js';
 
 export class User extends Model<
@@ -29,6 +29,7 @@ export class User extends Model<
   declare ssoProvider: CreationOptional<string | null>;
   declare ssoProviderId: CreationOptional<string | null>;
   declare ssoMetadata: CreationOptional<Record<string, unknown> | null>;
+  declare locale: CreationOptional<SupportedLocale>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare deletedAt: CreationOptional<Date | null>;
@@ -127,6 +128,12 @@ User.init(
       type: DataTypes.JSONB,
       allowNull: true,
       comment: 'Raw claims/data from SSO provider',
+    },
+    locale: {
+      type: DataTypes.STRING(5),
+      allowNull: false,
+      defaultValue: SupportedLocale.EN,
+      comment: 'User preferred locale for notifications and emails',
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,

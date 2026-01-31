@@ -1,6 +1,35 @@
 {
   "invalidSession": "Invalid or missing payment session",
   "verifying": "Verifying your payment...",
+  "history": {
+    "title": "Purchase History",
+    "subtitle": "View your course purchases and request refunds",
+    "empty": "No purchases yet",
+    "emptyDescription": "When you purchase a course, it will appear here.",
+    "browseCourses": "Browse Courses",
+    "unknownCourse": "Unknown Course",
+    "purchasedOn": "Purchased on",
+    "viewCourse": "View Course"
+  },
+  "refund": {
+    "request": "Request Refund",
+    "statusPending": "Refund pending review",
+    "statusApproved": "Refunded",
+    "statusRejected": "Refund rejected",
+    "rejectionReason": "Reason",
+    "dialogTitle": "Request a Refund",
+    "autoEligible": "Your purchase is eligible for an instant refund.",
+    "manualReview": "Your request will be reviewed by our team. This usually takes 1-2 business days.",
+    "instantInfo": "Since you purchased less than 1 hour ago, your refund will be processed immediately.",
+    "reviewInfo": "Since more than 1 hour has passed, your request will need to be reviewed by an administrator.",
+    "reasonLabel": "Why do you want a refund?",
+    "reasonPlaceholder": "Please explain your reason for requesting a refund...",
+    "reasonHint": "Minimum 10 characters",
+    "submitInstant": "Get Instant Refund",
+    "submitReview": "Submit Request",
+    "autoApproved": "Your refund has been processed automatically.",
+    "requestSubmitted": "Your refund request has been submitted for review."
+  },
   "success": {
     "title": "Payment Successful",
     "description": "Thank you for your purchase!",

@@ -90,6 +90,18 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/ProfileView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/notifications',
+    name: 'notifications',
+    component: () => import('../views/NotificationsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/settings/notifications',
+    name: 'notification-settings',
+    component: () => import('../views/NotificationSettingsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Payment routes
   {
@@ -102,6 +114,12 @@ const routes: RouteRecordRaw[] = [
     path: '/payment/cancel',
     name: 'payment-cancel',
     component: () => import('../views/PaymentCancelView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/purchases',
+    name: 'purchases',
+    component: () => import('../views/PurchaseHistoryView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
 
@@ -122,6 +140,12 @@ const routes: RouteRecordRaw[] = [
     path: '/admin/invitations',
     name: 'admin-invitations',
     component: () => import('../views/admin/InvitationsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/refunds',
+    name: 'admin-refunds',
+    component: () => import('../views/admin/RefundRequestsView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
   {

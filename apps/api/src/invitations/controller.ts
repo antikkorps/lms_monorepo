@@ -76,29 +76,29 @@ export async function listInvitations(ctx: Context): Promise<void> {
 
   ctx.body = {
     success: true,
-    data: invitations.map((inv) => ({
-      id: inv.id,
-      email: inv.email,
-      firstName: inv.firstName,
-      lastName: inv.lastName,
-      fullName: inv.fullName,
-      role: inv.role,
-      status: inv.status,
-      invitedBy: inv.invitedBy
-        ? {
-            id: inv.invitedBy.id,
-            fullName: `${inv.invitedBy.firstName} ${inv.invitedBy.lastName}`,
-          }
-        : null,
-      groups: inv.groups?.map((g) => ({ id: g.id, name: g.name })) || [],
-      expiresAt: inv.expiresAt,
-      acceptedAt: inv.acceptedAt,
-      createdAt: inv.createdAt,
-    })),
-    meta: {
+    data: {
+      invitations: invitations.map((inv) => ({
+        id: inv.id,
+        email: inv.email,
+        firstName: inv.firstName,
+        lastName: inv.lastName,
+        fullName: inv.fullName,
+        role: inv.role,
+        status: inv.status,
+        invitedBy: inv.invitedBy
+          ? {
+              id: inv.invitedBy.id,
+              fullName: `${inv.invitedBy.firstName} ${inv.invitedBy.lastName}`,
+            }
+          : null,
+        groups: inv.groups?.map((g) => ({ id: g.id, name: g.name })) || [],
+        expiresAt: inv.expiresAt,
+        acceptedAt: inv.acceptedAt,
+        createdAt: inv.createdAt,
+      })),
+      total,
       page: query.page,
       limit: query.limit,
-      total,
       totalPages: Math.ceil(total / query.limit),
     },
   };
