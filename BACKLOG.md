@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-01-30
+## Modified: 2026-01-31
 
 ---
 
@@ -15,7 +15,7 @@
 - [x] Enrollment status check in course API (Done: 2026-01-30)
 - [ ] Handle subscription lifecycle (B2B seats)
 - [ ] Invoice generation
-- [ ] Refund handling
+- [x] Refund handling (Done: 2026-01-31)
 
 ### Content Creation UI
 
@@ -55,7 +55,7 @@
 
 ## Important (Post-MVP)
 
-### Notifications
+### Notifications ⬅️ NEXT (branche feat/notifications)
 
 - [ ] Email notifications (course updates, new content)
 - [ ] In-app notification system

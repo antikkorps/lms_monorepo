@@ -5,6 +5,7 @@ import { createStripeCircuitBreaker } from './circuit-breaker.js';
 import { createCheckoutHandler } from './handlers/checkout.handler.js';
 import { createSubscriptionHandler } from './handlers/subscription.handler.js';
 import { createProductHandler } from './handlers/product.handler.js';
+import { createRefundHandler } from './handlers/refund.handler.js';
 import type {
   CreateCheckoutSessionOptions,
   CreateSubscriptionCheckoutOptions,
@@ -13,6 +14,8 @@ import type {
   CheckoutSessionResult,
   CustomerPortalResult,
   SyncProductResult,
+  RefundOptions,
+  RefundResult,
 } from './stripe.types.js';
 
 class StripeService {
@@ -20,6 +23,7 @@ class StripeService {
   private checkoutHandler: ReturnType<typeof createCheckoutHandler>;
   private subscriptionHandler: ReturnType<typeof createSubscriptionHandler>;
   private productHandler: ReturnType<typeof createProductHandler>;
+  private refundHandler: ReturnType<typeof createRefundHandler>;
 
   // Circuit breaker wrapped methods
   private createCheckoutSessionCB: (
@@ -34,6 +38,7 @@ class StripeService {
   private syncProductCB: (
     options: SyncProductOptions
   ) => Promise<SyncProductResult>;
+  private createRefundCB: (options: RefundOptions) => Promise<RefundResult>;
 
   constructor() {
     if (!config.stripeSecretKey) {
@@ -49,6 +54,7 @@ class StripeService {
     this.checkoutHandler = createCheckoutHandler(this.stripe);
     this.subscriptionHandler = createSubscriptionHandler(this.stripe);
     this.productHandler = createProductHandler(this.stripe);
+    this.refundHandler = createRefundHandler(this.stripe);
 
     // Wrap with circuit breakers
     this.createCheckoutSessionCB = createStripeCircuitBreaker(
@@ -72,6 +78,11 @@ class StripeService {
     this.syncProductCB = createStripeCircuitBreaker(
       (opts: SyncProductOptions) => this.productHandler.syncProduct(opts),
       'syncProduct'
+    );
+
+    this.createRefundCB = createStripeCircuitBreaker(
+      (opts: RefundOptions) => this.refundHandler.createRefund(opts),
+      'createRefund'
     );
 
     logger.info('Stripe service initialized');
@@ -142,6 +153,21 @@ class StripeService {
 
   async archiveProduct(productId: string): Promise<void> {
     return this.productHandler.archiveProduct(productId);
+  }
+
+  // Refunds
+  async createRefund(options: RefundOptions): Promise<RefundResult> {
+    return this.createRefundCB(options);
+  }
+
+  async retrieveRefund(refundId: string): Promise<Stripe.Refund> {
+    return this.refundHandler.retrieveRefund(refundId);
+  }
+
+  async listRefundsForPaymentIntent(
+    paymentIntentId: string
+  ): Promise<Stripe.Refund[]> {
+    return this.refundHandler.listRefundsForPaymentIntent(paymentIntentId);
   }
 
   // Webhook signature verification (not wrapped in circuit breaker - sync operation)

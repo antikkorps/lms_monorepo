@@ -1,10 +1,11 @@
 import type { Context } from 'koa';
 import { Op } from 'sequelize';
-import { Course, Chapter, Lesson, User, LessonContent, Purchase, UserProgress } from '../database/models/index.js';
-import { CourseStatus, UserRole, LessonType, Currency, PurchaseStatus } from '../database/models/enums.js';
+import { Course, Chapter, Lesson, User, LessonContent, UserProgress } from '../database/models/index.js';
+import { CourseStatus, UserRole, LessonType, Currency } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { parseLocaleFromRequest, getLocalizedLessonContent } from '../utils/locale.js';
+import { checkCourseAccess, canEditCourse } from '../utils/course-access.js';
 import slugify from 'slugify';
 
 // Type for authenticated user from context
@@ -27,14 +28,10 @@ function getAuthenticatedUser(ctx: Context): AuthenticatedUser {
 }
 
 /**
- * Check if user can edit a course
+ * Check if user can edit a course (wrapper for local use)
  */
-function canEditCourse(user: AuthenticatedUser, course: Course): boolean {
-  return (
-    user.role === UserRole.SUPER_ADMIN ||
-    user.role === UserRole.TENANT_ADMIN ||
-    course.instructorId === user.userId
-  );
+function canEditCourseLocal(user: AuthenticatedUser, course: Course): boolean {
+  return canEditCourse(user, course);
 }
 
 // =============================================================================
@@ -172,7 +169,7 @@ export async function getCourse(ctx: Context): Promise<void> {
     if (!user) {
       throw AppError.notFound('Course not found');
     }
-    if (!canEditCourse(user, course)) {
+    if (!canEditCourseLocal(user, course)) {
       throw AppError.notFound('Course not found');
     }
   }
@@ -208,22 +205,12 @@ export async function getCourse(ctx: Context): Promise<void> {
   // Add locale info to response
   courseData.locale = locale;
 
-  // Check enrollment status if user is authenticated
+  // Check enrollment status using centralized access check
   let enrollment = null;
   if (user) {
-    // Check if user has a completed purchase for this course
-    const purchase = await Purchase.findOne({
-      where: {
-        userId: user.userId,
-        courseId: course.id,
-        status: PurchaseStatus.COMPLETED,
-      },
-    });
+    const accessResult = await checkCourseAccess(user, course.id);
 
-    // Also check if the course is free (free courses don't need purchase)
-    const isEnrolled = !!purchase || course.isFree;
-
-    if (isEnrolled) {
+    if (accessResult.hasAccess) {
       // Get user progress for this course
       const progressRecords = await UserProgress.findAll({
         where: {
@@ -242,6 +229,7 @@ export async function getCourse(ctx: Context): Promise<void> {
 
       enrollment = {
         isEnrolled: true,
+        accessType: accessResult.accessType,
         progress: progressPercent,
         completedLessons,
         lastAccessedLessonId: null, // TODO: track this
@@ -249,6 +237,7 @@ export async function getCourse(ctx: Context): Promise<void> {
     } else {
       enrollment = {
         isEnrolled: false,
+        accessType: null,
         progress: 0,
         completedLessons: [],
         lastAccessedLessonId: null,
@@ -319,7 +308,7 @@ export async function updateCourse(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 
@@ -344,7 +333,7 @@ export async function deleteCourse(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to delete this course');
   }
 
@@ -365,7 +354,7 @@ export async function publishCourse(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to publish this course');
   }
 
@@ -466,7 +455,7 @@ export async function createChapter(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 
@@ -507,7 +496,7 @@ export async function updateChapter(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 
@@ -533,7 +522,7 @@ export async function deleteChapter(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 
@@ -570,7 +559,7 @@ export async function reorderChapters(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 
@@ -746,7 +735,7 @@ export async function createLesson(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 
@@ -819,7 +808,7 @@ export async function updateLesson(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 
@@ -865,7 +854,7 @@ export async function deleteLesson(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 
@@ -894,7 +883,7 @@ export async function reorderLessons(ctx: Context): Promise<void> {
     throw AppError.notFound('Course not found');
   }
 
-  if (!canEditCourse(user, course)) {
+  if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to edit this course');
   }
 

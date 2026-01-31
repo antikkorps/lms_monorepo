@@ -5,7 +5,7 @@ import { AppError } from '../utils/app-error.js';
 import { stripeService } from '../services/stripe/index.js';
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
-import type { CreateCourseCheckoutBody, VerifyPurchaseBody } from './schemas.js';
+import type { CreateCourseCheckoutBody, VerifyPurchaseBody, ProcessRefundBody } from './schemas.js';
 
 interface AuthenticatedUser {
   userId: string;
@@ -233,4 +233,103 @@ export async function getPurchase(ctx: Context): Promise<void> {
   }
 
   ctx.body = { data: purchase };
+}
+
+/**
+ * Process a refund for a purchase (admin only)
+ * POST /payments/:purchaseId/refund
+ */
+export async function processRefund(ctx: Context): Promise<void> {
+  const user = getAuthenticatedUser(ctx);
+  const { purchaseId } = ctx.params;
+  const { reason, amount, stripeReason } = ctx.request.body as ProcessRefundBody;
+
+  // Verify admin permissions (role check is done in route middleware, but double check)
+  if (user.role !== UserRole.SUPER_ADMIN && user.role !== UserRole.TENANT_ADMIN) {
+    throw AppError.forbidden('Admin access required');
+  }
+
+  // Find purchase
+  const purchase = await Purchase.findByPk(purchaseId, {
+    include: [{ model: Course, as: 'course' }],
+  });
+
+  if (!purchase) {
+    throw AppError.notFound('Purchase not found');
+  }
+
+  // Only completed purchases can be refunded
+  if (purchase.status !== PurchaseStatus.COMPLETED) {
+    throw new AppError(
+      `Cannot refund a purchase with status: ${purchase.status}`,
+      400,
+      'INVALID_PURCHASE_STATUS'
+    );
+  }
+
+  // Verify payment intent exists
+  if (!purchase.stripePaymentIntentId) {
+    throw new AppError(
+      'Purchase has no associated payment intent',
+      400,
+      'NO_PAYMENT_INTENT'
+    );
+  }
+
+  // Determine if this is a partial refund
+  const purchaseAmountCents = Math.round(Number(purchase.amount) * 100);
+  const isPartialRefund = amount !== undefined && amount < purchaseAmountCents;
+
+  // Create refund in Stripe
+  const refundResult = await stripeService.createRefund({
+    paymentIntentId: purchase.stripePaymentIntentId,
+    amount: amount, // undefined for full refund
+    reason: stripeReason || 'requested_by_customer',
+    metadata: {
+      purchaseId: purchase.id,
+      userId: purchase.userId,
+      courseId: purchase.courseId,
+      refundedBy: user.userId,
+    },
+  });
+
+  // Update purchase in database
+  const refundAmountInCurrency = refundResult.amount / 100;
+  await purchase.update({
+    status: PurchaseStatus.REFUNDED,
+    stripeRefundId: refundResult.refundId,
+    refundedAt: new Date(),
+    refundReason: reason || null,
+    refundAmount: refundAmountInCurrency,
+    isPartialRefund,
+  });
+
+  logger.info(
+    {
+      purchaseId: purchase.id,
+      refundId: refundResult.refundId,
+      amount: refundAmountInCurrency,
+      isPartialRefund,
+      refundedBy: user.userId,
+    },
+    'Purchase refunded'
+  );
+
+  ctx.body = {
+    data: {
+      id: purchase.id,
+      status: purchase.status,
+      refundId: refundResult.refundId,
+      refundAmount: refundAmountInCurrency,
+      refundedAt: purchase.refundedAt,
+      isPartialRefund,
+      course: purchase.course
+        ? {
+            id: purchase.course.id,
+            title: purchase.course.title,
+            slug: purchase.course.slug,
+          }
+        : null,
+    },
+  };
 }

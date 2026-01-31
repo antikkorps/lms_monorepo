@@ -67,6 +67,11 @@ export async function handleStripeWebhook(ctx: Context): Promise<void> {
       await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
       break;
 
+    // Refunds
+    case 'charge.refunded':
+      await handleChargeRefunded(event.data.object as Stripe.Charge);
+      break;
+
     default:
       logger.info({ eventType: event.type }, 'Unhandled Stripe event type');
   }
@@ -317,4 +322,69 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<void
   );
 
   // Tenant status will be updated via subscription.updated event
+}
+
+/**
+ * Handle charge refunded (B2C course refund via Stripe dashboard or API)
+ */
+async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
+  // Get payment intent ID from charge
+  const paymentIntentId =
+    typeof charge.payment_intent === 'string'
+      ? charge.payment_intent
+      : charge.payment_intent?.id;
+
+  if (!paymentIntentId) {
+    logger.warn({ chargeId: charge.id }, 'Charge refunded but no payment intent');
+    return;
+  }
+
+  // Find purchase by payment intent ID
+  const purchase = await Purchase.findOne({
+    where: { stripePaymentIntentId: paymentIntentId },
+  });
+
+  if (!purchase) {
+    logger.warn(
+      { paymentIntentId, chargeId: charge.id },
+      'No purchase found for refunded charge'
+    );
+    return;
+  }
+
+  // Skip if already refunded (idempotent)
+  if (purchase.status === PurchaseStatus.REFUNDED) {
+    logger.info(
+      { purchaseId: purchase.id, chargeId: charge.id },
+      'Purchase already refunded (idempotent skip)'
+    );
+    return;
+  }
+
+  // Get refund details from the charge
+  const refund = charge.refunds?.data[0];
+  const refundId = refund?.id;
+  const refundAmount = charge.amount_refunded / 100; // Convert from cents
+  const isPartialRefund = charge.amount_refunded < charge.amount;
+
+  // Update purchase status
+  await purchase.update({
+    status: PurchaseStatus.REFUNDED,
+    stripeRefundId: refundId || null,
+    refundedAt: new Date(),
+    refundReason: 'Refunded via Stripe',
+    refundAmount,
+    isPartialRefund,
+  });
+
+  logger.info(
+    {
+      purchaseId: purchase.id,
+      chargeId: charge.id,
+      refundId,
+      refundAmount,
+      isPartialRefund,
+    },
+    'Purchase refunded via webhook'
+  );
 }

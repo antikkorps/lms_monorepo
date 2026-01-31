@@ -5,6 +5,7 @@ import type { QuizAnswer } from '../database/models/QuizResult.js';
 import { UserRole, QuizQuestionType } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
+import { checkCourseAccessFromLesson } from '../utils/course-access.js';
 
 // Default passing threshold (70%)
 const PASSING_THRESHOLD = 0.7;
@@ -320,6 +321,16 @@ export async function submitQuiz(ctx: Context): Promise<void> {
   const lesson = await Lesson.findByPk(lessonId);
   if (!lesson) {
     throw AppError.notFound('Lesson not found');
+  }
+
+  // Check course access before submitting quiz
+  const accessResult = await checkCourseAccessFromLesson(user, lessonId);
+  if (!accessResult.hasAccess) {
+    throw new AppError(
+      accessResult.reason || 'You do not have access to this course',
+      403,
+      'COURSE_ACCESS_DENIED'
+    );
   }
 
   // Get all questions for this lesson

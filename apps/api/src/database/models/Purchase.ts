@@ -31,6 +31,13 @@ export class Purchase extends Model<
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
+  // Refund fields
+  declare stripeRefundId: CreationOptional<string | null>;
+  declare refundedAt: CreationOptional<Date | null>;
+  declare refundReason: CreationOptional<string | null>;
+  declare refundAmount: CreationOptional<number | null>;
+  declare isPartialRefund: CreationOptional<boolean>;
+
   // Associations
   declare user?: NonAttribute<User>;
   declare course?: NonAttribute<Course>;
@@ -39,6 +46,10 @@ export class Purchase extends Model<
   // Helpers
   get isCompleted(): NonAttribute<boolean> {
     return this.status === PurchaseStatus.COMPLETED;
+  }
+
+  get isRefunded(): NonAttribute<boolean> {
+    return this.status === PurchaseStatus.REFUNDED;
   }
 
   get isB2B(): NonAttribute<boolean> {
@@ -50,6 +61,14 @@ export class Purchase extends Model<
       style: 'currency',
       currency: this.currency,
     }).format(Number(this.amount));
+  }
+
+  get formattedRefundAmount(): NonAttribute<string | null> {
+    if (this.refundAmount === null) return null;
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: this.currency,
+    }).format(Number(this.refundAmount));
   }
 }
 
@@ -109,6 +128,27 @@ Purchase.init(
     purchasedAt: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    stripeRefundId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    refundedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    refundReason: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+    refundAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    isPartialRefund: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,

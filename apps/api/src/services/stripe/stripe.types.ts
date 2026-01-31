@@ -65,6 +65,23 @@ export interface WebhookEventMetadata {
   tenantId?: string;
 }
 
+// Refund types
+export interface RefundOptions {
+  paymentIntentId: string;
+  amount?: number; // Amount in cents for partial refund, omit for full refund
+  reason?: 'duplicate' | 'fraudulent' | 'requested_by_customer';
+  metadata?: Record<string, string>;
+}
+
+export interface RefundResult {
+  refundId: string;
+  status: string;
+  amount: number;
+  currency: string;
+  paymentIntentId: string;
+  createdAt: Date;
+}
+
 // Subscription status mapping
 export const SUBSCRIPTION_STATUS_MAP = {
   active: 'active',

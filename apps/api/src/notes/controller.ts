@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import { Note, Lesson, Chapter, Course } from '../database/models/index.js';
 import { UserRole } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
+import { checkCourseAccessFromLesson } from '../utils/course-access.js';
 import type { UpsertNoteInput } from './schemas.js';
 
 interface AuthenticatedUser {
@@ -69,6 +70,16 @@ export async function upsertNoteForLesson(ctx: Context): Promise<void> {
   const lesson = await Lesson.findByPk(lessonId);
   if (!lesson) {
     throw AppError.notFound('Lesson not found');
+  }
+
+  // Check course access before creating/updating note
+  const accessResult = await checkCourseAccessFromLesson(user, lessonId);
+  if (!accessResult.hasAccess) {
+    throw new AppError(
+      accessResult.reason || 'You do not have access to this course',
+      403,
+      'COURSE_ACCESS_DENIED'
+    );
   }
 
   // Upsert: find existing or create new
