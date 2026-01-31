@@ -8,6 +8,10 @@ import {
   verificationEmailTemplate,
   passwordResetEmailTemplate,
   invitationEmailTemplate,
+  lessonCompletedEmailTemplate,
+  courseCompletedEmailTemplate,
+  badgeEarnedEmailTemplate,
+  weeklyDigestEmailTemplate,
 } from './templates/index.js';
 import type {
   EmailProvider,
@@ -15,6 +19,8 @@ import type {
   VerificationEmailData,
   PasswordResetEmailData,
   InvitationEmailData,
+  NotificationEmailData,
+  DigestEmailData,
 } from './email.types.js';
 
 class EmailService {
@@ -117,6 +123,103 @@ class EmailService {
         'Failed to send invitation email'
       );
       // Don't rethrow - email failure shouldn't block invitation creation
+    }
+  }
+
+  async sendNotificationEmail(data: NotificationEmailData): Promise<void> {
+    let template;
+
+    switch (data.type) {
+      case 'lesson_completed':
+        template = lessonCompletedEmailTemplate({
+          to: data.to,
+          firstName: data.firstName,
+          lessonName: data.lessonName || 'a lesson',
+          courseName: data.courseName || 'your course',
+          courseUrl: data.courseUrl || '',
+          locale: data.locale,
+        });
+        break;
+
+      case 'course_completed':
+        template = courseCompletedEmailTemplate({
+          to: data.to,
+          firstName: data.firstName,
+          courseName: data.courseName || 'your course',
+          dashboardUrl: data.dashboardUrl || '',
+          certificateUrl: data.certificateUrl,
+          locale: data.locale,
+        });
+        break;
+
+      case 'badge_earned':
+        template = badgeEarnedEmailTemplate({
+          to: data.to,
+          firstName: data.firstName,
+          badgeName: data.badgeName || 'a badge',
+          badgeDescription: data.badgeDescription || '',
+          badgeIconUrl: data.badgeIconUrl,
+          profileUrl: data.profileUrl || '',
+          locale: data.locale,
+        });
+        break;
+
+      default:
+        logger.warn({ type: data.type }, 'Unknown notification email type');
+        return;
+    }
+
+    try {
+      await this.provider.send({
+        to: data.to,
+        subject: template.subject,
+        html: template.html,
+        text: template.text,
+      });
+
+      logger.info(
+        { to: data.to, type: `notification-${data.type}` },
+        'Notification email sent'
+      );
+    } catch (error) {
+      logger.error(
+        { to: data.to, type: `notification-${data.type}`, error: error instanceof Error ? error.message : 'Unknown' },
+        'Failed to send notification email'
+      );
+      throw error; // Rethrow for queue retry
+    }
+  }
+
+  async sendDigestEmail(data: DigestEmailData): Promise<void> {
+    const template = weeklyDigestEmailTemplate({
+      to: data.to,
+      firstName: data.firstName,
+      notifications: data.notifications,
+      dashboardUrl: data.dashboardUrl,
+      settingsUrl: data.settingsUrl,
+      weekStart: data.weekStart,
+      weekEnd: data.weekEnd,
+      locale: data.locale,
+    });
+
+    try {
+      await this.provider.send({
+        to: data.to,
+        subject: template.subject,
+        html: template.html,
+        text: template.text,
+      });
+
+      logger.info(
+        { to: data.to, type: 'digest', notificationCount: data.notifications.length },
+        'Digest email sent'
+      );
+    } catch (error) {
+      logger.error(
+        { to: data.to, type: 'digest', error: error instanceof Error ? error.message : 'Unknown' },
+        'Failed to send digest email'
+      );
+      throw error; // Rethrow for queue retry
     }
   }
 }

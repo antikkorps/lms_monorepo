@@ -23,7 +23,6 @@ import {
   LogOut,
   Menu,
   User,
-  Bell,
   BarChart3,
   Trophy,
   LayoutDashboard,
@@ -31,10 +30,13 @@ import {
   Mail,
   CreditCard,
   PenTool,
+  RefreshCcw,
+  ShoppingBag,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
 import DarkModeToggle from '@/components/common/DarkModeToggle.vue';
+import { NotificationBell } from '@/components/notifications';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -49,6 +51,22 @@ const navigationItems = computed(() => [
   { name: t('nav.main.analytics'), href: '/analytics', icon: BarChart3 },
   { name: t('nav.main.badges'), href: '/badges', icon: Trophy },
 ]);
+
+const isSuperAdmin = computed(() => authStore.userRole === 'super_admin');
+
+const adminItems = computed(() => {
+  const items = [
+    { href: '/admin', icon: LayoutDashboard, name: t('nav.admin.dashboard') },
+    { href: '/admin/members', icon: Users, name: t('nav.admin.members') },
+    { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
+    { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
+  ];
+  // Refunds only visible to super admin (B2C purchases)
+  if (isSuperAdmin.value) {
+    items.push({ href: '/admin/refunds', icon: RefreshCcw, name: t('nav.admin.refunds') });
+  }
+  return items;
+});
 
 async function handleLogout() {
   await authStore.logout();
@@ -154,8 +172,8 @@ async function handleLogout() {
             </RouterLink>
           </template>
 
-          <!-- Admin Section (tenant_admin only) -->
-          <template v-if="authStore.hasRole('tenant_admin')">
+          <!-- Admin Section (tenant_admin or super_admin) -->
+          <template v-if="authStore.hasAnyRole(['tenant_admin', 'super_admin'])">
             <div class="my-4 px-3">
               <div class="h-px bg-gradient-to-r from-transparent via-sidebar-border to-transparent" />
             </div>
@@ -164,12 +182,7 @@ async function handleLogout() {
               {{ t('nav.admin.title') }}
             </p>
             <RouterLink
-              v-for="adminItem in [
-                { href: '/admin', icon: LayoutDashboard, name: t('nav.admin.dashboard') },
-                { href: '/admin/members', icon: Users, name: t('nav.admin.members') },
-                { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
-                { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
-              ]"
+              v-for="adminItem in adminItems"
               :key="adminItem.href"
               :to="adminItem.href"
               v-slot="{ isActive }"
@@ -328,8 +341,8 @@ async function handleLogout() {
                 </RouterLink>
               </template>
 
-              <!-- Admin Section (tenant_admin only) -->
-              <template v-if="authStore.hasRole('tenant_admin')">
+              <!-- Admin Section (tenant_admin or super_admin) -->
+              <template v-if="authStore.hasAnyRole(['tenant_admin', 'super_admin'])">
                 <div class="my-4 px-3">
                   <div class="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
                 </div>
@@ -338,12 +351,7 @@ async function handleLogout() {
                   {{ t('nav.admin.title') }}
                 </p>
                 <RouterLink
-                  v-for="adminItem in [
-                    { href: '/admin', icon: LayoutDashboard, name: t('nav.admin.dashboard') },
-                    { href: '/admin/members', icon: Users, name: t('nav.admin.members') },
-                    { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
-                    { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
-                  ]"
+                  v-for="adminItem in adminItems"
                   :key="adminItem.href"
                   :to="adminItem.href"
                   v-slot="{ isActive }"
@@ -437,6 +445,18 @@ async function handleLogout() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem as-child>
+            <RouterLink to="/profile" class="flex w-full cursor-pointer items-center">
+              <User class="mr-2 h-4 w-4" />
+              {{ t('nav.user.profile') }}
+            </RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem as-child>
+            <RouterLink to="/purchases" class="flex w-full cursor-pointer items-center">
+              <ShoppingBag class="mr-2 h-4 w-4" />
+              {{ t('nav.user.purchases') }}
+            </RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem as-child>
             <RouterLink to="/settings" class="flex w-full cursor-pointer items-center">
               <Settings class="mr-2 h-4 w-4" />
               {{ t('nav.user.settings') }}
@@ -465,10 +485,7 @@ async function handleLogout() {
         <DarkModeToggle />
 
         <!-- Notifications -->
-        <Button variant="ghost" size="icon">
-          <Bell class="h-5 w-5" />
-          <span class="sr-only">{{ t('nav.accessibility.notifications') }}</span>
-        </Button>
+        <NotificationBell />
 
         <!-- User dropdown -->
         <DropdownMenu>
@@ -495,6 +512,12 @@ async function handleLogout() {
               <RouterLink to="/profile" class="flex w-full cursor-pointer items-center">
                 <User class="mr-2 h-4 w-4" />
                 {{ t('nav.user.profile') }}
+              </RouterLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem as-child>
+              <RouterLink to="/purchases" class="flex w-full cursor-pointer items-center">
+                <ShoppingBag class="mr-2 h-4 w-4" />
+                {{ t('nav.user.purchases') }}
               </RouterLink>
             </DropdownMenuItem>
             <DropdownMenuItem as-child>

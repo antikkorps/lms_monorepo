@@ -1,0 +1,58 @@
+{
+  "title": "Notifications",
+  "subtitle": "Stay updated with your learning activity",
+  "markAllAsRead": "Mark all as read",
+  "noNotifications": "No notifications yet",
+  "allCaughtUp": "You're all caught up!",
+  "loading": "Loading...",
+  "loadMore": "Load more",
+  "viewAll": "View all notifications",
+  "settings": {
+    "title": "Notification Settings",
+    "subtitle": "Manage how you receive notifications",
+    "types": "Notification Types",
+    "typesDesc": "Choose which notifications you want to receive",
+    "email": "Email",
+    "inApp": "In-app",
+    "digest": "Email Digest",
+    "digestDesc": "Receive a summary of your notifications",
+    "frequency": "Frequency",
+    "dayOfWeek": "Day of week",
+    "digestTime": "You'll receive your digest every {day} at 8:00 AM",
+    "never": "Never",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "days": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
+  },
+  "types": {
+    "lesson_completed": "Lesson Completed",
+    "course_completed": "Course Completed",
+    "quiz_passed": "Quiz Passed",
+    "badge_earned": "Badge Earned",
+    "discussion_reply": "Discussion Reply",
+    "purchase_confirmed": "Purchase Confirmed"
+  },
+  "toast": {
+    "emailUpdated": "Email preference updated",
+    "inAppUpdated": "In-app preference updated",
+    "frequencyUpdated": "Digest frequency updated",
+    "dayUpdated": "Digest day updated",
+    "error": "Failed to update preference",
+    "markedAsRead": "Marked as read",
+    "allMarkedAsRead": "All notifications marked as read"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago"
+  }
+}

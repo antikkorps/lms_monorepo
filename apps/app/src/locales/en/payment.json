@@ -1,0 +1,60 @@
+{
+  "invalidSession": "Invalid or missing payment session",
+  "verifying": "Verifying your payment...",
+  "history": {
+    "title": "Purchase History",
+    "subtitle": "View your course purchases and request refunds",
+    "empty": "No purchases yet",
+    "emptyDescription": "When you purchase a course, it will appear here.",
+    "browseCourses": "Browse Courses",
+    "unknownCourse": "Unknown Course",
+    "purchasedOn": "Purchased on",
+    "viewCourse": "View Course"
+  },
+  "refund": {
+    "request": "Request Refund",
+    "statusPending": "Refund pending review",
+    "statusApproved": "Refunded",
+    "statusRejected": "Refund rejected",
+    "rejectionReason": "Reason",
+    "dialogTitle": "Request a Refund",
+    "autoEligible": "Your purchase is eligible for an instant refund.",
+    "manualReview": "Your request will be reviewed by our team. This usually takes 1-2 business days.",
+    "instantInfo": "Since you purchased less than 1 hour ago, your refund will be processed immediately.",
+    "reviewInfo": "Since more than 1 hour has passed, your request will need to be reviewed by an administrator.",
+    "reasonLabel": "Why do you want a refund?",
+    "reasonPlaceholder": "Please explain your reason for requesting a refund...",
+    "reasonHint": "Minimum 10 characters",
+    "submitInstant": "Get Instant Refund",
+    "submitReview": "Submit Request",
+    "autoApproved": "Your refund has been processed automatically.",
+    "requestSubmitted": "Your refund request has been submitted for review."
+  },
+  "success": {
+    "title": "Payment Successful",
+    "description": "Thank you for your purchase!",
+    "confirmed": "Payment Confirmed",
+    "accessGranted": "You now have full access to this course.",
+    "purchasedCourse": "Purchased Course",
+    "startLearning": "Start Learning",
+    "backToDashboard": "Back to Dashboard"
+  },
+  "cancelled": {
+    "title": "Payment Cancelled",
+    "description": "Your payment was not completed.",
+    "notCharged": "No Charge Made",
+    "noChargeMessage": "Your payment method was not charged. You can try again whenever you're ready.",
+    "readyWhenYouAre": "We'll be here when you're ready to continue your learning journey.",
+    "tryAgain": "Try Again",
+    "browseCourses": "Browse Courses",
+    "backToDashboard": "Back to Dashboard"
+  },
+  "error": {
+    "title": "Verification Failed",
+    "verificationFailed": "We couldn't verify your payment. Please contact support if you were charged.",
+    "browseCourses": "Browse Courses",
+    "contactSupport": "If you believe this is an error, please contact our support team."
+  },
+  "processing": "Processing payment...",
+  "alreadyPurchased": "You have already purchased this course"
+}

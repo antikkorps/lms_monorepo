@@ -26,6 +26,8 @@ export { Discussion } from './Discussion.js';
 export { DiscussionReply } from './DiscussionReply.js';
 export { DiscussionReport } from './DiscussionReport.js';
 export { Note } from './Note.js';
+export { Notification, type NotificationData } from './Notification.js';
+export { NotificationPreference, type NotificationPreferenceFlags } from './NotificationPreference.js';
 
 // Import for associations setup
 import { Tenant } from './Tenant.js';
@@ -45,6 +47,8 @@ import { Discussion } from './Discussion.js';
 import { DiscussionReply } from './DiscussionReply.js';
 import { DiscussionReport } from './DiscussionReport.js';
 import { Note } from './Note.js';
+import { Notification } from './Notification.js';
+import { NotificationPreference } from './NotificationPreference.js';
 
 /**
  * Setup all model associations
@@ -456,6 +460,32 @@ export function setupAssociations(): void {
     foreignKey: 'lessonId',
     as: 'notes',
   });
+
+  // =============================================================================
+  // Notification Associations
+  // =============================================================================
+  Notification.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  User.hasMany(Notification, {
+    foreignKey: 'userId',
+    as: 'notifications',
+  });
+
+  // =============================================================================
+  // NotificationPreference Associations
+  // =============================================================================
+  NotificationPreference.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  User.hasOne(NotificationPreference, {
+    foreignKey: 'userId',
+    as: 'notificationPreference',
+  });
 }
 
 // All models for easy iteration
@@ -480,4 +510,6 @@ export const models = {
   DiscussionReply,
   DiscussionReport,
   Note,
+  Notification,
+  NotificationPreference,
 } as const;

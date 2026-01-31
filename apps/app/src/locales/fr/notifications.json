@@ -1,0 +1,58 @@
+{
+  "title": "Notifications",
+  "subtitle": "Restez informé de votre activité d'apprentissage",
+  "markAllAsRead": "Tout marquer comme lu",
+  "noNotifications": "Aucune notification",
+  "allCaughtUp": "Vous êtes à jour !",
+  "loading": "Chargement...",
+  "loadMore": "Charger plus",
+  "viewAll": "Voir toutes les notifications",
+  "settings": {
+    "title": "Paramètres de notification",
+    "subtitle": "Gérez la façon dont vous recevez les notifications",
+    "types": "Types de notification",
+    "typesDesc": "Choisissez les notifications que vous souhaitez recevoir",
+    "email": "Email",
+    "inApp": "Dans l'application",
+    "digest": "Résumé par email",
+    "digestDesc": "Recevez un résumé de vos notifications",
+    "frequency": "Fréquence",
+    "dayOfWeek": "Jour de la semaine",
+    "digestTime": "Vous recevrez votre résumé chaque {day} à 8h00",
+    "never": "Jamais",
+    "daily": "Quotidien",
+    "weekly": "Hebdomadaire",
+    "days": {
+      "0": "Dimanche",
+      "1": "Lundi",
+      "2": "Mardi",
+      "3": "Mercredi",
+      "4": "Jeudi",
+      "5": "Vendredi",
+      "6": "Samedi"
+    }
+  },
+  "types": {
+    "lesson_completed": "Leçon terminée",
+    "course_completed": "Cours terminé",
+    "quiz_passed": "Quiz réussi",
+    "badge_earned": "Badge obtenu",
+    "discussion_reply": "Réponse à une discussion",
+    "purchase_confirmed": "Achat confirmé"
+  },
+  "toast": {
+    "emailUpdated": "Préférence email mise à jour",
+    "inAppUpdated": "Préférence in-app mise à jour",
+    "frequencyUpdated": "Fréquence du résumé mise à jour",
+    "dayUpdated": "Jour du résumé mis à jour",
+    "error": "Échec de la mise à jour",
+    "markedAsRead": "Marqué comme lu",
+    "allMarkedAsRead": "Toutes les notifications marquées comme lues"
+  },
+  "time": {
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {count}m",
+    "hoursAgo": "Il y a {count}h",
+    "daysAgo": "Il y a {count}j"
+  }
+}

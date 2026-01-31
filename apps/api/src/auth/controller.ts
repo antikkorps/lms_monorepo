@@ -1,7 +1,7 @@
 import type { Context } from 'koa';
 import { User } from '../database/models/User.js';
 import { Tenant } from '../database/models/Tenant.js';
-import { UserRole, UserStatus } from '../database/models/enums.js';
+import { UserRole, UserStatus, SupportedLocale } from '../database/models/enums.js';
 import { hashPassword, verifyPassword, validatePasswordStrength } from './password.js';
 import {
   generateTokenPair,
@@ -392,7 +392,7 @@ export async function me(ctx: Context): Promise<void> {
   }
 
   const user = await User.findByPk(userId, {
-    attributes: ['id', 'email', 'firstName', 'lastName', 'role', 'status', 'tenantId', 'avatarUrl', 'lastLoginAt', 'createdAt'],
+    attributes: ['id', 'email', 'firstName', 'lastName', 'role', 'status', 'tenantId', 'avatarUrl', 'locale', 'lastLoginAt', 'createdAt'],
   });
 
   if (!user) {
@@ -419,10 +419,50 @@ export async function me(ctx: Context): Promise<void> {
         status: user.status,
         tenantId: user.tenantId,
         avatarUrl: user.avatarUrl,
+        locale: user.locale,
         lastLoginAt: user.lastLoginAt,
         createdAt: user.createdAt,
       },
       tenant,
+    },
+  };
+}
+
+/**
+ * Update user locale preference
+ * PATCH /auth/me/locale
+ */
+export async function updateLocale(ctx: Context): Promise<void> {
+  const userId = ctx.state.user?.userId;
+  const { locale } = ctx.request.body as { locale: string };
+
+  if (!userId) {
+    throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
+  }
+
+  if (!locale) {
+    throw new AppError('Locale is required', 400, 'VALIDATION_ERROR');
+  }
+
+  // Validate locale is a supported value
+  const supportedLocales = Object.values(SupportedLocale);
+  if (!supportedLocales.includes(locale as SupportedLocale)) {
+    throw new AppError(`Invalid locale. Supported: ${supportedLocales.join(', ')}`, 400, 'INVALID_LOCALE');
+  }
+
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  await user.update({ locale: locale as SupportedLocale });
+
+  logger.info({ userId, locale }, 'User locale updated');
+
+  ctx.body = {
+    success: true,
+    data: {
+      locale: user.locale,
     },
   };
 }

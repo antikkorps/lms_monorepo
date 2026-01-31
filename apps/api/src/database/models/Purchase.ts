@@ -1,6 +1,7 @@
 import {
   Model,
   DataTypes,
+  Op,
   type InferAttributes,
   type InferCreationAttributes,
   type CreationOptional,
@@ -8,7 +9,7 @@ import {
   type NonAttribute,
 } from 'sequelize';
 import { sequelize } from '../sequelize.js';
-import { PurchaseStatus } from './enums.js';
+import { PurchaseStatus, RefundRequestStatus } from './enums.js';
 import type { User } from './User.js';
 import type { Course } from './Course.js';
 import type { Tenant } from './Tenant.js';
@@ -30,6 +31,21 @@ export class Purchase extends Model<
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
+  // Refund fields
+  declare stripeRefundId: CreationOptional<string | null>;
+  declare refundedAt: CreationOptional<Date | null>;
+  declare refundReason: CreationOptional<string | null>;
+  declare refundAmount: CreationOptional<number | null>;
+  declare isPartialRefund: CreationOptional<boolean>;
+
+  // Refund request fields
+  declare refundRequestStatus: CreationOptional<RefundRequestStatus>;
+  declare refundRequestedAt: CreationOptional<Date | null>;
+  declare refundRequestReason: CreationOptional<string | null>;
+  declare refundReviewedBy: CreationOptional<string | null>;
+  declare refundReviewedAt: CreationOptional<Date | null>;
+  declare refundRejectionReason: CreationOptional<string | null>;
+
   // Associations
   declare user?: NonAttribute<User>;
   declare course?: NonAttribute<Course>;
@@ -40,8 +56,22 @@ export class Purchase extends Model<
     return this.status === PurchaseStatus.COMPLETED;
   }
 
+  get isRefunded(): NonAttribute<boolean> {
+    return this.status === PurchaseStatus.REFUNDED;
+  }
+
   get isB2B(): NonAttribute<boolean> {
     return this.tenantId !== null;
+  }
+
+  get isEligibleForAutoRefund(): NonAttribute<boolean> {
+    if (!this.purchasedAt) return false;
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    return this.purchasedAt > oneHourAgo;
+  }
+
+  get hasPendingRefundRequest(): NonAttribute<boolean> {
+    return this.refundRequestStatus === RefundRequestStatus.PENDING;
   }
 
   get formattedAmount(): NonAttribute<string> {
@@ -49,6 +79,14 @@ export class Purchase extends Model<
       style: 'currency',
       currency: this.currency,
     }).format(Number(this.amount));
+  }
+
+  get formattedRefundAmount(): NonAttribute<string | null> {
+    if (this.refundAmount === null) return null;
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: this.currency,
+    }).format(Number(this.refundAmount));
   }
 }
 
@@ -109,6 +147,57 @@ Purchase.init(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    stripeRefundId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    refundedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    refundReason: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+    refundAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    isPartialRefund: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    // Refund request fields
+    refundRequestStatus: {
+      type: DataTypes.ENUM(...Object.values(RefundRequestStatus)),
+      allowNull: false,
+      defaultValue: RefundRequestStatus.NONE,
+    },
+    refundRequestedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    refundRequestReason: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    refundReviewedBy: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
+    refundReviewedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    refundRejectionReason: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },
@@ -122,7 +211,11 @@ Purchase.init(
       {
         fields: ['stripe_checkout_session_id'],
         unique: true,
-        where: { stripe_checkout_session_id: { $ne: null } },
+        where: { stripe_checkout_session_id: { [Op.ne]: null } },
+      },
+      {
+        fields: ['refund_request_status'],
+        where: { refund_request_status: 'pending' },
       },
     ],
   }

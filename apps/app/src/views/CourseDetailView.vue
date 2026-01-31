@@ -19,10 +19,12 @@ import {
   Loader2,
   AlertCircle,
   Eye,
+  CreditCard,
 } from 'lucide-vue-next';
 import { useCourseDetail } from '@/composables/useCourseDetail';
 import { usePreview } from '@/composables/usePreview';
 import { useToast } from '@/composables/useToast';
+import { usePayments } from '@/composables/usePayments';
 import { CourseDetailSkeleton } from '@/components/skeletons';
 import { PreviewBanner } from '@/components/preview';
 import type { LessonItem } from '@shared/types';
@@ -34,6 +36,9 @@ const slug = route.params.slug as string;
 
 // Preview mode
 const { isPreviewMode, exitPreview } = usePreview();
+
+// Payments
+const { purchaseCourse, isProcessing: isPurchasing, error: paymentError } = usePayments();
 
 const {
   isLoading,
@@ -93,6 +98,17 @@ async function handleEnroll() {
   } else {
     toast.error(t('courses.detail.toast.enrollError'));
   }
+}
+
+async function handlePurchase() {
+  if (!course.value) return;
+
+  const success = await purchaseCourse(course.value.id);
+
+  if (!success && paymentError.value) {
+    toast.error(paymentError.value);
+  }
+  // If successful, user will be redirected to Stripe
 }
 
 function getLessonIcon(type: LessonItem['type']) {
@@ -265,10 +281,31 @@ function getProgressColor(pct: number): string {
                   </Button>
                 </div>
                 <div v-else>
-                  <Button class="w-full" size="lg" :disabled="isEnrolling" @click="handleEnroll">
+                  <!-- Free course: direct enrollment -->
+                  <Button
+                    v-if="isFree"
+                    class="w-full"
+                    size="lg"
+                    :disabled="isEnrolling"
+                    @click="handleEnroll"
+                  >
                     <Loader2 v-if="isEnrolling" class="mr-2 h-5 w-5 animate-spin" />
                     <template v-else>
-                      {{ isFree ? t('courses.enrollment.enrollFree') : t('courses.enrollment.enroll') }}
+                      {{ t('courses.enrollment.enrollFree') }}
+                    </template>
+                  </Button>
+                  <!-- Paid course: Stripe checkout -->
+                  <Button
+                    v-else
+                    class="w-full"
+                    size="lg"
+                    :disabled="isPurchasing"
+                    @click="handlePurchase"
+                  >
+                    <Loader2 v-if="isPurchasing" class="mr-2 h-5 w-5 animate-spin" />
+                    <template v-else>
+                      <CreditCard class="mr-2 h-5 w-5" />
+                      {{ t('courses.enrollment.purchase') }}
                     </template>
                   </Button>
                 </div>

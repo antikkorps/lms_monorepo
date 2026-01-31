@@ -18,7 +18,8 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { User, Lock, Shield, Loader2 } from 'lucide-vue-next';
+import { User, Lock, Shield, Loader2, ShoppingBag, ChevronRight } from 'lucide-vue-next';
+import { RouterLink } from 'vue-router';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -191,6 +192,23 @@ function onAvatarSelect(style: AvatarStyle, variation: number) {
             <p class="text-sm font-medium text-muted-foreground">{{ t('common.profile.accountId') }}</p>
             <p class="font-mono text-xs text-muted-foreground">{{ authStore.user?.id }}</p>
           </div>
+
+          <Separator />
+
+          <!-- Purchase History Link -->
+          <RouterLink
+            to="/purchases"
+            class="flex items-center justify-between p-3 -mx-3 rounded-lg hover:bg-muted transition-colors"
+          >
+            <div class="flex items-center gap-3">
+              <ShoppingBag class="h-5 w-5 text-muted-foreground" />
+              <div>
+                <p class="text-sm font-medium">{{ t('common.profile.purchaseHistory') }}</p>
+                <p class="text-xs text-muted-foreground">{{ t('common.profile.purchaseHistoryDesc') }}</p>
+              </div>
+            </div>
+            <ChevronRight class="h-4 w-4 text-muted-foreground" />
+          </RouterLink>
         </CardContent>
       </Card>
     </div>

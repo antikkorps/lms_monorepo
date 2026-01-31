@@ -31,6 +31,44 @@ export interface InvitationEmailData {
   role: string;
 }
 
+import type { SupportedLocale } from '../../database/models/enums.js';
+
+export interface NotificationEmailData {
+  to: string;
+  firstName: string;
+  type: 'lesson_completed' | 'course_completed' | 'badge_earned';
+  locale?: SupportedLocale;
+  // Lesson completed
+  lessonName?: string;
+  courseName?: string;
+  courseUrl?: string;
+  // Course completed
+  dashboardUrl?: string;
+  certificateUrl?: string;
+  // Badge earned
+  badgeName?: string;
+  badgeDescription?: string;
+  badgeIconUrl?: string;
+  profileUrl?: string;
+}
+
+export interface DigestEmailData {
+  to: string;
+  firstName: string;
+  notifications: Array<{
+    type: string;
+    title: string;
+    message: string;
+    link: string;
+    createdAt: Date;
+  }>;
+  dashboardUrl: string;
+  settingsUrl: string;
+  weekStart: Date;
+  weekEnd: Date;
+  locale?: SupportedLocale;
+}
+
 export interface EmailTemplate {
   subject: string;
   html: string;

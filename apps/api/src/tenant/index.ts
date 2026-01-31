@@ -15,6 +15,14 @@ import {
   requestSeats,
   upgradePlan,
 } from './controller.js';
+import {
+  createSubscriptionCheckout,
+  createPortalSession,
+  getSubscriptionStatus,
+  updateSeats,
+  cancelSubscription,
+  reactivateSubscription,
+} from './billing.controller.js';
 
 export const tenantRouter = new Router({ prefix: '/tenant' });
 
@@ -38,3 +46,11 @@ tenantRouter.get('/seats/history', ...tenantAdminAuth, getSeatUsageHistory);
 tenantRouter.get('/seats/plans', ...tenantAdminAuth, getSeatPlans);
 tenantRouter.post('/seats/request', ...tenantAdminAuth, requestSeats);
 tenantRouter.post('/seats/upgrade', ...tenantAdminAuth, upgradePlan);
+
+// Billing (Stripe subscription management)
+tenantRouter.post('/billing/checkout', ...tenantAdminAuth, createSubscriptionCheckout);
+tenantRouter.post('/billing/portal', ...tenantAdminAuth, createPortalSession);
+tenantRouter.get('/billing/subscription', ...tenantAdminAuth, getSubscriptionStatus);
+tenantRouter.patch('/billing/seats', ...tenantAdminAuth, updateSeats);
+tenantRouter.post('/billing/cancel', ...tenantAdminAuth, cancelSubscription);
+tenantRouter.post('/billing/reactivate', ...tenantAdminAuth, reactivateSubscription);
