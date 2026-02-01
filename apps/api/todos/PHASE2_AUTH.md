@@ -1,6 +1,6 @@
 # API - Phase 2: Authentication & Security
 
-## Modified: 2026-01-18
+## Modified: 2026-02-01
 
 ### Completed
 
@@ -20,6 +20,7 @@
 - [x] Implement email service with Circuit Breaker (Done: 2026-01-15)
 - [x] Add unit tests for auth, invitations & email (108 tests) (Done: 2026-01-15)
 - [x] Setup SSO integration - Google, Microsoft, OIDC générique (Done: 2026-01-18)
+- [x] Add i18n (FR/EN) support for auth emails - verification, password-reset, invitation (Done: 2026-02-01)
 
 ### Pending
 

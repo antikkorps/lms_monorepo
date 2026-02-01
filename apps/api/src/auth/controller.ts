@@ -28,6 +28,7 @@ import { AppError } from '../utils/app-error.js';
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 import { emailService } from '../services/email/index.js';
+import { parseLocaleFromRequest } from '../utils/locale.js';
 
 // Cookie options for tokens
 const COOKIE_OPTIONS: {
@@ -154,11 +155,15 @@ export async function register(ctx: Context): Promise<void> {
   // Build verification URL
   const verificationUrl = `${config.frontendUrl}/verify-email?token=${verificationToken}`;
 
+  // Get locale from request header for email
+  const locale = parseLocaleFromRequest(ctx.get('Accept-Language'));
+
   // Send verification email
   await emailService.sendVerificationEmail({
     to: user.email,
     firstName: user.firstName,
     verificationUrl,
+    locale,
   });
 
   ctx.status = 201;
@@ -576,11 +581,12 @@ export async function forgotPassword(ctx: Context): Promise<void> {
   // Build reset URL
   const resetUrl = `${config.frontendUrl || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
 
-  // Send password reset email
+  // Send password reset email (use user's stored locale preference)
   await emailService.sendPasswordResetEmail({
     to: user.email,
     firstName: user.firstName,
     resetUrl,
+    locale: user.locale,
   });
 
   ctx.body = successResponse;
@@ -763,11 +769,12 @@ export async function resendVerification(ctx: Context): Promise<void> {
   // Build verification URL
   const verificationUrl = `${config.frontendUrl}/verify-email?token=${verificationToken}`;
 
-  // Send verification email
+  // Send verification email (use user's stored locale preference)
   await emailService.sendVerificationEmail({
     to: user.email,
     firstName: user.firstName,
     verificationUrl,
+    locale: user.locale,
   });
 
   ctx.body = successResponse;

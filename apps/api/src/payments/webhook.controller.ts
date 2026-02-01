@@ -1,6 +1,6 @@
 import type { Context } from 'koa';
 import type Stripe from 'stripe';
-import { Purchase, Tenant } from '../database/models/index.js';
+import { Purchase, Tenant, TenantCourseLicense } from '../database/models/index.js';
 import { PurchaseStatus, TenantStatus } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { stripeService } from '../services/stripe/index.js';
@@ -89,12 +89,19 @@ async function handleCheckoutSessionCompleted(
 ): Promise<void> {
   const { courseId, userId, type } = session.metadata || {};
 
-  // Only handle course purchases
+  // Route to appropriate handler based on type
+  if (type === 'tenant_subscription') {
+    await handleTenantSubscriptionCheckout(session);
+    return;
+  }
+
+  if (type === 'b2b_license') {
+    await handleB2BLicenseCheckout(session);
+    return;
+  }
+
+  // Only handle course purchases below
   if (type !== 'course_purchase') {
-    // Handle tenant subscription checkout separately
-    if (type === 'tenant_subscription') {
-      await handleTenantSubscriptionCheckout(session);
-    }
     return;
   }
 
@@ -144,6 +151,81 @@ async function handleCheckoutSessionCompleted(
   logger.info(
     { purchaseId: purchase.id, courseId, userId },
     'Course purchase completed'
+  );
+}
+
+/**
+ * Handle B2B license checkout completion
+ */
+async function handleB2BLicenseCheckout(
+  session: Stripe.Checkout.Session
+): Promise<void> {
+  const { tenantId, courseId } = session.metadata || {};
+
+  if (!tenantId || !courseId) {
+    logger.error(
+      { sessionId: session.id },
+      'B2B license checkout missing tenantId or courseId'
+    );
+    return;
+  }
+
+  // Find pending license by session ID
+  const license = await TenantCourseLicense.findOne({
+    where: { stripeCheckoutSessionId: session.id },
+  });
+
+  if (!license) {
+    logger.error(
+      { sessionId: session.id, tenantId, courseId },
+      'License not found for checkout session'
+    );
+    return;
+  }
+
+  // Skip if already completed (idempotent)
+  if (license.status === PurchaseStatus.COMPLETED) {
+    logger.info(
+      { licenseId: license.id },
+      'License already completed (idempotent skip)'
+    );
+    return;
+  }
+
+  // Get payment intent and invoice IDs
+  const paymentIntentId =
+    typeof session.payment_intent === 'string'
+      ? session.payment_intent
+      : session.payment_intent?.id;
+
+  const invoiceId =
+    typeof session.invoice === 'string'
+      ? session.invoice
+      : session.invoice?.id;
+
+  // Update license status
+  await license.update({
+    status: PurchaseStatus.COMPLETED,
+    stripePaymentIntentId: paymentIntentId || null,
+    stripeInvoiceId: invoiceId || null,
+    purchasedAt: new Date(),
+  });
+
+  // Update tenant's Stripe customer ID if not set
+  if (session.customer) {
+    const tenant = await Tenant.findByPk(tenantId);
+    if (tenant && !tenant.stripeCustomerId) {
+      const customerId =
+        typeof session.customer === 'string'
+          ? session.customer
+          : session.customer?.id;
+      await tenant.update({ stripeCustomerId: customerId });
+    }
+  }
+
+  logger.info(
+    { licenseId: license.id, tenantId, courseId },
+    'B2B course license activated'
   );
 }
 

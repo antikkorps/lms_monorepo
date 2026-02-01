@@ -8,8 +8,11 @@ import { createProductHandler } from './handlers/product.handler.js';
 import { createRefundHandler } from './handlers/refund.handler.js';
 import type {
   CreateCheckoutSessionOptions,
+  CreateB2BLicenseCheckoutOptions,
   CreateSubscriptionCheckoutOptions,
   CreateCustomerPortalOptions,
+  CreateCustomerOptions,
+  CreateCustomerResult,
   SyncProductOptions,
   CheckoutSessionResult,
   CustomerPortalResult,
@@ -29,6 +32,9 @@ class StripeService {
   private createCheckoutSessionCB: (
     options: CreateCheckoutSessionOptions
   ) => Promise<CheckoutSessionResult>;
+  private createB2BLicenseCheckoutCB: (
+    options: CreateB2BLicenseCheckoutOptions
+  ) => Promise<CheckoutSessionResult>;
   private createSubscriptionCheckoutCB: (
     options: CreateSubscriptionCheckoutOptions
   ) => Promise<CheckoutSessionResult>;
@@ -39,6 +45,7 @@ class StripeService {
     options: SyncProductOptions
   ) => Promise<SyncProductResult>;
   private createRefundCB: (options: RefundOptions) => Promise<RefundResult>;
+  private createCustomerCB: (options: CreateCustomerOptions) => Promise<CreateCustomerResult>;
 
   constructor() {
     if (!config.stripeSecretKey) {
@@ -63,6 +70,12 @@ class StripeService {
       'createCheckoutSession'
     );
 
+    this.createB2BLicenseCheckoutCB = createStripeCircuitBreaker(
+      (opts: CreateB2BLicenseCheckoutOptions) =>
+        this.checkoutHandler.createB2BLicenseCheckoutSession(opts),
+      'createB2BLicenseCheckout'
+    );
+
     this.createSubscriptionCheckoutCB = createStripeCircuitBreaker(
       (opts: CreateSubscriptionCheckoutOptions) =>
         this.subscriptionHandler.createSubscriptionCheckout(opts),
@@ -85,6 +98,18 @@ class StripeService {
       'createRefund'
     );
 
+    this.createCustomerCB = createStripeCircuitBreaker(
+      async (opts: CreateCustomerOptions): Promise<CreateCustomerResult> => {
+        const customer = await this.stripe.customers.create({
+          email: opts.email,
+          name: opts.name,
+          metadata: opts.metadata,
+        });
+        return { customerId: customer.id, email: opts.email };
+      },
+      'createCustomer'
+    );
+
     logger.info('Stripe service initialized');
   }
 
@@ -99,6 +124,13 @@ class StripeService {
     sessionId: string
   ): Promise<Stripe.Checkout.Session> {
     return this.checkoutHandler.retrieveSession(sessionId);
+  }
+
+  // B2B License checkout (course licenses for tenants - card + bank transfer)
+  async createB2BLicenseCheckoutSession(
+    options: CreateB2BLicenseCheckoutOptions
+  ): Promise<CheckoutSessionResult> {
+    return this.createB2BLicenseCheckoutCB(options);
   }
 
   // Subscriptions (B2B tenant billing)
@@ -168,6 +200,11 @@ class StripeService {
     paymentIntentId: string
   ): Promise<Stripe.Refund[]> {
     return this.refundHandler.listRefundsForPaymentIntent(paymentIntentId);
+  }
+
+  // Customer management
+  async createCustomer(options: CreateCustomerOptions): Promise<CreateCustomerResult> {
+    return this.createCustomerCB(options);
   }
 
   // Webhook signature verification (not wrapped in circuit breaker - sync operation)

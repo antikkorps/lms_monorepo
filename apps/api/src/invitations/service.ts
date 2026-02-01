@@ -5,7 +5,7 @@ import { Invitation, InvitationGroup } from '../database/models/Invitation.js';
 import { User } from '../database/models/User.js';
 import { Tenant } from '../database/models/Tenant.js';
 import { Group, UserGroup } from '../database/models/Group.js';
-import { UserRole, UserStatus, InvitationStatus } from '../database/models/enums.js';
+import { UserRole, UserStatus, InvitationStatus, SupportedLocale } from '../database/models/enums.js';
 import { hashPassword, validatePasswordStrength } from '../auth/password.js';
 import { AppError } from '../utils/app-error.js';
 import { logger } from '../utils/logger.js';
@@ -382,13 +382,22 @@ async function sendInvitationEmail(
 ): Promise<void> {
   const inviteUrl = `${config.frontendUrl}/accept-invitation?token=${invitation.token}`;
 
-  // Get inviter name if not provided
+  // Get inviter info (name and locale) if not provided
   let inviter = inviterName;
-  if (!inviter) {
-    const inviterUser = await User.findByPk(invitation.invitedById, {
-      attributes: ['firstName', 'lastName'],
-    });
-    inviter = inviterUser ? `${inviterUser.firstName} ${inviterUser.lastName}` : tenant.name;
+  let locale: SupportedLocale = SupportedLocale.EN;
+
+  const inviterUser = await User.findByPk(invitation.invitedById, {
+    attributes: ['firstName', 'lastName', 'locale'],
+  });
+
+  if (inviterUser) {
+    if (!inviter) {
+      inviter = `${inviterUser.firstName} ${inviterUser.lastName}`;
+    }
+    // Use inviter's locale for the invitation email
+    locale = inviterUser.locale || SupportedLocale.EN;
+  } else if (!inviter) {
+    inviter = tenant.name;
   }
 
   await emailService.sendInvitationEmail({
@@ -398,5 +407,6 @@ async function sendInvitationEmail(
     inviterName: inviter,
     inviteUrl,
     role: invitation.role,
+    locale,
   });
 }

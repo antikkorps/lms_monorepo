@@ -28,6 +28,7 @@ export { DiscussionReport } from './DiscussionReport.js';
 export { Note } from './Note.js';
 export { Notification, type NotificationData } from './Notification.js';
 export { NotificationPreference, type NotificationPreferenceFlags } from './NotificationPreference.js';
+export { TenantCourseLicense, TenantCourseLicenseAssignment } from './TenantCourseLicense.js';
 
 // Import for associations setup
 import { Tenant } from './Tenant.js';
@@ -49,6 +50,7 @@ import { DiscussionReport } from './DiscussionReport.js';
 import { Note } from './Note.js';
 import { Notification } from './Notification.js';
 import { NotificationPreference } from './NotificationPreference.js';
+import { TenantCourseLicense, TenantCourseLicenseAssignment } from './TenantCourseLicense.js';
 
 /**
  * Setup all model associations
@@ -486,6 +488,52 @@ export function setupAssociations(): void {
     foreignKey: 'userId',
     as: 'notificationPreference',
   });
+
+  // =============================================================================
+  // TenantCourseLicense Associations
+  // =============================================================================
+  TenantCourseLicense.belongsTo(Tenant, {
+    foreignKey: 'tenantId',
+    as: 'tenant',
+  });
+
+  TenantCourseLicense.belongsTo(Course, {
+    foreignKey: 'courseId',
+    as: 'course',
+  });
+
+  TenantCourseLicense.belongsTo(User, {
+    foreignKey: 'purchasedById',
+    as: 'purchasedBy',
+  });
+
+  Tenant.hasMany(TenantCourseLicense, {
+    foreignKey: 'tenantId',
+    as: 'courseLicenses',
+  });
+
+  Course.hasMany(TenantCourseLicense, {
+    foreignKey: 'courseId',
+    as: 'tenantLicenses',
+  });
+
+  // =============================================================================
+  // TenantCourseLicenseAssignment Associations
+  // =============================================================================
+  TenantCourseLicenseAssignment.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  TenantCourseLicenseAssignment.belongsTo(User, {
+    foreignKey: 'assignedById',
+    as: 'assignedBy',
+  });
+
+  User.hasMany(TenantCourseLicenseAssignment, {
+    foreignKey: 'userId',
+    as: 'licenseAssignments',
+  });
 }
 
 // All models for easy iteration
@@ -512,4 +560,6 @@ export const models = {
   Note,
   Notification,
   NotificationPreference,
+  TenantCourseLicense,
+  TenantCourseLicenseAssignment,
 } as const;
