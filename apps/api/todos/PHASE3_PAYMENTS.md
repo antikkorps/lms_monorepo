@@ -21,6 +21,7 @@
 #### B2B Course Licensing (Done: 2026-02-01)
 - [x] TenantCourseLicense model with unlimited/seats types
 - [x] License checkout with card + bank transfer (SEPA)
+- [x] Auto-create Stripe customer for new tenants
 - [x] License assignment for seats-based licenses
 - [x] Course access check via tenant license
 - [x] License refund endpoint
