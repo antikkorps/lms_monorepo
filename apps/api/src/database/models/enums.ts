@@ -122,3 +122,9 @@ export enum RefundRequestStatus {
   REJECTED = 'rejected',
   AUTO_APPROVED = 'auto_approved',
 }
+
+// B2B Course Licensing
+export enum LicenseType {
+  UNLIMITED = 'unlimited', // All tenant members have access
+  SEATS = 'seats', // Limited seats, assigned to specific members
+}

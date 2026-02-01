@@ -1,3 +1,5 @@
+import type { SupportedLocale } from '../../database/models/enums.js';
+
 export interface SendEmailOptions {
   to: string;
   subject: string;
@@ -14,12 +16,14 @@ export interface VerificationEmailData {
   to: string;
   firstName: string;
   verificationUrl: string;
+  locale?: SupportedLocale;
 }
 
 export interface PasswordResetEmailData {
   to: string;
   firstName: string;
   resetUrl: string;
+  locale?: SupportedLocale;
 }
 
 export interface InvitationEmailData {
@@ -29,9 +33,8 @@ export interface InvitationEmailData {
   inviterName: string;
   inviteUrl: string;
   role: string;
+  locale?: SupportedLocale;
 }
-
-import type { SupportedLocale } from '../../database/models/enums.js';
 
 export interface NotificationEmailData {
   to: string;

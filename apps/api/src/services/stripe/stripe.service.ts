@@ -8,6 +8,7 @@ import { createProductHandler } from './handlers/product.handler.js';
 import { createRefundHandler } from './handlers/refund.handler.js';
 import type {
   CreateCheckoutSessionOptions,
+  CreateB2BLicenseCheckoutOptions,
   CreateSubscriptionCheckoutOptions,
   CreateCustomerPortalOptions,
   SyncProductOptions,
@@ -28,6 +29,9 @@ class StripeService {
   // Circuit breaker wrapped methods
   private createCheckoutSessionCB: (
     options: CreateCheckoutSessionOptions
+  ) => Promise<CheckoutSessionResult>;
+  private createB2BLicenseCheckoutCB: (
+    options: CreateB2BLicenseCheckoutOptions
   ) => Promise<CheckoutSessionResult>;
   private createSubscriptionCheckoutCB: (
     options: CreateSubscriptionCheckoutOptions
@@ -61,6 +65,12 @@ class StripeService {
       (opts: CreateCheckoutSessionOptions) =>
         this.checkoutHandler.createCourseCheckoutSession(opts),
       'createCheckoutSession'
+    );
+
+    this.createB2BLicenseCheckoutCB = createStripeCircuitBreaker(
+      (opts: CreateB2BLicenseCheckoutOptions) =>
+        this.checkoutHandler.createB2BLicenseCheckoutSession(opts),
+      'createB2BLicenseCheckout'
     );
 
     this.createSubscriptionCheckoutCB = createStripeCircuitBreaker(
@@ -99,6 +109,13 @@ class StripeService {
     sessionId: string
   ): Promise<Stripe.Checkout.Session> {
     return this.checkoutHandler.retrieveSession(sessionId);
+  }
+
+  // B2B License checkout (course licenses for tenants - card + bank transfer)
+  async createB2BLicenseCheckoutSession(
+    options: CreateB2BLicenseCheckoutOptions
+  ): Promise<CheckoutSessionResult> {
+    return this.createB2BLicenseCheckoutCB(options);
   }
 
   // Subscriptions (B2B tenant billing)

@@ -19,6 +19,23 @@ export interface CheckoutSessionResult {
   url: string;
 }
 
+// B2B License checkout (course licenses for tenants)
+export interface CreateB2BLicenseCheckoutOptions {
+  tenantId: string;
+  courseId: string;
+  userId: string;
+  licenseType: 'unlimited' | 'seats';
+  seats: number | null;
+  courseName: string;
+  description: string;
+  priceInCents: number;
+  currency: string;
+  customerEmail: string;
+  stripeCustomerId?: string;
+  successUrl: string;
+  cancelUrl: string;
+}
+
 // Subscription types (B2B)
 export interface CreateSubscriptionCheckoutOptions {
   tenantId: string;

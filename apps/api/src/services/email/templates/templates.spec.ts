@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { verificationEmailTemplate } from './verification.js';
 import { passwordResetEmailTemplate } from './password-reset.js';
 import { invitationEmailTemplate } from './invitation.js';
+import { SupportedLocale } from '../../../database/models/enums.js';
 
 describe('Email Templates', () => {
   // ===========================================================================
@@ -52,6 +53,20 @@ describe('Email Templates', () => {
       expect(result.html).toContain('24 hours');
       expect(result.text).toContain('24 hours');
     });
+
+    it('should generate French email when locale is FR', () => {
+      const result = verificationEmailTemplate({
+        to: 'user@example.com',
+        firstName: 'Jean',
+        verificationUrl: 'https://example.com/verify?token=abc123',
+        locale: SupportedLocale.FR,
+      });
+
+      expect(result.subject).toBe('Vérifiez votre adresse email');
+      expect(result.html).toContain('Bienvenue, Jean !');
+      expect(result.html).toContain('24 heures');
+      expect(result.text).toContain('Bienvenue, Jean !');
+    });
   });
 
   // ===========================================================================
@@ -101,6 +116,20 @@ describe('Email Templates', () => {
 
       expect(result.html).toContain('1 hour');
       expect(result.text).toContain('1 hour');
+    });
+
+    it('should generate French email when locale is FR', () => {
+      const result = passwordResetEmailTemplate({
+        to: 'user@example.com',
+        firstName: 'Pierre',
+        resetUrl: 'https://example.com/reset?token=abc123',
+        locale: SupportedLocale.FR,
+      });
+
+      expect(result.subject).toBe('Réinitialiser votre mot de passe');
+      expect(result.html).toContain('Bonjour Pierre,');
+      expect(result.html).toContain('1 heure');
+      expect(result.text).toContain('Bonjour Pierre,');
     });
   });
 
@@ -173,6 +202,38 @@ describe('Email Templates', () => {
 
       expect(result.html).toContain('7 days');
       expect(result.text).toContain('7 days');
+    });
+
+    it('should generate French email when locale is FR', () => {
+      const result = invitationEmailTemplate({
+        ...defaultData,
+        firstName: 'Marie',
+        locale: SupportedLocale.FR,
+      });
+
+      expect(result.subject).toBe('Vous êtes invité(e) à rejoindre Acme Corp');
+      expect(result.html).toContain('Bonjour Marie,');
+      expect(result.html).toContain('Apprenant'); // FR translation of 'Learner'
+      expect(result.html).toContain('7 jours');
+      expect(result.text).toContain('Bonjour Marie,');
+    });
+
+    it('should translate role names in French', () => {
+      const roles = [
+        { role: 'learner', display: 'Apprenant' },
+        { role: 'instructor', display: 'Formateur' },
+        { role: 'manager', display: 'Responsable' },
+        { role: 'tenant_admin', display: 'Administrateur' },
+      ];
+
+      for (const { role, display } of roles) {
+        const result = invitationEmailTemplate({
+          ...defaultData,
+          role,
+          locale: SupportedLocale.FR,
+        });
+        expect(result.html).toContain(display);
+      }
     });
   });
 });
