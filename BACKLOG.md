@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-01-31
+## Modified: 2026-02-01
 
 ---
 
@@ -13,8 +13,9 @@
 - [x] Create checkout flow UI (B2C course purchases) (Done: 2026-01-30)
 - [x] Payment success/cancel pages (Done: 2026-01-30)
 - [x] Enrollment status check in course API (Done: 2026-01-30)
-- [ ] Handle subscription lifecycle (B2B seats)
-- [ ] Invoice generation
+- [x] Handle subscription lifecycle (B2B seats) (Done: 2026-01-26)
+- [x] B2B course licensing (unlimited + seats) with SEPA (Done: 2026-02-01)
+- [ ] Invoice management for B2B (list past invoices)
 - [x] Refund handling (Done: 2026-01-31)
 - [x] Purchase history page for learners (Done: 2026-01-31)
 - [x] Refund request flow (auto < 1h, admin approval > 1h) (Done: 2026-01-31)
@@ -66,7 +67,7 @@
 - [x] Digest emails (weekly summary) avec BullMQ scheduler (Done: 2026-01-31)
 - [x] Notification bell avec dropdown dans navbar (Done: 2026-01-31)
 - [x] Page notifications complète avec pagination (Done: 2026-01-31)
-- [ ] i18n des notifications et emails (EN/FR) - Plan créé
+- [x] i18n des emails notifications + auth (EN/FR) (Done: 2026-02-01)
 
 ### Testing & Quality
 
@@ -269,3 +270,24 @@ Flux de remboursement B2C:
 Frontend:
 - `PurchaseHistoryView.vue` - Historique achats + demande refund
 - `RefundRequestsView.vue` - Admin gestion demandes
+
+**B2B Course Licensing (2026-02-01)**
+
+Système de licences de cours pour les tenants:
+- **Unlimited**: Tous les membres du tenant ont accès (10× prix du cours)
+- **Seats**: Accès assigné à des membres spécifiques (remises volume 10/20/30%)
+
+| Endpoint | Description |
+|----------|-------------|
+| POST /tenant/licenses/checkout | Créer checkout Stripe (carte + SEPA) |
+| GET /tenant/licenses | Liste des licences du tenant |
+| GET /tenant/licenses/:id | Détails d'une licence |
+| POST /tenant/licenses/:id/assign | Assigner un siège |
+| DELETE /tenant/licenses/:id/assignments/:userId | Retirer un siège |
+| POST /tenant/licenses/:id/refund | Demander remboursement |
+
+Features:
+- Auto-création customer Stripe si inexistant
+- Virement bancaire (SEPA) via `customer_balance`
+- Accès cours vérifié via `checkTenantCourseAccess()`
+- Migration: `007_create_tenant_course_licenses.sql`

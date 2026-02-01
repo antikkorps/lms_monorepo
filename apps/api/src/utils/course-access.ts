@@ -3,8 +3,8 @@
  * Centralized access control logic for courses
  */
 
-import { Course, Purchase, Lesson, Chapter, Tenant } from '../database/models/index.js';
-import { PurchaseStatus, UserRole, TenantStatus, SubscriptionStatus } from '../database/models/enums.js';
+import { Course, Purchase, Lesson, Chapter, Tenant, TenantCourseLicense, TenantCourseLicenseAssignment } from '../database/models/index.js';
+import { PurchaseStatus, UserRole, TenantStatus, SubscriptionStatus, LicenseType } from '../database/models/enums.js';
 
 export type AccessType = 'purchase' | 'tenant' | 'free' | 'instructor' | 'admin';
 
@@ -68,9 +68,9 @@ export async function checkCourseAccess(
     return { hasAccess: false, reason: 'Authentication required' };
   }
 
-  // 4. B2B: Check tenant subscription
+  // 4. B2B: Check tenant course license
   if (user.tenantId) {
-    const tenantAccess = await checkTenantAccess(user.tenantId, user.userId);
+    const tenantAccess = await checkTenantCourseAccess(user.tenantId, user.userId, courseId);
     if (tenantAccess.hasAccess) {
       return { hasAccess: true, accessType: 'tenant' };
     }
@@ -100,7 +100,91 @@ export async function checkCourseAccess(
 }
 
 /**
- * Check if a user has access via their tenant subscription
+ * Check if a user has access to a course via their tenant
+ * This checks for:
+ * 1. Active tenant subscription (seats)
+ * 2. Active course license (unlimited or assigned seat)
+ */
+export async function checkTenantCourseAccess(
+  tenantId: string,
+  userId: string,
+  courseId: string
+): Promise<TenantAccessResult> {
+  const tenant = await Tenant.findByPk(tenantId);
+
+  if (!tenant) {
+    return { hasAccess: false, reason: 'Tenant not found' };
+  }
+
+  // Check tenant status
+  if (tenant.status !== TenantStatus.ACTIVE && tenant.status !== TenantStatus.TRIAL) {
+    return {
+      hasAccess: false,
+      reason: `Tenant subscription is ${tenant.status}`,
+    };
+  }
+
+  // Check subscription status (tenant must have an active subscription)
+  if (
+    tenant.subscriptionStatus !== SubscriptionStatus.ACTIVE &&
+    tenant.subscriptionStatus !== SubscriptionStatus.TRIALING
+  ) {
+    return {
+      hasAccess: false,
+      reason: `Subscription status is ${tenant.subscriptionStatus}`,
+    };
+  }
+
+  // Check seats (user must be within seat allocation)
+  if (tenant.seatsUsed > tenant.seatsPurchased) {
+    return {
+      hasAccess: false,
+      reason: 'No available seats in tenant subscription',
+    };
+  }
+
+  // Check for course license
+  const license = await TenantCourseLicense.findOne({
+    where: {
+      tenantId,
+      courseId,
+      status: PurchaseStatus.COMPLETED,
+    },
+  });
+
+  if (!license) {
+    return {
+      hasAccess: false,
+      reason: 'No active license for this course',
+    };
+  }
+
+  // Unlimited license: all tenant members have access
+  if (license.licenseType === LicenseType.UNLIMITED) {
+    return { hasAccess: true };
+  }
+
+  // Seats license: check if user is assigned
+  const assignment = await TenantCourseLicenseAssignment.findOne({
+    where: {
+      licenseId: license.id,
+      userId,
+    },
+  });
+
+  if (!assignment) {
+    return {
+      hasAccess: false,
+      reason: 'User is not assigned to this course license',
+    };
+  }
+
+  return { hasAccess: true };
+}
+
+/**
+ * Check if a user has access via their tenant subscription (legacy - for backward compatibility)
+ * @deprecated Use checkTenantCourseAccess instead
  */
 export async function checkTenantAccess(
   tenantId: string,

@@ -19,6 +19,23 @@ export interface CheckoutSessionResult {
   url: string;
 }
 
+// B2B License checkout (course licenses for tenants)
+export interface CreateB2BLicenseCheckoutOptions {
+  tenantId: string;
+  courseId: string;
+  userId: string;
+  licenseType: 'unlimited' | 'seats';
+  seats: number | null;
+  courseName: string;
+  description: string;
+  priceInCents: number;
+  currency: string;
+  customerEmail: string;
+  stripeCustomerId?: string;
+  successUrl: string;
+  cancelUrl: string;
+}
+
 // Subscription types (B2B)
 export interface CreateSubscriptionCheckoutOptions {
   tenantId: string;
@@ -63,6 +80,18 @@ export interface WebhookEventMetadata {
   courseId?: string;
   userId?: string;
   tenantId?: string;
+}
+
+// Customer types
+export interface CreateCustomerOptions {
+  email: string;
+  name?: string;
+  metadata?: Record<string, string>;
+}
+
+export interface CreateCustomerResult {
+  customerId: string;
+  email: string;
 }
 
 // Refund types

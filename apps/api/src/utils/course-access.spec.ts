@@ -19,6 +19,12 @@ vi.mock('../database/models/index.js', () => ({
   Tenant: {
     findByPk: vi.fn(),
   },
+  TenantCourseLicense: {
+    findOne: vi.fn(),
+  },
+  TenantCourseLicenseAssignment: {
+    findOne: vi.fn(),
+  },
 }));
 
 // Import after mocks
@@ -29,7 +35,7 @@ import {
   canEditCourse,
   type AuthenticatedUser,
 } from './course-access.js';
-import { Course, Purchase, Lesson, Tenant } from '../database/models/index.js';
+import { Course, Purchase, Lesson, Tenant, TenantCourseLicense, TenantCourseLicenseAssignment } from '../database/models/index.js';
 
 // =============================================================================
 // Test Helpers
@@ -67,6 +73,19 @@ function createMockTenant(overrides: Record<string, unknown> = {}) {
     subscriptionStatus: SubscriptionStatus.ACTIVE,
     seatsPurchased: 10,
     seatsUsed: 5,
+    ...overrides,
+  };
+}
+
+function createMockLicense(overrides: Record<string, unknown> = {}) {
+  return {
+    id: 'license-123',
+    tenantId: 'tenant-123',
+    courseId: 'course-123',
+    licenseType: 'unlimited',
+    status: PurchaseStatus.COMPLETED,
+    seatsTotal: null,
+    seatsUsed: 0,
     ...overrides,
   };
 }
@@ -181,9 +200,10 @@ describe('Course Access Utility', () => {
       expect(result.reason).toBe('No active purchase or subscription found for this course');
     });
 
-    it('should grant access with active tenant subscription (B2B)', async () => {
+    it('should grant access with active tenant license (B2B unlimited)', async () => {
       vi.mocked(Course.findByPk).mockResolvedValue(createMockCourse() as never);
       vi.mocked(Tenant.findByPk).mockResolvedValue(createMockTenant() as never);
+      vi.mocked(TenantCourseLicense.findOne).mockResolvedValue(createMockLicense() as never);
       vi.mocked(Purchase.findOne).mockResolvedValue(null); // No B2C purchase
 
       const result = await checkCourseAccess(
@@ -209,6 +229,7 @@ describe('Course Access Utility', () => {
       vi.mocked(Tenant.findByPk).mockResolvedValue(
         createMockTenant({ status: TenantStatus.SUSPENDED }) as never
       );
+      vi.mocked(TenantCourseLicense.findOne).mockResolvedValue(null); // License check skipped due to tenant status
       vi.mocked(Purchase.findOne).mockResolvedValue(createMockPurchase() as never);
 
       const result = await checkCourseAccess(

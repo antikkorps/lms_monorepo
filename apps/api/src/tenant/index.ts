@@ -23,6 +23,14 @@ import {
   cancelSubscription,
   reactivateSubscription,
 } from './billing.controller.js';
+import {
+  createLicenseCheckout,
+  listLicenses,
+  getLicense,
+  assignSeat,
+  unassignSeat,
+  requestLicenseRefund,
+} from './licenses.controller.js';
 
 export const tenantRouter = new Router({ prefix: '/tenant' });
 
@@ -54,3 +62,12 @@ tenantRouter.get('/billing/subscription', ...tenantAdminAuth, getSubscriptionSta
 tenantRouter.patch('/billing/seats', ...tenantAdminAuth, updateSeats);
 tenantRouter.post('/billing/cancel', ...tenantAdminAuth, cancelSubscription);
 tenantRouter.post('/billing/reactivate', ...tenantAdminAuth, reactivateSubscription);
+
+// Course licenses (B2B course access)
+const licenseAdminAuth = [authenticate, requireTenant, requireRole(UserRole.TENANT_ADMIN, UserRole.MANAGER, UserRole.SUPER_ADMIN)];
+tenantRouter.post('/licenses/checkout', ...licenseAdminAuth, createLicenseCheckout);
+tenantRouter.get('/licenses', ...licenseAdminAuth, listLicenses);
+tenantRouter.get('/licenses/:id', ...licenseAdminAuth, getLicense);
+tenantRouter.post('/licenses/:id/assign', ...licenseAdminAuth, assignSeat);
+tenantRouter.delete('/licenses/:id/assignments/:userId', ...licenseAdminAuth, unassignSeat);
+tenantRouter.post('/licenses/:id/refund', ...tenantAdminAuth, requestLicenseRefund);
