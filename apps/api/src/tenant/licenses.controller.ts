@@ -1,5 +1,4 @@
 import type { Context } from 'koa';
-import { Op } from 'sequelize';
 import {
   Course,
   User,
@@ -131,7 +130,7 @@ export async function createLicenseCheckout(ctx: Context): Promise<void> {
     courseId,
     userId: user.userId,
     licenseType: licenseType as LicenseType,
-    seats: licenseType === 'seats' ? seats : null,
+    seats: licenseType === 'seats' ? seats! : null,
     courseName: course.title,
     description,
     priceInCents,

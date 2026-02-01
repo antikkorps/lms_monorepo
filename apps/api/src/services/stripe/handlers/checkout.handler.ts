@@ -112,22 +112,12 @@ export function createCheckoutHandler(stripe: Stripe) {
       } = options;
 
       // Build session params with B2B payment options
+      // Bank transfer (customer_balance) requires an existing Stripe customer
+      const paymentMethods: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] = ['card'];
+
       const sessionParams: Stripe.Checkout.SessionCreateParams = {
         mode: 'payment',
-        // B2B supports card and bank transfer
-        payment_method_types: ['card'],
-        payment_method_options: {
-          // Enable bank transfer for customer balance
-          customer_balance: {
-            funding_type: 'bank_transfer',
-            bank_transfer: {
-              type: 'eu_bank_transfer',
-              eu_bank_transfer: {
-                country: 'FR', // Default to France, Stripe will handle others
-              },
-            },
-          },
-        },
+        payment_method_types: paymentMethods,
         line_items: [
           {
             price_data: {
@@ -177,8 +167,22 @@ export function createCheckoutHandler(stripe: Stripe) {
         },
       };
 
-      // Add customer_balance to payment methods for bank transfer support
-      (sessionParams.payment_method_types as string[]).push('customer_balance');
+      // Add bank transfer (customer_balance) only if we have a Stripe customer
+      // This is required because customer_balance needs an existing customer
+      if (stripeCustomerId) {
+        paymentMethods.push('customer_balance');
+        sessionParams.payment_method_options = {
+          customer_balance: {
+            funding_type: 'bank_transfer',
+            bank_transfer: {
+              type: 'eu_bank_transfer',
+              eu_bank_transfer: {
+                country: 'FR',
+              },
+            },
+          },
+        };
+      }
 
       const session = await stripe.checkout.sessions.create(sessionParams);
 
