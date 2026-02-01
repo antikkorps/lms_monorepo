@@ -80,6 +80,25 @@ export async function createLicenseCheckout(ctx: Context): Promise<void> {
     throw AppError.notFound('Tenant not found');
   }
 
+  // Ensure tenant has a Stripe customer (required for bank transfer payments)
+  let stripeCustomerId = tenant.stripeCustomerId;
+  if (!stripeCustomerId) {
+    logger.info({ tenantId: user.tenantId }, 'Creating Stripe customer for tenant');
+    const { customerId } = await stripeService.createCustomer({
+      email: user.email,
+      name: tenant.name,
+      metadata: {
+        tenantId: user.tenantId,
+        tenantName: tenant.name,
+      },
+    });
+    stripeCustomerId = customerId;
+
+    // Save the customer ID to the tenant
+    await tenant.update({ stripeCustomerId });
+    logger.info({ tenantId: user.tenantId, stripeCustomerId }, 'Stripe customer created for tenant');
+  }
+
   // Check if tenant already has an active license for this course
   const existingLicense = await TenantCourseLicense.findOne({
     where: {
@@ -136,7 +155,7 @@ export async function createLicenseCheckout(ctx: Context): Promise<void> {
     priceInCents,
     currency: course.currency,
     customerEmail: user.email,
-    stripeCustomerId: tenant.stripeCustomerId || undefined,
+    stripeCustomerId,
     successUrl: `${config.frontendUrl}/admin/licenses/success?session_id={CHECKOUT_SESSION_ID}`,
     cancelUrl: `${config.frontendUrl}/admin/licenses?course=${course.slug}`,
   });

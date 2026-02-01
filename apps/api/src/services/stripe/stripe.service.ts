@@ -11,6 +11,8 @@ import type {
   CreateB2BLicenseCheckoutOptions,
   CreateSubscriptionCheckoutOptions,
   CreateCustomerPortalOptions,
+  CreateCustomerOptions,
+  CreateCustomerResult,
   SyncProductOptions,
   CheckoutSessionResult,
   CustomerPortalResult,
@@ -43,6 +45,7 @@ class StripeService {
     options: SyncProductOptions
   ) => Promise<SyncProductResult>;
   private createRefundCB: (options: RefundOptions) => Promise<RefundResult>;
+  private createCustomerCB: (options: CreateCustomerOptions) => Promise<CreateCustomerResult>;
 
   constructor() {
     if (!config.stripeSecretKey) {
@@ -93,6 +96,18 @@ class StripeService {
     this.createRefundCB = createStripeCircuitBreaker(
       (opts: RefundOptions) => this.refundHandler.createRefund(opts),
       'createRefund'
+    );
+
+    this.createCustomerCB = createStripeCircuitBreaker(
+      async (opts: CreateCustomerOptions): Promise<CreateCustomerResult> => {
+        const customer = await this.stripe.customers.create({
+          email: opts.email,
+          name: opts.name,
+          metadata: opts.metadata,
+        });
+        return { customerId: customer.id, email: opts.email };
+      },
+      'createCustomer'
     );
 
     logger.info('Stripe service initialized');
@@ -185,6 +200,11 @@ class StripeService {
     paymentIntentId: string
   ): Promise<Stripe.Refund[]> {
     return this.refundHandler.listRefundsForPaymentIntent(paymentIntentId);
+  }
+
+  // Customer management
+  async createCustomer(options: CreateCustomerOptions): Promise<CreateCustomerResult> {
+    return this.createCustomerCB(options);
   }
 
   // Webhook signature verification (not wrapped in circuit breaker - sync operation)

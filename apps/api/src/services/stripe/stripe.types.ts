@@ -82,6 +82,18 @@ export interface WebhookEventMetadata {
   tenantId?: string;
 }
 
+// Customer types
+export interface CreateCustomerOptions {
+  email: string;
+  name?: string;
+  metadata?: Record<string, string>;
+}
+
+export interface CreateCustomerResult {
+  customerId: string;
+  email: string;
+}
+
 // Refund types
 export interface RefundOptions {
   paymentIntentId: string;
