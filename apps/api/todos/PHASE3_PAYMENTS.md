@@ -30,7 +30,13 @@
 
 ### Pending
 
-- [ ] Invoice management for B2B (list past invoices)
+#### Invoice Management B2B (Next: 2026-02-02)
+- [ ] GET /tenant/invoices - Liste factures via Stripe API
+- [ ] GET /tenant/invoices/:id - Détail facture
+- [ ] Download PDF - URL signée vers PDF Stripe
+- [ ] Frontend: Page liste factures dashboard tenant
+
+#### Future
 - [ ] Volume discount tiers for large seat purchases
 - [ ] License expiration/renewal (if time-limited)
 
