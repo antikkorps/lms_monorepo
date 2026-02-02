@@ -20,7 +20,7 @@
     "vue-sonner": "^2.0.9"
   },
   "devDependencies": {
-    "@types/dompurify": "^3.0.5",
+    "@types/dompurify": "^3.2.0",
     "@types/markdown-it": "^14.1.2",
     "@vue/compiler-sfc": "^3.5.27"
   }
