@@ -1,4 +1,14 @@
 {
+  "title": "Une erreur est survenue",
+  "unknown": "Une erreur inattendue est survenue",
+  "retry": "Réessayer",
+  "dismiss": "Fermer",
+  "globalTitle": "Une erreur est survenue",
+  "boundary": {
+    "title": "Une erreur est survenue",
+    "description": "Une erreur s'est produite lors du chargement de cette section.",
+    "retry": "Réessayer"
+  },
   "http": {
     "400": "Requête invalide",
     "401": "Veuillez vous connecter pour continuer",
