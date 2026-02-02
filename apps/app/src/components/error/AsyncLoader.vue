@@ -89,13 +89,13 @@ const showContent = computed(() => {
       <AlertCircle class="h-8 w-8 text-destructive shrink-0" />
       <div class="flex-1">
         <p class="font-medium text-destructive">
-          {{ t('error.loadFailed', 'Failed to load data') }}
+          {{ t('errors.generic.message', 'Failed to load data') }}
         </p>
         <p class="text-sm text-muted-foreground">{{ error }}</p>
       </div>
       <Button variant="outline" size="sm" @click="emit('retry')">
         <RefreshCw class="mr-2 h-4 w-4" />
-        {{ t('error.retry', 'Retry') }}
+        {{ t('errors.retry', 'Retry') }}
       </Button>
     </CardContent>
   </Card>

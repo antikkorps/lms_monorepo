@@ -1,5 +1,6 @@
 ---
 import { getLangFromUrl, useTranslations, getLocalizedPath, getAlternateLinks, type Lang } from '../i18n';
+import CookieConsent from '../components/CookieConsent.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -357,6 +358,9 @@ const footerLinks = {
         </div>
       </div>
     </footer>
+
+    <!-- Cookie Consent Banner -->
+    <CookieConsent lang={lang} />
 
     <!-- Scripts -->
     <script is:inline>

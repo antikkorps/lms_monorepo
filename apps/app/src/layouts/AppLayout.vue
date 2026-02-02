@@ -32,6 +32,7 @@ import {
   PenTool,
   RefreshCcw,
   ShoppingBag,
+  Receipt,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
@@ -60,6 +61,7 @@ const adminItems = computed(() => {
     { href: '/admin/members', icon: Users, name: t('nav.admin.members') },
     { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
     { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
+    { href: '/admin/invoices', icon: Receipt, name: t('nav.admin.invoices') },
   ];
   // Refunds only visible to super admin (B2C purchases)
   if (isSuperAdmin.value) {

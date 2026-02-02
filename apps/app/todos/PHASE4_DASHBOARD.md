@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-01-26
+## Modified: 2026-02-02
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -36,7 +36,7 @@
 - [x] Integrate real API for tenant dashboard (useTenantDashboard) (Done: 2026-01-26)
 - [x] Integrate real API for tenant members (useTenantMembers) (Done: 2026-01-26)
 - [x] Integrate real API for seats (useSeats) (Done: 2026-01-26)
-- [ ] Add error boundaries for API failures
+- [x] Add error boundaries for API failures (Done: 2026-02-02)
 - [ ] Implement optimistic updates
 
 ### Pending - Content Creation (Critical)

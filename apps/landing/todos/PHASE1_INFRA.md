@@ -1,6 +1,6 @@
 # Landing (Astro) - Phase 1: Infrastructure Setup
 
-## Modified: 2026-01-28
+## Modified: 2026-02-02
 
 ### Completed
 - [x] Create Astro application structure (Done: 2026-01-14)
@@ -42,9 +42,12 @@
 - [ ] Optimize images with Astro Image
 - [ ] Add lazy loading for images
 
+### Completed - Integrations (Done: 2026-02-02)
+- [x] Add cookie consent banner (GDPR-compliant with preferences)
+- [x] Add Cookie Policy page (EN/FR)
+
 ### Pending - Integrations
 - [ ] Add analytics integration (Google Analytics / Plausible)
-- [ ] Add cookie consent banner
 - [ ] Newsletter signup form
 
 ### Pending - Content

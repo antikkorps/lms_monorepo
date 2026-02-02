@@ -100,6 +100,55 @@
     "instructor": "Formateur",
     "learner": "Apprenant"
   },
+  "invoices": {
+    "title": "Factures",
+    "subtitle": "Consultez et téléchargez les factures de votre organisation.",
+    "refresh": "Actualiser",
+    "error": {
+      "loadFailed": "Impossible de charger les factures",
+      "retry": "Réessayer"
+    },
+    "stats": {
+      "total": "Total des factures",
+      "allTime": "Depuis le début",
+      "paid": "Payées",
+      "totalAmount": "{amount} au total",
+      "open": "En attente",
+      "awaitingPayment": "En attente de paiement"
+    },
+    "filters": {
+      "allStatus": "Tous les statuts",
+      "paid": "Payée",
+      "open": "En attente",
+      "draft": "Brouillon",
+      "void": "Annulée"
+    },
+    "table": {
+      "title": "Historique des factures",
+      "description": "Liste de toutes les factures de votre organisation.",
+      "invoice": "Facture",
+      "date": "Date",
+      "status": "Statut",
+      "dueDate": "Échéance",
+      "amount": "Montant",
+      "actions": "Actions"
+    },
+    "status": {
+      "paid": "Payée",
+      "open": "En attente",
+      "draft": "Brouillon",
+      "uncollectible": "Irrécouvrable",
+      "void": "Annulée"
+    },
+    "empty": {
+      "title": "Aucune facture",
+      "message": "Les factures apparaîtront ici une fois que vous aurez une activité de facturation."
+    },
+    "actions": {
+      "view": "Voir",
+      "download": "Télécharger PDF"
+    }
+  },
   "refunds": {
     "title": "Demandes de remboursement",
     "subtitle": "Gérez les demandes de remboursement des apprenants",
