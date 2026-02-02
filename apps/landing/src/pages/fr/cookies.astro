@@ -1,0 +1,204 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const lastUpdated = '2 fevrier 2026';
+
+const sections = [
+  {
+    id: 'what-are-cookies',
+    title: 'Qu\'est-ce qu\'un cookie',
+    content: `
+      <p>Les cookies sont de petits fichiers texte stockes sur votre appareil (ordinateur, tablette ou mobile) lorsque vous visitez un site web. Ils sont largement utilises pour faire fonctionner les sites web plus efficacement et pour fournir des informations aux proprietaires de sites.</p>
+      <p>Les cookies nous aident a comprendre comment vous interagissez avec notre plateforme, a memoriser vos preferences et a ameliorer votre experience globale.</p>
+    `,
+  },
+  {
+    id: 'types-of-cookies',
+    title: 'Types de cookies que nous utilisons',
+    content: `
+      <h4>Cookies essentiels</h4>
+      <p>Ces cookies sont necessaires au bon fonctionnement du site web. Ils permettent des fonctionnalites de base telles que la securite, la gestion du reseau et l'accessibilite. Vous ne pouvez pas refuser ces cookies car le site ne fonctionnerait pas correctement sans eux.</p>
+      <ul>
+        <li><strong>Cookies de session :</strong> Maintiennent votre etat de connexion lors de votre navigation.</li>
+        <li><strong>Cookies de securite :</strong> Aident a detecter et prevenir les menaces de securite.</li>
+        <li><strong>Cookies de preferences :</strong> Memorisent vos preferences de langue et de theme.</li>
+      </ul>
+
+      <h4>Cookies analytiques</h4>
+      <p>Ces cookies nous aident a comprendre comment les visiteurs interagissent avec notre site en collectant et rapportant des informations de maniere anonyme. Cela nous aide a ameliorer notre plateforme.</p>
+      <ul>
+        <li><strong>Pages vues :</strong> Suivent les pages les plus frequemment visitees.</li>
+        <li><strong>Temps sur le site :</strong> Mesurent la duree des sessions utilisateur.</li>
+        <li><strong>Parcours de navigation :</strong> Comprennent comment les utilisateurs naviguent sur le site.</li>
+        <li><strong>Suivi des erreurs :</strong> Identifient et corrigent les problemes techniques.</li>
+      </ul>
+
+      <h4>Cookies marketing</h4>
+      <p>Ces cookies sont utilises pour diffuser des publicites pertinentes et suivre l'efficacite de nos campagnes marketing. Ils peuvent etre definis par nous ou par des partenaires publicitaires tiers.</p>
+      <ul>
+        <li><strong>Publicite :</strong> Diffusent des annonces personnalisees selon vos interets.</li>
+        <li><strong>Reciblage :</strong> Affichent des annonces pertinentes sur d'autres sites que vous visitez.</li>
+        <li><strong>Suivi de campagnes :</strong> Mesurent le succes des initiatives marketing.</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'cookie-list',
+    title: 'Cookies que nous utilisons',
+    content: `
+      <p>Voici la liste des principaux cookies que nous utilisons :</p>
+
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b border-border">
+            <th class="text-left py-2 pr-4 font-semibold">Nom du cookie</th>
+            <th class="text-left py-2 pr-4 font-semibold">Type</th>
+            <th class="text-left py-2 pr-4 font-semibold">Duree</th>
+            <th class="text-left py-2 font-semibold">Objectif</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-border/50">
+            <td class="py-2 pr-4">session_id</td>
+            <td class="py-2 pr-4">Essentiel</td>
+            <td class="py-2 pr-4">Session</td>
+            <td class="py-2">Maintient votre session de connexion</td>
+          </tr>
+          <tr class="border-b border-border/50">
+            <td class="py-2 pr-4">theme</td>
+            <td class="py-2 pr-4">Essentiel</td>
+            <td class="py-2 pr-4">1 an</td>
+            <td class="py-2">Stocke votre preference de theme (clair/sombre)</td>
+          </tr>
+          <tr class="border-b border-border/50">
+            <td class="py-2 pr-4">cookie_consent</td>
+            <td class="py-2 pr-4">Essentiel</td>
+            <td class="py-2 pr-4">1 an</td>
+            <td class="py-2">Stocke vos preferences de cookies</td>
+          </tr>
+          <tr class="border-b border-border/50">
+            <td class="py-2 pr-4">_ga</td>
+            <td class="py-2 pr-4">Analytique</td>
+            <td class="py-2 pr-4">2 ans</td>
+            <td class="py-2">Google Analytics - distingue les utilisateurs</td>
+          </tr>
+          <tr class="border-b border-border/50">
+            <td class="py-2 pr-4">_gid</td>
+            <td class="py-2 pr-4">Analytique</td>
+            <td class="py-2 pr-4">24 heures</td>
+            <td class="py-2">Google Analytics - distingue les utilisateurs</td>
+          </tr>
+        </tbody>
+      </table>
+    `,
+  },
+  {
+    id: 'managing-cookies',
+    title: 'Gerer vos preferences de cookies',
+    content: `
+      <h4>Sur notre site web</h4>
+      <p>Vous pouvez gerer vos preferences de cookies a tout moment en cliquant sur le lien "Parametres des cookies" dans le pied de page de notre site. Cela vous permettra de :</p>
+      <ul>
+        <li>Voir quels cookies sont actives</li>
+        <li>Activer ou desactiver les cookies analytiques</li>
+        <li>Activer ou desactiver les cookies marketing</li>
+      </ul>
+
+      <h4>Dans votre navigateur</h4>
+      <p>La plupart des navigateurs vous permettent de controler les cookies via leurs parametres. Vous pouvez generalement :</p>
+      <ul>
+        <li>Voir quels cookies sont stockes sur votre appareil</li>
+        <li>Supprimer des cookies individuels ou tous les cookies</li>
+        <li>Bloquer les cookies de sites specifiques ou de tous les sites</li>
+        <li>Bloquer les cookies tiers</li>
+        <li>Accepter tous les cookies</li>
+      </ul>
+      <p>Veuillez noter que le blocage de tous les cookies peut affecter le fonctionnement de notre site et d'autres sites que vous visitez.</p>
+
+      <h4>Instructions par navigateur</h4>
+      <ul>
+        <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google Chrome</a></li>
+        <li><a href="https://support.mozilla.org/fr/kb/cookies-informations-sites-enregistrent" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Mozilla Firefox</a></li>
+        <li><a href="https://support.apple.com/fr-fr/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Safari</a></li>
+        <li><a href="https://support.microsoft.com/fr-fr/microsoft-edge/supprimer-les-cookies-dans-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Microsoft Edge</a></li>
+      </ul>
+    `,
+  },
+  {
+    id: 'third-party',
+    title: 'Cookies tiers',
+    content: `
+      <p>Certains cookies sur notre site sont definis par des services tiers. Ceux-ci incluent :</p>
+      <ul>
+        <li><strong>Google Analytics :</strong> Nous utilisons Google Analytics pour comprendre comment les visiteurs utilisent notre site. Google peut utiliser ces donnees conformement a sa <a href="https://policies.google.com/privacy?hl=fr" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Politique de confidentialite</a>.</li>
+        <li><strong>Stripe :</strong> Notre processeur de paiement peut definir des cookies pour la prevention de la fraude et le traitement des paiements.</li>
+        <li><strong>YouTube :</strong> Si vous regardez des videos integrees, YouTube peut definir des cookies conformement a sa politique de confidentialite.</li>
+      </ul>
+      <p>Nous ne controlons pas ces cookies tiers. Veuillez consulter les politiques de confidentialite respectives de ces services pour plus d'informations.</p>
+    `,
+  },
+  {
+    id: 'updates',
+    title: 'Mises a jour de cette politique',
+    content: `
+      <p>Nous pouvons mettre a jour cette Politique des Cookies de temps en temps pour refleter les changements dans nos pratiques ou pour des raisons legales, operationnelles ou reglementaires.</p>
+      <p>Lorsque nous apportons des modifications, nous mettrons a jour la date de "Derniere mise a jour" en haut de cette page. Nous vous encourageons a consulter periodiquement cette politique pour rester informe de notre utilisation des cookies.</p>
+    `,
+  },
+  {
+    id: 'contact',
+    title: 'Nous contacter',
+    content: `
+      <p>Si vous avez des questions sur notre utilisation des cookies ou sur cette Politique des Cookies, veuillez nous contacter :</p>
+      <ul>
+        <li><strong>Email :</strong> privacy@lms-platform.com</li>
+        <li><strong>Courrier :</strong> LMS Platform, 123 Learning Street, San Francisco, CA 94102, USA</li>
+      </ul>
+    `,
+  },
+];
+---
+
+<Layout
+  title="Politique des Cookies - LMS Platform"
+  description="Decouvrez comment LMS Platform utilise les cookies et comment vous pouvez gerer vos preferences de cookies."
+  canonicalPath="/fr/cookies"
+  lang="fr"
+>
+  <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-muted">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl sm:text-5xl font-bold text-foreground">Politique des Cookies</h1>
+      <p class="mt-4 text-muted-foreground">Derniere mise a jour : {lastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Table of Contents -->
+      <nav class="mb-12 p-6 bg-muted rounded-lg">
+        <h2 class="font-semibold text-foreground mb-4">Table des matieres</h2>
+        <ul class="space-y-2">
+          {sections.map((section, index) => (
+            <li>
+              <a href={`#${section.id}`} class="text-muted-foreground hover:text-primary transition-colors">
+                {index + 1}. {section.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Content -->
+      <div class="prose prose-gray dark:prose-invert max-w-none">
+        {sections.map((section, index) => (
+          <div id={section.id} class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold text-foreground mb-4">
+              {index + 1}. {section.title}
+            </h2>
+            <div class="text-muted-foreground space-y-4 [&_h4]:text-foreground [&_h4]:font-semibold [&_h4]:mt-6 [&_h4]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:text-muted-foreground [&_strong]:text-foreground [&_table]:w-full [&_table]:text-sm" set:html={section.content} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,261 @@
+---
+/**
+ * Cookie Consent Banner
+ * GDPR-compliant cookie consent with customizable preferences
+ */
+import { useTranslations, getLocalizedPath, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<!-- Cookie Consent Banner -->
+<div
+  id="cookie-banner"
+  class="fixed bottom-0 left-0 right-0 z-50 p-4 hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cookie-title"
+>
+  <div class="max-w-4xl mx-auto">
+    <div class="glass border border-border rounded-2xl shadow-lg p-6 animate-slide-up">
+      <!-- Main Banner -->
+      <div id="cookie-main" class="space-y-4">
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex-1">
+            <h2 id="cookie-title" class="text-lg font-semibold text-foreground mb-2">
+              {t('cookie.title')}
+            </h2>
+            <p class="text-sm text-muted-foreground">
+              {t('cookie.description')}
+            </p>
+            <p class="text-sm text-muted-foreground mt-2">
+              {t('cookie.learnMore')}{' '}
+              <a
+                href={getLocalizedPath('/cookies', lang)}
+                class="text-primary hover:underline"
+              >
+                {t('cookie.policy')}
+              </a>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button
+            id="cookie-reject"
+            class="px-6 py-2.5 text-sm font-medium border border-border rounded-lg hover:bg-accent transition-colors"
+          >
+            {t('cookie.rejectAll')}
+          </button>
+          <button
+            id="cookie-customize-btn"
+            class="px-6 py-2.5 text-sm font-medium border border-border rounded-lg hover:bg-accent transition-colors"
+          >
+            {t('cookie.customize')}
+          </button>
+          <button
+            id="cookie-accept"
+            class="px-6 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            {t('cookie.acceptAll')}
+          </button>
+        </div>
+      </div>
+
+      <!-- Customize Panel (hidden by default) -->
+      <div id="cookie-customize" class="hidden space-y-4">
+        <h2 class="text-lg font-semibold text-foreground">
+          {t('cookie.customize')}
+        </h2>
+
+        <!-- Cookie Categories -->
+        <div class="space-y-4">
+          <!-- Essential (always on) -->
+          <div class="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <h3 class="font-medium text-foreground">{t('cookie.essential.title')}</h3>
+                <span class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                  {lang === 'fr' ? 'Toujours actif' : 'Always on'}
+                </span>
+              </div>
+              <p class="text-sm text-muted-foreground mt-1">
+                {t('cookie.essential.description')}
+              </p>
+            </div>
+            <div class="pt-1">
+              <input
+                type="checkbox"
+                checked
+                disabled
+                class="w-5 h-5 rounded border-border"
+              />
+            </div>
+          </div>
+
+          <!-- Analytics -->
+          <div class="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
+            <div class="flex-1">
+              <h3 class="font-medium text-foreground">{t('cookie.analytics.title')}</h3>
+              <p class="text-sm text-muted-foreground mt-1">
+                {t('cookie.analytics.description')}
+              </p>
+            </div>
+            <div class="pt-1">
+              <input
+                type="checkbox"
+                id="cookie-analytics"
+                class="w-5 h-5 rounded border-border accent-primary cursor-pointer"
+              />
+            </div>
+          </div>
+
+          <!-- Marketing -->
+          <div class="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
+            <div class="flex-1">
+              <h3 class="font-medium text-foreground">{t('cookie.marketing.title')}</h3>
+              <p class="text-sm text-muted-foreground mt-1">
+                {t('cookie.marketing.description')}
+              </p>
+            </div>
+            <div class="pt-1">
+              <input
+                type="checkbox"
+                id="cookie-marketing"
+                class="w-5 h-5 rounded border-border accent-primary cursor-pointer"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button
+            id="cookie-back"
+            class="px-6 py-2.5 text-sm font-medium border border-border rounded-lg hover:bg-accent transition-colors"
+          >
+            {lang === 'fr' ? 'Retour' : 'Back'}
+          </button>
+          <button
+            id="cookie-save"
+            class="px-6 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            {t('cookie.savePreferences')}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const COOKIE_CONSENT_KEY = 'cookie_consent';
+    const banner = document.getElementById('cookie-banner');
+    const mainPanel = document.getElementById('cookie-main');
+    const customizePanel = document.getElementById('cookie-customize');
+    const analyticsCheckbox = document.getElementById('cookie-analytics');
+    const marketingCheckbox = document.getElementById('cookie-marketing');
+
+    // Check if consent already given
+    function getConsent() {
+      try {
+        const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+        return consent ? JSON.parse(consent) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    // Save consent
+    function saveConsent(preferences) {
+      const consent = {
+        essential: true, // Always true
+        analytics: preferences.analytics || false,
+        marketing: preferences.marketing || false,
+        timestamp: new Date().toISOString(),
+      };
+      localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consent));
+      hideBanner();
+      applyConsent(consent);
+    }
+
+    // Apply consent (enable/disable tracking)
+    function applyConsent(consent) {
+      // Dispatch custom event for analytics integration
+      window.dispatchEvent(new CustomEvent('cookieConsentUpdated', {
+        detail: consent
+      }));
+
+      // If analytics enabled, you could initialize GA/Plausible here
+      if (consent.analytics) {
+        // Example: window.gtag && window.gtag('consent', 'update', { analytics_storage: 'granted' });
+      }
+
+      if (consent.marketing) {
+        // Example: enable marketing pixels
+      }
+    }
+
+    // Show/hide banner
+    function showBanner() {
+      banner?.classList.remove('hidden');
+    }
+
+    function hideBanner() {
+      banner?.classList.add('hidden');
+    }
+
+    // Show customize panel
+    function showCustomize() {
+      mainPanel?.classList.add('hidden');
+      customizePanel?.classList.remove('hidden');
+    }
+
+    // Show main panel
+    function showMain() {
+      customizePanel?.classList.add('hidden');
+      mainPanel?.classList.remove('hidden');
+    }
+
+    // Accept all
+    document.getElementById('cookie-accept')?.addEventListener('click', () => {
+      saveConsent({ analytics: true, marketing: true });
+    });
+
+    // Reject all
+    document.getElementById('cookie-reject')?.addEventListener('click', () => {
+      saveConsent({ analytics: false, marketing: false });
+    });
+
+    // Customize button
+    document.getElementById('cookie-customize-btn')?.addEventListener('click', showCustomize);
+
+    // Back button
+    document.getElementById('cookie-back')?.addEventListener('click', showMain);
+
+    // Save preferences
+    document.getElementById('cookie-save')?.addEventListener('click', () => {
+      saveConsent({
+        analytics: analyticsCheckbox?.checked || false,
+        marketing: marketingCheckbox?.checked || false,
+      });
+    });
+
+    // Initialize
+    const existingConsent = getConsent();
+    if (existingConsent) {
+      // Apply existing consent
+      applyConsent(existingConsent);
+    } else {
+      // Show banner after a small delay for better UX
+      setTimeout(showBanner, 1000);
+    }
+  })();
+</script>

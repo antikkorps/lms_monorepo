@@ -134,6 +134,22 @@ export const translations = {
     'legal.terms.title': 'Terms of Service',
     'legal.lastUpdated': 'Last updated',
     'legal.toc': 'Table of Contents',
+
+    // Cookie Consent
+    'cookie.title': 'We value your privacy',
+    'cookie.description': 'We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.',
+    'cookie.acceptAll': 'Accept All',
+    'cookie.rejectAll': 'Reject All',
+    'cookie.customize': 'Customize',
+    'cookie.savePreferences': 'Save Preferences',
+    'cookie.essential.title': 'Essential',
+    'cookie.essential.description': 'Required for the website to function properly.',
+    'cookie.analytics.title': 'Analytics',
+    'cookie.analytics.description': 'Help us understand how visitors interact with our website.',
+    'cookie.marketing.title': 'Marketing',
+    'cookie.marketing.description': 'Used to deliver personalized advertisements.',
+    'cookie.learnMore': 'Learn more about our',
+    'cookie.policy': 'Cookie Policy',
   },
   fr: {
     // Navigation
@@ -259,6 +275,22 @@ export const translations = {
     'legal.terms.title': 'Conditions d\'Utilisation',
     'legal.lastUpdated': 'Derniere mise a jour',
     'legal.toc': 'Table des Matieres',
+
+    // Cookie Consent
+    'cookie.title': 'Nous respectons votre vie privee',
+    'cookie.description': 'Nous utilisons des cookies pour ameliorer votre experience de navigation, proposer du contenu personnalise et analyser notre trafic. En cliquant sur "Tout accepter", vous consentez a notre utilisation des cookies.',
+    'cookie.acceptAll': 'Tout accepter',
+    'cookie.rejectAll': 'Tout refuser',
+    'cookie.customize': 'Personnaliser',
+    'cookie.savePreferences': 'Enregistrer',
+    'cookie.essential.title': 'Essentiels',
+    'cookie.essential.description': 'Necessaires au bon fonctionnement du site.',
+    'cookie.analytics.title': 'Analytiques',
+    'cookie.analytics.description': 'Nous aident a comprendre comment les visiteurs utilisent notre site.',
+    'cookie.marketing.title': 'Marketing',
+    'cookie.marketing.description': 'Utilises pour diffuser des publicites personnalisees.',
+    'cookie.learnMore': 'En savoir plus sur notre',
+    'cookie.policy': 'Politique des Cookies',
   },
 } as const;
 
