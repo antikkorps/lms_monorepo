@@ -70,12 +70,12 @@ function handleRetry() {
       <CardHeader>
         <CardTitle class="flex items-center gap-2 text-destructive">
           <AlertTriangle class="h-5 w-5" />
-          {{ t('error.boundary.title') }}
+          {{ t('errors.boundary.title') }}
         </CardTitle>
       </CardHeader>
       <CardContent class="space-y-4">
         <p class="text-sm text-muted-foreground">
-          {{ fallbackMessage || errorMessage || t('error.boundary.description') }}
+          {{ fallbackMessage || errorMessage || t('errors.boundary.description') }}
         </p>
 
         <div v-if="errorDetails" class="text-xs text-muted-foreground bg-muted p-2 rounded font-mono overflow-auto max-h-32">
@@ -84,7 +84,7 @@ function handleRetry() {
 
         <Button v-if="showRetry" variant="outline" size="sm" @click="handleRetry">
           <RefreshCw class="mr-2 h-4 w-4" />
-          {{ t('error.boundary.retry') }}
+          {{ t('errors.boundary.retry') }}
         </Button>
       </CardContent>
     </Card>

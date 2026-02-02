@@ -5,7 +5,6 @@
 
 import type {
   Invoice,
-  InvoiceListItem,
   InvoiceListOptions,
   InvoiceListResult,
 } from '@shared/types';

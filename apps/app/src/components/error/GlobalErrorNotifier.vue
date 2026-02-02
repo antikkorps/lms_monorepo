@@ -21,11 +21,11 @@ watch(
 
     const message = errorService.getUserMessage(newError);
 
-    toast.error(t('error.globalTitle', 'An error occurred'), {
+    toast.error(t('errors.globalTitle', 'An error occurred'), {
       description: message,
       duration: 6000,
       action: {
-        label: t('error.dismiss', 'Dismiss'),
+        label: t('errors.dismiss', 'Dismiss'),
         onClick: () => errorService.dismissError(newError.id),
       },
     });

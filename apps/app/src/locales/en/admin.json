@@ -100,6 +100,55 @@
     "instructor": "Instructor",
     "learner": "Learner"
   },
+  "invoices": {
+    "title": "Invoices",
+    "subtitle": "View and download your organization's invoices.",
+    "refresh": "Refresh",
+    "error": {
+      "loadFailed": "Failed to load invoices",
+      "retry": "Retry"
+    },
+    "stats": {
+      "total": "Total Invoices",
+      "allTime": "All time",
+      "paid": "Paid",
+      "totalAmount": "{amount} total",
+      "open": "Open",
+      "awaitingPayment": "Awaiting payment"
+    },
+    "filters": {
+      "allStatus": "All Statuses",
+      "paid": "Paid",
+      "open": "Open",
+      "draft": "Draft",
+      "void": "Void"
+    },
+    "table": {
+      "title": "Invoice History",
+      "description": "A list of all invoices for your organization.",
+      "invoice": "Invoice",
+      "date": "Date",
+      "status": "Status",
+      "dueDate": "Due Date",
+      "amount": "Amount",
+      "actions": "Actions"
+    },
+    "status": {
+      "paid": "Paid",
+      "open": "Open",
+      "draft": "Draft",
+      "uncollectible": "Uncollectible",
+      "void": "Void"
+    },
+    "empty": {
+      "title": "No invoices yet",
+      "message": "Invoices will appear here once you have billing activity."
+    },
+    "actions": {
+      "view": "View",
+      "download": "Download PDF"
+    }
+  },
   "refunds": {
     "title": "Refund Requests",
     "subtitle": "Review and manage refund requests from learners",

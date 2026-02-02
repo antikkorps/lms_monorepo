@@ -42,13 +42,15 @@ function mapStripeStatus(status: Stripe.Invoice.Status | null): InvoiceStatus {
  * Map Stripe line item to our generic line item
  */
 function mapLineItem(item: Stripe.InvoiceLineItem): InvoiceLineItem {
+  const quantity = item.quantity || 1;
+  // Calculate unit amount from total amount divided by quantity
+  const unitAmount = Math.round(item.amount / quantity);
+
   return {
     id: item.id,
     description: item.description || 'Item',
-    quantity: item.quantity || 1,
-    unitAmount: item.unit_amount_excluding_tax
-      ? parseInt(item.unit_amount_excluding_tax, 10)
-      : (item.amount / (item.quantity || 1)),
+    quantity,
+    unitAmount,
     amount: item.amount,
     currency: item.currency.toUpperCase(),
   };
@@ -70,7 +72,7 @@ function mapInvoice(invoice: Stripe.Invoice): Invoice {
     amountRemaining: invoice.amount_remaining,
     subtotal: invoice.subtotal,
     total: invoice.total,
-    tax: invoice.tax,
+    tax: null, // Tax details available via line items if needed
     createdAt: new Date(invoice.created * 1000),
     dueDate: invoice.due_date ? new Date(invoice.due_date * 1000) : null,
     paidAt: invoice.status_transitions?.paid_at
@@ -82,9 +84,9 @@ function mapInvoice(invoice: Stripe.Invoice): Invoice {
     periodEnd: invoice.period_end
       ? new Date(invoice.period_end * 1000)
       : null,
-    description: invoice.description,
-    hostedUrl: invoice.hosted_invoice_url,
-    pdfUrl: invoice.invoice_pdf,
+    description: invoice.description ?? null,
+    hostedUrl: invoice.hosted_invoice_url ?? null,
+    pdfUrl: invoice.invoice_pdf ?? null,
     lines: lines.map(mapLineItem),
     metadata: (invoice.metadata || {}) as Record<string, string>,
   };
@@ -107,8 +109,8 @@ function mapInvoiceListItem(invoice: Stripe.Invoice): InvoiceListItem {
     paidAt: invoice.status_transitions?.paid_at
       ? new Date(invoice.status_transitions.paid_at * 1000)
       : null,
-    description: invoice.description,
-    hostedUrl: invoice.hosted_invoice_url,
+    description: invoice.description ?? null,
+    hostedUrl: invoice.hosted_invoice_url ?? null,
   };
 }
 
@@ -159,15 +161,15 @@ export class StripeInvoiceProvider implements InvoiceProvider {
       params.status = status;
     }
 
-    if (startDate) {
-      params.created = { gte: Math.floor(startDate.getTime() / 1000) };
-    }
-
-    if (endDate) {
-      params.created = {
-        ...(params.created as Stripe.InvoiceListParams.Created || {}),
-        lte: Math.floor(endDate.getTime() / 1000),
-      };
+    if (startDate || endDate) {
+      const created: Stripe.RangeQueryParam = {};
+      if (startDate) {
+        created.gte = Math.floor(startDate.getTime() / 1000);
+      }
+      if (endDate) {
+        created.lte = Math.floor(endDate.getTime() / 1000);
+      }
+      params.created = created;
     }
 
     const response = await this.stripe.invoices.list(params);

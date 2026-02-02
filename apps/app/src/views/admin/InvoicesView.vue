@@ -9,13 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select } from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -35,7 +29,10 @@ import {
   RefreshCw,
   ExternalLink,
 } from 'lucide-vue-next';
+import { useI18n } from 'vue-i18n';
 import type { InvoiceStatus } from '@shared/types';
+
+const { t } = useI18n();
 
 const {
   isLoading,
@@ -79,14 +76,7 @@ async function handleRefresh() {
 }
 
 function getStatusLabel(status: InvoiceStatus): string {
-  const labels: Record<InvoiceStatus, string> = {
-    paid: 'Paid',
-    open: 'Open',
-    draft: 'Draft',
-    uncollectible: 'Uncollectible',
-    void: 'Void',
-  };
-  return labels[status] || status;
+  return t(`admin.invoices.status.${status}`);
 }
 
 onMounted(() => {
@@ -99,12 +89,12 @@ onMounted(() => {
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-bold tracking-tight">Invoices</h1>
-        <p class="text-muted-foreground">View and download your organization's invoices.</p>
+        <h1 class="text-3xl font-bold tracking-tight">{{ t('admin.invoices.title') }}</h1>
+        <p class="text-muted-foreground">{{ t('admin.invoices.subtitle') }}</p>
       </div>
       <Button variant="outline" @click="handleRefresh" :disabled="isLoading">
         <RefreshCw class="mr-2 h-4 w-4" :class="{ 'animate-spin': isLoading }" />
-        Refresh
+        {{ t('admin.invoices.refresh') }}
       </Button>
     </div>
 
@@ -134,10 +124,12 @@ onMounted(() => {
       <CardContent class="flex items-center gap-4 py-6">
         <AlertCircle class="h-8 w-8 text-destructive" />
         <div>
-          <p class="font-medium">Failed to load invoices</p>
+          <p class="font-medium">{{ t('admin.invoices.error.loadFailed') }}</p>
           <p class="text-sm text-muted-foreground">{{ error }}</p>
         </div>
-        <Button variant="outline" class="ml-auto" @click="handleRefresh">Retry</Button>
+        <Button variant="outline" class="ml-auto" @click="handleRefresh">
+          {{ t('admin.invoices.error.retry') }}
+        </Button>
       </CardContent>
     </Card>
 
@@ -147,39 +139,39 @@ onMounted(() => {
       <div class="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Total Invoices</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('admin.invoices.stats.total') }}</CardTitle>
             <Receipt class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ invoices.length }}</div>
             <p class="text-xs text-muted-foreground">
-              All time
+              {{ t('admin.invoices.stats.allTime') }}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Paid</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('admin.invoices.stats.paid') }}</CardTitle>
             <CreditCard class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ paidInvoices.length }}</div>
             <p class="text-xs text-muted-foreground">
-              {{ invoices.length > 0 ? formatAmount(totalPaid, paidInvoices[0]?.currency || 'EUR') : '€0.00' }} total
+              {{ t('admin.invoices.stats.totalAmount', { amount: invoices.length > 0 ? formatAmount(totalPaid, paidInvoices[0]?.currency || 'EUR') : '€0.00' }) }}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-sm font-medium">Open</CardTitle>
+            <CardTitle class="text-sm font-medium">{{ t('admin.invoices.stats.open') }}</CardTitle>
             <Clock class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">{{ openInvoices.length }}</div>
             <p class="text-xs text-muted-foreground">
-              Awaiting payment
+              {{ t('admin.invoices.stats.awaitingPayment') }}
             </p>
           </CardContent>
         </Card>
@@ -187,35 +179,34 @@ onMounted(() => {
 
       <!-- Filters -->
       <div class="flex items-center gap-4">
-        <Select :model-value="statusFilter" @update:model-value="handleStatusChange">
-          <SelectTrigger class="w-[180px]">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="paid">Paid</SelectItem>
-            <SelectItem value="open">Open</SelectItem>
-            <SelectItem value="draft">Draft</SelectItem>
-            <SelectItem value="void">Void</SelectItem>
-          </SelectContent>
+        <Select
+          :model-value="statusFilter"
+          class="w-[180px]"
+          @update:model-value="handleStatusChange"
+        >
+          <option value="all">{{ t('admin.invoices.filters.allStatus') }}</option>
+          <option value="paid">{{ t('admin.invoices.filters.paid') }}</option>
+          <option value="open">{{ t('admin.invoices.filters.open') }}</option>
+          <option value="draft">{{ t('admin.invoices.filters.draft') }}</option>
+          <option value="void">{{ t('admin.invoices.filters.void') }}</option>
         </Select>
       </div>
 
       <!-- Invoices Table -->
       <Card>
         <CardHeader>
-          <CardTitle>Invoice History</CardTitle>
+          <CardTitle>{{ t('admin.invoices.table.title') }}</CardTitle>
           <CardDescription>
-            A list of all invoices for your organization.
+            {{ t('admin.invoices.table.description') }}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <!-- Empty State -->
           <div v-if="!hasInvoices" class="flex flex-col items-center justify-center py-12 text-center">
             <FileText class="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 class="text-lg font-medium">No invoices yet</h3>
+            <h3 class="text-lg font-medium">{{ t('admin.invoices.empty.title') }}</h3>
             <p class="text-sm text-muted-foreground max-w-sm mt-1">
-              Invoices will appear here once you have billing activity.
+              {{ t('admin.invoices.empty.message') }}
             </p>
           </div>
 
@@ -223,12 +214,12 @@ onMounted(() => {
           <Table v-else>
             <TableHeader>
               <TableRow>
-                <TableHead>Invoice</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead class="text-right">Amount</TableHead>
-                <TableHead class="text-right">Actions</TableHead>
+                <TableHead>{{ t('admin.invoices.table.invoice') }}</TableHead>
+                <TableHead>{{ t('admin.invoices.table.date') }}</TableHead>
+                <TableHead>{{ t('admin.invoices.table.status') }}</TableHead>
+                <TableHead>{{ t('admin.invoices.table.dueDate') }}</TableHead>
+                <TableHead class="text-right">{{ t('admin.invoices.table.amount') }}</TableHead>
+                <TableHead class="text-right">{{ t('admin.invoices.table.actions') }}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -263,13 +254,15 @@ onMounted(() => {
                       as="a"
                       :href="invoice.hostedUrl"
                       target="_blank"
+                      :title="t('admin.invoices.actions.view')"
                     >
                       <ExternalLink class="h-4 w-4" />
-                      <span class="sr-only">View</span>
+                      <span class="sr-only">{{ t('admin.invoices.actions.view') }}</span>
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
+                      :title="t('admin.invoices.actions.download')"
                       @click="handleDownload(invoice.id)"
                       :disabled="isDownloading === invoice.id"
                     >
@@ -277,7 +270,7 @@ onMounted(() => {
                         class="h-4 w-4"
                         :class="{ 'animate-pulse': isDownloading === invoice.id }"
                       />
-                      <span class="sr-only">Download PDF</span>
+                      <span class="sr-only">{{ t('admin.invoices.actions.download') }}</span>
                     </Button>
                   </div>
                 </TableCell>
