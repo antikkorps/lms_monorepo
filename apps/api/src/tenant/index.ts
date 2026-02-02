@@ -31,6 +31,11 @@ import {
   unassignSeat,
   requestLicenseRefund,
 } from './licenses.controller.js';
+import {
+  listInvoices,
+  getInvoice,
+  getInvoicePdf,
+} from './invoices.controller.js';
 
 export const tenantRouter = new Router({ prefix: '/tenant' });
 
@@ -71,3 +76,9 @@ tenantRouter.get('/licenses/:id', ...licenseAdminAuth, getLicense);
 tenantRouter.post('/licenses/:id/assign', ...licenseAdminAuth, assignSeat);
 tenantRouter.delete('/licenses/:id/assignments/:userId', ...licenseAdminAuth, unassignSeat);
 tenantRouter.post('/licenses/:id/refund', ...tenantAdminAuth, requestLicenseRefund);
+
+// Invoices (Stripe invoices for tenant billing)
+const invoiceAuth = [authenticate, requireTenant];
+tenantRouter.get('/invoices', ...invoiceAuth, listInvoices);
+tenantRouter.get('/invoices/:id', ...invoiceAuth, getInvoice);
+tenantRouter.get('/invoices/:id/pdf', ...invoiceAuth, getInvoicePdf);

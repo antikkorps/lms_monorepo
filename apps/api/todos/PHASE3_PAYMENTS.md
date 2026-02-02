@@ -1,6 +1,6 @@
 # API - Phase 3: Payments & Licensing
 
-## Modified: 2026-02-01
+## Modified: 2026-02-02
 
 ### Completed
 
@@ -28,13 +28,14 @@
 - [x] Webhook handling for b2b_license payments
 - [x] Database migration for license tables
 
-### Pending
+### Completed - Invoice Management B2B (Done: 2026-02-02)
+- [x] GET /tenant/invoices - Liste factures via Stripe API
+- [x] GET /tenant/invoices/:id - Détail facture
+- [x] GET /tenant/invoices/:id/pdf - URL vers PDF Stripe
+- [x] Frontend: Page liste factures dashboard tenant
+- [x] Architecture découplée avec InvoiceProvider interface (provider-agnostic)
 
-#### Invoice Management B2B (Next: 2026-02-02)
-- [ ] GET /tenant/invoices - Liste factures via Stripe API
-- [ ] GET /tenant/invoices/:id - Détail facture
-- [ ] Download PDF - URL signée vers PDF Stripe
-- [ ] Frontend: Page liste factures dashboard tenant
+### Pending
 
 #### Future
 - [ ] Volume discount tiers for large seat purchases
