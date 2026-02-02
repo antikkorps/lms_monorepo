@@ -154,6 +154,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/admin/SeatManagementView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/admin/invoices',
+    name: 'admin-invoices',
+    component: () => import('../views/admin/InvoicesView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Instructor routes (instructors and admins)
   {

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import { Toaster } from '@/components/ui/sonner';
 import { AppLayout, AuthLayout } from '@/layouts';
+import { GlobalErrorNotifier } from '@/components/error';
 
 const route = useRoute();
 
@@ -25,4 +26,5 @@ const layout = computed(() => {
   </component>
   <RouterView v-else />
   <Toaster position="top-right" :duration="4000" rich-colors />
+  <GlobalErrorNotifier />
 </template>

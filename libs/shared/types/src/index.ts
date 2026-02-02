@@ -4,3 +4,4 @@
 export * from './api.types.js';
 export * from './auth.types.js';
 export * from './domain.types.js';
+export * from './invoice.types.js';

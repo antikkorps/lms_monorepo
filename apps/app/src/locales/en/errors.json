@@ -1,4 +1,14 @@
 {
+  "title": "Something went wrong",
+  "unknown": "An unexpected error occurred",
+  "retry": "Try Again",
+  "dismiss": "Dismiss",
+  "globalTitle": "An error occurred",
+  "boundary": {
+    "title": "Something went wrong",
+    "description": "An error occurred while loading this section.",
+    "retry": "Try Again"
+  },
   "http": {
     "400": "Bad request",
     "401": "Please sign in to continue",
