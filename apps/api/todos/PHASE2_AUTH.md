@@ -1,6 +1,6 @@
 # API - Phase 2: Authentication & Security
 
-## Modified: 2026-02-02
+## Modified: 2026-02-04
 
 ### Completed
 
@@ -25,17 +25,20 @@
 ### Pending
 
 #### Email Configuration
-- [ ] Configure production email provider (SendGrid / Resend / AWS SES)
+- [x] Configure production email provider (Mailjet) (Done: 2026-02-04)
 - [ ] Test email delivery for all templates (verification, password-reset, invitation)
 - [ ] Add email delivery monitoring / logging
 
 #### SSO Configuration
-- [ ] Configure Google OAuth credentials (production)
-- [ ] Configure Microsoft OAuth credentials (production)
-- [ ] Test SSO flows end-to-end
+
+- [x] Configure Google OAuth credentials (Done: 2026-02-04)
+- [x] Test Google SSO flow end-to-end (Done: 2026-02-04)
+- [ ] Configure Microsoft OAuth credentials
+- [ ] Test Microsoft SSO flow
 - [ ] Add SSO provider selection UI in Vue app
 
 #### Optional
+
 - [ ] Implement session fingerprinting
 
 ### Notes

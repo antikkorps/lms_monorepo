@@ -78,4 +78,4 @@ export interface EmailTemplate {
   text: string;
 }
 
-export type EmailProviderType = 'console' | 'postmark' | 'sendgrid';
+export type EmailProviderType = 'console' | 'postmark' | 'sendgrid' | 'mailjet';

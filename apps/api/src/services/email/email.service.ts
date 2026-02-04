@@ -2,6 +2,7 @@ import { config } from '../../config/index.js';
 import { logger } from '../../utils/logger.js';
 import { createCircuitBreaker } from './circuit-breaker.js';
 import { createConsoleProvider } from './providers/console.provider.js';
+import { createMailjetProvider } from './providers/mailjet.provider.js';
 import { createPostmarkProvider } from './providers/postmark.provider.js';
 import { createSendGridProvider } from './providers/sendgrid.provider.js';
 import {
@@ -47,6 +48,13 @@ class EmailService {
 
       case 'sendgrid':
         baseProvider = createSendGridProvider(config.email.sendgridApiKey);
+        break;
+
+      case 'mailjet':
+        baseProvider = createMailjetProvider(
+          config.email.mailjetApiKey,
+          config.email.mailjetApiSecret
+        );
         break;
 
       case 'console':
