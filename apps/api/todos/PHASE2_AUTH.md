@@ -37,6 +37,13 @@
 - [ ] Test Microsoft SSO flow
 - [ ] Add SSO provider selection UI in Vue app
 
+#### SSO B2B (Tenant-specific)
+
+- [ ] Create API endpoint to update tenant SSO config (PUT /tenants/:id/sso)
+- [ ] Create admin UI for tenant SSO configuration
+- [ ] Support OIDC discovery URL for enterprise IdPs (Okta, Auth0, Keycloak)
+- [ ] Add documentation for B2B clients to configure their SSO
+
 #### Optional
 
 - [ ] Implement session fingerprinting
