@@ -4,8 +4,24 @@
     "outDir": "../../dist/out-tsc",
     "declaration": true,
     "types": ["node"],
-    "composite": false
+    "composite": false,
+    "rootDir": "../../",
+    "paths": {
+      "@shared/schemas": ["../../libs/shared/schemas/src/index.ts"],
+      "@shared/types": ["../../libs/shared/types/src/index.ts"],
+      "@shared/ui": ["../../libs/shared/ui/src/index.ts"],
+      "@api/*": ["./src/*"]
+    }
   },
-  "exclude": ["vitest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"]
+  "exclude": [
+    "vitest.config.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "../../libs/**/*.spec.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "../../libs/shared/schemas/src/**/*.ts",
+    "../../libs/shared/types/src/**/*.ts"
+  ]
 }

@@ -26,6 +26,12 @@
       "cache": true
     }
   },
+  "sync": {
+    "applyChanges": false,
+    "generatorPresets": {
+      "@nx/js:typescript-sync": false
+    }
+  },
   "plugins": [
     {
       "plugin": "@nx/js/typescript",

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import Koa from 'koa';
 import { config } from './config/index.js';
 import { setupMiddlewares } from './middlewares/index.js';

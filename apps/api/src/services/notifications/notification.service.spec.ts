@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { NotificationType, DigestFrequency } from '../../database/models/enums.js';
+import { NotificationType } from '../../database/models/enums.js';
 
 // =============================================================================
 // Module Mocks

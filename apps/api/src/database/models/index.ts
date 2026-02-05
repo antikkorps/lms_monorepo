@@ -29,6 +29,7 @@ export { Note } from './Note.js';
 export { Notification, type NotificationData } from './Notification.js';
 export { NotificationPreference, type NotificationPreferenceFlags } from './NotificationPreference.js';
 export { TenantCourseLicense, TenantCourseLicenseAssignment } from './TenantCourseLicense.js';
+export { EmailLog, type EmailType, type EmailStatus } from './EmailLog.js';
 
 // Import for associations setup
 import { Tenant } from './Tenant.js';
@@ -51,6 +52,7 @@ import { Note } from './Note.js';
 import { Notification } from './Notification.js';
 import { NotificationPreference } from './NotificationPreference.js';
 import { TenantCourseLicense, TenantCourseLicenseAssignment } from './TenantCourseLicense.js';
+import { EmailLog } from './EmailLog.js';
 
 /**
  * Setup all model associations
@@ -562,4 +564,5 @@ export const models = {
   NotificationPreference,
   TenantCourseLicense,
   TenantCourseLicenseAssignment,
+  EmailLog,
 } as const;

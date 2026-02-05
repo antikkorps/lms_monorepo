@@ -17,6 +17,7 @@ import { uploadsRouter } from '../uploads/index.js';
 import { certificateRoutes } from '../certificates/index.js';
 import { paymentsRouter, webhooksRouter } from '../payments/index.js';
 import { notificationsRouter } from '../notifications/index.js';
+import { adminRouter } from '../admin/index.js';
 
 const apiRouter = new Router({ prefix: '/api/v1' });
 
@@ -58,6 +59,8 @@ apiRouter.use(webhooksRouter.routes());
 apiRouter.use(webhooksRouter.allowedMethods());
 apiRouter.use(notificationsRouter.routes());
 apiRouter.use(notificationsRouter.allowedMethods());
+apiRouter.use(adminRouter.routes());
+apiRouter.use(adminRouter.allowedMethods());
 
 export function setupRoutes(app: Koa): void {
   app.use(apiRouter.routes());

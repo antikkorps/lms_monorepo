@@ -1,6 +1,6 @@
 # API - Phase 2: Authentication & Security
 
-## Modified: 2026-02-01
+## Modified: 2026-02-05
 
 ### Completed
 
@@ -24,7 +24,30 @@
 
 ### Pending
 
-- [ ] Implement session fingerprinting (optional)
+#### Email Configuration
+- [x] Configure production email provider (Mailjet) (Done: 2026-02-04)
+- [ ] Test email delivery for all templates (verification, password-reset, invitation)
+- [ ] Add email delivery monitoring / logging
+
+#### SSO Configuration
+
+- [x] Configure Google OAuth credentials (Done: 2026-02-04)
+- [x] Test Google SSO flow end-to-end (Done: 2026-02-04)
+- [x] Configure Microsoft OAuth credentials (Done: 2026-02-05)
+- [x] Test Microsoft SSO flow (Done: 2026-02-05)
+- [x] Add SSO provider selection UI in Vue app (Already done)
+
+#### SSO B2B (Tenant-specific)
+
+- [x] Create API endpoint to update tenant SSO config (GET/PUT/DELETE /tenant/sso) (Done: 2026-02-05)
+- [x] Create admin UI for tenant SSO configuration (TenantSSOView.vue) (Done: 2026-02-05)
+- [x] Support OIDC discovery URL for enterprise IdPs (Okta, Auth0, Keycloak) (Done: 2026-02-05)
+- [x] Add documentation for B2B clients to configure their SSO (docs/guides/b2b-sso-setup.md) (Done: 2026-02-05)
+- [x] Update LoginView.vue to support tenant-specific SSO (?tenant=slug) (Done: 2026-02-05)
+
+#### Optional
+
+- [ ] Implement session fingerprinting
 
 ### Notes
 

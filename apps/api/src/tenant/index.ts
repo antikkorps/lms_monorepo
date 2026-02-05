@@ -36,6 +36,12 @@ import {
   getInvoice,
   getInvoicePdf,
 } from './invoices.controller.js';
+import {
+  getTenantSSO,
+  updateTenantSSO,
+  deleteTenantSSO,
+  testTenantSSO,
+} from './sso.controller.js';
 
 export const tenantRouter = new Router({ prefix: '/tenant' });
 
@@ -82,3 +88,9 @@ const invoiceAuth = [authenticate, requireTenant];
 tenantRouter.get('/invoices', ...invoiceAuth, listInvoices);
 tenantRouter.get('/invoices/:id', ...invoiceAuth, getInvoice);
 tenantRouter.get('/invoices/:id/pdf', ...invoiceAuth, getInvoicePdf);
+
+// SSO Configuration (tenant admin only)
+tenantRouter.get('/sso', ...tenantAdminAuth, getTenantSSO);
+tenantRouter.put('/sso', ...tenantAdminAuth, updateTenantSSO);
+tenantRouter.delete('/sso', ...tenantAdminAuth, deleteTenantSSO);
+tenantRouter.post('/sso/test', ...tenantAdminAuth, testTenantSSO);
