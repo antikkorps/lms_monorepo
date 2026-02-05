@@ -1,6 +1,6 @@
 import CircuitBreaker from 'opossum';
 import { logger } from '../../utils/logger.js';
-import type { EmailProvider, SendEmailOptions } from './email.types.js';
+import type { EmailProvider, SendEmailOptions, SendResult } from './email.types.js';
 
 const CIRCUIT_BREAKER_OPTIONS = {
   timeout: 10000, // 10 seconds
@@ -33,9 +33,10 @@ export function createCircuitBreaker(provider: EmailProvider): EmailProvider {
 
   return {
     name: `${provider.name}:circuit-breaker`,
-    async send(options: SendEmailOptions): Promise<void> {
+    async send(options: SendEmailOptions): Promise<SendResult> {
       try {
-        await breaker.fire(options);
+        const result = await breaker.fire(options) as SendResult;
+        return result;
       } catch (error) {
         // Log error but don't throw - email failure shouldn't block user actions
         logger.error(
@@ -48,8 +49,11 @@ export function createCircuitBreaker(provider: EmailProvider): EmailProvider {
           },
           'Email send failed (circuit breaker)'
         );
-        // Rethrow so caller knows it failed, but they can decide to ignore
-        throw error;
+        // Return failure result instead of throwing
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Circuit breaker error',
+        };
       }
     },
   };

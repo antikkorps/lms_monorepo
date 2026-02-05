@@ -348,18 +348,50 @@ export const useAuthStore = defineStore('auth', () => {
    */
   async function getSSOAuthUrl(
     provider: 'google' | 'microsoft' | 'oidc',
+    tenantSlug?: string,
   ): Promise<string | null> {
     isLoading.value = true;
     error.value = null;
 
     try {
+      const params: Record<string, string> = {
+        redirect_uri: window.location.origin + '/dashboard',
+      };
+      if (tenantSlug) {
+        params.tenant = tenantSlug;
+      }
+
       const response = await apiClient.get<{ authUrl: string }>(
         `/auth/sso/${provider}/authorize`,
-        {
-          redirect_uri: window.location.origin + '/dashboard',
-        },
+        params,
       );
       return response.authUrl;
+    } catch (err) {
+      if (err instanceof ApiRequestError) {
+        error.value = err.message;
+      } else {
+        error.value = 'An unexpected error occurred';
+      }
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /**
+   * Get available SSO providers for a tenant
+   */
+  async function getTenantSSOProviders(
+    tenantSlug: string,
+  ): Promise<Array<{ type: string; name: string; enabled: boolean }> | null> {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const response = await apiClient.get<{
+        providers: Array<{ type: string; name: string; enabled: boolean }>;
+      }>('/auth/sso/providers', { tenant: tenantSlug });
+      return response.providers;
     } catch (err) {
       if (err instanceof ApiRequestError) {
         error.value = err.message;
@@ -405,6 +437,7 @@ export const useAuthStore = defineStore('auth', () => {
     verifyEmail,
     resendVerification,
     getSSOAuthUrl,
+    getTenantSSOProviders,
     clearError,
   };
 });

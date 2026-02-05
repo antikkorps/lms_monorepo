@@ -433,5 +433,82 @@
       "deleteSuccess": "Question supprimée avec succès",
       "deleteError": "Échec de la suppression de la question"
     }
+  },
+  "sso": {
+    "title": "Authentification unique (SSO)",
+    "subtitle": "Configurez le SSO pour permettre aux membres de l'équipe de se connecter avec votre fournisseur d'identité.",
+    "enabled": "SSO Activé",
+    "disabled": "SSO Désactivé",
+    "loading": "Chargement de la configuration SSO...",
+    "error": {
+      "loadFailed": "Impossible de charger la configuration SSO",
+      "saveFailed": "Impossible de sauvegarder la configuration SSO",
+      "testFailed": "Impossible de tester la configuration SSO",
+      "deleteFailed": "Impossible de désactiver le SSO",
+      "retry": "Réessayer"
+    },
+    "provider": {
+      "label": "Fournisseur d'identité",
+      "placeholder": "Sélectionner un fournisseur",
+      "google": "Google Workspace",
+      "microsoft": "Microsoft Azure AD",
+      "oidc": "Fournisseur OIDC (Okta, Auth0, Keycloak...)"
+    },
+    "fields": {
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Entrez votre OAuth Client ID",
+      "clientIdHint": "Le client ID de votre fournisseur d'identité",
+      "clientSecret": "Client Secret",
+      "clientSecretPlaceholder": "Entrez votre OAuth Client Secret",
+      "clientSecretHint": "Le client secret sera stocké de manière sécurisée",
+      "issuer": "URL de l'émetteur",
+      "issuerPlaceholder": "https://votre-domaine.okta.com",
+      "issuerHint": "L'URL de base de votre fournisseur OIDC (doit supporter /.well-known/openid-configuration)",
+      "tenantId": "ID du tenant Azure AD",
+      "tenantIdPlaceholder": "Entrez votre ID de tenant Azure AD",
+      "tenantIdHint": "Disponible dans Azure Portal > Azure Active Directory > Vue d'ensemble"
+    },
+    "loginUrl": {
+      "title": "URL de connexion pour votre équipe",
+      "description": "Partagez cette URL avec les membres de votre équipe pour se connecter via SSO :",
+      "copy": "Copier l'URL",
+      "copied": "URL copiée !"
+    },
+    "actions": {
+      "test": "Tester la configuration",
+      "save": "Enregistrer et activer le SSO",
+      "disable": "Désactiver le SSO",
+      "update": "Mettre à jour"
+    },
+    "test": {
+      "title": "Test de configuration",
+      "testing": "Test en cours...",
+      "success": "La configuration est valide",
+      "failed": "Le test de configuration a échoué",
+      "discoverySuccess": "OIDC Discovery réussi",
+      "discoveryFailed": "OIDC Discovery échoué",
+      "endpoints": "Points de terminaison découverts"
+    },
+    "confirmDisable": {
+      "title": "Désactiver le SSO",
+      "description": "Êtes-vous sûr de vouloir désactiver le SSO ? Les membres de l'équipe devront utiliser l'authentification par mot de passe.",
+      "cancel": "Annuler",
+      "confirm": "Désactiver le SSO"
+    },
+    "toast": {
+      "saved": "Configuration SSO enregistrée avec succès",
+      "disabled": "Le SSO a été désactivé",
+      "testSuccess": "Test de configuration réussi",
+      "testFailed": "Test de configuration échoué : {error}"
+    },
+    "help": {
+      "title": "Instructions de configuration",
+      "description": "Suivez ces étapes pour configurer le SSO pour votre organisation :",
+      "step1": "Créez une application OAuth dans votre fournisseur d'identité",
+      "step2": "Définissez l'URI de redirection sur : {redirectUri}",
+      "step3": "Copiez le Client ID et le Client Secret",
+      "step4": "Entrez les identifiants ci-dessus et testez la configuration",
+      "docsLink": "Voir le guide de configuration détaillé"
+    }
   }
 }

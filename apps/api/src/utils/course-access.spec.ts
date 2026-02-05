@@ -35,7 +35,7 @@ import {
   canEditCourse,
   type AuthenticatedUser,
 } from './course-access.js';
-import { Course, Purchase, Lesson, Tenant, TenantCourseLicense, TenantCourseLicenseAssignment } from '../database/models/index.js';
+import { Course, Purchase, Lesson, Tenant, TenantCourseLicense } from '../database/models/index.js';
 
 // =============================================================================
 // Test Helpers

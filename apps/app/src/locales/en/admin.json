@@ -433,5 +433,82 @@
       "deleteSuccess": "Question deleted successfully",
       "deleteError": "Failed to delete question"
     }
+  },
+  "sso": {
+    "title": "Single Sign-On (SSO)",
+    "subtitle": "Configure SSO to allow team members to sign in with your identity provider.",
+    "enabled": "SSO Enabled",
+    "disabled": "SSO Disabled",
+    "loading": "Loading SSO configuration...",
+    "error": {
+      "loadFailed": "Failed to load SSO configuration",
+      "saveFailed": "Failed to save SSO configuration",
+      "testFailed": "Failed to test SSO configuration",
+      "deleteFailed": "Failed to disable SSO",
+      "retry": "Retry"
+    },
+    "provider": {
+      "label": "Identity Provider",
+      "placeholder": "Select a provider",
+      "google": "Google Workspace",
+      "microsoft": "Microsoft Azure AD",
+      "oidc": "OIDC Provider (Okta, Auth0, Keycloak...)"
+    },
+    "fields": {
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Enter your OAuth Client ID",
+      "clientIdHint": "The client ID from your identity provider",
+      "clientSecret": "Client Secret",
+      "clientSecretPlaceholder": "Enter your OAuth Client Secret",
+      "clientSecretHint": "The client secret will be stored securely",
+      "issuer": "Issuer URL",
+      "issuerPlaceholder": "https://your-domain.okta.com",
+      "issuerHint": "The base URL of your OIDC provider (must support /.well-known/openid-configuration)",
+      "tenantId": "Azure AD Tenant ID",
+      "tenantIdPlaceholder": "Enter your Azure AD Tenant ID",
+      "tenantIdHint": "Found in Azure Portal > Azure Active Directory > Overview"
+    },
+    "loginUrl": {
+      "title": "Login URL for your team",
+      "description": "Share this URL with your team members to sign in using SSO:",
+      "copy": "Copy URL",
+      "copied": "URL copied!"
+    },
+    "actions": {
+      "test": "Test Configuration",
+      "save": "Save & Enable SSO",
+      "disable": "Disable SSO",
+      "update": "Update Configuration"
+    },
+    "test": {
+      "title": "Configuration Test",
+      "testing": "Testing configuration...",
+      "success": "Configuration is valid",
+      "failed": "Configuration test failed",
+      "discoverySuccess": "OIDC Discovery successful",
+      "discoveryFailed": "OIDC Discovery failed",
+      "endpoints": "Discovered endpoints"
+    },
+    "confirmDisable": {
+      "title": "Disable SSO",
+      "description": "Are you sure you want to disable SSO? Team members will need to use password authentication instead.",
+      "cancel": "Cancel",
+      "confirm": "Disable SSO"
+    },
+    "toast": {
+      "saved": "SSO configuration saved successfully",
+      "disabled": "SSO has been disabled",
+      "testSuccess": "Configuration test passed",
+      "testFailed": "Configuration test failed: {error}"
+    },
+    "help": {
+      "title": "Setup Instructions",
+      "description": "Follow these steps to configure SSO for your organization:",
+      "step1": "Create an OAuth application in your identity provider",
+      "step2": "Set the redirect URI to: {redirectUri}",
+      "step3": "Copy the Client ID and Client Secret",
+      "step4": "Enter the credentials above and test the configuration",
+      "docsLink": "View detailed setup guide"
+    }
   }
 }

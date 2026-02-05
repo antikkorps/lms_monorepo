@@ -31,11 +31,13 @@ export const config = {
 
   // Email
   email: {
-    provider: process.env.EMAIL_PROVIDER || 'console', // 'console' | 'postmark' | 'sendgrid'
+    provider: process.env.EMAIL_PROVIDER || 'console', // 'console' | 'postmark' | 'sendgrid' | 'mailjet'
     from: process.env.EMAIL_FROM || 'noreply@example.com',
     fromName: process.env.EMAIL_FROM_NAME || 'LMS Platform',
     postmarkApiKey: process.env.POSTMARK_API_KEY || '',
     sendgridApiKey: process.env.SENDGRID_API_KEY || '',
+    mailjetApiKey: process.env.MAILJET_API_KEY || '',
+    mailjetApiSecret: process.env.MAILJET_API_SECRET || '',
   },
 
   // SSO (OAuth2/OpenID Connect)

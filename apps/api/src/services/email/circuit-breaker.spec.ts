@@ -42,11 +42,14 @@ describe('Circuit Breaker', () => {
     expect(mockProvider.send).toHaveBeenCalledWith(testEmail);
   });
 
-  it('should throw error when provider fails', async () => {
+  it('should return error result when provider fails', async () => {
     mockProvider.send = vi.fn().mockRejectedValue(new Error('Provider error'));
     const wrapped = createCircuitBreaker(mockProvider);
 
-    await expect(wrapped.send(testEmail)).rejects.toThrow('Provider error');
+    const result = await wrapped.send(testEmail);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Provider error');
   });
 
   it('should handle multiple successful calls', async () => {
@@ -64,8 +67,9 @@ describe('Circuit Breaker', () => {
     mockProvider.send = vi.fn().mockRejectedValue(new Error('Send failed'));
     const wrapped = createCircuitBreaker(mockProvider);
 
-    await expect(wrapped.send(testEmail)).rejects.toThrow();
+    const result = await wrapped.send(testEmail);
 
+    expect(result.success).toBe(false);
     expect(logger.error).toHaveBeenCalledWith(
       expect.objectContaining({
         provider: 'test-provider',
@@ -84,11 +88,8 @@ describe('Circuit Breaker', () => {
 
       // volumeThreshold is 5, so we need 5+ failures
       for (let i = 0; i < 6; i++) {
-        try {
-          await wrapped.send(testEmail);
-        } catch {
-          // Expected to fail
-        }
+        const result = await wrapped.send(testEmail);
+        expect(result.success).toBe(false);
       }
 
       // Check that the circuit opened (logger.warn called with 'OPENED')

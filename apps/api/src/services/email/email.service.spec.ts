@@ -7,17 +7,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Mock providers before importing the service
 const mockConsoleProvider = {
   name: 'console',
-  send: vi.fn().mockResolvedValue(undefined),
+  send: vi.fn().mockResolvedValue({ success: true, messageId: 'test-id' }),
 };
 
 const mockPostmarkProvider = {
   name: 'postmark',
-  send: vi.fn().mockResolvedValue(undefined),
+  send: vi.fn().mockResolvedValue({ success: true, messageId: 'test-id' }),
 };
 
 const mockSendGridProvider = {
   name: 'sendgrid',
-  send: vi.fn().mockResolvedValue(undefined),
+  send: vi.fn().mockResolvedValue({ success: true, messageId: 'test-id' }),
 };
 
 vi.mock('./providers/console.provider.js', () => ({
@@ -58,6 +58,13 @@ vi.mock('../../utils/logger.js', () => ({
   },
 }));
 
+// Mock EmailLog model to avoid database connection
+vi.mock('../../database/models/EmailLog.js', () => ({
+  EmailLog: {
+    create: vi.fn().mockResolvedValue({}),
+  },
+}));
+
 // =============================================================================
 // Tests
 // =============================================================================
@@ -94,7 +101,7 @@ describe('EmailService', () => {
       vi.resetModules();
 
       // Setup mocks for this test
-      const mockProvider = { name: 'test', send: vi.fn().mockResolvedValue(undefined) };
+      const mockProvider = { name: 'test', send: vi.fn().mockResolvedValue({ success: true, messageId: 'test-id' }) };
 
       vi.doMock('./providers/console.provider.js', () => ({
         createConsoleProvider: () => mockProvider,
@@ -140,7 +147,7 @@ describe('EmailService', () => {
     it('should call provider with correct template', async () => {
       vi.resetModules();
 
-      const mockProvider = { name: 'test', send: vi.fn().mockResolvedValue(undefined) };
+      const mockProvider = { name: 'test', send: vi.fn().mockResolvedValue({ success: true, messageId: 'test-id' }) };
 
       vi.doMock('./providers/console.provider.js', () => ({
         createConsoleProvider: () => mockProvider,
@@ -186,7 +193,7 @@ describe('EmailService', () => {
     it('should call provider with correct template', async () => {
       vi.resetModules();
 
-      const mockProvider = { name: 'test', send: vi.fn().mockResolvedValue(undefined) };
+      const mockProvider = { name: 'test', send: vi.fn().mockResolvedValue({ success: true, messageId: 'test-id' }) };
 
       vi.doMock('./providers/console.provider.js', () => ({
         createConsoleProvider: () => mockProvider,
@@ -243,7 +250,7 @@ describe('EmailService', () => {
 
       const mockProvider = {
         name: 'test',
-        send: vi.fn().mockRejectedValue(new Error('Send failed')),
+        send: vi.fn().mockResolvedValue({ success: false, error: 'Send failed' }),
       };
 
       vi.doMock('./providers/console.provider.js', () => ({

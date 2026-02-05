@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LocalStorageProvider } from './local.storage.js';
 import * as fs from 'fs/promises';
-import * as path from 'path';
 
 // Mock fs/promises
 vi.mock('fs/promises');
