@@ -7,9 +7,15 @@ export interface SendEmailOptions {
   text?: string;
 }
 
+export interface SendResult {
+  success: boolean;
+  messageId?: string;
+  error?: string;
+}
+
 export interface EmailProvider {
   name: string;
-  send(options: SendEmailOptions): Promise<void>;
+  send(options: SendEmailOptions): Promise<SendResult>;
 }
 
 export interface VerificationEmailData {

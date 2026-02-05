@@ -160,6 +160,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/admin/InvoicesView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/admin/sso',
+    name: 'admin-sso',
+    component: () => import('../views/admin/TenantSSOView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Instructor routes (instructors and admins)
   {

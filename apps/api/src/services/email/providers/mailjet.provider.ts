@@ -1,6 +1,6 @@
 import Mailjet from 'node-mailjet';
 import { config } from '../../../config/index.js';
-import type { EmailProvider, SendEmailOptions } from '../email.types.js';
+import type { EmailProvider, SendEmailOptions, SendResult } from '../email.types.js';
 
 export class MailjetEmailProvider implements EmailProvider {
   name = 'mailjet';
@@ -13,25 +13,48 @@ export class MailjetEmailProvider implements EmailProvider {
     this.client = new Mailjet({ apiKey, apiSecret });
   }
 
-  async send(options: SendEmailOptions): Promise<void> {
-    await this.client.post('send', { version: 'v3.1' }).request({
-      Messages: [
-        {
-          From: {
-            Email: config.email.from,
-            Name: config.email.fromName,
-          },
-          To: [
-            {
-              Email: options.to,
+  async send(options: SendEmailOptions): Promise<SendResult> {
+    try {
+      const response = await this.client.post('send', { version: 'v3.1' }).request({
+        Messages: [
+          {
+            From: {
+              Email: config.email.from,
+              Name: config.email.fromName,
             },
-          ],
-          Subject: options.subject,
-          HTMLPart: options.html,
-          TextPart: options.text,
-        },
-      ],
-    });
+            To: [
+              {
+                Email: options.to,
+              },
+            ],
+            Subject: options.subject,
+            HTMLPart: options.html,
+            TextPart: options.text,
+          },
+        ],
+      });
+
+      // Extract message ID from Mailjet response
+      const body = response.body as {
+        Messages?: Array<{
+          Status: string;
+          To?: Array<{ MessageID: number }>;
+        }>;
+      };
+
+      const messageId = body.Messages?.[0]?.To?.[0]?.MessageID?.toString();
+
+      return {
+        success: true,
+        messageId,
+      };
+    } catch (error) {
+      const err = error as Error;
+      return {
+        success: false,
+        error: err.message,
+      };
+    }
   }
 }
 

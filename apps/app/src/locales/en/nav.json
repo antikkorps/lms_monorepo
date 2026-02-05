@@ -26,6 +26,7 @@
     "invitations": "Invitations",
     "seats": "Seat Management",
     "invoices": "Invoices",
+    "sso": "SSO Configuration",
     "refunds": "Refund Requests"
   },
   "accessibility": {

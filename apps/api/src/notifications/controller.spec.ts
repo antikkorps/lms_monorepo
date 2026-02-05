@@ -279,14 +279,11 @@ describe('NotificationsController', () => {
       };
       mockPreferenceService.update.mockResolvedValue(mockUpdatedPreferences);
 
-      const ctx = createMockContext({
-        request: {
-          body: {
-            emailEnabled: { lesson_completed: false },
-            digestFrequency: DigestFrequency.DAILY,
-          },
-        },
-      });
+      const ctx = createMockContext();
+      ctx.request.body = {
+        emailEnabled: { lesson_completed: false },
+        digestFrequency: DigestFrequency.DAILY,
+      };
 
       const { updatePreferences } = await import('./controller.js');
       await updatePreferences(ctx);

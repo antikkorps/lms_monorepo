@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Context } from 'koa';
-import { UserRole, PurchaseStatus, CourseStatus } from '../database/models/enums.js';
+import { UserRole, PurchaseStatus } from '../database/models/enums.js';
 
 // =============================================================================
 // Module Mocks
@@ -43,7 +43,7 @@ vi.mock('../config/index.js', () => ({
 
 // Import after mocks
 import { processRefund } from './controller.js';
-import { Purchase, Course } from '../database/models/index.js';
+import { Purchase } from '../database/models/index.js';
 import { stripeService } from '../services/stripe/index.js';
 
 // =============================================================================
@@ -315,7 +315,6 @@ describe('Refund Handler', () => {
   describe('createRefundHandler', () => {
     it('should create refund handler with required methods', async () => {
       // This tests the handler factory pattern
-      const Stripe = vi.fn();
       const mockStripe = {
         refunds: {
           create: vi.fn().mockResolvedValue({
@@ -369,15 +368,8 @@ describe('Webhook Controller - charge.refunded', () => {
     // For now, we verify the purchase update logic
 
     // Simulate what the webhook handler does
-    const charge = {
-      id: 'ch_test123',
-      payment_intent: 'pi_test123',
-      amount: 4999,
-      amount_refunded: 4999,
-      refunds: {
-        data: [{ id: 're_test123' }],
-      },
-    };
+    // The charge.refunded event contains:
+    // { id, payment_intent, amount, amount_refunded, refunds: { data: [...] } }
 
     // The handler would:
     // 1. Find purchase by payment_intent
@@ -411,8 +403,9 @@ describe('Re-purchase after Refund', () => {
     // The key is that we only block if status === COMPLETED
 
     // User has a REFUNDED purchase
-    vi.mocked(Purchase.findOne).mockImplementation(({ where }: { where: Record<string, unknown> }) => {
-      if (where.status === PurchaseStatus.COMPLETED) {
+    vi.mocked(Purchase.findOne).mockImplementation((options) => {
+      const where = options?.where as Record<string, unknown> | undefined;
+      if (where?.status === PurchaseStatus.COMPLETED) {
         return Promise.resolve(null); // No COMPLETED purchase
       }
       return Promise.resolve(createMockPurchase({ status: PurchaseStatus.REFUNDED }) as never);
