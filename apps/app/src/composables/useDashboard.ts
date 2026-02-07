@@ -6,6 +6,7 @@
 import type { LearnerDashboardStats, CourseListItem, Badge } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi } from './useApi';
+import { logger } from '../lib/logger';
 
 // Extended course type for dashboard with last accessed info
 export interface DashboardCourse extends CourseListItem {
@@ -152,7 +153,7 @@ export function useDashboard() {
 
     // Prevent rapid successive calls
     if (windowState.fetchInProgress || now - windowState.lastFetchTime < FETCH_THROTTLE_MS) {
-      console.log('[useDashboard] Skipping fetch - throttled or in progress');
+      logger.debug('[useDashboard] Skipping fetch - throttled or in progress');
       return;
     }
 

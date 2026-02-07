@@ -191,11 +191,14 @@ export interface LessonItem {
   isAccessible?: boolean;
   videoUrl?: string | null;
   videoId?: string | null;
+  videoPlaybackUrl?: string | null;
+  transcodingStatus?: TranscodingStatus | null;
 }
 
 export type LessonType = 'video' | 'quiz' | 'document' | 'assignment';
 export type CourseStatus = 'draft' | 'published' | 'archived';
 export type SupportedLocale = 'en' | 'fr';
+export type TranscodingStatus = 'pending' | 'processing' | 'ready' | 'error';
 
 // Lesson content for specific locale
 export interface LessonContent {
@@ -207,6 +210,11 @@ export interface LessonContent {
   videoId: string | null;
   transcript: string | null;
   description: string | null;
+  transcodingStatus: TranscodingStatus | null;
+  videoSourceKey: string | null;
+  videoPlaybackUrl: string | null;
+  videoStreamId: string | null;
+  transcodingError: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -218,6 +226,8 @@ export interface LocalizedLesson {
   type: LessonType;
   videoUrl: string | null;
   videoId: string | null;
+  videoPlaybackUrl: string | null;
+  transcodingStatus: TranscodingStatus | null;
   duration: number;
   position: number;
   isFree: boolean;

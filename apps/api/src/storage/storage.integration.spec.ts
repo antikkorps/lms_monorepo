@@ -15,6 +15,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { logger } from '../utils/logger.js';
 
 const SHOULD_RUN = process.env.R2_INTEGRATION_TEST === 'true';
 
@@ -30,7 +31,7 @@ describe('R2 Storage Integration Tests', () => {
 
   beforeAll(async () => {
     if (!SHOULD_RUN) {
-      console.log('⏭️  Skipping R2 integration tests (set R2_INTEGRATION_TEST=true to run)');
+      logger.info('⏭️  Skipping R2 integration tests (set R2_INTEGRATION_TEST=true to run)');
       return;
     }
 
@@ -58,9 +59,9 @@ describe('R2 Storage Integration Tests', () => {
     // Cleanup: delete test file
     try {
       await provider.delete(testFileKey);
-      console.log(`🧹 Cleaned up test file: ${testFileKey}`);
+      logger.info(`🧹 Cleaned up test file: ${testFileKey}`);
     } catch (err) {
-      console.warn(`⚠️  Failed to cleanup test file: ${testFileKey}`);
+      logger.warn(`⚠️  Failed to cleanup test file: ${testFileKey}`);
     }
   });
 
@@ -84,8 +85,8 @@ describe('R2 Storage Integration Tests', () => {
     expect(result.provider).toBe('r2');
     expect(result.url).toBeTruthy();
 
-    console.log(`✅ Uploaded test file: ${result.key}`);
-    console.log(`   URL: ${result.url}`);
+    logger.info(`✅ Uploaded test file: ${result.key}`);
+    logger.info(`   URL: ${result.url}`);
   });
 
   runTest('should check if uploaded file exists', async () => {
@@ -99,7 +100,7 @@ describe('R2 Storage Integration Tests', () => {
     const nonExistent = await provider.exists('tests/this-file-does-not-exist-12345.txt');
     expect(nonExistent).toBe(false);
 
-    console.log(`✅ Exists check passed`);
+    logger.info(`✅ Exists check passed`);
   });
 
   runTest('should generate a signed download URL', async () => {
@@ -113,8 +114,8 @@ describe('R2 Storage Integration Tests', () => {
     expect(signedUrl).toContain('X-Amz-Signature');
     expect(signedUrl).toContain('X-Amz-Expires=300');
 
-    console.log(`✅ Generated signed URL (expires in 5 min)`);
-    console.log(`   ${signedUrl.substring(0, 100)}...`);
+    logger.info(`✅ Generated signed URL (expires in 5 min)`);
+    logger.info(`   ${signedUrl.substring(0, 100)}...`);
   });
 
   runTest('should generate a signed upload URL', async () => {
@@ -128,7 +129,7 @@ describe('R2 Storage Integration Tests', () => {
     expect(signedUrl).toBeTruthy();
     expect(signedUrl).toContain('X-Amz-Signature');
 
-    console.log(`✅ Generated signed upload URL for: ${uploadKey}`);
+    logger.info(`✅ Generated signed upload URL for: ${uploadKey}`);
   });
 
   runTest('should delete the test file', async () => {
@@ -142,7 +143,7 @@ describe('R2 Storage Integration Tests', () => {
     const exists = await provider.exists(testFileKey);
     expect(exists).toBe(false);
 
-    console.log(`✅ Deleted test file: ${testFileKey}`);
+    logger.info(`✅ Deleted test file: ${testFileKey}`);
 
     // Clear key so afterAll doesn't try to delete again
     testFileKey = '';
@@ -173,7 +174,7 @@ describe('Local Storage Integration Tests', () => {
     const fs = await import('fs/promises');
     try {
       await fs.rm(testDir, { recursive: true, force: true });
-      console.log(`🧹 Cleaned up test directory: ${testDir}`);
+      logger.info(`🧹 Cleaned up test directory: ${testDir}`);
     } catch {
       // Ignore
     }
@@ -193,7 +194,7 @@ describe('Local Storage Integration Tests', () => {
     expect(result.provider).toBe('local');
     expect(result.url).toContain('/uploads/');
 
-    console.log(`✅ Uploaded local test file: ${result.key}`);
+    logger.info(`✅ Uploaded local test file: ${result.key}`);
   });
 
   runTest('should verify local file exists', async () => {
@@ -202,7 +203,7 @@ describe('Local Storage Integration Tests', () => {
     const exists = await provider.exists(testFileKey);
     expect(exists).toBe(true);
 
-    console.log(`✅ Local file exists check passed`);
+    logger.info(`✅ Local file exists check passed`);
   });
 
   runTest('should delete local file', async () => {
@@ -213,6 +214,6 @@ describe('Local Storage Integration Tests', () => {
     const exists = await provider.exists(testFileKey);
     expect(exists).toBe(false);
 
-    console.log(`✅ Deleted local test file`);
+    logger.info(`✅ Deleted local test file`);
   });
 });

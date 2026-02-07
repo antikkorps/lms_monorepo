@@ -71,6 +71,7 @@ const {
   hideControls,
   handleKeydown,
   setupEventListeners,
+  setupHls,
 } = useVideoPlayer(videoRef, {
   autoplay: props.autoplay,
   startTime: props.startTime,
@@ -82,7 +83,7 @@ const {
 const playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 onMounted(() => {
-  setupEventListeners();
+  setupEventListeners(props.src);
 
   // Add keyboard listener to container
   containerRef.value?.addEventListener('keydown', handleKeydown);
@@ -121,9 +122,9 @@ function handleContainerDoubleClick(e: MouseEvent) {
 
 watch(
   () => props.src,
-  () => {
-    if (videoRef.value) {
-      videoRef.value.load();
+  (newSrc) => {
+    if (videoRef.value && newSrc) {
+      setupHls(newSrc);
     }
   }
 );
@@ -143,7 +144,6 @@ watch(
     <video
       ref="videoRef"
       class="h-full w-full"
-      :src="src"
       :poster="poster"
       playsinline
       @click.stop="togglePlay"

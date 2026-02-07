@@ -8,7 +8,7 @@ import {
   type NonAttribute,
 } from 'sequelize';
 import { sequelize } from '../sequelize.js';
-import { SupportedLocale } from './enums.js';
+import { SupportedLocale, TranscodingStatus } from './enums.js';
 import type { Lesson } from './Lesson.js';
 
 /**
@@ -28,6 +28,11 @@ export class LessonContent extends Model<
   declare videoId: CreationOptional<string | null>;
   declare transcript: CreationOptional<string | null>;
   declare description: CreationOptional<string | null>;
+  declare transcodingStatus: CreationOptional<TranscodingStatus | null>;
+  declare videoSourceKey: CreationOptional<string | null>;
+  declare videoPlaybackUrl: CreationOptional<string | null>;
+  declare videoStreamId: CreationOptional<string | null>;
+  declare transcodingError: CreationOptional<string | null>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
@@ -77,6 +82,32 @@ LessonContent.init(
     description: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+    transcodingStatus: {
+      type: DataTypes.ENUM(...Object.values(TranscodingStatus)),
+      allowNull: true,
+      defaultValue: null,
+      field: 'transcoding_status',
+    },
+    videoSourceKey: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: 'video_source_key',
+    },
+    videoPlaybackUrl: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: 'video_playback_url',
+    },
+    videoStreamId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'video_stream_id',
+    },
+    transcodingError: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: 'transcoding_error',
     },
     createdAt: {
       type: DataTypes.DATE,

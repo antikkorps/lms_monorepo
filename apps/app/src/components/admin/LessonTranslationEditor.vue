@@ -21,6 +21,7 @@ import {
 import { useLessonContent, type UpsertLessonContentInput } from '@/composables/useLessonContent';
 import type { SupportedLocale, LessonType } from '@shared/types';
 import type { UploadResult } from '@/composables/useUpload';
+import { RefreshCw, Clock, Zap } from 'lucide-vue-next';
 
 const props = defineProps<{
   lessonId: string;
@@ -44,6 +45,9 @@ const {
   fetchContents,
   upsertContent,
   deleteContent,
+  startTranscodingPolling,
+  stopTranscodingPolling,
+  retryTranscoding,
 } = useLessonContent(props.lessonId);
 
 const activeLocale = ref<SupportedLocale>('en');
@@ -60,9 +64,19 @@ const formData = ref<UpsertLessonContentInput>({
   title: null,
   videoUrl: null,
   videoId: null,
+  videoSourceKey: null,
   transcript: null,
   description: null,
 });
+
+const isRetrying = ref(false);
+
+const currentContent = computed(() => getContentByLocale(activeLocale.value));
+const transcodingStatus = computed(() => currentContent.value?.transcodingStatus ?? null);
+const transcodingError = computed(() => currentContent.value?.transcodingError ?? null);
+const isTranscoding = computed(() =>
+  transcodingStatus.value === 'pending' || transcodingStatus.value === 'processing'
+);
 
 const localeLabels: Record<SupportedLocale, string> = {
   en: 'English',
@@ -82,9 +96,16 @@ function loadLocaleData(locale: SupportedLocale) {
     title: content?.title ?? null,
     videoUrl: content?.videoUrl ?? null,
     videoId: content?.videoId ?? null,
+    videoSourceKey: content?.videoSourceKey ?? null,
     transcript: content?.transcript ?? null,
     description: content?.description ?? null,
   };
+
+  // Auto-start polling if transcoding is in progress
+  stopTranscodingPolling();
+  if (content?.transcodingStatus === 'pending' || content?.transcodingStatus === 'processing') {
+    startTranscodingPolling(locale);
+  }
 }
 
 watch(activeLocale, (locale) => {
@@ -97,11 +118,23 @@ async function handleSave() {
   if (result) {
     saveSuccess.value = true;
     emit('saved');
-    // Clear success message after 3 seconds
+    // Start polling if transcoding is pending
+    if (result.transcodingStatus === 'pending' || result.transcodingStatus === 'processing') {
+      startTranscodingPolling(activeLocale.value);
+    }
     setTimeout(() => {
       saveSuccess.value = false;
     }, 3000);
   }
+}
+
+async function handleRetryTranscoding() {
+  isRetrying.value = true;
+  const success = await retryTranscoding(activeLocale.value);
+  if (success) {
+    startTranscodingPolling(activeLocale.value);
+  }
+  isRetrying.value = false;
 }
 
 async function handleDelete() {
@@ -111,12 +144,13 @@ async function handleDelete() {
 
   const success = await deleteContent(activeLocale.value);
   if (success) {
-    // Reset form data
+    stopTranscodingPolling();
     formData.value = {
       lang: activeLocale.value,
       title: null,
       videoUrl: null,
       videoId: null,
+      videoSourceKey: null,
       transcript: null,
       description: null,
     };
@@ -125,8 +159,8 @@ async function handleDelete() {
 
 function handleVideoUpload(result: UploadResult) {
   formData.value.videoUrl = result.url;
-  // Extract video ID from key for reference
   formData.value.videoId = result.key;
+  formData.value.videoSourceKey = result.key;
 }
 
 function handleDocumentUpload(result: UploadResult) {
@@ -274,6 +308,52 @@ onMounted(async () => {
                 </div>
               </TabsContent>
             </Tabs>
+          </div>
+
+          <!-- Transcoding Status Banner -->
+          <div v-if="showVideoUpload && transcodingStatus" class="rounded-lg border p-4">
+            <!-- Pending / Processing -->
+            <div v-if="isTranscoding" class="flex items-center gap-3 text-blue-600 dark:text-blue-400">
+              <Loader2 class="h-5 w-5 animate-spin" />
+              <div>
+                <p class="font-medium">
+                  {{ transcodingStatus === 'pending'
+                    ? t('admin.lessonContent.transcoding.pending', 'Transcoding queued...')
+                    : t('admin.lessonContent.transcoding.processing', 'Transcoding in progress...')
+                  }}
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ t('admin.lessonContent.transcoding.processingHint', 'This may take a few minutes. You can leave this page.') }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Ready -->
+            <div v-else-if="transcodingStatus === 'ready'" class="flex items-center gap-3 text-green-600 dark:text-green-400">
+              <CheckCircle2 class="h-5 w-5" />
+              <div>
+                <p class="font-medium">{{ t('admin.lessonContent.transcoding.ready', 'Video transcoded and ready') }}</p>
+                <p v-if="currentContent?.videoPlaybackUrl" class="text-sm text-muted-foreground truncate max-w-md">
+                  {{ currentContent.videoPlaybackUrl }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Error -->
+            <div v-else-if="transcodingStatus === 'error'" class="flex items-center justify-between">
+              <div class="flex items-center gap-3 text-destructive">
+                <AlertCircle class="h-5 w-5" />
+                <div>
+                  <p class="font-medium">{{ t('admin.lessonContent.transcoding.error', 'Transcoding failed') }}</p>
+                  <p v-if="transcodingError" class="text-sm text-muted-foreground">{{ transcodingError }}</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" :disabled="isRetrying" @click="handleRetryTranscoding">
+                <RefreshCw v-if="!isRetrying" class="mr-2 h-4 w-4" />
+                <Loader2 v-else class="mr-2 h-4 w-4 animate-spin" />
+                {{ t('admin.lessonContent.transcoding.retry', 'Retry') }}
+              </Button>
+            </div>
           </div>
 
           <!-- Fallback for other lesson types (quiz, assignment) - just URL fields -->

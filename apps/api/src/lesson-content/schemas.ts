@@ -9,6 +9,7 @@ export const createLessonContentSchema = z.object({
   title: z.string().max(255).optional().nullable(),
   videoUrl: z.string().url().max(2048).optional().nullable(),
   videoId: z.string().max(255).optional().nullable(),
+  videoSourceKey: z.string().max(1024).optional().nullable(),
   transcript: z.string().max(100000).optional().nullable(),
   description: z.string().max(10000).optional().nullable(),
 });
@@ -20,6 +21,7 @@ export const updateLessonContentSchema = z.object({
   title: z.string().max(255).optional().nullable(),
   videoUrl: z.string().url().max(2048).optional().nullable(),
   videoId: z.string().max(255).optional().nullable(),
+  videoSourceKey: z.string().max(1024).optional().nullable(),
   transcript: z.string().max(100000).optional().nullable(),
   description: z.string().max(10000).optional().nullable(),
 });
@@ -32,6 +34,7 @@ export const upsertLessonContentSchema = z.object({
   title: z.string().max(255).optional().nullable(),
   videoUrl: z.string().url().max(2048).optional().nullable(),
   videoId: z.string().max(255).optional().nullable(),
+  videoSourceKey: z.string().max(1024).optional().nullable(),
   transcript: z.string().max(100000).optional().nullable(),
   description: z.string().max(10000).optional().nullable(),
 });

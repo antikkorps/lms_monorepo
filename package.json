@@ -16,7 +16,9 @@
     "db:schema": "docker exec -i lms-postgres psql -U lms -d lms < docker/postgres/schema.sql",
     "db:seed": "docker exec -i lms-postgres psql -U lms -d lms < docker/postgres/seed.sql",
     "db:reset": "npm run db:schema && npm run db:seed",
-    "db:psql": "docker exec -it lms-postgres psql -U lms -d lms"
+    "db:psql": "docker exec -it lms-postgres psql -U lms -d lms",
+    "db:migrate": "npx tsx apps/api/src/database/migrator.ts",
+    "db:migrate:status": "npx tsx apps/api/src/database/migrator.ts status"
   },
   "private": true,
   "devDependencies": {

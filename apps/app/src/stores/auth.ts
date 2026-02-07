@@ -7,6 +7,7 @@ import type { AuthenticatedUser, Role } from '@shared/types';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { apiClient, ApiRequestError } from '../composables/useApi';
+import { logger } from '../lib/logger';
 
 interface LoginCredentials {
   email: string;
@@ -87,14 +88,14 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Throttle: prevent rapid successive calls (e.g., during HMR)
     if (now - windowState.lastInitTime < INIT_THROTTLE_MS) {
-      console.log('[AuthStore] Skipping init - throttled');
+      logger.debug('[AuthStore] Skipping init - throttled');
       isInitialized.value = true;
       return;
     }
 
     // Initialization already in progress - return the existing promise
     if (windowState.initPromise) {
-      console.log('[AuthStore] Init in progress, waiting...');
+      logger.debug('[AuthStore] Init in progress, waiting...');
       return windowState.initPromise;
     }
 
@@ -106,15 +107,15 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = null;
 
       try {
-        console.log('[AuthStore] Initializing...');
+        logger.debug('[AuthStore] Initializing...');
         // Try to get current user from server (uses httpOnly cookie)
         // API returns { user: AuthenticatedUser, tenant: TenantInfo | null }
         const response = await apiClient.get<{ user: AuthenticatedUser }>('/auth/me');
         user.value = response.user;
         windowState.userData = response.user; // Persist for HMR
-        console.log('[AuthStore] Initialized, user:', response.user?.email);
+        logger.debug('[AuthStore] Initialized, user:', response.user?.email);
       } catch (err) {
-        console.error('[AuthStore] Init error:', err);
+        logger.error('[AuthStore] Init error:', err);
         // Not authenticated - that's OK
         user.value = null;
         windowState.userData = null;
