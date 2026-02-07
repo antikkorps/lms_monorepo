@@ -12,6 +12,7 @@ import { Select } from '@/components/ui/select';
 import { CourseStatusBadge } from '@/components/admin';
 import { CourseListSkeleton } from '@/components/skeletons';
 import { useCourseEditor } from '@/composables/useCourseEditor';
+import { logger } from '@/lib/logger';
 import {
   Search,
   Plus,
@@ -160,7 +161,7 @@ function formatPrice(price: number, currency: string = 'EUR'): string {
 }
 
 onMounted(() => {
-  console.log('[CourseListView] Component mounted, calling fetchMyCourses...');
+  logger.debug('[CourseListView] Component mounted, calling fetchMyCourses...');
   fetchMyCourses();
 });
 </script>

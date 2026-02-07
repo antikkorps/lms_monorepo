@@ -4,6 +4,7 @@
  */
 
 import type { ApiResponse, ApiError, HttpMethod } from '@shared/types';
+import { logger } from '../lib/logger';
 
 const API_BASE = '/api/v1';
 
@@ -117,7 +118,7 @@ class ApiClient {
       // Network error - check if we should retry
       if (retryConfig && this.shouldRetry(fetchError, null, retryCount, retryConfig)) {
         const delay = this.calculateRetryDelay(retryCount, retryConfig);
-        console.log(`[ApiClient] Network error, retrying in ${delay}ms (attempt ${retryCount + 1}/${retryConfig.maxRetries})`);
+        logger.debug(`[ApiClient] Network error, retrying in ${delay}ms (attempt ${retryCount + 1}/${retryConfig.maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, delay));
         return this.request<T>(endpoint, { ...options, _retryCount: retryCount + 1 });
       }
@@ -126,21 +127,21 @@ class ApiClient {
 
     // Handle 401 - attempt token refresh (only once to prevent infinite loops)
     if (response.status === 401 && !skipAuth && !options._isRetry) {
-      console.log('[ApiClient] Got 401, attempting token refresh...');
+      logger.debug('[ApiClient] Got 401, attempting token refresh...');
       const refreshed = await this.handleTokenRefresh();
       if (refreshed) {
-        console.log('[ApiClient] Token refreshed, retrying request...');
+        logger.debug('[ApiClient] Token refreshed, retrying request...');
         // Retry the original request with _isRetry flag to prevent infinite loop
         return this.request<T>(endpoint, { ...options, _isRetry: true });
       }
-      console.log('[ApiClient] Token refresh failed');
+      logger.debug('[ApiClient] Token refresh failed');
       // Refresh failed - let the error propagate
     }
 
     // Check if we should retry on server errors (5xx)
     if (retryConfig && this.shouldRetry(null, response.status, retryCount, retryConfig)) {
       const delay = this.calculateRetryDelay(retryCount, retryConfig);
-      console.log(`[ApiClient] Server error ${response.status}, retrying in ${delay}ms (attempt ${retryCount + 1}/${retryConfig.maxRetries})`);
+      logger.debug(`[ApiClient] Server error ${response.status}, retrying in ${delay}ms (attempt ${retryCount + 1}/${retryConfig.maxRetries})`);
       await new Promise(resolve => setTimeout(resolve, delay));
       return this.request<T>(endpoint, { ...options, _retryCount: retryCount + 1 });
     }
@@ -180,17 +181,17 @@ class ApiClient {
     this.isRefreshing = true;
 
     try {
-      console.log('[ApiClient] Calling /auth/refresh...');
+      logger.debug('[ApiClient] Calling /auth/refresh...');
       const response = await fetch(`${API_BASE}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
       });
 
-      console.log('[ApiClient] Refresh response status:', response.status);
+      logger.debug('[ApiClient] Refresh response status:', response.status);
 
       if (response.ok) {
         const data = await response.json();
-        console.log('[ApiClient] Refresh successful, got new token');
+        logger.debug('[ApiClient] Refresh successful, got new token');
 
         // Refresh successful - process queued requests
         this.refreshQueue.forEach((callback) => callback());
@@ -205,16 +206,16 @@ class ApiClient {
       // Log the error response
       try {
         const errorData = await response.json();
-        console.error('[ApiClient] Refresh failed:', errorData);
+        logger.error('[ApiClient] Refresh failed:', errorData);
       } catch {
-        console.error('[ApiClient] Refresh failed with status:', response.status);
+        logger.error('[ApiClient] Refresh failed with status:', response.status);
       }
 
       // Refresh failed - clear auth state
       this.clearAuthState();
       return false;
     } catch (err) {
-      console.error('[ApiClient] Refresh error:', err);
+      logger.error('[ApiClient] Refresh error:', err);
       this.clearAuthState();
       return false;
     } finally {

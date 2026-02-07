@@ -32,6 +32,7 @@ COPY nx.json tsconfig.base.json ./
 # Copy source code
 COPY apps/api ./apps/api
 COPY libs ./libs
+COPY docker/postgres/migrations ./docker/postgres/migrations
 
 # Expose port
 EXPOSE 3000
