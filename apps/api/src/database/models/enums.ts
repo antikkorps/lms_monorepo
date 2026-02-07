@@ -123,6 +123,13 @@ export enum RefundRequestStatus {
   AUTO_APPROVED = 'auto_approved',
 }
 
+export enum TranscodingStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  READY = 'ready',
+  ERROR = 'error',
+}
+
 // B2B Course Licensing
 export enum LicenseType {
   UNLIMITED = 'unlimited', // All tenant members have access

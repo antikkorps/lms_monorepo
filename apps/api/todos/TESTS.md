@@ -1,6 +1,6 @@
 # API - Tests
 
-## Modified: 2026-01-31
+## Modified: 2026-02-07
 
 ### Test Setup
 
@@ -32,8 +32,17 @@
 | Preference Service | `services/notifications/preference.service.spec.ts` | 10 | Done |
 | Notification Worker | `queue/workers/notification.worker.spec.ts` | 8 | Done |
 | Certificate Generator | `certificates/generator.spec.ts` | 6 | Done |
+| Validate Middleware | `middlewares/validate.spec.ts` | 11 | Done |
+| SSO Controller | `sso/controller.spec.ts` | 19 | Done |
+| Lesson Content Controller | `lesson-content/controller.spec.ts` | 15 | Done |
+| Transcoding Controller | `lesson-content/transcoding.controller.spec.ts` | 9 | Done |
+| Transcoding Service | `services/transcoding/index.spec.ts` | 7 | Done |
+| Transcoding CB | `services/transcoding/circuit-breaker.spec.ts` | 10 | Done |
+| Transcoding Worker | `queue/workers/transcoding.worker.spec.ts` | 13 | Done |
+| Notification Worker | `queue/workers/notification.worker.spec.ts` | 10 | Done |
+| DB Migrator | `database/migrator.spec.ts` | 10 | Done |
 
-**Total: 301 tests** (293 passed, 8 skipped)
+**Total: 361 tests** (353 passed, 8 skipped)
 
 *Integration tests: run with `R2_INTEGRATION_TEST=true`
 

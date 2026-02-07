@@ -1,9 +1,9 @@
 /**
  * Composable for managing lesson content translations
  */
-import { ref, computed } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { useApi } from './useApi';
-import type { SupportedLocale } from '@shared/types';
+import type { SupportedLocale, TranscodingStatus } from '@shared/types';
 
 export interface LessonContentItem {
   id: string;
@@ -14,8 +14,21 @@ export interface LessonContentItem {
   videoId: string | null;
   transcript: string | null;
   description: string | null;
+  transcodingStatus: TranscodingStatus | null;
+  videoSourceKey: string | null;
+  videoPlaybackUrl: string | null;
+  videoStreamId: string | null;
+  transcodingError: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface TranscodingStatusResponse {
+  transcodingStatus: TranscodingStatus | null;
+  videoPlaybackUrl: string | null;
+  videoStreamId: string | null;
+  transcodingError: string | null;
+  videoSourceKey: string | null;
 }
 
 export interface UpsertLessonContentInput {
@@ -23,6 +36,7 @@ export interface UpsertLessonContentInput {
   title?: string | null;
   videoUrl?: string | null;
   videoId?: string | null;
+  videoSourceKey?: string | null;
   transcript?: string | null;
   description?: string | null;
 }
@@ -107,6 +121,65 @@ export function useLessonContent(lessonId: string) {
     }
   }
 
+  let pollingTimer: ReturnType<typeof setInterval> | null = null;
+
+  async function pollTranscodingStatus(locale: SupportedLocale): Promise<TranscodingStatusResponse | null> {
+    try {
+      const response = await api.get<TranscodingStatusResponse>(
+        `/lessons/${lessonId}/content/${locale}/transcoding`
+      );
+
+      // Update local cache with new transcoding status
+      const content = contents.value.find((c) => c.lang === locale);
+      if (content && response) {
+        content.transcodingStatus = response.transcodingStatus;
+        content.videoPlaybackUrl = response.videoPlaybackUrl;
+        content.videoStreamId = response.videoStreamId;
+        content.transcodingError = response.transcodingError;
+      }
+
+      return response;
+    } catch {
+      return null;
+    }
+  }
+
+  function startTranscodingPolling(locale: SupportedLocale, intervalMs = 5000): void {
+    stopTranscodingPolling();
+    pollingTimer = setInterval(async () => {
+      const status = await pollTranscodingStatus(locale);
+      if (status && (status.transcodingStatus === 'ready' || status.transcodingStatus === 'error' || !status.transcodingStatus)) {
+        stopTranscodingPolling();
+      }
+    }, intervalMs);
+  }
+
+  function stopTranscodingPolling(): void {
+    if (pollingTimer) {
+      clearInterval(pollingTimer);
+      pollingTimer = null;
+    }
+  }
+
+  async function retryTranscoding(locale: SupportedLocale): Promise<boolean> {
+    try {
+      await api.post(`/lessons/${lessonId}/content/${locale}/transcoding/retry`, {});
+      // Update local state
+      const content = contents.value.find((c) => c.lang === locale);
+      if (content) {
+        content.transcodingStatus = 'pending';
+        content.transcodingError = null;
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  onUnmounted(() => {
+    stopTranscodingPolling();
+  });
+
   return {
     isLoading,
     isSaving,
@@ -118,5 +191,9 @@ export function useLessonContent(lessonId: string) {
     fetchContents,
     upsertContent,
     deleteContent,
+    pollTranscodingStatus,
+    startTranscodingPolling,
+    stopTranscodingPolling,
+    retryTranscoding,
   };
 }

@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-02-02
+## Modified: 2026-02-07
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -44,7 +44,7 @@
 - [x] Chapter management UI with drag & drop (Done: 2026-01-24)
 - [x] Lesson editor with settings tab (Done: 2026-01-24)
 - [x] Quiz question builder UI (Done: 2026-01-24)
-- [ ] Media upload components (video, images, docs)
+- [x] Media upload components (video, images, docs) (Done: 2026-02-07)
 
 ### Recently Completed
 - [x] Discussion & Notes system merged to dev (Done: 2026-01-22)
@@ -58,6 +58,11 @@
 - [x] "Enrolled" badge display for enrolled users (Done: 2026-01-25)
 - [x] Multi-currency support (EUR/USD) (Done: 2026-01-25)
 - [x] Fix quiz loading bug (useQuiz) (Done: 2026-01-25)
+- [x] Media upload with UploadZone (drag & drop, progress, validation) (Done: 2026-02-07)
+- [x] Video transcoding pipeline via Cloudflare Stream (Done: 2026-02-07)
+- [x] Transcoding status polling + retry in lesson editor (Done: 2026-02-07)
+- [x] DB migration runner with tracking (npm run db:migrate) (Done: 2026-02-07)
+- [x] Replace all console.* with proper loggers (backend pino + frontend logger) (Done: 2026-02-07)
 
 ---
 

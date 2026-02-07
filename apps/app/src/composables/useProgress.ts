@@ -6,6 +6,7 @@
 import type { CourseListItem } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi } from './useApi';
+import { logger } from '../lib/logger';
 
 export interface CourseProgress extends CourseListItem {
   progress: number;
@@ -196,7 +197,7 @@ export function useProgress() {
 
     // Prevent rapid successive calls
     if (windowState.fetchInProgress || now - windowState.lastFetchTime < FETCH_THROTTLE_MS) {
-      console.log('[useProgress] Skipping fetch - throttled or in progress');
+      logger.debug('[useProgress] Skipping fetch - throttled or in progress');
       return;
     }
 

@@ -11,6 +11,7 @@ import type {
 } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi } from './useApi';
+import { logger } from '../lib/logger';
 
 interface CourseEditorState {
   courses: InstructorCourse[];
@@ -74,7 +75,7 @@ export function useCourseEditor() {
     const now = Date.now();
     const windowState = getWindowState();
 
-    console.log('[useCourseEditor] fetchMyCourses called', {
+    logger.debug('[useCourseEditor] fetchMyCourses called', {
       fetchInProgress: windowState.fetchInProgress,
       lastFetchTime: windowState.lastFetchTime,
       timeSinceLastFetch: now - windowState.lastFetchTime,
@@ -83,7 +84,7 @@ export function useCourseEditor() {
 
     // Prevent rapid successive calls
     if (windowState.fetchInProgress || now - windowState.lastFetchTime < FETCH_THROTTLE_MS) {
-      console.log('[useCourseEditor] Skipping fetch - throttled or in progress');
+      logger.debug('[useCourseEditor] Skipping fetch - throttled or in progress');
       return;
     }
 
@@ -93,14 +94,14 @@ export function useCourseEditor() {
     state.value.error = null;
 
     try {
-      console.log('[useCourseEditor] Fetching courses...');
+      logger.debug('[useCourseEditor] Fetching courses...');
       const courses = await api.get<InstructorCourse[]>('/courses/my');
       state.value.courses = courses;
-      console.log('[useCourseEditor] Fetched', courses.length, 'courses');
+      logger.debug('[useCourseEditor] Fetched', courses.length, 'courses');
     } catch (err) {
       state.value.error =
         err instanceof Error ? err.message : 'Failed to load courses';
-      console.error('[useCourseEditor] Fetch error:', err);
+      logger.error('[useCourseEditor] Fetch error:', err);
     } finally {
       state.value.isLoading = false;
       windowState.fetchInProgress = false;

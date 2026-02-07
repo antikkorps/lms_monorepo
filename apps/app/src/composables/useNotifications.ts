@@ -6,6 +6,7 @@
 import { ref, computed, onUnmounted } from 'vue';
 import { useApi } from './useApi';
 import { useToast } from './useToast';
+import { logger } from '../lib/logger';
 
 export type NotificationType =
   | 'lesson_completed'
@@ -155,7 +156,7 @@ export function useNotifications() {
 
     eventSource.addEventListener('connected', () => {
       isConnected.value = true;
-      console.log('[Notifications] SSE connected');
+      logger.debug('[Notifications] SSE connected');
     });
 
     eventSource.addEventListener('notification', (event) => {
@@ -178,12 +179,12 @@ export function useNotifications() {
           description: parsedNotification.message || undefined,
         });
       } catch (err) {
-        console.error('[Notifications] Failed to parse SSE message:', err);
+        logger.error('[Notifications] Failed to parse SSE message:', err);
       }
     });
 
     eventSource.onerror = () => {
-      console.warn('[Notifications] SSE connection error, will reconnect...');
+      logger.warn('[Notifications] SSE connection error, will reconnect...');
       isConnected.value = false;
       disconnectSSE();
 
@@ -201,7 +202,7 @@ export function useNotifications() {
       eventSource.close();
       eventSource = null;
       isConnected.value = false;
-      console.log('[Notifications] SSE disconnected');
+      logger.debug('[Notifications] SSE disconnected');
     }
   }
 

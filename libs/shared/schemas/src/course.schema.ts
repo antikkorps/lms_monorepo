@@ -4,6 +4,8 @@ export const courseStatusEnum = z.enum(['draft', 'published', 'archived']);
 
 export const lessonTypeEnum = z.enum(['video', 'quiz', 'document', 'assignment']);
 
+export const transcodingStatusEnum = z.enum(['pending', 'processing', 'ready', 'error']);
+
 export const quizQuestionTypeEnum = z.enum([
   'single_choice',
   'multiple_choice',
@@ -115,6 +117,7 @@ export const submitQuizSchema = z.object({
 // Type exports
 export type CourseStatus = z.infer<typeof courseStatusEnum>;
 export type LessonType = z.infer<typeof lessonTypeEnum>;
+export type TranscodingStatus = z.infer<typeof transcodingStatusEnum>;
 export type QuizQuestionType = z.infer<typeof quizQuestionTypeEnum>;
 export type Course = z.infer<typeof courseSchema>;
 export type CreateCourseInput = z.infer<typeof createCourseSchema>;

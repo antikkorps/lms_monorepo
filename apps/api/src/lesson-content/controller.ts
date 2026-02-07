@@ -1,7 +1,10 @@
 import type { Context } from 'koa';
 import { LessonContent, Lesson, Chapter, Course } from '../database/models/index.js';
-import { UserRole, SupportedLocale } from '../database/models/enums.js';
+import { UserRole, SupportedLocale, TranscodingStatus } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
+import { isTranscodingAvailable, getTranscoding } from '../services/transcoding/index.js';
+import { addSubmitTranscodingJob } from '../queue/index.js';
+import { logger } from '../utils/logger.js';
 import type {
   CreateLessonContentInput,
   UpdateLessonContentInput,
@@ -72,6 +75,46 @@ async function canManageLessonContent(
   return false;
 }
 
+function serializeLessonContent(c: LessonContent) {
+  return {
+    id: c.id,
+    lessonId: c.lessonId,
+    lang: c.lang,
+    title: c.title,
+    videoUrl: c.videoUrl,
+    videoId: c.videoId,
+    transcript: c.transcript,
+    description: c.description,
+    transcodingStatus: c.transcodingStatus,
+    videoSourceKey: c.videoSourceKey,
+    videoPlaybackUrl: c.videoPlaybackUrl,
+    videoStreamId: c.videoStreamId,
+    transcodingError: c.transcodingError,
+    createdAt: c.createdAt,
+    updatedAt: c.updatedAt,
+  };
+}
+
+async function triggerTranscoding(content: LessonContent, videoSourceKey: string): Promise<void> {
+  if (!isTranscodingAvailable()) return;
+
+  await content.update({
+    transcodingStatus: TranscodingStatus.PENDING,
+    transcodingError: null,
+    videoPlaybackUrl: null,
+    videoStreamId: null,
+  });
+
+  await addSubmitTranscodingJob({
+    lessonContentId: content.id,
+    lessonId: content.lessonId,
+    lang: content.lang,
+    videoSourceKey,
+  });
+
+  logger.info({ lessonContentId: content.id, videoSourceKey }, 'Transcoding job enqueued');
+}
+
 // =============================================================================
 // List all content for a lesson
 // =============================================================================
@@ -97,18 +140,7 @@ export async function listLessonContents(ctx: Context): Promise<void> {
   });
 
   ctx.body = {
-    data: contents.map((c) => ({
-      id: c.id,
-      lessonId: c.lessonId,
-      lang: c.lang,
-      title: c.title,
-      videoUrl: c.videoUrl,
-      videoId: c.videoId,
-      transcript: c.transcript,
-      description: c.description,
-      createdAt: c.createdAt,
-      updatedAt: c.updatedAt,
-    })),
+    data: contents.map(serializeLessonContent),
   };
 }
 
@@ -141,18 +173,7 @@ export async function getLessonContentByLang(ctx: Context): Promise<void> {
   }
 
   ctx.body = {
-    data: {
-      id: content.id,
-      lessonId: content.lessonId,
-      lang: content.lang,
-      title: content.title,
-      videoUrl: content.videoUrl,
-      videoId: content.videoId,
-      transcript: content.transcript,
-      description: content.description,
-      createdAt: content.createdAt,
-      updatedAt: content.updatedAt,
-    },
+    data: serializeLessonContent(content),
   };
 }
 
@@ -192,24 +213,18 @@ export async function createLessonContent(ctx: Context): Promise<void> {
     title: input.title,
     videoUrl: input.videoUrl,
     videoId: input.videoId,
+    videoSourceKey: input.videoSourceKey,
     transcript: input.transcript,
     description: input.description,
   });
 
+  if (input.videoSourceKey && isTranscodingAvailable()) {
+    await triggerTranscoding(content, input.videoSourceKey);
+  }
+
   ctx.status = 201;
   ctx.body = {
-    data: {
-      id: content.id,
-      lessonId: content.lessonId,
-      lang: content.lang,
-      title: content.title,
-      videoUrl: content.videoUrl,
-      videoId: content.videoId,
-      transcript: content.transcript,
-      description: content.description,
-      createdAt: content.createdAt,
-      updatedAt: content.updatedAt,
-    },
+    data: serializeLessonContent(content),
   };
 }
 
@@ -243,6 +258,7 @@ export async function upsertLessonContent(ctx: Context): Promise<void> {
       title: input.title,
       videoUrl: input.videoUrl,
       videoId: input.videoId,
+      videoSourceKey: input.videoSourceKey,
       transcript: input.transcript,
       description: input.description,
     },
@@ -254,25 +270,20 @@ export async function upsertLessonContent(ctx: Context): Promise<void> {
       title: input.title,
       videoUrl: input.videoUrl,
       videoId: input.videoId,
+      videoSourceKey: input.videoSourceKey,
       transcript: input.transcript,
       description: input.description,
     });
   }
 
+  // Trigger transcoding if a new video source key was provided
+  if (input.videoSourceKey && isTranscodingAvailable()) {
+    await triggerTranscoding(content, input.videoSourceKey);
+  }
+
   ctx.status = created ? 201 : 200;
   ctx.body = {
-    data: {
-      id: content.id,
-      lessonId: content.lessonId,
-      lang: content.lang,
-      title: content.title,
-      videoUrl: content.videoUrl,
-      videoId: content.videoId,
-      transcript: content.transcript,
-      description: content.description,
-      createdAt: content.createdAt,
-      updatedAt: content.updatedAt,
-    },
+    data: serializeLessonContent(content),
   };
 }
 
@@ -308,23 +319,18 @@ export async function updateLessonContent(ctx: Context): Promise<void> {
     title: input.title,
     videoUrl: input.videoUrl,
     videoId: input.videoId,
+    videoSourceKey: input.videoSourceKey,
     transcript: input.transcript,
     description: input.description,
   });
 
+  // Trigger transcoding if a new video source key was provided
+  if (input.videoSourceKey && isTranscodingAvailable()) {
+    await triggerTranscoding(content, input.videoSourceKey);
+  }
+
   ctx.body = {
-    data: {
-      id: content.id,
-      lessonId: content.lessonId,
-      lang: content.lang,
-      title: content.title,
-      videoUrl: content.videoUrl,
-      videoId: content.videoId,
-      transcript: content.transcript,
-      description: content.description,
-      createdAt: content.createdAt,
-      updatedAt: content.updatedAt,
-    },
+    data: serializeLessonContent(content),
   };
 }
 
@@ -353,6 +359,15 @@ export async function deleteLessonContent(ctx: Context): Promise<void> {
 
   if (!content) {
     throw AppError.notFound(`Content for locale '${lang}' not found for this lesson`);
+  }
+
+  // Clean up Cloudflare Stream asset if exists
+  if (content.videoStreamId && isTranscodingAvailable()) {
+    try {
+      await getTranscoding().delete(content.videoStreamId);
+    } catch (err) {
+      logger.warn({ videoStreamId: content.videoStreamId, error: err }, 'Failed to delete Stream asset');
+    }
   }
 
   await content.destroy();

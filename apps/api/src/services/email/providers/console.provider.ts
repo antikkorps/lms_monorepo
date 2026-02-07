@@ -13,20 +13,10 @@ export class ConsoleEmailProvider implements EmailProvider {
         to: options.to,
         subject: options.subject,
         messageId,
-        textPreview: options.text?.substring(0, 200),
+        text: options.text || '(no text version)',
       },
-      '========== EMAIL (Console Provider - Dev Mode) =========='
+      'Email sent (console provider)',
     );
-
-    // Log the full HTML content in a readable format for development
-    console.log('\n' + '='.repeat(60));
-    console.log(`TO: ${options.to}`);
-    console.log(`SUBJECT: ${options.subject}`);
-    console.log(`MESSAGE ID: ${messageId}`);
-    console.log('='.repeat(60));
-    console.log('TEXT VERSION:');
-    console.log(options.text || '(no text version)');
-    console.log('='.repeat(60) + '\n');
 
     return {
       success: true,

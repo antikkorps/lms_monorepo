@@ -11,6 +11,8 @@ import {
   stopNotificationWorker,
   startDigestWorker,
   stopDigestWorker,
+  startTranscodingWorker,
+  stopTranscodingWorker,
 } from './queue/index.js';
 import { disconnectPublisher } from './services/notifications/index.js';
 
@@ -35,6 +37,7 @@ async function bootstrap() {
     // Start queue workers
     startNotificationWorker();
     startDigestWorker();
+    startTranscodingWorker();
     logger.info('Queue workers started');
 
     // Start HTTP server
@@ -54,6 +57,7 @@ async function bootstrap() {
           // Stop queue workers
           await stopNotificationWorker();
           await stopDigestWorker();
+          await stopTranscodingWorker();
           logger.info('Queue workers stopped');
 
           // Close notification pub/sub
