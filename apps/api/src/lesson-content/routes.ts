@@ -7,6 +7,7 @@ import {
   updateLessonContent,
   deleteLessonContent,
 } from './controller.js';
+import { getTranscodingStatus, retryTranscoding } from './transcoding.controller.js';
 import { authenticate, requireRole } from '../auth/middleware.js';
 import { validate, validateQuery } from '../middlewares/validate.js';
 import {
@@ -75,4 +76,22 @@ lessonContentRouter.delete(
   authenticate,
   requireRole(UserRole.INSTRUCTOR, UserRole.TENANT_ADMIN, UserRole.SUPER_ADMIN),
   deleteLessonContent
+);
+
+// Get transcoding status for a specific locale
+// GET /api/v1/lessons/:lessonId/content/:lang/transcoding
+lessonContentRouter.get(
+  '/:lang/transcoding',
+  authenticate,
+  requireRole(UserRole.INSTRUCTOR, UserRole.TENANT_ADMIN, UserRole.SUPER_ADMIN),
+  getTranscodingStatus
+);
+
+// Retry failed transcoding for a specific locale
+// POST /api/v1/lessons/:lessonId/content/:lang/transcoding/retry
+lessonContentRouter.post(
+  '/:lang/transcoding/retry',
+  authenticate,
+  requireRole(UserRole.INSTRUCTOR, UserRole.TENANT_ADMIN, UserRole.SUPER_ADMIN),
+  retryTranscoding
 );

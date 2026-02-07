@@ -1,9 +1,10 @@
 /**
  * Video Player Composable
- * Manages video playback state and controls
+ * Manages video playback state and controls with HLS.js support
  */
 
 import { ref, computed, onUnmounted, type Ref } from 'vue';
+import Hls from 'hls.js';
 
 export interface VideoQuality {
   label: string;
@@ -40,6 +41,7 @@ export function useVideoPlayer(
 
   let controlsTimeout: ReturnType<typeof setTimeout> | null = null;
   const progressInterval: ReturnType<typeof setInterval> | null = null;
+  let hlsInstance: Hls | null = null;
 
   // Computed
   const progress = computed(() => {
@@ -338,8 +340,48 @@ export function useVideoPlayer(
     showControlsTemporarily();
   }
 
+  function isHlsSource(src: string): boolean {
+    return src.includes('.m3u8') || src.includes('/manifest/');
+  }
+
+  function setupHls(src: string): void {
+    const video = videoRef.value;
+    if (!video) return;
+
+    destroyHls();
+
+    if (isHlsSource(src)) {
+      if (Hls.isSupported()) {
+        hlsInstance = new Hls();
+        hlsInstance.loadSource(src);
+        hlsInstance.attachMedia(video);
+        hlsInstance.on(Hls.Events.ERROR, (_event, data) => {
+          if (data.fatal) {
+            error.value = `HLS error: ${data.details}`;
+            options.onError?.(error.value);
+          }
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Native HLS support (Safari)
+        video.src = src;
+      } else {
+        error.value = 'HLS playback is not supported in this browser';
+        options.onError?.(error.value);
+      }
+    } else {
+      video.src = src;
+    }
+  }
+
+  function destroyHls(): void {
+    if (hlsInstance) {
+      hlsInstance.destroy();
+      hlsInstance = null;
+    }
+  }
+
   // Setup and cleanup
-  function setupEventListeners() {
+  function setupEventListeners(src?: string) {
     const video = videoRef.value;
     if (!video) return;
 
@@ -355,6 +397,11 @@ export function useVideoPlayer(
     document.addEventListener('fullscreenchange', () => {
       isFullscreen.value = !!document.fullscreenElement;
     });
+
+    // Setup HLS if src provided and it's an HLS source
+    if (src) {
+      setupHls(src);
+    }
   }
 
   function cleanupEventListeners() {
@@ -369,6 +416,8 @@ export function useVideoPlayer(
     video.removeEventListener('waiting', handleWaiting);
     video.removeEventListener('canplay', handleCanPlay);
     video.removeEventListener('volumechange', handleVolumeChange);
+
+    destroyHls();
 
     if (controlsTimeout) clearTimeout(controlsTimeout);
     if (progressInterval) clearInterval(progressInterval);
@@ -420,6 +469,7 @@ export function useVideoPlayer(
     handleKeydown,
     setupEventListeners,
     cleanupEventListeners,
+    setupHls,
     formatTime,
   };
 }

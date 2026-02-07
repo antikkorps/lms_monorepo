@@ -27,6 +27,7 @@ import { QuizEngine } from '@/components/quiz';
 import { DiscussionSection } from '@/components/discussions';
 import { NoteEditor } from '@/components/notes';
 import { PreviewBanner } from '@/components/preview';
+import VideoPlayer from '@/components/video/VideoPlayer.vue';
 import type { LessonItem } from '@shared/types';
 
 const { t } = useI18n();
@@ -307,15 +308,35 @@ function navigateToLesson(lesson: LessonItem) {
               <!-- Video Player -->
               <div v-if="currentLesson.type === 'video'" class="space-y-4">
                 <div class="aspect-video overflow-hidden rounded-lg bg-black">
-                  <!-- YouTube Player if videoId is available -->
+                  <!-- HLS Playback URL (transcoded video) -->
+                  <VideoPlayer
+                    v-if="currentLesson.videoPlaybackUrl"
+                    :src="currentLesson.videoPlaybackUrl"
+                    :title="currentLesson.title"
+                  />
+                  <!-- YouTube embed if videoId is a short YouTube ID (not an R2 key) -->
                   <iframe
-                    v-if="currentLesson.videoId"
+                    v-else-if="currentLesson.videoId && currentLesson.videoId.length < 20 && !currentLesson.videoId.includes('/')"
                     :src="`https://www.youtube.com/embed/${currentLesson.videoId}?rel=0&modestbranding=1`"
                     class="h-full w-full"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen
                   />
+                  <!-- Direct video URL (dev/fallback) -->
+                  <VideoPlayer
+                    v-else-if="currentLesson.videoUrl"
+                    :src="currentLesson.videoUrl"
+                    :title="currentLesson.title"
+                  />
+                  <!-- Transcoding in progress -->
+                  <div v-else-if="currentLesson.transcodingStatus === 'pending' || currentLesson.transcodingStatus === 'processing'" class="flex h-full items-center justify-center text-white">
+                    <div class="text-center">
+                      <Loader2 class="mx-auto h-12 w-12 animate-spin opacity-75" />
+                      <p class="mt-4">{{ t('courses.lesson.videoProcessing', 'Video is being processed...') }}</p>
+                      <p class="text-sm opacity-75">{{ t('courses.lesson.videoProcessingHint', 'Please check back in a few minutes') }}</p>
+                    </div>
+                  </div>
                   <!-- Placeholder if no video -->
                   <div v-else class="flex h-full items-center justify-center text-white">
                     <div class="text-center">
