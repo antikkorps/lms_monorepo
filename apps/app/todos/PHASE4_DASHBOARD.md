@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-02-07
+## Modified: 2026-02-08
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -25,7 +25,8 @@
 - [x] Create profile page with avatar selector component (Done: 2026-01-24)
 
 ### Pending - UX Improvements
-- [ ] Implement lazy loading for videos
+- [x] Implement lazy loading for videos (Done: 2026-02-08)
+- [x] Implement optimistic updates with rollback (Done: 2026-02-08)
 
 ### Pending - API Integration
 - [x] Integrate real API for dashboard (useDashboard) (Done: 2026-01-25)
@@ -37,7 +38,7 @@
 - [x] Integrate real API for tenant members (useTenantMembers) (Done: 2026-01-26)
 - [x] Integrate real API for seats (useSeats) (Done: 2026-01-26)
 - [x] Add error boundaries for API failures (Done: 2026-02-02)
-- [ ] Implement optimistic updates
+- [x] Implement optimistic updates (Done: 2026-02-08)
 
 ### Pending - Content Creation (Critical)
 - [x] Course creator/editor page (Done: 2026-01-24)

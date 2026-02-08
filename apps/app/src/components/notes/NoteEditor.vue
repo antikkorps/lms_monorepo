@@ -37,7 +37,6 @@ const props = withDefaults(defineProps<Props>(), {
 const {
   currentNote,
   isLoading,
-  error,
   isSaving,
   hasUnsavedChanges,
   localContent,
@@ -46,7 +45,6 @@ const {
   deleteNote,
   updateLocalContent,
   discardChanges,
-  clearError,
 } = useNote(props.lessonId);
 
 const toast = useToast();
@@ -198,14 +196,6 @@ watch(
     }
   }
 );
-
-// Watch for errors
-watch(error, (err) => {
-  if (err) {
-    toast.error(err);
-    clearError();
-  }
-});
 
 // Handle textarea input
 function handleInput(event: Event) {

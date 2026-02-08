@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-02-01
+## Modified: 2026-02-08
 
 ---
 
@@ -15,7 +15,7 @@
 - [x] Enrollment status check in course API (Done: 2026-01-30)
 - [x] Handle subscription lifecycle (B2B seats) (Done: 2026-01-26)
 - [x] B2B course licensing (unlimited + seats) with SEPA (Done: 2026-02-01)
-- [ ] Invoice management for B2B (list past invoices)
+- [x] Invoice management for B2B (list past invoices) (Done: 2026-02-02)
 - [x] Refund handling (Done: 2026-01-31)
 - [x] Purchase history page for learners (Done: 2026-01-31)
 - [x] Refund request flow (auto < 1h, admin approval > 1h) (Done: 2026-01-31)
@@ -38,7 +38,7 @@
 - [x] Integration with cloud storage (Cloudflare R2) (Done: 2026-01-26)
 - [x] Intégrer UploadZone dans lesson editor (vidéos) et course builder (thumbnails) (Done: 2026-01-26)
 - [x] Tester R2 avec credentials réels (Done: 2026-01-28)
-- [ ] Video transcoding pipeline
+- [x] Video transcoding pipeline (Done: 2026-02-07)
 
 ### API Integration (Frontend)
 
@@ -52,7 +52,7 @@
   - [x] Tenant Members API (useTenantMembers) (Done: 2026-01-26)
   - [x] Seats API (useSeats) (Done: 2026-01-26)
 - [x] Add error boundaries for API failures (Done: 2026-01-26)
-- [ ] Implement optimistic updates for better UX
+- [x] Implement optimistic updates for better UX (Done: 2026-02-08)
 - [x] Add retry logic with exponential backoff (Done: 2026-01-26)
 
 ---
@@ -72,7 +72,7 @@
 ### Testing & Quality
 
 - [x] E2E tests with Playwright setup (Done: 2026-01-28)
-- [ ] Auth controller unit tests
+- [x] Auth controller unit tests (65 tests, 12 endpoints) (Done: 2026-02-08)
 - [ ] Redis session tests
 - [ ] Integration tests (API + DB)
 - [ ] Performance testing

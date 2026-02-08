@@ -26,6 +26,8 @@ const authorInitials = computed(() => {
   return `${props.discussion.user.firstName[0]}${props.discussion.user.lastName[0]}`.toUpperCase();
 });
 
+const isPending = computed(() => (props.discussion as Discussion & { isPending?: boolean }).isPending === true);
+
 const timeAgo = computed(() => {
   return formatDistanceToNow(new Date(props.discussion.createdAt), {
     addSuffix: true,
@@ -34,7 +36,7 @@ const timeAgo = computed(() => {
 </script>
 
 <template>
-  <div class="rounded-lg border bg-card p-4">
+  <div class="rounded-lg border bg-card p-4" :class="{ 'opacity-60': isPending }">
     <!-- Header -->
     <div class="flex items-start justify-between gap-4">
       <div class="flex items-start gap-3">
@@ -76,16 +78,18 @@ const timeAgo = computed(() => {
         <div class="flex items-center gap-1">
           <button
             v-if="discussion.isOwner"
-            class="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+            class="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
             title="Delete"
+            :disabled="isPending"
             @click="emit('delete')"
           >
             <Trash2 class="h-4 w-4" />
           </button>
           <button
             v-if="!discussion.isOwner"
-            class="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+            class="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
             title="Report"
+            :disabled="isPending"
             @click="emit('report')"
           >
             <Flag class="h-4 w-4" />
@@ -100,7 +104,8 @@ const timeAgo = computed(() => {
     <!-- Footer -->
     <div class="mt-4 flex items-center gap-4">
       <button
-        class="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        class="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+        :disabled="isPending"
         @click="emit('reply')"
       >
         <MessageCircle class="h-4 w-4" />

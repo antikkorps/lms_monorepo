@@ -16,7 +16,6 @@ const props = defineProps<Props>();
 const {
   discussions,
   isLoading,
-  error,
   pagination,
   isSubmitting,
   currentDiscussion,
@@ -31,7 +30,6 @@ const {
   deleteReply,
   reportReply,
   clearReplies,
-  clearError,
 } = useDiscussions(props.lessonId);
 
 const toast = useToast();
@@ -57,14 +55,6 @@ watch(
     }
   }
 );
-
-// Watch for errors
-watch(error, (err) => {
-  if (err) {
-    toast.error(err);
-    clearError();
-  }
-});
 
 // Discussion actions
 async function handleCreateDiscussion(content: string) {
