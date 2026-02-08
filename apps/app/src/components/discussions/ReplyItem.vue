@@ -25,6 +25,8 @@ const authorInitials = computed(() => {
   return `${props.reply.user.firstName[0]}${props.reply.user.lastName[0]}`.toUpperCase();
 });
 
+const isPending = computed(() => (props.reply as DiscussionReply & { isPending?: boolean }).isPending === true);
+
 const timeAgo = computed(() => {
   return formatDistanceToNow(new Date(props.reply.createdAt), {
     addSuffix: true,
@@ -33,7 +35,7 @@ const timeAgo = computed(() => {
 </script>
 
 <template>
-  <div class="flex gap-3 py-3">
+  <div class="flex gap-3 py-3" :class="{ 'opacity-60': isPending }">
     <!-- Avatar -->
     <div
       v-if="reply.user?.avatarUrl"
@@ -71,16 +73,18 @@ const timeAgo = computed(() => {
     <div class="flex shrink-0 items-start gap-1">
       <button
         v-if="reply.isOwner"
-        class="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+        class="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
         title="Delete"
+        :disabled="isPending"
         @click="emit('delete')"
       >
         <Trash2 class="h-3.5 w-3.5" />
       </button>
       <button
         v-if="!reply.isOwner"
-        class="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+        class="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
         title="Report"
+        :disabled="isPending"
         @click="emit('report')"
       >
         <Flag class="h-3.5 w-3.5" />

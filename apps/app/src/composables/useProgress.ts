@@ -6,6 +6,7 @@
 import type { CourseListItem } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi } from './useApi';
+import { useToast } from './useToast';
 import { logger } from '../lib/logger';
 
 export interface CourseProgress extends CourseListItem {
@@ -109,6 +110,7 @@ const sharedStats = ref<ProgressStats | null>(null);
 
 export function useProgress() {
   const api = useApi();
+  const toast = useToast();
 
   // Use shared state instead of creating new state per call
   const isLoading = sharedIsLoading;
@@ -229,27 +231,45 @@ export function useProgress() {
   }
 
   /**
-   * Update lesson completion
+   * Update lesson completion (optimistic)
    */
   async function markLessonComplete(courseId: string, lessonId: string): Promise<boolean> {
+    const course = courses.value.find((c) => c.id === courseId);
+
+    // Snapshot for rollback
+    const snapshot = course
+      ? {
+          completedLessons: course.completedLessons,
+          progress: course.progress,
+          lastAccessedAt: course.lastAccessedAt,
+          completedAt: course.completedAt,
+        }
+      : null;
+
+    // Apply optimistic update
+    if (course) {
+      course.completedLessons++;
+      course.progress = Math.round((course.completedLessons / course.totalLessons) * 100);
+      course.lastAccessedAt = new Date();
+      if (course.progress === 100) {
+        course.completedAt = new Date();
+      }
+    }
+
     try {
       await api.post(`/courses/${courseId}/lessons/${lessonId}/complete`, {});
-
-      // Update local state
-      const course = courses.value.find((c) => c.id === courseId);
-      if (course) {
-        course.completedLessons++;
-        course.progress = Math.round((course.completedLessons / course.totalLessons) * 100);
-        course.lastAccessedAt = new Date();
-
-        if (course.progress === 100) {
-          course.completedAt = new Date();
-        }
-      }
-
       return true;
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to update progress';
+      // Rollback
+      if (course && snapshot) {
+        course.completedLessons = snapshot.completedLessons;
+        course.progress = snapshot.progress;
+        course.lastAccessedAt = snapshot.lastAccessedAt;
+        course.completedAt = snapshot.completedAt;
+      }
+      const message = err instanceof Error ? err.message : 'Failed to update progress';
+      error.value = message;
+      toast.error(message);
       return false;
     }
   }

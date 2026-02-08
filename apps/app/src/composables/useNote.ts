@@ -6,6 +6,7 @@
 import type { Note, NoteWithLesson, UpsertNoteInput } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi, ApiRequestError } from './useApi';
+import { useToast } from './useToast';
 
 interface Pagination {
   page: number;
@@ -25,6 +26,7 @@ interface NoteState {
 
 export function useNote(lessonId?: string) {
   const api = useApi();
+  const toast = useToast();
 
   const state = ref<NoteState>({
     currentNote: null,
@@ -77,7 +79,7 @@ export function useNote(lessonId?: string) {
   }
 
   /**
-   * Save (create or update) note for a lesson
+   * Save (create or update) note for a lesson (optimistic)
    */
   async function saveNote(
     targetLessonId?: string,
@@ -94,6 +96,23 @@ export function useNote(lessonId?: string) {
       state.value.error = 'Note content is required';
       return null;
     }
+
+    // Snapshot for rollback
+    const snapshot = {
+      currentNote: state.value.currentNote ? { ...state.value.currentNote } : null,
+      localContent: localContent.value,
+      hasUnsavedChanges: hasUnsavedChanges.value,
+    };
+
+    // Apply optimistic update
+    if (state.value.currentNote) {
+      state.value.currentNote = {
+        ...state.value.currentNote,
+        content: noteContent,
+        updatedAt: new Date(),
+      };
+    }
+    hasUnsavedChanges.value = false;
 
     isSaving.value = true;
     state.value.error = null;
@@ -112,11 +131,14 @@ export function useNote(lessonId?: string) {
 
       return note;
     } catch (err) {
-      if (err instanceof ApiRequestError) {
-        state.value.error = err.message;
-      } else {
-        state.value.error = 'Failed to save note';
-      }
+      // Rollback
+      state.value.currentNote = snapshot.currentNote;
+      localContent.value = snapshot.localContent;
+      hasUnsavedChanges.value = snapshot.hasUnsavedChanges;
+
+      const message = err instanceof ApiRequestError ? err.message : 'Failed to save note';
+      state.value.error = message;
+      toast.error(message);
       return null;
     } finally {
       isSaving.value = false;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
   Play,
@@ -23,11 +23,13 @@ interface Props {
   qualities?: VideoQuality[];
   autoplay?: boolean;
   startTime?: number;
+  lazy?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   autoplay: false,
   startTime: 0,
+  lazy: true,
 });
 
 const emit = defineEmits<{
@@ -82,11 +84,40 @@ const {
 
 const playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-onMounted(() => {
-  setupEventListeners(props.src);
+const isInitialized = ref(false);
+let observer: IntersectionObserver | null = null;
 
-  // Add keyboard listener to container
+function initializePlayer() {
+  if (isInitialized.value) return;
+  isInitialized.value = true;
+  setupEventListeners(props.src);
+}
+
+onMounted(() => {
   containerRef.value?.addEventListener('keydown', handleKeydown);
+
+  if (props.lazy && 'IntersectionObserver' in window) {
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          initializePlayer();
+          observer?.disconnect();
+          observer = null;
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (containerRef.value) {
+      observer.observe(containerRef.value);
+    }
+  } else {
+    initializePlayer();
+  }
+});
+
+onUnmounted(() => {
+  observer?.disconnect();
+  observer = null;
 });
 
 function handleProgressClick(e: MouseEvent) {
@@ -123,8 +154,11 @@ function handleContainerDoubleClick(e: MouseEvent) {
 watch(
   () => props.src,
   (newSrc) => {
-    if (videoRef.value && newSrc) {
+    if (!newSrc) return;
+    if (isInitialized.value) {
       setupHls(newSrc);
+    } else {
+      initializePlayer();
     }
   }
 );
