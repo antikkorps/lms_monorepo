@@ -1,6 +1,6 @@
 # API - Tests
 
-## Modified: 2026-02-07
+## Modified: 2026-02-08
 
 ### Test Setup
 
@@ -41,8 +41,9 @@
 | Transcoding Worker | `queue/workers/transcoding.worker.spec.ts` | 13 | Done |
 | Notification Worker | `queue/workers/notification.worker.spec.ts` | 10 | Done |
 | DB Migrator | `database/migrator.spec.ts` | 10 | Done |
+| Auth Controller | `auth/controller.spec.ts` | 65 | Done |
 
-**Total: 361 tests** (353 passed, 8 skipped)
+**Total: 426 tests** (418 passed, 8 skipped)
 
 *Integration tests: run with `R2_INTEGRATION_TEST=true`
 
@@ -74,7 +75,7 @@ cd apps/api && npx vitest run --coverage
 
 ### Pending Tests
 
-- [ ] Auth controller tests (complex, many endpoints)
+- [x] Auth controller tests (65 tests, 12 endpoints) (Done: 2026-02-08)
 - [ ] Redis session tests (requires Redis mock)
 
 ### Notes
