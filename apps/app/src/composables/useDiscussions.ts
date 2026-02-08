@@ -12,6 +12,13 @@ import type {
 } from '@shared/types';
 import { ref, computed } from 'vue';
 import { useApi, ApiRequestError } from './useApi';
+import { useToast } from './useToast';
+import { useAuthStore } from '@/stores/auth';
+
+let tempIdCounter = 0;
+function generateTempId(): string {
+  return `temp-${Date.now()}-${++tempIdCounter}`;
+}
 
 interface Pagination {
   page: number;
@@ -33,6 +40,8 @@ interface DiscussionsState {
 
 export function useDiscussions(lessonId?: string) {
   const api = useApi();
+  const toast = useToast();
+  const authStore = useAuthStore();
 
   const state = ref<DiscussionsState>({
     discussions: [],
@@ -102,7 +111,7 @@ export function useDiscussions(lessonId?: string) {
   }
 
   /**
-   * Create a new discussion
+   * Create a new discussion (optimistic)
    */
   async function createDiscussion(
     input: CreateDiscussionInput
@@ -110,21 +119,47 @@ export function useDiscussions(lessonId?: string) {
     isSubmitting.value = true;
     state.value.error = null;
 
+    const tempId = generateTempId();
+    const now = new Date();
+    const user = authStore.user;
+
+    // Create optimistic temp discussion
+    const tempDiscussion: Discussion & { isPending: boolean } = {
+      id: tempId,
+      lessonId: input.lessonId,
+      content: input.content,
+      replyCount: 0,
+      createdAt: now,
+      updatedAt: now,
+      user: user
+        ? { id: user.id, firstName: user.firstName, lastName: user.lastName, avatarUrl: user.avatarUrl ?? null }
+        : null,
+      isOwner: true,
+      isPending: true,
+    };
+
+    // Add optimistically
+    state.value.discussions = [tempDiscussion as Discussion, ...state.value.discussions];
+    state.value.pagination.total += 1;
+
     try {
       const response = await api.post<{ data: Discussion }>('/discussions', input);
       const discussion = (response as unknown as { data: Discussion }).data || response as unknown as Discussion;
 
-      // Add to the beginning of the list
-      state.value.discussions = [discussion, ...state.value.discussions];
-      state.value.pagination.total += 1;
+      // Replace temp with real
+      state.value.discussions = state.value.discussions.map((d) =>
+        d.id === tempId ? discussion : d
+      );
 
       return discussion;
     } catch (err) {
-      if (err instanceof ApiRequestError) {
-        state.value.error = err.message;
-      } else {
-        state.value.error = 'Failed to create discussion';
-      }
+      // Rollback
+      state.value.discussions = state.value.discussions.filter((d) => d.id !== tempId);
+      state.value.pagination.total -= 1;
+
+      const message = err instanceof ApiRequestError ? err.message : 'Failed to create discussion';
+      state.value.error = message;
+      toast.error(message);
       return null;
     } finally {
       isSubmitting.value = false;
@@ -217,7 +252,7 @@ export function useDiscussions(lessonId?: string) {
   }
 
   /**
-   * Create a reply
+   * Create a reply (optimistic)
    */
   async function createReply(
     discussionId: string,
@@ -226,6 +261,33 @@ export function useDiscussions(lessonId?: string) {
     isSubmitting.value = true;
     state.value.error = null;
 
+    const tempId = generateTempId();
+    const now = new Date();
+    const user = authStore.user;
+
+    // Create optimistic temp reply
+    const tempReply: DiscussionReply & { isPending: boolean } = {
+      id: tempId,
+      discussionId,
+      content: input.content,
+      createdAt: now,
+      updatedAt: now,
+      user: user
+        ? { id: user.id, firstName: user.firstName, lastName: user.lastName, avatarUrl: user.avatarUrl ?? null }
+        : null,
+      isOwner: true,
+      isPending: true,
+    };
+
+    // Add optimistically
+    state.value.replies = [...state.value.replies, tempReply as DiscussionReply];
+    state.value.repliesPagination.total += 1;
+
+    const discussion = state.value.discussions.find((d) => d.id === discussionId);
+    if (discussion) {
+      discussion.replyCount += 1;
+    }
+
     try {
       const response = await api.post<{ data: DiscussionReply }>(
         `/discussions/${discussionId}/replies`,
@@ -233,25 +295,25 @@ export function useDiscussions(lessonId?: string) {
       );
       const reply = (response as unknown as { data: DiscussionReply }).data || response as unknown as DiscussionReply;
 
-      // Add to replies list
-      state.value.replies = [...state.value.replies, reply];
-      state.value.repliesPagination.total += 1;
-
-      // Update reply count in discussion list
-      const discussion = state.value.discussions.find(
-        (d) => d.id === discussionId
+      // Replace temp with real
+      state.value.replies = state.value.replies.map((r) =>
+        r.id === tempId ? reply : r
       );
-      if (discussion) {
-        discussion.replyCount += 1;
-      }
 
       return reply;
     } catch (err) {
-      if (err instanceof ApiRequestError) {
-        state.value.error = err.message;
-      } else {
-        state.value.error = 'Failed to create reply';
+      // Rollback reply
+      state.value.replies = state.value.replies.filter((r) => r.id !== tempId);
+      state.value.repliesPagination.total -= 1;
+
+      // Rollback discussion reply count
+      if (discussion) {
+        discussion.replyCount -= 1;
       }
+
+      const message = err instanceof ApiRequestError ? err.message : 'Failed to create reply';
+      state.value.error = message;
+      toast.error(message);
       return null;
     } finally {
       isSubmitting.value = false;
