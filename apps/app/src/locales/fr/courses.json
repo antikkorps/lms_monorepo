@@ -19,6 +19,13 @@
       "priceDesc": "Prix décroissant"
     },
     "showing": "Affichage de {filtered} sur {total} cours",
+    "category": "Catégorie",
+    "level": "Niveau",
+    "minRating": "Note minimum",
+    "allCategories": "Toutes les catégories",
+    "allLevels": "Tous les niveaux",
+    "advancedFilters": "Filtres",
+    "hideFilters": "Masquer les filtres",
     "clearFilters": "Effacer les filtres",
     "empty": {
       "title": "Aucun cours trouvé",
@@ -135,5 +142,21 @@
       "message": "Commencez à apprendre en vous inscrivant à un cours",
       "action": "Parcourir les cours"
     }
+  },
+  "categories": {
+    "development": "Développement",
+    "design": "Design",
+    "business": "Business",
+    "marketing": "Marketing",
+    "data_science": "Data Science",
+    "language": "Langues",
+    "personal_development": "Développement personnel",
+    "other": "Autre"
+  },
+  "levels": {
+    "beginner": "Débutant",
+    "intermediate": "Intermédiaire",
+    "advanced": "Avancé",
+    "all_levels": "Tous niveaux"
   }
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Badge, BadgeCategory } from '@/composables/useBadges';
+import { useI18n } from 'vue-i18n';
 import BadgeCard from './BadgeCard.vue';
 import { computed } from 'vue';
 
@@ -21,6 +22,8 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: 'select', badge: Badge): void;
 }>();
+
+const { t } = useI18n();
 
 const displayedBadges = computed(() => {
   if (props.maxItems > 0) {
@@ -47,13 +50,9 @@ const groupedBadges = computed(() => {
   return groups;
 });
 
-const categoryLabels: Record<BadgeCategory, string> = {
-  course: 'Courses',
-  streak: 'Streaks',
-  quiz: 'Quizzes',
-  milestone: 'Milestones',
-  special: 'Special',
-};
+function getCategoryLabel(category: BadgeCategory): string {
+  return t(`badges.categoryLabels.${category}`);
+}
 
 function handleBadgeClick(badge: Badge) {
   emit('select', badge);
@@ -66,7 +65,7 @@ function handleBadgeClick(badge: Badge) {
     <template v-for="(badges, category) in groupedBadges" :key="category">
       <div v-if="badges.length > 0">
         <h3 class="text-sm font-medium text-muted-foreground mb-3">
-          {{ categoryLabels[category as BadgeCategory] }}
+          {{ getCategoryLabel(category as BadgeCategory) }}
         </h3>
         <div
           class="grid gap-4"

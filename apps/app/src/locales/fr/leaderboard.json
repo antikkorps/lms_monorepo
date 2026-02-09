@@ -1,0 +1,27 @@
+{
+  "title": "Classement",
+  "subtitle": "Découvrez votre position par rapport aux autres apprenants",
+  "myRank": "Rang #{rank}",
+  "yourPosition": "Votre position actuelle",
+  "metrics": {
+    "courses_completed": "Cours terminés",
+    "avg_quiz_score": "Score quiz",
+    "current_streak": "Série",
+    "total_learning_time": "Temps d'apprentissage"
+  },
+  "periods": {
+    "weekly": "Cette semaine",
+    "monthly": "Ce mois",
+    "all_time": "Tout le temps"
+  },
+  "error": {
+    "loadFailed": "Impossible de charger le classement",
+    "retry": "Réessayer"
+  },
+  "empty": "Aucune donnée de classement pour le moment.",
+  "you": "(vous)",
+  "unknown": "Inconnu",
+  "score": {
+    "day": "jour | jours"
+  }
+}

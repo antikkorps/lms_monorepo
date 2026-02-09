@@ -1,0 +1,7 @@
+{
+  "trigger": "Search courses...",
+  "placeholder": "Type to search courses...",
+  "noResults": "No courses found",
+  "hint": "Press Enter to see all results",
+  "title": "Search"
+}

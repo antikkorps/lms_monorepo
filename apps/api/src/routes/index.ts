@@ -18,6 +18,10 @@ import { certificateRoutes } from '../certificates/index.js';
 import { paymentsRouter, webhooksRouter } from '../payments/index.js';
 import { notificationsRouter } from '../notifications/index.js';
 import { adminRouter } from '../admin/index.js';
+import { reviewsRouter } from '../reviews/index.js';
+import { streaksRouter } from '../streaks/index.js';
+import { leaderboardsRouter } from '../leaderboards/index.js';
+import { searchRouter } from '../search/index.js';
 
 const apiRouter = new Router({ prefix: '/api/v1' });
 
@@ -61,6 +65,14 @@ apiRouter.use(notificationsRouter.routes());
 apiRouter.use(notificationsRouter.allowedMethods());
 apiRouter.use(adminRouter.routes());
 apiRouter.use(adminRouter.allowedMethods());
+apiRouter.use(reviewsRouter.routes());
+apiRouter.use(reviewsRouter.allowedMethods());
+apiRouter.use(streaksRouter.routes());
+apiRouter.use(streaksRouter.allowedMethods());
+apiRouter.use(leaderboardsRouter.routes());
+apiRouter.use(leaderboardsRouter.allowedMethods());
+apiRouter.use(searchRouter.routes());
+apiRouter.use(searchRouter.allowedMethods());
 
 export function setupRoutes(app: Koa): void {
   app.use(apiRouter.routes());

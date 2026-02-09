@@ -6,7 +6,7 @@ import { UserRole, QuizQuestionType } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { checkCourseAccessFromLesson } from '../utils/course-access.js';
-import { onQuizPassed } from '../triggers/notification.triggers.js';
+import { onQuizPassed, onActivityPerformed } from '../triggers/notification.triggers.js';
 
 // Default passing threshold (70%)
 const PASSING_THRESHOLD = 0.7;
@@ -404,6 +404,9 @@ export async function submitQuiz(ctx: Context): Promise<void> {
       onQuizPassed(user.userId, lessonId, courseId, Math.round((totalScore / maxScore) * 100));
     }
   }
+
+  // Track activity for streak
+  onActivityPerformed(user.userId, 'quiz_submitted', lessonId);
 
   ctx.status = 201;
   ctx.body = {

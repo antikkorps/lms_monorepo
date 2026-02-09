@@ -2,6 +2,7 @@
 import type { Badge } from '@/composables/useBadges';
 import { useBadges } from '@/composables/useBadges';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import {
   DialogRoot,
   DialogPortal,
@@ -35,6 +36,7 @@ const emit = defineEmits<{
   (e: 'update:open', value: boolean): void;
 }>();
 
+const { t } = useI18n();
 const { getRarityColor, getRarityBgColor, getRarityTextColor, formatEarnedDate } = useBadges();
 
 const isEarned = computed(() => props.badge?.earnedAt !== null);
@@ -59,14 +61,7 @@ const categoryIcon = computed(() => {
 
 const categoryLabel = computed(() => {
   if (!props.badge) return '';
-  const labels: Record<string, string> = {
-    course: 'Course Achievement',
-    streak: 'Streak Achievement',
-    quiz: 'Quiz Achievement',
-    milestone: 'Milestone Achievement',
-    special: 'Special Achievement',
-  };
-  return labels[props.badge.category] || 'Achievement';
+  return t(`badges.categories.${props.badge.category}`, t('badges.categories.default'));
 });
 
 const rarityLabel = computed(() => {
@@ -94,7 +89,7 @@ function handleOpenChange(value: boolean) {
             class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <X class="h-4 w-4" />
-            <span class="sr-only">Close</span>
+            <span class="sr-only">{{ t('badges.modal.close') }}</span>
           </DialogClose>
 
           <!-- Badge icon -->
@@ -144,7 +139,7 @@ function handleOpenChange(value: boolean) {
                 <component :is="categoryIcon" class="h-4 w-4 text-muted-foreground" />
               </div>
               <div>
-                <p class="text-muted-foreground text-xs">Category</p>
+                <p class="text-muted-foreground text-xs">{{ t('badges.modal.category') }}</p>
                 <p class="font-medium">{{ categoryLabel }}</p>
               </div>
             </div>
@@ -155,7 +150,7 @@ function handleOpenChange(value: boolean) {
                 <Calendar class="h-4 w-4 text-muted-foreground" />
               </div>
               <div>
-                <p class="text-muted-foreground text-xs">Earned</p>
+                <p class="text-muted-foreground text-xs">{{ t('badges.modal.earned') }}</p>
                 <p class="font-medium">{{ formatEarnedDate(badge.earnedAt!) }}</p>
               </div>
             </div>
@@ -165,7 +160,7 @@ function handleOpenChange(value: boolean) {
                 <Target class="h-4 w-4 text-muted-foreground" />
               </div>
               <div class="flex-1">
-                <p class="text-muted-foreground text-xs">Progress</p>
+                <p class="text-muted-foreground text-xs">{{ t('badges.modal.progress') }}</p>
                 <div class="flex items-center gap-2">
                   <div class="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                     <div

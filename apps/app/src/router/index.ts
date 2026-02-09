@@ -166,6 +166,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/admin/TenantSSOView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/admin/reviews',
+    name: 'admin-reviews',
+    component: () => import('../views/admin/ReviewModerationView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Instructor routes (instructors and admins)
   {
@@ -196,6 +202,14 @@ const routes: RouteRecordRaw[] = [
     path: '/instructor/lessons/:id',
     name: 'instructor-lesson-edit',
     component: () => import('../views/admin/lessons/LessonEditorView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+
+  // Leaderboard
+  {
+    path: '/leaderboard',
+    name: 'leaderboard',
+    component: () => import('../views/LeaderboardView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
 
