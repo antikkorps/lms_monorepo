@@ -1,0 +1,5 @@
+{
+  "currentStreak": "{count} day streak | {count} days streak",
+  "longestStreak": "Longest: {count} day | Longest: {count} days",
+  "day": "day | days"
+}

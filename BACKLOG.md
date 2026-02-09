@@ -40,6 +40,12 @@
 - [x] Tester R2 avec credentials réels (Done: 2026-01-28)
 - [x] Video transcoding pipeline (Done: 2026-02-07)
 
+#### Video Transcoding — Production Readiness
+- [ ] Cloudflare Stream webhook endpoint (remplacer le polling par des callbacks)
+- [ ] Cleanup des streams Cloudflare à la suppression de LessonContent
+- [ ] Extraction thumbnail/poster depuis Cloudflare Stream
+- [ ] Admin monitoring des jobs transcoding (liste active/failed)
+
 ### API Integration (Frontend)
 
 - [x] Replace mock data with real API calls in composables (Done: 2026-01-26)
@@ -97,9 +103,9 @@
 ### Gamification & Engagement
 
 - [x] Course completion certificates (PDF generation) (Done: 2026-01-28)
-- [ ] Leaderboards (per course, global)
-- [ ] Course reviews & ratings
-- [ ] Achievement streaks
+- [x] Leaderboards (per course, global) (Done: 2026-02-09)
+- [x] Course reviews & ratings with moderation (Done: 2026-02-09)
+- [x] Achievement streaks (Done: 2026-02-09)
 
 ### Analytics & Reporting
 

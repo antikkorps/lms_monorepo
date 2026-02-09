@@ -28,6 +28,8 @@ export class Course extends Model<
   declare duration: CreationOptional<number>;
   declare chaptersCount: CreationOptional<number>;
   declare lessonsCount: CreationOptional<number>;
+  declare averageRating: CreationOptional<number>;
+  declare ratingsCount: CreationOptional<number>;
   declare stripeProductId: CreationOptional<string | null>;
   declare stripePriceId: CreationOptional<string | null>;
   declare createdAt: CreationOptional<Date>;
@@ -115,6 +117,16 @@ Course.init(
       defaultValue: 0,
     },
     lessonsCount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    averageRating: {
+      type: DataTypes.DECIMAL(3, 2),
+      allowNull: false,
+      defaultValue: 0,
+    },
+    ratingsCount: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,

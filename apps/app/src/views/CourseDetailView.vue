@@ -25,8 +25,12 @@ import { useCourseDetail } from '@/composables/useCourseDetail';
 import { usePreview } from '@/composables/usePreview';
 import { useToast } from '@/composables/useToast';
 import { usePayments } from '@/composables/usePayments';
+import { useReviews } from '@/composables/useReviews';
 import { CourseDetailSkeleton } from '@/components/skeletons';
 import { PreviewBanner } from '@/components/preview';
+import StarRating from '@/components/reviews/StarRating.vue';
+import ReviewCard from '@/components/reviews/ReviewCard.vue';
+import ReviewForm from '@/components/reviews/ReviewForm.vue';
 import type { LessonItem } from '@shared/types';
 
 const { t } = useI18n();
@@ -62,9 +66,26 @@ const {
 const isEnrolling = ref(false);
 const expandedChapters = ref<Set<string>>(new Set());
 
+const {
+  reviews,
+  pagination: reviewsPagination,
+  isLoading: reviewsLoading,
+  fetchReviews,
+} = useReviews();
+
 onMounted(() => {
   fetchCourse();
 });
+
+// Load reviews when course loads
+watch(
+  () => course.value,
+  (c) => {
+    if (c) {
+      fetchReviews(c.id);
+    }
+  }
+);
 
 // Re-fetch when slug changes
 watch(
@@ -123,6 +144,13 @@ function getLessonIcon(type: LessonItem['type']) {
       return Edit3;
     default:
       return PlayCircle;
+  }
+}
+
+function handleReviewUpdated() {
+  if (course.value) {
+    fetchReviews(course.value.id);
+    fetchCourse();
   }
 }
 
@@ -418,6 +446,45 @@ function getProgressColor(pct: number): string {
           </div>
         </CardContent>
       </Card>
+      <!-- Reviews Section -->
+      <div class="space-y-6">
+        <!-- Rating Summary -->
+        <Card v-if="course.ratingsCount > 0">
+          <CardHeader>
+            <CardTitle>{{ t('reviews.title') }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="flex items-center gap-4">
+              <div class="text-center">
+                <div class="text-4xl font-bold">{{ Number(course.averageRating).toFixed(1) }}</div>
+                <StarRating :model-value="Math.round(Number(course.averageRating))" readonly size="sm" />
+                <p class="mt-1 text-sm text-muted-foreground">
+                  {{ t('reviews.reviewCount', { count: course.ratingsCount }, course.ratingsCount) }}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- Review Form (for enrolled users) -->
+        <ReviewForm v-if="isEnrolled && !isPreviewMode" :course-id="course.id" @updated="handleReviewUpdated" />
+
+        <!-- Reviews List -->
+        <Card v-if="reviews.length > 0">
+          <CardHeader>
+            <CardTitle v-if="!course.ratingsCount">{{ t('reviews.title') }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="divide-y">
+              <ReviewCard
+                v-for="review in reviews"
+                :key="review.id"
+                :review="review"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </template>
     </div>
   </div>

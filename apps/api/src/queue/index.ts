@@ -4,4 +4,8 @@ export { transcodingQueue, addSubmitTranscodingJob, addCheckTranscodingStatusJob
 export { startNotificationWorker, stopNotificationWorker } from './workers/notification.worker.js';
 export { startDigestWorker, stopDigestWorker } from './workers/digest.worker.js';
 export { startTranscodingWorker, stopTranscodingWorker } from './workers/transcoding.worker.js';
+export { streakQueue, addStreakUpdateJob } from './streak.queue.js';
+export { startStreakWorker, stopStreakWorker } from './workers/streak.worker.js';
+export { leaderboardQueue } from './leaderboard.queue.js';
+export { startLeaderboardWorker, stopLeaderboardWorker, scheduleLeaderboardRefresh } from './workers/leaderboard.worker.js';
 export { queueConnection } from './connection.js';

@@ -5,6 +5,7 @@ import type { Purchase } from '../database/models/Purchase.js';
 import type { DiscussionReply } from '../database/models/DiscussionReply.js';
 import type { Discussion } from '../database/models/Discussion.js';
 import { notificationService } from '../services/notifications/index.js';
+import { addStreakUpdateJob } from '../queue/streak.queue.js';
 import { logger } from '../utils/logger.js';
 
 export async function onLessonCompleted(progress: UserProgress): Promise<void> {
@@ -132,6 +133,25 @@ export async function onDiscussionReply(
     logger.error(
       { userId: discussion.userId, discussionId: discussion.id, error: error instanceof Error ? error.message : 'Unknown' },
       'Failed to send discussion reply notification'
+    );
+  }
+}
+
+/**
+ * Record a user activity and trigger streak update via queue.
+ * Call this whenever a user performs a trackable activity (lesson completion, quiz, etc.)
+ */
+export async function onActivityPerformed(
+  userId: string,
+  activityType: string,
+  referenceId?: string
+): Promise<void> {
+  try {
+    await addStreakUpdateJob({ userId, activityType, referenceId });
+  } catch (error) {
+    logger.error(
+      { userId, activityType, error: error instanceof Error ? error.message : 'Unknown' },
+      'Failed to queue streak update'
     );
   }
 }

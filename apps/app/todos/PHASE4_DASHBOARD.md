@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-02-08
+## Modified: 2026-02-09
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -64,6 +64,11 @@
 - [x] Transcoding status polling + retry in lesson editor (Done: 2026-02-07)
 - [x] DB migration runner with tracking (npm run db:migrate) (Done: 2026-02-07)
 - [x] Replace all console.* with proper loggers (backend pino + frontend logger) (Done: 2026-02-07)
+- [x] Course reviews with star rating + form + card display (Done: 2026-02-09)
+- [x] Review moderation admin view (Done: 2026-02-09)
+- [x] Streak badge component on dashboard (Done: 2026-02-09)
+- [x] Leaderboard view with metric/period selectors (Done: 2026-02-09)
+- [x] i18n translations for reviews, streaks, leaderboards, badges (EN/FR) (Done: 2026-02-09)
 
 ---
 

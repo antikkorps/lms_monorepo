@@ -12,9 +12,11 @@ import {
   ArrowRight,
   PlayCircle,
   AlertCircle,
+  Flame,
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useDashboard } from '@/composables/useDashboard';
+import { useStreak } from '@/composables/useStreak';
 import { DashboardSkeleton } from '@/components/skeletons';
 import { BadgeCard, BadgeModal } from '@/components/badges';
 import type { Badge } from '@/composables/useBadges';
@@ -32,6 +34,8 @@ const {
   fetchDashboard,
   formatRelativeTime,
 } = useDashboard();
+
+const { streak, fetchStreak: loadStreak } = useStreak();
 
 const selectedBadge = ref<Badge | null>(null);
 const badgeModalOpen = ref(false);
@@ -61,6 +65,7 @@ function formatLastAccessed(date: Date | null): string {
 
 onMounted(() => {
   fetchDashboard();
+  loadStreak();
 });
 
 function getGreeting(): string {
@@ -155,6 +160,23 @@ function getProgressColor(progress: number): string {
           </CardContent>
         </Card>
       </div>
+
+      <!-- Streak Widget -->
+      <Card v-if="streak && streak.currentStreak > 0">
+        <CardContent class="flex items-center gap-4 py-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/50">
+            <Flame class="h-6 w-6 text-orange-500" />
+          </div>
+          <div>
+            <p class="text-lg font-bold">
+              {{ t('streaks.currentStreak', { count: streak.currentStreak }, streak.currentStreak) }}
+            </p>
+            <p class="text-sm text-muted-foreground">
+              {{ t('streaks.longestStreak', { count: streak.longestStreak }, streak.longestStreak) }}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       <!-- Continue Learning Section -->
       <Card>

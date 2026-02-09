@@ -4,7 +4,6 @@
  */
 
 import type { Context } from 'koa';
-import { Op } from 'sequelize';
 import {
   Badge,
   UserBadge,
@@ -12,6 +11,7 @@ import {
   QuizResult,
   Purchase,
   Course,
+  UserStreak,
 } from '../database/models/index.js';
 import { UserRole, CourseStatus, PurchaseStatus } from '../database/models/enums.js';
 import type { BadgeCriteria, BadgeCategory, BadgeRarity } from '../database/models/Badge.js';
@@ -170,52 +170,15 @@ async function getCompletedCoursesCount(userId: string): Promise<number> {
 }
 
 /**
- * Calculate current learning streak
+ * Calculate current learning streak from user_streaks table
  */
 async function calculateCurrentStreak(userId: string): Promise<number> {
-  const progressRecords = await UserProgress.findAll({
-    where: {
-      userId,
-      completed: true,
-      completedAt: { [Op.ne]: null },
-    },
-    attributes: ['completedAt'],
-    order: [['completedAt', 'DESC']],
+  const streak = await UserStreak.findOne({
+    where: { userId },
+    attributes: ['currentStreak'],
   });
 
-  if (progressRecords.length === 0) return 0;
-
-  const activeDates = new Set<string>();
-  for (const record of progressRecords) {
-    if (record.completedAt) {
-      activeDates.add(new Date(record.completedAt).toISOString().split('T')[0]);
-    }
-  }
-
-  const sortedDates = Array.from(activeDates).sort().reverse();
-
-  // Check if last activity was today or yesterday
-  const today = new Date().toISOString().split('T')[0];
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-
-  if (sortedDates[0] !== today && sortedDates[0] !== yesterday) {
-    return 0; // Streak broken
-  }
-
-  let streak = 1;
-  for (let i = 1; i < sortedDates.length; i++) {
-    const current = new Date(sortedDates[i - 1]);
-    const previous = new Date(sortedDates[i]);
-    const diffDays = Math.floor((current.getTime() - previous.getTime()) / 86400000);
-
-    if (diffDays === 1) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-
-  return streak;
+  return streak?.currentStreak || 0;
 }
 
 /**

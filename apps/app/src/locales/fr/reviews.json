@@ -1,0 +1,42 @@
+{
+  "title": "Avis",
+  "writeReview": "Rédiger un avis",
+  "yourReview": "Votre avis",
+  "rating": "Note",
+  "titleLabel": "Titre (optionnel)",
+  "titlePlaceholder": "Résumé de votre expérience",
+  "commentLabel": "Commentaire (optionnel)",
+  "commentPlaceholder": "Partagez votre ressenti sur ce cours...",
+  "submitReview": "Soumettre l'avis",
+  "updateReview": "Modifier l'avis",
+  "delete": "Supprimer",
+  "status": {
+    "approved": "Approuvé",
+    "rejected": "Rejeté",
+    "pending": "En attente de modération"
+  },
+  "toast": {
+    "updated": "Avis mis à jour avec succès",
+    "submitted": "Avis soumis pour modération",
+    "deleted": "Avis supprimé",
+    "submitError": "Impossible de soumettre l'avis",
+    "deleteError": "Impossible de supprimer l'avis",
+    "approved": "Avis approuvé",
+    "rejected": "Avis rejeté",
+    "moderateError": "Impossible de modérer l'avis"
+  },
+  "reviewCount": "1 avis | {count} avis",
+  "anonymous": "Anonyme",
+  "moderation": {
+    "title": "Modération des avis",
+    "subtitle": "Approuver ou rejeter les avis en attente",
+    "loadError": "Impossible de charger les avis",
+    "retry": "Réessayer",
+    "emptyTitle": "Tout est à jour !",
+    "emptyMessage": "Aucun avis en attente de modération.",
+    "unknownCourse": "Cours inconnu",
+    "by": "par",
+    "approve": "Approuver",
+    "reject": "Rejeter"
+  }
+}

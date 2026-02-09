@@ -22,6 +22,8 @@ const DEFAULT_FLAGS: NotificationPreferenceFlags = {
   [NotificationType.BADGE_EARNED]: true,
   [NotificationType.DISCUSSION_REPLY]: true,
   [NotificationType.PURCHASE_CONFIRMED]: true,
+  [NotificationType.REVIEW_APPROVED]: true,
+  [NotificationType.STREAK_MILESTONE]: true,
 };
 
 export class NotificationPreference extends Model<

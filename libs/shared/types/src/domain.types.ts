@@ -50,6 +50,8 @@ export interface CourseListItem {
   duration: number;
   chaptersCount: number;
   lessonsCount: number;
+  averageRating?: number;
+  ratingsCount?: number;
   progress?: number; // User progress percentage (0-100)
 }
 
@@ -437,4 +439,51 @@ export interface NoteWithLesson extends Note {
 
 export interface UpsertNoteInput {
   content: string;
+}
+
+// Review domain
+export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+
+export interface CourseReview {
+  id: string;
+  courseId: string;
+  rating: number;
+  title: string | null;
+  comment: string | null;
+  status: ReviewStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+  } | null;
+}
+
+export interface CourseRatingSummary {
+  averageRating: number;
+  ratingsCount: number;
+}
+
+// Streak domain
+export interface UserStreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lastActiveDate: string | null;
+}
+
+// Leaderboard domain
+export type LeaderboardMetric = 'courses_completed' | 'avg_quiz_score' | 'current_streak' | 'total_learning_time';
+export type LeaderboardPeriod = 'weekly' | 'monthly' | 'all_time';
+
+export interface LeaderboardEntry {
+  rank: number;
+  score: number;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+  };
 }
