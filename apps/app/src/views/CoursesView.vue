@@ -1,21 +1,27 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   Search,
   AlertCircle,
   BookOpen,
   Filter,
   SlidersHorizontal,
+  Star,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-vue-next';
 import CourseCard from '@/components/courses/CourseCard.vue';
 import { CourseCardSkeleton } from '@/components/skeletons';
 import { useCourses, type CourseFilter, type CourseSortBy } from '@/composables/useCourses';
 
 const { t } = useI18n();
+const route = useRoute();
 
 const {
   isLoading,
@@ -24,15 +30,38 @@ const {
   filter,
   sortBy,
   searchQuery,
+  category,
+  level,
+  minRating,
   totalCourses,
   filteredCount,
   freeCourses,
+  hasActiveFilters,
   fetchCourses,
   setFilter,
   setSortBy,
   setSearchQuery,
+  setCategory,
+  setLevel,
+  setMinRating,
   clearFilters,
 } = useCourses();
+
+const showAdvancedFilters = ref(false);
+
+const categoryOptions = [
+  'development', 'design', 'business', 'marketing',
+  'data_science', 'language', 'personal_development', 'other',
+] as const;
+
+const levelOptions = [
+  'beginner', 'intermediate', 'advanced', 'all_levels',
+] as const;
+
+const ratingOptions = [
+  { value: 4, label: '4+' },
+  { value: 4.5, label: '4.5+' },
+] as const;
 
 const searchInput = ref('');
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -62,6 +91,11 @@ const sortOptions = computed(() => [
 ]);
 
 onMounted(() => {
+  const urlSearch = route.query.search as string | undefined;
+  if (urlSearch) {
+    searchInput.value = urlSearch;
+    setSearchQuery(urlSearch);
+  }
   fetchCourses();
 });
 </script>
@@ -120,12 +154,91 @@ onMounted(() => {
             </option>
           </select>
         </div>
+
+        <!-- Toggle advanced filters -->
+        <Button
+          variant="outline"
+          size="sm"
+          class="gap-1"
+          @click="showAdvancedFilters = !showAdvancedFilters"
+        >
+          <Filter class="h-4 w-4" />
+          <span class="hidden sm:inline">{{ showAdvancedFilters ? t('courses.catalog.hideFilters') : t('courses.catalog.advancedFilters') }}</span>
+          <component :is="showAdvancedFilters ? ChevronUp : ChevronDown" class="h-3 w-3" />
+        </Button>
+      </div>
+    </div>
+
+    <!-- Advanced Filters -->
+    <div v-if="showAdvancedFilters" class="space-y-3 rounded-lg border p-4">
+      <!-- Category -->
+      <div>
+        <p class="mb-2 text-sm font-medium text-muted-foreground">{{ t('courses.catalog.category') }}</p>
+        <div class="flex flex-wrap gap-2">
+          <Badge
+            :variant="category === null ? 'default' : 'outline'"
+            class="cursor-pointer"
+            @click="setCategory(null)"
+          >
+            {{ t('courses.catalog.allCategories') }}
+          </Badge>
+          <Badge
+            v-for="cat in categoryOptions"
+            :key="cat"
+            :variant="category === cat ? 'default' : 'outline'"
+            class="cursor-pointer"
+            @click="setCategory(category === cat ? null : cat)"
+          >
+            {{ t(`courses.categories.${cat}`) }}
+          </Badge>
+        </div>
+      </div>
+
+      <!-- Level -->
+      <div>
+        <p class="mb-2 text-sm font-medium text-muted-foreground">{{ t('courses.catalog.level') }}</p>
+        <div class="flex flex-wrap gap-2">
+          <Badge
+            :variant="level === null ? 'default' : 'outline'"
+            class="cursor-pointer"
+            @click="setLevel(null)"
+          >
+            {{ t('courses.catalog.allLevels') }}
+          </Badge>
+          <Badge
+            v-for="lvl in levelOptions"
+            :key="lvl"
+            :variant="level === lvl ? 'default' : 'outline'"
+            class="cursor-pointer"
+            @click="setLevel(level === lvl ? null : lvl)"
+          >
+            {{ t(`courses.levels.${lvl}`) }}
+          </Badge>
+        </div>
+      </div>
+
+      <!-- Min Rating -->
+      <div>
+        <p class="mb-2 text-sm font-medium text-muted-foreground">{{ t('courses.catalog.minRating') }}</p>
+        <div class="flex gap-2">
+          <Button
+            v-for="opt in ratingOptions"
+            :key="opt.value"
+            :variant="minRating === opt.value ? 'secondary' : 'outline'"
+            size="sm"
+            class="gap-1"
+            @click="setMinRating(minRating === opt.value ? null : opt.value)"
+          >
+            <Star class="h-3 w-3 fill-yellow-400 text-yellow-400" />
+            {{ opt.label }}
+          </Button>
+        </div>
       </div>
     </div>
 
     <!-- Active filters indicator -->
     <div
-      v-if="filter !== 'all' || searchQuery"
+      v-if="hasActiveFilters"
       class="flex items-center gap-2 text-sm text-muted-foreground"
     >
       <Filter class="h-4 w-4" />
@@ -163,12 +276,12 @@ onMounted(() => {
       <h3 class="mb-2 text-lg font-semibold">{{ t('courses.catalog.empty.title') }}</h3>
       <p class="mb-4 text-muted-foreground">
         {{
-          searchQuery || filter !== 'all'
+          hasActiveFilters
             ? t('courses.catalog.empty.messageFiltered')
             : t('courses.catalog.empty.messageEmpty')
         }}
       </p>
-      <Button v-if="searchQuery || filter !== 'all'" variant="outline" @click="clearFilters">
+      <Button v-if="hasActiveFilters" variant="outline" @click="clearFilters">
         {{ t('courses.catalog.clearFilters') }}
       </Button>
     </div>

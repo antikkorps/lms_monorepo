@@ -151,6 +151,24 @@ export enum TranscodingStatus {
   ERROR = 'error',
 }
 
+export enum CourseCategory {
+  DEVELOPMENT = 'development',
+  DESIGN = 'design',
+  BUSINESS = 'business',
+  MARKETING = 'marketing',
+  DATA_SCIENCE = 'data_science',
+  LANGUAGE = 'language',
+  PERSONAL_DEVELOPMENT = 'personal_development',
+  OTHER = 'other',
+}
+
+export enum CourseLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced',
+  ALL_LEVELS = 'all_levels',
+}
+
 // B2B Course Licensing
 export enum LicenseType {
   UNLIMITED = 'unlimited', // All tenant members have access

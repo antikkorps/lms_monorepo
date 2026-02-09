@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-02-08
+## Modified: 2026-02-09
 
 ---
 
@@ -92,9 +92,10 @@
 
 ### Search & Discovery
 
-- [ ] Full-text search (courses, lessons)
-- [ ] Advanced filters (category, duration, level)
-- [ ] Search suggestions/autocomplete
+- [x] Full-text search with PostgreSQL tsvector + ts_rank (Done: 2026-02-09)
+- [x] Advanced filters (category, level, price, rating) (Done: 2026-02-09)
+- [x] Search suggestions/autocomplete with pg_trgm (Done: 2026-02-09)
+- [x] Command palette (Cmd+K) with fuzzy search (Done: 2026-02-09)
 
 ---
 

@@ -34,17 +34,20 @@ import {
   ShoppingBag,
   Receipt,
   Shield,
+  Search,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
 import DarkModeToggle from '@/components/common/DarkModeToggle.vue';
 import { NotificationBell } from '@/components/notifications';
+import CommandPalette from '@/components/search/CommandPalette.vue';
 
 const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
 
 const isMobileMenuOpen = ref(false);
+const commandPaletteOpen = ref(false);
 
 const navigationItems = computed(() => [
   { name: t('nav.main.dashboard'), href: '/dashboard', icon: Home },
@@ -421,6 +424,12 @@ async function handleLogout() {
 
       <div class="flex-1" />
 
+      <!-- Search button (mobile) -->
+      <Button variant="ghost" size="icon" @click="commandPaletteOpen = true">
+        <Search class="h-5 w-5" />
+        <span class="sr-only">{{ t('search.title') }}</span>
+      </Button>
+
       <!-- Language switcher (mobile) -->
       <LanguageSwitcher />
 
@@ -478,7 +487,13 @@ async function handleLogout() {
     <!-- Desktop header -->
     <header class="fixed left-64 right-0 top-0 z-30 hidden h-16 items-center justify-between border-b border-border bg-background px-6 lg:flex">
       <div class="flex-1">
-        <!-- Breadcrumb or title could go here -->
+        <Button variant="outline" size="sm" class="w-64 justify-start text-muted-foreground" @click="commandPaletteOpen = true">
+          <Search class="mr-2 h-4 w-4" />
+          {{ t('search.trigger') }}
+          <kbd class="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <span class="text-xs">&#8984;</span>K
+          </kbd>
+        </Button>
       </div>
 
       <div class="flex items-center gap-4">
@@ -546,5 +561,8 @@ async function handleLogout() {
         <slot />
       </div>
     </main>
+
+    <!-- Command Palette -->
+    <CommandPalette v-model:open="commandPaletteOpen" />
   </div>
 </template>

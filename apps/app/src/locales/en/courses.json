@@ -19,6 +19,13 @@
       "priceDesc": "Price: High to Low"
     },
     "showing": "Showing {filtered} of {total} courses",
+    "category": "Category",
+    "level": "Level",
+    "minRating": "Minimum Rating",
+    "allCategories": "All Categories",
+    "allLevels": "All Levels",
+    "advancedFilters": "Filters",
+    "hideFilters": "Hide Filters",
     "clearFilters": "Clear filters",
     "empty": {
       "title": "No courses found",
@@ -135,5 +142,21 @@
       "message": "Start learning by enrolling in a course",
       "action": "Browse Courses"
     }
+  },
+  "categories": {
+    "development": "Development",
+    "design": "Design",
+    "business": "Business",
+    "marketing": "Marketing",
+    "data_science": "Data Science",
+    "language": "Language",
+    "personal_development": "Personal Development",
+    "other": "Other"
+  },
+  "levels": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "all_levels": "All Levels"
   }
 }

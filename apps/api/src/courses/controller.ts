@@ -1,7 +1,7 @@
 import type { Context } from 'koa';
 import { Op } from 'sequelize';
 import { Course, Chapter, Lesson, User, LessonContent, UserProgress } from '../database/models/index.js';
-import { CourseStatus, UserRole, LessonType, Currency } from '../database/models/enums.js';
+import { CourseStatus, UserRole, LessonType, Currency, CourseCategory, CourseLevel } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { parseLocaleFromRequest, getLocalizedLessonContent } from '../utils/locale.js';
@@ -49,6 +49,8 @@ export async function listCourses(ctx: Context): Promise<void> {
     status,
     instructorId,
     search,
+    category,
+    level,
     sort = 'createdAt',
     order = 'DESC',
   } = ctx.query as {
@@ -57,6 +59,8 @@ export async function listCourses(ctx: Context): Promise<void> {
     status?: CourseStatus;
     instructorId?: string;
     search?: string;
+    category?: CourseCategory;
+    level?: CourseLevel;
     sort?: string;
     order?: 'ASC' | 'DESC';
   };
@@ -81,6 +85,14 @@ export async function listCourses(ctx: Context): Promise<void> {
       { title: { [Op.iLike]: `%${search}%` } },
       { description: { [Op.iLike]: `%${search}%` } },
     ];
+  }
+
+  if (category) {
+    where.category = category;
+  }
+
+  if (level) {
+    where.level = level;
   }
 
   const { rows: courses, count } = await Course.findAndCountAll({
@@ -256,13 +268,15 @@ export async function getCourse(ctx: Context): Promise<void> {
  */
 export async function createCourse(ctx: Context): Promise<void> {
   const user = getAuthenticatedUser(ctx);
-  const { title, slug, description, thumbnailUrl, price, currency } = ctx.request.body as {
+  const { title, slug, description, thumbnailUrl, price, currency, category, level } = ctx.request.body as {
     title: string;
     slug?: string;
     description?: string;
     thumbnailUrl?: string;
     price?: number;
     currency?: Currency;
+    category?: CourseCategory;
+    level?: CourseLevel;
   };
 
   const courseSlug = slug || slugify(title, { lower: true, strict: true });
@@ -279,6 +293,8 @@ export async function createCourse(ctx: Context): Promise<void> {
     thumbnailUrl: thumbnailUrl || null,
     price: price || 0,
     currency: currency || Currency.EUR,
+    category: category || CourseCategory.OTHER,
+    level: level || CourseLevel.ALL_LEVELS,
     instructorId: user.userId,
     status: CourseStatus.DRAFT,
   });
@@ -301,6 +317,8 @@ export async function updateCourse(ctx: Context): Promise<void> {
     status?: CourseStatus;
     price?: number;
     currency?: Currency;
+    category?: CourseCategory;
+    level?: CourseLevel;
   };
 
   const course = await Course.findByPk(id);

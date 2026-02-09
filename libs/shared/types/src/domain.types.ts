@@ -52,6 +52,8 @@ export interface CourseListItem {
   lessonsCount: number;
   averageRating?: number;
   ratingsCount?: number;
+  category?: CourseCategory;
+  level?: CourseLevel;
   progress?: number; // User progress percentage (0-100)
 }
 
@@ -199,6 +201,8 @@ export interface LessonItem {
 
 export type LessonType = 'video' | 'quiz' | 'document' | 'assignment';
 export type CourseStatus = 'draft' | 'published' | 'archived';
+export type CourseCategory = 'development' | 'design' | 'business' | 'marketing' | 'data_science' | 'language' | 'personal_development' | 'other';
+export type CourseLevel = 'beginner' | 'intermediate' | 'advanced' | 'all_levels';
 export type SupportedLocale = 'en' | 'fr';
 export type TranscodingStatus = 'pending' | 'processing' | 'ready' | 'error';
 

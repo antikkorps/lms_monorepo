@@ -1,0 +1,7 @@
+{
+  "trigger": "Rechercher des cours...",
+  "placeholder": "Tapez pour rechercher...",
+  "noResults": "Aucun cours trouvé",
+  "hint": "Appuyez sur Entrée pour voir tous les résultats",
+  "title": "Recherche"
+}

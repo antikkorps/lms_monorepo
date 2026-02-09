@@ -69,6 +69,9 @@
 - [x] Streak badge component on dashboard (Done: 2026-02-09)
 - [x] Leaderboard view with metric/period selectors (Done: 2026-02-09)
 - [x] i18n translations for reviews, streaks, leaderboards, badges (EN/FR) (Done: 2026-02-09)
+- [x] Full-text search with command palette (Cmd+K) (Done: 2026-02-09)
+- [x] Advanced catalog filters: category, level, rating (Done: 2026-02-09)
+- [x] Search suggestions autocomplete with pg_trgm (Done: 2026-02-09)
 
 ---
 

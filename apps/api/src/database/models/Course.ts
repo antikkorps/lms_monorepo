@@ -8,7 +8,7 @@ import {
   type NonAttribute,
 } from 'sequelize';
 import { sequelize } from '../sequelize.js';
-import { CourseStatus, Currency } from './enums.js';
+import { CourseStatus, Currency, CourseCategory, CourseLevel } from './enums.js';
 import type { User } from './User.js';
 import type { Chapter } from './Chapter.js';
 
@@ -30,6 +30,8 @@ export class Course extends Model<
   declare lessonsCount: CreationOptional<number>;
   declare averageRating: CreationOptional<number>;
   declare ratingsCount: CreationOptional<number>;
+  declare category: CreationOptional<CourseCategory>;
+  declare level: CreationOptional<CourseLevel>;
   declare stripeProductId: CreationOptional<string | null>;
   declare stripePriceId: CreationOptional<string | null>;
   declare createdAt: CreationOptional<Date>;
@@ -131,6 +133,16 @@ Course.init(
       allowNull: false,
       defaultValue: 0,
     },
+    category: {
+      type: DataTypes.ENUM(...Object.values(CourseCategory)),
+      allowNull: false,
+      defaultValue: CourseCategory.OTHER,
+    },
+    level: {
+      type: DataTypes.ENUM(...Object.values(CourseLevel)),
+      allowNull: false,
+      defaultValue: CourseLevel.ALL_LEVELS,
+    },
     stripeProductId: {
       type: DataTypes.STRING(255),
       allowNull: true,
@@ -152,6 +164,8 @@ Course.init(
       { fields: ['slug'] },
       { fields: ['status'] },
       { fields: ['instructor_id'] },
+      { fields: ['category'] },
+      { fields: ['level'] },
     ],
   }
 );
