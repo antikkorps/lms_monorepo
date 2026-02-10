@@ -510,5 +510,41 @@
       "step4": "Entrez les identifiants ci-dessus et testez la configuration",
       "docsLink": "Voir le guide de configuration détaillé"
     }
+  },
+  "analytics": {
+    "title": "Tableau de bord analytique",
+    "subtitle": "Revenus, utilisateurs et engagement de votre plateforme.",
+    "export": "Exporter CSV",
+    "error": {
+      "loadFailed": "Échec du chargement des analytiques",
+      "retry": "Réessayer"
+    },
+    "stats": {
+      "netRevenue": "Revenu net",
+      "newUsers": "Nouveaux utilisateurs",
+      "activeUsers": "Utilisateurs actifs",
+      "completionRate": "Taux de complétion",
+      "vsPreviousPeriod": "vs période précédente"
+    },
+    "charts": {
+      "revenue": "Revenu",
+      "revenueOverTime": "Revenu dans le temps",
+      "revenueDescription": "Revenu total généré pendant la période sélectionnée",
+      "dailyEngagement": "Engagement quotidien",
+      "engagementDescription": "Utilisateurs actifs et complétion de leçons par jour",
+      "activeUsers": "Utilisateurs actifs",
+      "completions": "Complétions"
+    },
+    "topCourses": {
+      "title": "Top des cours par revenu",
+      "description": "Cours les plus performants pendant la période sélectionnée",
+      "sales": "ventes",
+      "empty": "Aucune donnée de revenu pour cette période"
+    },
+    "categories": {
+      "title": "Répartition par catégorie",
+      "description": "Distribution des ventes de cours par catégorie",
+      "empty": "Aucune donnée de catégorie pour cette période"
+    }
   }
 }

@@ -172,6 +172,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/admin/ReviewModerationView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/admin/analytics',
+    name: 'admin-analytics',
+    component: () => import('../views/admin/AdminAnalyticsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Instructor routes (instructors and admins)
   {
