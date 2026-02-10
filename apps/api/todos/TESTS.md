@@ -77,6 +77,11 @@ cd apps/api && npx vitest run --coverage
 
 - [x] Auth controller tests (65 tests, 12 endpoints) (Done: 2026-02-08)
 - [ ] Redis session tests (requires Redis mock)
+- [ ] Reviews controller tests
+- [ ] Streaks controller tests
+- [ ] Leaderboard controller tests
+- [ ] Streak worker tests
+- [ ] Leaderboard worker tests
 
 ### Notes
 

@@ -31,5 +31,26 @@
     "title": "No badges found",
     "messageFiltered": "Try a different category filter.",
     "messageDefault": "Start learning to earn your first badge!"
+  },
+  "modal": {
+    "close": "Close",
+    "category": "Category",
+    "earned": "Earned",
+    "progress": "Progress"
+  },
+  "categories": {
+    "course": "Course Achievement",
+    "streak": "Streak Achievement",
+    "quiz": "Quiz Achievement",
+    "milestone": "Milestone Achievement",
+    "special": "Special Achievement",
+    "default": "Achievement"
+  },
+  "categoryLabels": {
+    "course": "Courses",
+    "streak": "Streaks",
+    "quiz": "Quizzes",
+    "milestone": "Milestones",
+    "special": "Special"
   }
 }

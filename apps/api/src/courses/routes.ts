@@ -25,12 +25,23 @@ import { validate } from '../middlewares/validate.js';
 import { z } from 'zod';
 
 // Validation schemas
+const courseCategoryEnum = z.enum([
+  'development', 'design', 'business', 'marketing',
+  'data_science', 'language', 'personal_development', 'other',
+]);
+
+const courseLevelEnum = z.enum([
+  'beginner', 'intermediate', 'advanced', 'all_levels',
+]);
+
 const createCourseSchema = z.object({
   title: z.string().min(1).max(255),
   slug: z.string().min(1).max(255).regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens').optional(),
   description: z.string().max(5000).optional(),
   thumbnailUrl: z.string().url().optional(),
   price: z.number().nonnegative().default(0),
+  category: courseCategoryEnum.optional(),
+  level: courseLevelEnum.optional(),
 });
 
 const updateCourseSchema = z.object({
@@ -39,6 +50,8 @@ const updateCourseSchema = z.object({
   thumbnailUrl: z.string().url().nullable().optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
   price: z.number().nonnegative().optional(),
+  category: courseCategoryEnum.optional(),
+  level: courseLevelEnum.optional(),
 });
 
 const createChapterSchema = z.object({

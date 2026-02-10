@@ -1,0 +1,42 @@
+{
+  "title": "Reviews",
+  "writeReview": "Write a Review",
+  "yourReview": "Your Review",
+  "rating": "Rating",
+  "titleLabel": "Title (optional)",
+  "titlePlaceholder": "Summary of your experience",
+  "commentLabel": "Comment (optional)",
+  "commentPlaceholder": "Share your thoughts about this course...",
+  "submitReview": "Submit Review",
+  "updateReview": "Update Review",
+  "delete": "Delete",
+  "status": {
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "pending": "Pending moderation"
+  },
+  "toast": {
+    "updated": "Review updated successfully",
+    "submitted": "Review submitted for moderation",
+    "deleted": "Review deleted",
+    "submitError": "Failed to submit review",
+    "deleteError": "Failed to delete review",
+    "approved": "Review approved",
+    "rejected": "Review rejected",
+    "moderateError": "Failed to moderate review"
+  },
+  "reviewCount": "1 review | {count} reviews",
+  "anonymous": "Anonymous",
+  "moderation": {
+    "title": "Review Moderation",
+    "subtitle": "Approve or reject pending course reviews",
+    "loadError": "Failed to load reviews",
+    "retry": "Retry",
+    "emptyTitle": "All caught up!",
+    "emptyMessage": "No pending reviews to moderate.",
+    "unknownCourse": "Unknown Course",
+    "by": "by",
+    "approve": "Approve",
+    "reject": "Reject"
+  }
+}

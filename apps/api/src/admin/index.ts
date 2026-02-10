@@ -1,13 +1,29 @@
 import Router from '@koa/router';
-import { authenticate, requireSuperAdmin } from '../auth/middleware.js';
+import { authenticate, requireSuperAdmin, requireRole } from '../auth/middleware.js';
+import { UserRole } from '../database/models/enums.js';
 import { sendTestEmail, getEmailStats, getEmailLogs } from './email.controller.js';
+import {
+  getAnalyticsOverview,
+  getAnalyticsRevenue,
+  getAnalyticsEngagement,
+  getAnalyticsExport,
+} from './analytics.controller.js';
 
 export const adminRouter = new Router({ prefix: '/admin' });
 
 // All admin routes require authentication and SuperAdmin role
 const superAdminAuth = [authenticate, requireSuperAdmin];
 
+// Analytics routes require admin role (super_admin or tenant_admin)
+const adminAuth = [authenticate, requireRole(UserRole.SUPER_ADMIN, UserRole.TENANT_ADMIN)];
+
 // Email endpoints
 adminRouter.post('/email/test', ...superAdminAuth, sendTestEmail);
 adminRouter.get('/email/stats', ...superAdminAuth, getEmailStats);
 adminRouter.get('/email/logs', ...superAdminAuth, getEmailLogs);
+
+// Analytics endpoints
+adminRouter.get('/analytics/overview', ...adminAuth, getAnalyticsOverview);
+adminRouter.get('/analytics/revenue', ...adminAuth, getAnalyticsRevenue);
+adminRouter.get('/analytics/engagement', ...adminAuth, getAnalyticsEngagement);
+adminRouter.get('/analytics/export', ...adminAuth, getAnalyticsExport);

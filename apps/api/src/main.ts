@@ -13,6 +13,11 @@ import {
   stopDigestWorker,
   startTranscodingWorker,
   stopTranscodingWorker,
+  startStreakWorker,
+  stopStreakWorker,
+  startLeaderboardWorker,
+  stopLeaderboardWorker,
+  scheduleLeaderboardRefresh,
 } from './queue/index.js';
 import { disconnectPublisher } from './services/notifications/index.js';
 
@@ -38,6 +43,9 @@ async function bootstrap() {
     startNotificationWorker();
     startDigestWorker();
     startTranscodingWorker();
+    startStreakWorker();
+    startLeaderboardWorker();
+    await scheduleLeaderboardRefresh();
     logger.info('Queue workers started');
 
     // Start HTTP server
@@ -58,6 +66,8 @@ async function bootstrap() {
           await stopNotificationWorker();
           await stopDigestWorker();
           await stopTranscodingWorker();
+          await stopStreakWorker();
+          await stopLeaderboardWorker();
           logger.info('Queue workers stopped');
 
           // Close notification pub/sub

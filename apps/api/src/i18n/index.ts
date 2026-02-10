@@ -66,6 +66,8 @@ export function getNotificationText(
     [NotificationType.BADGE_EARNED]: 'badge_earned',
     [NotificationType.DISCUSSION_REPLY]: 'discussion_reply',
     [NotificationType.PURCHASE_CONFIRMED]: 'purchase_confirmed',
+    [NotificationType.REVIEW_APPROVED]: 'default',
+    [NotificationType.STREAK_MILESTONE]: 'default',
   };
 
   const translationKey = typeKeyMap[type];

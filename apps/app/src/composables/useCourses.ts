@@ -16,6 +16,9 @@ interface CoursesState {
   filter: CourseFilter;
   sortBy: CourseSortBy;
   searchQuery: string;
+  category: string | null;
+  level: string | null;
+  minRating: number | null;
   pagination: {
     page: number;
     limit: number;
@@ -85,6 +88,9 @@ export function useCourses() {
     filter: 'all',
     sortBy: 'newest',
     searchQuery: '',
+    category: null,
+    level: null,
+    minRating: null,
     pagination: {
       page: 1,
       limit: 20,
@@ -139,6 +145,14 @@ export function useCourses() {
   const totalCourses = computed(() => state.value.pagination.total);
   const filteredCount = computed(() => filteredCourses.value.length);
   const freeCourses = computed(() => state.value.courses.filter((c) => c.price === 0).length);
+  const hasActiveFilters = computed(
+    () =>
+      state.value.filter !== 'all' ||
+      state.value.searchQuery !== '' ||
+      state.value.category !== null ||
+      state.value.level !== null ||
+      state.value.minRating !== null
+  );
 
   /**
    * Fetch courses from API
@@ -158,6 +172,16 @@ export function useCourses() {
       // Add search to API call if present
       if (state.value.searchQuery) {
         params.set('search', state.value.searchQuery);
+      }
+
+      if (state.value.category) {
+        params.set('category', state.value.category);
+      }
+      if (state.value.level) {
+        params.set('level', state.value.level);
+      }
+      if (state.value.minRating !== null) {
+        params.set('minRating', state.value.minRating.toString());
       }
 
       const response = await fetch(`/api/v1/courses?${params.toString()}`, {
@@ -198,6 +222,35 @@ export function useCourses() {
    */
   function setSearchQuery(query: string): void {
     state.value.searchQuery = query;
+    state.value.pagination.page = 1;
+    fetchCourses();
+  }
+
+  /**
+   * Set category filter
+   */
+  function setCategory(cat: string | null): void {
+    state.value.category = cat;
+    state.value.pagination.page = 1;
+    fetchCourses();
+  }
+
+  /**
+   * Set level filter
+   */
+  function setLevel(lvl: string | null): void {
+    state.value.level = lvl;
+    state.value.pagination.page = 1;
+    fetchCourses();
+  }
+
+  /**
+   * Set minimum rating filter
+   */
+  function setMinRating(rating: number | null): void {
+    state.value.minRating = rating;
+    state.value.pagination.page = 1;
+    fetchCourses();
   }
 
   /**
@@ -207,6 +260,9 @@ export function useCourses() {
     state.value.filter = 'all';
     state.value.sortBy = 'newest';
     state.value.searchQuery = '';
+    state.value.category = null;
+    state.value.level = null;
+    state.value.minRating = null;
   }
 
   /**
@@ -225,18 +281,25 @@ export function useCourses() {
     filter: computed(() => state.value.filter),
     sortBy: computed(() => state.value.sortBy),
     searchQuery: computed(() => state.value.searchQuery),
+    category: computed(() => state.value.category),
+    level: computed(() => state.value.level),
+    minRating: computed(() => state.value.minRating),
     pagination: computed(() => state.value.pagination),
 
     // Computed
     totalCourses,
     filteredCount,
     freeCourses,
+    hasActiveFilters,
 
     // Methods
     fetchCourses,
     setFilter,
     setSortBy,
     setSearchQuery,
+    setCategory,
+    setLevel,
+    setMinRating,
     clearFilters,
     goToPage,
   };

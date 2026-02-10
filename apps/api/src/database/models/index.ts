@@ -30,6 +30,10 @@ export { Notification, type NotificationData } from './Notification.js';
 export { NotificationPreference, type NotificationPreferenceFlags } from './NotificationPreference.js';
 export { TenantCourseLicense, TenantCourseLicenseAssignment } from './TenantCourseLicense.js';
 export { EmailLog, type EmailType, type EmailStatus } from './EmailLog.js';
+export { CourseReview } from './CourseReview.js';
+export { UserStreak } from './UserStreak.js';
+export { UserActivityLog } from './UserActivityLog.js';
+export { LeaderboardEntry } from './LeaderboardEntry.js';
 
 // Import for associations setup
 import { Tenant } from './Tenant.js';
@@ -53,6 +57,10 @@ import { Notification } from './Notification.js';
 import { NotificationPreference } from './NotificationPreference.js';
 import { TenantCourseLicense, TenantCourseLicenseAssignment } from './TenantCourseLicense.js';
 import { EmailLog } from './EmailLog.js';
+import { CourseReview } from './CourseReview.js';
+import { UserStreak } from './UserStreak.js';
+import { UserActivityLog } from './UserActivityLog.js';
+import { LeaderboardEntry } from './LeaderboardEntry.js';
 
 /**
  * Setup all model associations
@@ -536,6 +544,70 @@ export function setupAssociations(): void {
     foreignKey: 'userId',
     as: 'licenseAssignments',
   });
+
+  // =============================================================================
+  // CourseReview Associations
+  // =============================================================================
+  CourseReview.belongsTo(Course, {
+    foreignKey: 'courseId',
+    as: 'course',
+  });
+
+  CourseReview.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  CourseReview.belongsTo(User, {
+    foreignKey: 'moderatedById',
+    as: 'moderatedBy',
+  });
+
+  Course.hasMany(CourseReview, {
+    foreignKey: 'courseId',
+    as: 'reviews',
+  });
+
+  User.hasMany(CourseReview, {
+    foreignKey: 'userId',
+    as: 'reviews',
+  });
+
+  // =============================================================================
+  // UserStreak Associations
+  // =============================================================================
+  UserStreak.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  User.hasOne(UserStreak, {
+    foreignKey: 'userId',
+    as: 'streak',
+  });
+
+  // =============================================================================
+  // LeaderboardEntry Associations
+  // =============================================================================
+  LeaderboardEntry.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  LeaderboardEntry.belongsTo(Tenant, {
+    foreignKey: 'tenantId',
+    as: 'tenant',
+  });
+
+  LeaderboardEntry.belongsTo(Course, {
+    foreignKey: 'courseId',
+    as: 'course',
+  });
+
+  User.hasMany(LeaderboardEntry, {
+    foreignKey: 'userId',
+    as: 'leaderboardEntries',
+  });
 }
 
 // All models for easy iteration
@@ -565,4 +637,8 @@ export const models = {
   TenantCourseLicense,
   TenantCourseLicenseAssignment,
   EmailLog,
+  CourseReview,
+  UserStreak,
+  UserActivityLog,
+  LeaderboardEntry,
 } as const;

@@ -31,5 +31,26 @@
     "title": "Aucun badge trouvé",
     "messageFiltered": "Essayez un autre filtre de catégorie.",
     "messageDefault": "Commencez à apprendre pour obtenir votre premier badge !"
+  },
+  "modal": {
+    "close": "Fermer",
+    "category": "Catégorie",
+    "earned": "Obtenu",
+    "progress": "Progression"
+  },
+  "categories": {
+    "course": "Accomplissement de cours",
+    "streak": "Accomplissement de série",
+    "quiz": "Accomplissement de quiz",
+    "milestone": "Accomplissement de jalon",
+    "special": "Accomplissement spécial",
+    "default": "Accomplissement"
+  },
+  "categoryLabels": {
+    "course": "Cours",
+    "streak": "Séries",
+    "quiz": "Quiz",
+    "milestone": "Jalons",
+    "special": "Spéciaux"
   }
 }

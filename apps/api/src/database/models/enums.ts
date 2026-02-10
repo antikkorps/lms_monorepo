@@ -107,6 +107,27 @@ export enum NotificationType {
   BADGE_EARNED = 'badge_earned',
   DISCUSSION_REPLY = 'discussion_reply',
   PURCHASE_CONFIRMED = 'purchase_confirmed',
+  REVIEW_APPROVED = 'review_approved',
+  STREAK_MILESTONE = 'streak_milestone',
+}
+
+export enum ReviewStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
+export enum LeaderboardMetric {
+  COURSES_COMPLETED = 'courses_completed',
+  AVG_QUIZ_SCORE = 'avg_quiz_score',
+  CURRENT_STREAK = 'current_streak',
+  TOTAL_LEARNING_TIME = 'total_learning_time',
+}
+
+export enum LeaderboardPeriod {
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  ALL_TIME = 'all_time',
 }
 
 export enum DigestFrequency {
@@ -128,6 +149,24 @@ export enum TranscodingStatus {
   PROCESSING = 'processing',
   READY = 'ready',
   ERROR = 'error',
+}
+
+export enum CourseCategory {
+  DEVELOPMENT = 'development',
+  DESIGN = 'design',
+  BUSINESS = 'business',
+  MARKETING = 'marketing',
+  DATA_SCIENCE = 'data_science',
+  LANGUAGE = 'language',
+  PERSONAL_DEVELOPMENT = 'personal_development',
+  OTHER = 'other',
+}
+
+export enum CourseLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced',
+  ALL_LEVELS = 'all_levels',
 }
 
 // B2B Course Licensing

@@ -5,4 +5,5 @@ export {
   onBadgeEarned,
   onPurchaseConfirmed,
   onDiscussionReply,
+  onActivityPerformed,
 } from './notification.triggers.js';

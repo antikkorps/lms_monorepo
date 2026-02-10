@@ -27,6 +27,7 @@
     "seats": "Seat Management",
     "invoices": "Invoices",
     "sso": "SSO Configuration",
+    "analytics": "Analytics",
     "refunds": "Refund Requests"
   },
   "accessibility": {

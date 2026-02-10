@@ -1,6 +1,6 @@
 # LMS Platform - Backlog
 
-## Modified: 2026-02-08
+## Modified: 2026-02-09
 
 ---
 
@@ -40,6 +40,12 @@
 - [x] Tester R2 avec credentials réels (Done: 2026-01-28)
 - [x] Video transcoding pipeline (Done: 2026-02-07)
 
+#### Video Transcoding — Production Readiness
+- [ ] Cloudflare Stream webhook endpoint (remplacer le polling par des callbacks)
+- [ ] Cleanup des streams Cloudflare à la suppression de LessonContent
+- [ ] Extraction thumbnail/poster depuis Cloudflare Stream
+- [ ] Admin monitoring des jobs transcoding (liste active/failed)
+
 ### API Integration (Frontend)
 
 - [x] Replace mock data with real API calls in composables (Done: 2026-01-26)
@@ -77,6 +83,14 @@
 - [ ] Integration tests (API + DB)
 - [ ] Performance testing
 
+### Dependency Migrations
+
+- [x] Zod 3 → 4 migration (Done: 2026-02-10)
+  - `z.record(schema)` → `z.record(z.string(), schema)` (common.schema, tenant.schema)
+  - Added `zod ^4` as root dependency for Docker hoisting
+  - Note: `.flatten()` and `z.nativeEnum()` are unchanged in Zod 4
+- [ ] ESLint 9 → 10 — bloqué, attendre support typescript-eslint (PR #87)
+
 ### Documentation
 
 - [ ] OpenAPI/Swagger documentation
@@ -86,9 +100,10 @@
 
 ### Search & Discovery
 
-- [ ] Full-text search (courses, lessons)
-- [ ] Advanced filters (category, duration, level)
-- [ ] Search suggestions/autocomplete
+- [x] Full-text search with PostgreSQL tsvector + ts_rank (Done: 2026-02-09)
+- [x] Advanced filters (category, level, price, rating) (Done: 2026-02-09)
+- [x] Search suggestions/autocomplete with pg_trgm (Done: 2026-02-09)
+- [x] Command palette (Cmd+K) with fuzzy search (Done: 2026-02-09)
 
 ---
 
@@ -97,9 +112,9 @@
 ### Gamification & Engagement
 
 - [x] Course completion certificates (PDF generation) (Done: 2026-01-28)
-- [ ] Leaderboards (per course, global)
-- [ ] Course reviews & ratings
-- [ ] Achievement streaks
+- [x] Leaderboards (per course, global) (Done: 2026-02-09)
+- [x] Course reviews & ratings with moderation (Done: 2026-02-09)
+- [x] Achievement streaks (Done: 2026-02-09)
 
 ### Analytics & Reporting
 

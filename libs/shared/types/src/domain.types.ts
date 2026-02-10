@@ -50,6 +50,10 @@ export interface CourseListItem {
   duration: number;
   chaptersCount: number;
   lessonsCount: number;
+  averageRating?: number;
+  ratingsCount?: number;
+  category?: CourseCategory;
+  level?: CourseLevel;
   progress?: number; // User progress percentage (0-100)
 }
 
@@ -197,6 +201,8 @@ export interface LessonItem {
 
 export type LessonType = 'video' | 'quiz' | 'document' | 'assignment';
 export type CourseStatus = 'draft' | 'published' | 'archived';
+export type CourseCategory = 'development' | 'design' | 'business' | 'marketing' | 'data_science' | 'language' | 'personal_development' | 'other';
+export type CourseLevel = 'beginner' | 'intermediate' | 'advanced' | 'all_levels';
 export type SupportedLocale = 'en' | 'fr';
 export type TranscodingStatus = 'pending' | 'processing' | 'ready' | 'error';
 
@@ -437,4 +443,107 @@ export interface NoteWithLesson extends Note {
 
 export interface UpsertNoteInput {
   content: string;
+}
+
+// Review domain
+export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+
+export interface CourseReview {
+  id: string;
+  courseId: string;
+  rating: number;
+  title: string | null;
+  comment: string | null;
+  status: ReviewStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+  } | null;
+}
+
+export interface CourseRatingSummary {
+  averageRating: number;
+  ratingsCount: number;
+}
+
+// Streak domain
+export interface UserStreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lastActiveDate: string | null;
+}
+
+// Leaderboard domain
+export type LeaderboardMetric = 'courses_completed' | 'avg_quiz_score' | 'current_streak' | 'total_learning_time';
+export type LeaderboardPeriod = 'weekly' | 'monthly' | 'all_time';
+
+export interface LeaderboardEntry {
+  rank: number;
+  score: number;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+  };
+}
+
+// Admin Analytics
+export type AnalyticsPeriod = '7d' | '30d' | '90d' | '12m';
+
+export interface AdminAnalyticsDeltas {
+  revenue: number;
+  users: number;
+  activeUsers: number;
+  completionRate: number;
+}
+
+export interface AdminAnalyticsSummary {
+  totalRevenue: number;
+  newUsers: number;
+  activeUsers: number;
+  completionRate: number;
+  deltas: AdminAnalyticsDeltas;
+}
+
+export interface RevenueTimePoint {
+  date: string;
+  amount: number;
+}
+
+export interface TopCourseRevenue {
+  courseId: string;
+  title: string;
+  revenue: number;
+  sales: number;
+}
+
+export interface CurrencyBreakdown {
+  currency: string;
+  amount: number;
+  count: number;
+}
+
+export interface DailyEngagement {
+  date: string;
+  activeUsers: number;
+  completions: number;
+}
+
+export interface CourseCompletionRate {
+  courseId: string;
+  title: string;
+  enrolled: number;
+  completed: number;
+  rate: number;
+}
+
+export interface CategoryDistribution {
+  category: string;
+  count: number;
+  color: string;
 }

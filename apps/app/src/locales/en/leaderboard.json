@@ -1,0 +1,27 @@
+{
+  "title": "Leaderboard",
+  "subtitle": "See how you rank against other learners",
+  "myRank": "Rank #{rank}",
+  "yourPosition": "Your current position",
+  "metrics": {
+    "courses_completed": "Courses Completed",
+    "avg_quiz_score": "Quiz Score",
+    "current_streak": "Streak",
+    "total_learning_time": "Learning Time"
+  },
+  "periods": {
+    "weekly": "This Week",
+    "monthly": "This Month",
+    "all_time": "All Time"
+  },
+  "error": {
+    "loadFailed": "Failed to load leaderboard",
+    "retry": "Retry"
+  },
+  "empty": "No leaderboard data yet.",
+  "you": "(you)",
+  "unknown": "Unknown",
+  "score": {
+    "day": "day | days"
+  }
+}

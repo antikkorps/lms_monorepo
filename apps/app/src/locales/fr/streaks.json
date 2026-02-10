@@ -1,0 +1,5 @@
+{
+  "currentStreak": "{count} jour de série | {count} jours de série",
+  "longestStreak": "Record : {count} jour | Record : {count} jours",
+  "day": "jour | jours"
+}
