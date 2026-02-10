@@ -491,3 +491,59 @@ export interface LeaderboardEntry {
     avatarUrl: string | null;
   };
 }
+
+// Admin Analytics
+export type AnalyticsPeriod = '7d' | '30d' | '90d' | '12m';
+
+export interface AdminAnalyticsDeltas {
+  revenue: number;
+  users: number;
+  activeUsers: number;
+  completionRate: number;
+}
+
+export interface AdminAnalyticsSummary {
+  totalRevenue: number;
+  newUsers: number;
+  activeUsers: number;
+  completionRate: number;
+  deltas: AdminAnalyticsDeltas;
+}
+
+export interface RevenueTimePoint {
+  date: string;
+  amount: number;
+}
+
+export interface TopCourseRevenue {
+  courseId: string;
+  title: string;
+  revenue: number;
+  sales: number;
+}
+
+export interface CurrencyBreakdown {
+  currency: string;
+  amount: number;
+  count: number;
+}
+
+export interface DailyEngagement {
+  date: string;
+  activeUsers: number;
+  completions: number;
+}
+
+export interface CourseCompletionRate {
+  courseId: string;
+  title: string;
+  enrolled: number;
+  completed: number;
+  rate: number;
+}
+
+export interface CategoryDistribution {
+  category: string;
+  count: number;
+  color: string;
+}

@@ -25,7 +25,7 @@ export const tenantSchema = z.object({
   stripeSubscriptionId: z.string().nullable(),
   logoUrl: z.string().url().nullable(),
   domain: z.string().nullable(),
-  settings: z.record(z.unknown()).default({}),
+  settings: z.record(z.string(), z.unknown()).default({}),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -46,7 +46,7 @@ export const updateTenantSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   logoUrl: z.string().url().nullable().optional(),
   domain: z.string().nullable().optional(),
-  settings: z.record(z.unknown()).optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const groupSchema = z.object({

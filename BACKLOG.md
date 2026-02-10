@@ -83,6 +83,14 @@
 - [ ] Integration tests (API + DB)
 - [ ] Performance testing
 
+### Dependency Migrations
+
+- [x] Zod 3 → 4 migration (Done: 2026-02-10)
+  - `z.record(schema)` → `z.record(z.string(), schema)` (common.schema, tenant.schema)
+  - Added `zod ^4` as root dependency for Docker hoisting
+  - Note: `.flatten()` and `z.nativeEnum()` are unchanged in Zod 4
+- [ ] ESLint 9 → 10 — bloqué, attendre support typescript-eslint (PR #87)
+
 ### Documentation
 
 - [ ] OpenAPI/Swagger documentation

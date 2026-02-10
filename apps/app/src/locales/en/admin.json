@@ -510,5 +510,41 @@
       "step4": "Enter the credentials above and test the configuration",
       "docsLink": "View detailed setup guide"
     }
+  },
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "subtitle": "Revenue, users, and engagement insights for your platform.",
+    "export": "Export CSV",
+    "error": {
+      "loadFailed": "Failed to load analytics",
+      "retry": "Retry"
+    },
+    "stats": {
+      "netRevenue": "Net Revenue",
+      "newUsers": "New Users",
+      "activeUsers": "Active Users",
+      "completionRate": "Completion Rate",
+      "vsPreviousPeriod": "vs previous period"
+    },
+    "charts": {
+      "revenue": "Revenue",
+      "revenueOverTime": "Revenue Over Time",
+      "revenueDescription": "Total revenue generated during the selected period",
+      "dailyEngagement": "Daily Engagement",
+      "engagementDescription": "Active users and lesson completions per day",
+      "activeUsers": "Active Users",
+      "completions": "Completions"
+    },
+    "topCourses": {
+      "title": "Top Courses by Revenue",
+      "description": "Best performing courses during the selected period",
+      "sales": "sales",
+      "empty": "No revenue data for this period"
+    },
+    "categories": {
+      "title": "Category Distribution",
+      "description": "Course sales distribution by category",
+      "empty": "No category data for this period"
+    }
   }
 }

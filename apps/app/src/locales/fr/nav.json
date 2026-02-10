@@ -27,6 +27,7 @@
     "seats": "Gestion des places",
     "invoices": "Factures",
     "sso": "Configuration SSO",
+    "analytics": "Analytique",
     "refunds": "Demandes de remboursement"
   },
   "accessibility": {
