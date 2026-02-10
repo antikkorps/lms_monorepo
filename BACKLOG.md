@@ -83,6 +83,16 @@
 - [ ] Integration tests (API + DB)
 - [ ] Performance testing
 
+### Dependency Migrations
+
+- [ ] Zod 3 → 4 migration (~15 fichiers) — codemod `npx @nicoespeon/zod-v3-to-v4`
+  - `.flatten()` → `z.treeifyError()` (email.controller, sso.controller)
+  - `z.nativeEnum()` → `z.enum()` (lesson-content, notifications schemas)
+  - `z.record(schema)` → `z.record(z.string(), schema)` (common.schema, tenant.schema)
+  - Audit `.optional().default()` chains (search schemas, invitation controller)
+  - PR Dependabot #90 en attente
+- [ ] ESLint 9 → 10 — bloqué, attendre support typescript-eslint (PR #87)
+
 ### Documentation
 
 - [ ] OpenAPI/Swagger documentation
