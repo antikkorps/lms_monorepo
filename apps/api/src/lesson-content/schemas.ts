@@ -5,7 +5,7 @@ import { SupportedLocale } from '../database/models/enums.js';
  * Schema for creating lesson content
  */
 export const createLessonContentSchema = z.object({
-  lang: z.enum(SupportedLocale),
+  lang: z.nativeEnum(SupportedLocale),
   title: z.string().max(255).optional().nullable(),
   videoUrl: z.string().url().max(2048).optional().nullable(),
   videoId: z.string().max(255).optional().nullable(),
@@ -30,7 +30,7 @@ export const updateLessonContentSchema = z.object({
  * Schema for upsert (create or update) lesson content
  */
 export const upsertLessonContentSchema = z.object({
-  lang: z.enum(SupportedLocale),
+  lang: z.nativeEnum(SupportedLocale),
   title: z.string().max(255).optional().nullable(),
   videoUrl: z.string().url().max(2048).optional().nullable(),
   videoId: z.string().max(255).optional().nullable(),
@@ -43,7 +43,7 @@ export const upsertLessonContentSchema = z.object({
  * Schema for listing lesson contents (query params)
  */
 export const listLessonContentsQuerySchema = z.object({
-  lang: z.enum(SupportedLocale).optional(),
+  lang: z.nativeEnum(SupportedLocale).optional(),
 });
 
 export type CreateLessonContentInput = z.infer<typeof createLessonContentSchema>;

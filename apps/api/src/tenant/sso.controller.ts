@@ -4,7 +4,6 @@
  */
 
 import type { Context } from 'koa';
-import { z } from 'zod';
 import {
   updateTenantSSOSchema,
   tenantSSOConfigSchema,
@@ -77,7 +76,7 @@ export async function updateTenantSSO(ctx: Context): Promise<void> {
       'Validation error',
       400,
       'VALIDATION_ERROR',
-      { errors: z.flattenError(parseResult.error).fieldErrors }
+      { errors: parseResult.error.flatten().fieldErrors }
     );
   }
 
@@ -200,7 +199,7 @@ export async function testTenantSSO(ctx: Context): Promise<void> {
       'Validation error',
       400,
       'VALIDATION_ERROR',
-      { errors: z.flattenError(parseResult.error).fieldErrors }
+      { errors: parseResult.error.flatten().fieldErrors }
     );
   }
 

@@ -48,7 +48,7 @@ export async function sendTestEmail(ctx: Context): Promise<void> {
   const validation = sendTestEmailSchema.safeParse(ctx.request.body);
   if (!validation.success) {
     throw new AppError('Invalid request body', 400, 'VALIDATION_ERROR', {
-      errors: z.flattenError(validation.error).fieldErrors,
+      errors: validation.error.flatten().fieldErrors,
     });
   }
 
@@ -81,7 +81,7 @@ export async function getEmailStats(ctx: Context): Promise<void> {
   const validation = getStatsSchema.safeParse(ctx.query);
   if (!validation.success) {
     throw new AppError('Invalid query parameters', 400, 'VALIDATION_ERROR', {
-      errors: z.flattenError(validation.error).fieldErrors,
+      errors: validation.error.flatten().fieldErrors,
     });
   }
 
@@ -110,7 +110,7 @@ export async function getEmailLogs(ctx: Context): Promise<void> {
   const validation = getLogsSchema.safeParse(ctx.query);
   if (!validation.success) {
     throw new AppError('Invalid query parameters', 400, 'VALIDATION_ERROR', {
-      errors: z.flattenError(validation.error).fieldErrors,
+      errors: validation.error.flatten().fieldErrors,
     });
   }
 

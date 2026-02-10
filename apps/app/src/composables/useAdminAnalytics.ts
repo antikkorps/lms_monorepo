@@ -38,12 +38,10 @@ export function useAdminAnalytics() {
     error.value = null;
 
     try {
-      const query = `?period=${period.value}`;
-      const [overviewData, revenueData, engagementData] = await Promise.all([
-        api.get<AdminAnalyticsSummary>(`/admin/analytics/overview${query}`),
-        api.get<RevenueData>(`/admin/analytics/revenue${query}`),
-        api.get<EngagementData>(`/admin/analytics/engagement${query}`),
-      ]);
+      const p = { period: period.value };
+      const overviewData = await api.get<AdminAnalyticsSummary>('/admin/analytics/overview', p);
+      const revenueData = await api.get<RevenueData>('/admin/analytics/revenue', p);
+      const engagementData = await api.get<EngagementData>('/admin/analytics/engagement', p);
 
       overview.value = overviewData;
       revenue.value = revenueData;

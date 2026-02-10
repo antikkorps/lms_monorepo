@@ -9,12 +9,12 @@ export const listNotificationsQuerySchema = z.object({
 
 export const updatePreferencesSchema = z.object({
   emailEnabled: z
-    .record(z.enum(NotificationType), z.boolean())
+    .record(z.nativeEnum(NotificationType), z.boolean())
     .optional(),
   inAppEnabled: z
-    .record(z.enum(NotificationType), z.boolean())
+    .record(z.nativeEnum(NotificationType), z.boolean())
     .optional(),
-  digestFrequency: z.enum(DigestFrequency).optional(),
+  digestFrequency: z.nativeEnum(DigestFrequency).optional(),
   digestDay: z.number().int().min(0).max(6).optional(),
 });
 

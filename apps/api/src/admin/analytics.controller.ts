@@ -176,20 +176,22 @@ export async function getAnalyticsOverview(ctx: Context): Promise<void> {
   let prevCompletionRate = 0;
 
   if (totalEnrollments > 0) {
-    // Count completed courses in period: users who have completed all lessons
+    // Count completed courses: users who completed all lessons in a course
     const completedCourses = await sequelize.query<{ count: string }>(`
       SELECT COUNT(*) as count FROM (
-        SELECT p."user_id", p."course_id"
+        SELECT p.user_id, p.course_id
         FROM purchases p
         JOIN courses c ON c.id = p.course_id AND c.status = 'published' AND c.lessons_count > 0
+        LEFT JOIN (
+          SELECT user_id, course_id, COUNT(*) as completed_count
+          FROM user_progress
+          WHERE completed = true
+          GROUP BY user_id, course_id
+        ) up ON up.user_id = p.user_id AND up.course_id = p.course_id
         WHERE p.status = 'completed'
           AND p.purchased_at BETWEEN :start AND :end
           ${tenantId && userIds ? `AND p.user_id IN (:userIds)` : ''}
-        GROUP BY p."user_id", p."course_id"
-        HAVING COUNT(DISTINCT (
-          SELECT up.lesson_id FROM user_progress up
-          WHERE up.user_id = p.user_id AND up.course_id = p.course_id AND up.completed = true
-        )) >= c.lessons_count
+          AND COALESCE(up.completed_count, 0) >= c.lessons_count
       ) completed
     `, {
       replacements: {
@@ -400,19 +402,21 @@ export async function getAnalyticsEngagement(ctx: Context): Promise<void> {
       c.title,
       COUNT(DISTINCT p.user_id) as enrolled,
       COUNT(DISTINCT CASE
-        WHEN (
-          SELECT COUNT(*)
-          FROM user_progress up
-          WHERE up.user_id = p.user_id AND up.course_id = c.id AND up.completed = true
-        ) >= c.lessons_count AND c.lessons_count > 0
+        WHEN COALESCE(up.completed_count, 0) >= c.lessons_count AND c.lessons_count > 0
         THEN p.user_id
       END) as completed
     FROM purchases p
     JOIN courses c ON c.id = p.course_id AND c.status = 'published'
+    LEFT JOIN (
+      SELECT user_id, course_id, COUNT(*) as completed_count
+      FROM user_progress
+      WHERE completed = true
+      GROUP BY user_id, course_id
+    ) up ON up.user_id = p.user_id AND up.course_id = c.id
     WHERE p.status = 'completed'
       AND p.purchased_at BETWEEN :start AND :end
       ${tenantId && userIds ? `AND p.user_id IN (:userIds)` : ''}
-    GROUP BY c.id, c.title
+    GROUP BY c.id, c.title, c.lessons_count
     ORDER BY enrolled DESC
     LIMIT 10
   `, {
