@@ -48,6 +48,7 @@
 #### Optional
 
 - [ ] Implement session fingerprinting
+- [ ] Super admin tenant impersonation (allow super_admin to act within a tenant context, e.g. to help configure SSO)
 
 ### Notes
 
