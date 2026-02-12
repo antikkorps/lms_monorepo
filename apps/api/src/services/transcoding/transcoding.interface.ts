@@ -25,10 +25,20 @@ export interface TranscodingStatusResult {
   errorMessage?: string;
 }
 
+export interface WebhookVerificationResult {
+  valid: boolean;
+  reason?: string;
+}
+
 export interface TranscodingProvider {
   readonly name: string;
   isAvailable(): boolean;
   submit(options: TranscodingSubmitOptions): Promise<TranscodingSubmitResult>;
   getStatus(uid: string): Promise<TranscodingStatusResult>;
   delete(uid: string): Promise<void>;
+
+  // Webhook support (providers without webhook return false)
+  supportsWebhook(): boolean;
+  verifyWebhook(rawBody: Buffer, headers: Record<string, string>): WebhookVerificationResult;
+  parseWebhookPayload(body: unknown): TranscodingStatusResult | null;
 }

@@ -14,8 +14,9 @@ import { getStorage } from '../../storage/index.js';
 import { config } from '../../config/index.js';
 import { logger } from '../../utils/logger.js';
 
-const MAX_CHECK_ATTEMPTS = 60; // 60 * 30s = 30 minutes
+const MAX_CHECK_ATTEMPTS = 60;
 const CHECK_DELAY_MS = 30000;
+const SAFETY_NET_DELAY_MS = 10 * 60 * 1000; // 10 minutes
 
 async function processSubmitTranscoding(job: Job<SubmitTranscodingJobData>): Promise<void> {
   const { lessonContentId, videoSourceKey } = job.data;
@@ -47,13 +48,14 @@ async function processSubmitTranscoding(job: Job<SubmitTranscodingJobData>): Pro
     transcodingError: null,
   });
 
+  // Safety-net: single delayed check in case webhook delivery fails
   await addCheckTranscodingStatusJob({
     lessonContentId,
     videoStreamId: result.uid,
-    attempt: 1,
-  }, CHECK_DELAY_MS);
+    attempt: MAX_CHECK_ATTEMPTS, // Won't re-queue — marks ERROR if still pending
+  }, SAFETY_NET_DELAY_MS);
 
-  logger.info({ jobId: job.id, lessonContentId, streamUid: result.uid }, 'Transcoding submitted, polling queued');
+  logger.info({ jobId: job.id, lessonContentId, streamUid: result.uid }, 'Transcoding submitted, awaiting webhook');
 }
 
 async function processCheckStatus(job: Job<CheckTranscodingStatusJobData>): Promise<void> {
@@ -64,6 +66,13 @@ async function processCheckStatus(job: Job<CheckTranscodingStatusJobData>): Prom
   const content = await LessonContent.findByPk(lessonContentId);
   if (!content) {
     logger.warn({ lessonContentId }, 'LessonContent not found, stopping status check');
+    return;
+  }
+
+  // Skip if webhook already resolved this
+  if (content.transcodingStatus === TranscodingStatus.READY ||
+      content.transcodingStatus === TranscodingStatus.ERROR) {
+    logger.info({ lessonContentId, status: content.transcodingStatus }, 'Already terminal, skipping check');
     return;
   }
 

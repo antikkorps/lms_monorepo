@@ -11,7 +11,7 @@ import { requestLogger } from './request-logger.js';
 import { defaultRateLimiter } from './rate-limiter.js';
 
 // Paths that need raw body preserved (for webhook signature verification)
-const RAW_BODY_PATHS = ['/api/v1/webhooks/stripe'];
+const RAW_BODY_PATHS = ['/api/v1/webhooks/stripe', '/api/v1/webhooks/transcoding'];
 
 // Extend Koa Request type to include rawBodyBuffer
 // Note: koa-bodyparser already declares rawBody as string, so we use a different name

@@ -222,14 +222,14 @@ describe('TranscodingWorker', () => {
           transcodingError: null,
         });
 
-        // Should enqueue status check
+        // Should enqueue safety-net check (single delayed check at max attempts)
         expect(mockAddCheckJob).toHaveBeenCalledWith(
           {
             lessonContentId: 'content-123',
             videoStreamId: 'stream-abc',
-            attempt: 1,
+            attempt: 60,
           },
-          30000
+          600000
         );
       });
 
@@ -262,6 +262,7 @@ describe('TranscodingWorker', () => {
       const mockContent = {
         id: 'content-123',
         lessonId: 'lesson-456',
+        transcodingStatus: 'processing',
         update: vi.fn().mockResolvedValue(undefined),
       };
 
@@ -424,6 +425,44 @@ describe('TranscodingWorker', () => {
             lessonContentId: 'nonexistent',
             videoStreamId: 'stream-abc',
             attempt: 1,
+          },
+        } as Job<CheckTranscodingStatusJobData>;
+
+        await processJob(job);
+
+        expect(mockTranscodingProvider.getStatus).not.toHaveBeenCalled();
+      });
+
+      it('should skip check if already in terminal state (READY)', async () => {
+        const terminalContent = { ...mockContent, transcodingStatus: 'ready' };
+        mockLessonContentModel.findByPk.mockResolvedValue(terminalContent);
+
+        const job = {
+          id: 'job-terminal',
+          data: {
+            type: 'check-transcoding-status',
+            lessonContentId: 'content-123',
+            videoStreamId: 'stream-abc',
+            attempt: 60,
+          },
+        } as Job<CheckTranscodingStatusJobData>;
+
+        await processJob(job);
+
+        expect(mockTranscodingProvider.getStatus).not.toHaveBeenCalled();
+      });
+
+      it('should skip check if already in terminal state (ERROR)', async () => {
+        const terminalContent = { ...mockContent, transcodingStatus: 'error' };
+        mockLessonContentModel.findByPk.mockResolvedValue(terminalContent);
+
+        const job = {
+          id: 'job-terminal-err',
+          data: {
+            type: 'check-transcoding-status',
+            lessonContentId: 'content-123',
+            videoStreamId: 'stream-abc',
+            attempt: 60,
           },
         } as Job<CheckTranscodingStatusJobData>;
 

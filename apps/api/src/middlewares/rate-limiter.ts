@@ -180,7 +180,9 @@ export const authRateLimiter = rateLimiter({
  */
 export const defaultRateLimiter = rateLimiter({
   skip: (ctx) => {
-    // Skip health checks and metrics
-    return ctx.path === '/health' || ctx.path === '/health/ready' || ctx.path === '/metrics';
+    return (
+      ctx.path === '/health' || ctx.path === '/health/ready' || ctx.path === '/metrics' ||
+      ctx.path.startsWith('/api/v1/webhooks/')
+    );
   },
 });
