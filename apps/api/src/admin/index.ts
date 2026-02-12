@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import { authenticate, requireSuperAdmin, requireRole } from '../auth/middleware.js';
 import { UserRole } from '../database/models/enums.js';
 import { sendTestEmail, getEmailStats, getEmailLogs } from './email.controller.js';
+import { getTranscodingStats, listTranscodingJobs, retryTranscodingJob } from './transcoding.controller.js';
 import {
   getAnalyticsOverview,
   getAnalyticsRevenue,
@@ -21,6 +22,11 @@ const adminAuth = [authenticate, requireRole(UserRole.SUPER_ADMIN, UserRole.TENA
 adminRouter.post('/email/test', ...superAdminAuth, sendTestEmail);
 adminRouter.get('/email/stats', ...superAdminAuth, getEmailStats);
 adminRouter.get('/email/logs', ...superAdminAuth, getEmailLogs);
+
+// Transcoding endpoints
+adminRouter.get('/transcoding/stats', ...superAdminAuth, getTranscodingStats);
+adminRouter.get('/transcoding/jobs', ...superAdminAuth, listTranscodingJobs);
+adminRouter.post('/transcoding/jobs/:id/retry', ...superAdminAuth, retryTranscodingJob);
 
 // Analytics endpoints
 adminRouter.get('/analytics/overview', ...adminAuth, getAnalyticsOverview);
