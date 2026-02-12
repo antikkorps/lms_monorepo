@@ -9,6 +9,7 @@ import {
 } from 'sequelize';
 import { sequelize } from '../sequelize.js';
 import { SupportedLocale, TranscodingStatus } from './enums.js';
+import { logger } from '../../utils/logger.js';
 import type { Lesson } from './Lesson.js';
 
 /**
@@ -135,5 +136,29 @@ LessonContent.init(
         fields: ['lang'],
       },
     ],
+    hooks: {
+      beforeDestroy: async (instance: LessonContent) => {
+        if (instance.videoStreamId) {
+          try {
+            // Lazy import to avoid circular dependency
+            const { isTranscodingAvailable, getTranscoding } = await import(
+              '../../services/transcoding/index.js'
+            );
+            if (isTranscodingAvailable()) {
+              await getTranscoding().delete(instance.videoStreamId);
+              logger.info(
+                { videoStreamId: instance.videoStreamId, lessonContentId: instance.id },
+                'Deleted Stream asset on LessonContent destroy'
+              );
+            }
+          } catch (err) {
+            logger.warn(
+              { videoStreamId: instance.videoStreamId, lessonContentId: instance.id, error: err },
+              'Failed to delete Stream asset on LessonContent destroy'
+            );
+          }
+        }
+      },
+    },
   }
 );

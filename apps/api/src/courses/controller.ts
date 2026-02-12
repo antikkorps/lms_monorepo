@@ -6,6 +6,8 @@ import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { parseLocaleFromRequest, getLocalizedLessonContent } from '../utils/locale.js';
 import { checkCourseAccess, canEditCourse } from '../utils/course-access.js';
+import { isTranscodingAvailable, getTranscoding } from '../services/transcoding/index.js';
+import { logger } from '../utils/logger.js';
 import slugify from 'slugify';
 
 // Type for authenticated user from context
@@ -32,6 +34,32 @@ function getAuthenticatedUser(ctx: Context): AuthenticatedUser {
  */
 function canEditCourseLocal(user: AuthenticatedUser, course: Course): boolean {
   return canEditCourse(user, course);
+}
+
+/**
+ * Delete Cloudflare Stream assets for LessonContent records before cascade deletion.
+ * DB cascades don't trigger Sequelize hooks, so we must clean up explicitly.
+ */
+async function cleanupStreamAssets(where: Record<string, unknown>): Promise<void> {
+  if (!isTranscodingAvailable()) return;
+
+  const contents = await LessonContent.findAll({
+    attributes: ['id', 'videoStreamId'],
+    where: { ...where, videoStreamId: { [Op.ne]: null } },
+  });
+
+  const transcoding = getTranscoding();
+  for (const content of contents) {
+    try {
+      await transcoding.delete(content.videoStreamId!);
+    } catch (err) {
+      logger.warn({ videoStreamId: content.videoStreamId, lessonContentId: content.id, error: err }, 'Failed to delete Stream asset during cleanup');
+    }
+  }
+
+  if (contents.length > 0) {
+    logger.info({ count: contents.length }, 'Cleaned up Stream assets before cascade delete');
+  }
 }
 
 // =============================================================================
@@ -553,6 +581,10 @@ export async function deleteChapter(ctx: Context): Promise<void> {
   }
 
   const lessonCount = chapter.lessons?.length || 0;
+  const lessonIds = chapter.lessons?.map((l) => l.id) || [];
+  if (lessonIds.length > 0) {
+    await cleanupStreamAssets({ lessonId: { [Op.in]: lessonIds } });
+  }
 
   await chapter.destroy();
   await course.decrement('chaptersCount');
@@ -877,6 +909,7 @@ export async function deleteLesson(ctx: Context): Promise<void> {
   }
 
   const duration = lesson.duration;
+  await cleanupStreamAssets({ lessonId: id });
   await lesson.destroy();
 
   await course.decrement('lessonsCount');

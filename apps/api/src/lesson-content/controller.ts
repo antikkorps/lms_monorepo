@@ -98,6 +98,16 @@ function serializeLessonContent(c: LessonContent) {
 async function triggerTranscoding(content: LessonContent, videoSourceKey: string): Promise<void> {
   if (!isTranscodingAvailable()) return;
 
+  // Clean up previous Cloudflare Stream asset before replacing
+  if (content.videoStreamId) {
+    try {
+      await getTranscoding().delete(content.videoStreamId);
+      logger.info({ videoStreamId: content.videoStreamId, lessonContentId: content.id }, 'Deleted previous Stream asset');
+    } catch (err) {
+      logger.warn({ videoStreamId: content.videoStreamId, error: err }, 'Failed to delete previous Stream asset');
+    }
+  }
+
   await content.update({
     transcodingStatus: TranscodingStatus.PENDING,
     transcodingError: null,
@@ -361,15 +371,7 @@ export async function deleteLessonContent(ctx: Context): Promise<void> {
     throw AppError.notFound(`Content for locale '${lang}' not found for this lesson`);
   }
 
-  // Clean up Cloudflare Stream asset if exists
-  if (content.videoStreamId && isTranscodingAvailable()) {
-    try {
-      await getTranscoding().delete(content.videoStreamId);
-    } catch (err) {
-      logger.warn({ videoStreamId: content.videoStreamId, error: err }, 'Failed to delete Stream asset');
-    }
-  }
-
+  // Stream cleanup handled by LessonContent beforeDestroy hook
   await content.destroy();
   ctx.status = 204;
 }

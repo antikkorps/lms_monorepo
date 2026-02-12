@@ -368,15 +368,11 @@ describe('LessonContent Controller', () => {
   });
 
   // ===========================================================================
-  // deleteLessonContent — Stream cleanup
+  // deleteLessonContent
   // ===========================================================================
 
   describe('deleteLessonContent', () => {
-    it('should delete Cloudflare Stream asset when videoStreamId exists', async () => {
-      mockIsTranscodingAvailable.mockReturnValue(true);
-      const mockDelete = vi.fn().mockResolvedValue(undefined);
-      mockGetTranscoding.mockReturnValue({ delete: mockDelete });
-
+    it('should destroy content and return 204', async () => {
       const content = createMockContentInstance({ videoStreamId: 'stream-to-delete' });
       mockLessonContentModel.findOne.mockResolvedValue(content);
 
@@ -387,16 +383,12 @@ describe('LessonContent Controller', () => {
 
       await deleteLessonContent(ctx);
 
-      expect(mockDelete).toHaveBeenCalledWith('stream-to-delete');
+      // Stream cleanup is handled by LessonContent beforeDestroy hook
       expect(content.destroy).toHaveBeenCalled();
       expect(ctx.status).toBe(204);
     });
 
-    it('should NOT attempt Stream delete when no videoStreamId', async () => {
-      mockIsTranscodingAvailable.mockReturnValue(true);
-      const mockDelete = vi.fn();
-      mockGetTranscoding.mockReturnValue({ delete: mockDelete });
-
+    it('should destroy content without videoStreamId', async () => {
       const content = createMockContentInstance({ videoStreamId: null });
       mockLessonContentModel.findOne.mockResolvedValue(content);
 
@@ -407,45 +399,8 @@ describe('LessonContent Controller', () => {
 
       await deleteLessonContent(ctx);
 
-      expect(mockDelete).not.toHaveBeenCalled();
-      expect(content.destroy).toHaveBeenCalled();
-    });
-
-    it('should still delete content even if Stream delete fails', async () => {
-      mockIsTranscodingAvailable.mockReturnValue(true);
-      const mockDelete = vi.fn().mockRejectedValue(new Error('Stream API error'));
-      mockGetTranscoding.mockReturnValue({ delete: mockDelete });
-
-      const content = createMockContentInstance({ videoStreamId: 'stream-broken' });
-      mockLessonContentModel.findOne.mockResolvedValue(content);
-
-      const ctx = createMockContext({
-        params: { lessonId: 'lesson-456', lang: 'en' },
-        state: superAdminState,
-      });
-
-      await deleteLessonContent(ctx);
-
-      // Should still destroy content even though Stream delete failed
       expect(content.destroy).toHaveBeenCalled();
       expect(ctx.status).toBe(204);
-    });
-
-    it('should skip Stream delete when transcoding not available', async () => {
-      mockIsTranscodingAvailable.mockReturnValue(false);
-
-      const content = createMockContentInstance({ videoStreamId: 'stream-123' });
-      mockLessonContentModel.findOne.mockResolvedValue(content);
-
-      const ctx = createMockContext({
-        params: { lessonId: 'lesson-456', lang: 'en' },
-        state: superAdminState,
-      });
-
-      await deleteLessonContent(ctx);
-
-      expect(mockGetTranscoding).not.toHaveBeenCalled();
-      expect(content.destroy).toHaveBeenCalled();
     });
   });
 
