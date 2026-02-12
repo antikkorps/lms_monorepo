@@ -5,6 +5,7 @@
  */
 
 import PDFDocument from 'pdfkit';
+import { APP_NAME } from '../config/index.js';
 
 export interface CertificateData {
   // Recipient
@@ -63,10 +64,10 @@ export async function generateCertificate(
         margins: { top: 50, bottom: 50, left: 50, right: 50 },
         info: {
           Title: `Certificate - ${data.courseName}`,
-          Author: 'LMS Platform',
+          Author: APP_NAME,
           Subject: `Course Completion Certificate for ${data.recipientName}`,
           Keywords: 'certificate, course, completion',
-          Creator: 'LMS Platform',
+          Creator: APP_NAME,
         },
       });
 
@@ -203,7 +204,7 @@ export async function generateCertificate(
         .font('Helvetica-Bold')
         .fontSize(10)
         .fillColor('#94a3b8')
-        .text('LMS Platform', pageWidth - 280, footerY + 15, { width: 200, align: 'center' });
+        .text(APP_NAME, pageWidth - 280, footerY + 15, { width: 200, align: 'center' });
 
       // Verification URL (if enabled)
       if (opts.includeVerificationUrl && opts.verificationBaseUrl) {

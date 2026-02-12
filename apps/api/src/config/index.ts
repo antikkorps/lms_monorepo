@@ -1,4 +1,7 @@
+export const APP_NAME = 'IQON-IA';
+
 export const config = {
+  appName: APP_NAME,
   env: process.env.NODE_ENV || 'development',
   nodeEnv: process.env.NODE_ENV || 'development',
   port: Number.parseInt(process.env.PORT || '3000', 10),
@@ -33,7 +36,7 @@ export const config = {
   email: {
     provider: process.env.EMAIL_PROVIDER || 'console', // 'console' | 'postmark' | 'sendgrid' | 'mailjet'
     from: process.env.EMAIL_FROM || 'noreply@example.com',
-    fromName: process.env.EMAIL_FROM_NAME || 'LMS Platform',
+    fromName: process.env.EMAIL_FROM_NAME || 'IQON-IA',
     postmarkApiKey: process.env.POSTMARK_API_KEY || '',
     sendgridApiKey: process.env.SENDGRID_API_KEY || '',
     mailjetApiKey: process.env.MAILJET_API_KEY || '',

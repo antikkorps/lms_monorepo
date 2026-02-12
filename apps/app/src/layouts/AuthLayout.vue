@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { APP_NAME } from '@shared/config';
 </script>
 
 <template>
@@ -8,7 +9,7 @@ import { RouterLink } from 'vue-router';
     <header class="py-6">
       <div class="container mx-auto px-4">
         <RouterLink to="/" class="text-2xl font-bold text-foreground">
-          LMS Platform
+          {{ APP_NAME }}
         </RouterLink>
       </div>
     </header>
@@ -22,7 +23,7 @@ import { RouterLink } from 'vue-router';
 
     <!-- Footer -->
     <footer class="py-6 text-center text-sm text-muted-foreground">
-      <p>&copy; {{ new Date().getFullYear() }} LMS Platform. All rights reserved.</p>
+      <p>&copy; {{ new Date().getFullYear() }} {{ APP_NAME }}. All rights reserved.</p>
     </footer>
   </div>
 </template>

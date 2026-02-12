@@ -5,6 +5,7 @@
     "types": ["vitest/globals", "node"],
     "rootDir": "../../",
     "paths": {
+      "@shared/config": ["../../libs/shared/config/src/index.ts"],
       "@shared/schemas": ["../../libs/shared/schemas/src/index.ts"],
       "@shared/types": ["../../libs/shared/types/src/index.ts"],
       "@shared/ui": ["../../libs/shared/ui/src/index.ts"],
@@ -13,6 +14,7 @@
   },
   "include": [
     "src/**/*.ts",
+    "../../libs/shared/config/src/**/*.ts",
     "../../libs/shared/schemas/src/**/*.ts",
     "../../libs/shared/types/src/**/*.ts"
   ],
