@@ -5,6 +5,7 @@ import type {
   TranscodingSubmitOptions,
   TranscodingSubmitResult,
   TranscodingStatusResult,
+  WebhookVerificationResult,
 } from './transcoding.interface.js';
 
 const SUBMIT_OPTIONS = {
@@ -76,6 +77,18 @@ export function createTranscodingCircuitBreaker(provider: TranscodingProvider): 
 
     async delete(uid: string): Promise<void> {
       await deleteBreaker.fire(uid);
+    },
+
+    supportsWebhook(): boolean {
+      return provider.supportsWebhook();
+    },
+
+    verifyWebhook(rawBody: Buffer, headers: Record<string, string>): WebhookVerificationResult {
+      return provider.verifyWebhook(rawBody, headers);
+    },
+
+    parseWebhookPayload(body: unknown): TranscodingStatusResult | null {
+      return provider.parseWebhookPayload(body);
     },
   };
 }

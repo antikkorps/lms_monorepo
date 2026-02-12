@@ -222,14 +222,14 @@ describe('TranscodingWorker', () => {
           transcodingError: null,
         });
 
-        // Should enqueue status check
+        // Should enqueue safety-net check (single delayed check at max attempts)
         expect(mockAddCheckJob).toHaveBeenCalledWith(
           {
             lessonContentId: 'content-123',
             videoStreamId: 'stream-abc',
-            attempt: 1,
+            attempt: 60,
           },
-          30000
+          600000
         );
       });
 
@@ -262,6 +262,7 @@ describe('TranscodingWorker', () => {
       const mockContent = {
         id: 'content-123',
         lessonId: 'lesson-456',
+        transcodingStatus: 'processing',
         update: vi.fn().mockResolvedValue(undefined),
       };
 
@@ -275,6 +276,7 @@ describe('TranscodingWorker', () => {
           uid: 'stream-abc',
           status: 'ready',
           playbackUrl: 'https://stream.cloudflare.com/abc/manifest/video.m3u8',
+          thumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
           duration: 120,
         });
 
@@ -293,6 +295,7 @@ describe('TranscodingWorker', () => {
         expect(mockContent.update).toHaveBeenCalledWith({
           transcodingStatus: 'ready',
           videoPlaybackUrl: 'https://stream.cloudflare.com/abc/manifest/video.m3u8',
+          videoThumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
           transcodingError: null,
         });
 
@@ -432,11 +435,50 @@ describe('TranscodingWorker', () => {
         expect(mockTranscodingProvider.getStatus).not.toHaveBeenCalled();
       });
 
+      it('should skip check if already in terminal state (READY)', async () => {
+        const terminalContent = { ...mockContent, transcodingStatus: 'ready' };
+        mockLessonContentModel.findByPk.mockResolvedValue(terminalContent);
+
+        const job = {
+          id: 'job-terminal',
+          data: {
+            type: 'check-transcoding-status',
+            lessonContentId: 'content-123',
+            videoStreamId: 'stream-abc',
+            attempt: 60,
+          },
+        } as Job<CheckTranscodingStatusJobData>;
+
+        await processJob(job);
+
+        expect(mockTranscodingProvider.getStatus).not.toHaveBeenCalled();
+      });
+
+      it('should skip check if already in terminal state (ERROR)', async () => {
+        const terminalContent = { ...mockContent, transcodingStatus: 'error' };
+        mockLessonContentModel.findByPk.mockResolvedValue(terminalContent);
+
+        const job = {
+          id: 'job-terminal-err',
+          data: {
+            type: 'check-transcoding-status',
+            lessonContentId: 'content-123',
+            videoStreamId: 'stream-abc',
+            attempt: 60,
+          },
+        } as Job<CheckTranscodingStatusJobData>;
+
+        await processJob(job);
+
+        expect(mockTranscodingProvider.getStatus).not.toHaveBeenCalled();
+      });
+
       it('should not update lesson duration when duration is 0', async () => {
         mockTranscodingProvider.getStatus.mockResolvedValue({
           uid: 'stream-abc',
           status: 'ready',
           playbackUrl: 'https://stream.example.com/manifest.m3u8',
+          thumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
           duration: 0,
         });
 

@@ -1,6 +1,6 @@
 # API - Phase 2: Authentication & Security
 
-## Modified: 2026-02-05
+## Modified: 2026-02-12
 
 ### Completed
 
@@ -48,6 +48,7 @@
 #### Optional
 
 - [ ] Implement session fingerprinting
+- [ ] Super admin tenant impersonation (allow super_admin to act within a tenant context, e.g. to help configure SSO)
 
 ### Notes
 

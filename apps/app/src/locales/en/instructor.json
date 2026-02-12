@@ -74,6 +74,8 @@
     "currency": "Currency",
     "media": "Media",
     "mediaDescription": "Add a thumbnail image for your course",
+    "thumbnail": "Thumbnail Image",
+    "dropThumbnail": "Drop thumbnail image here",
     "thumbnailUrl": "Thumbnail URL",
     "thumbnailPlaceholder": "https://example.com/image.jpg",
     "thumbnailHint": "Recommended size: 1280x720 pixels",

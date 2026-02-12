@@ -6,6 +6,9 @@ import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { parseLocaleFromRequest, getLocalizedLessonContent } from '../utils/locale.js';
 import { checkCourseAccess, canEditCourse } from '../utils/course-access.js';
+import { isTranscodingAvailable, getTranscoding } from '../services/transcoding/index.js';
+import { getStorage } from '../storage/index.js';
+import { logger } from '../utils/logger.js';
 import slugify from 'slugify';
 
 // Type for authenticated user from context
@@ -32,6 +35,49 @@ function getAuthenticatedUser(ctx: Context): AuthenticatedUser {
  */
 function canEditCourseLocal(user: AuthenticatedUser, course: Course): boolean {
   return canEditCourse(user, course);
+}
+
+/**
+ * Delete Cloudflare Stream assets AND source video files for LessonContent records
+ * before cascade deletion. DB cascades don't trigger Sequelize hooks, so we must
+ * clean up explicitly.
+ */
+async function cleanupVideoAssets(where: Record<string, unknown>): Promise<void> {
+  const contents = await LessonContent.findAll({
+    attributes: ['id', 'videoStreamId', 'videoSourceKey'],
+    where: {
+      ...where,
+      [Op.or]: [
+        { videoStreamId: { [Op.ne]: null } },
+        { videoSourceKey: { [Op.ne]: null } },
+      ],
+    },
+  });
+
+  if (contents.length === 0) return;
+
+  const transcodingAvailable = isTranscodingAvailable();
+  const storage = getStorage();
+
+  for (const content of contents) {
+    if (content.videoStreamId && transcodingAvailable) {
+      try {
+        await getTranscoding().delete(content.videoStreamId);
+      } catch (err) {
+        logger.warn({ videoStreamId: content.videoStreamId, lessonContentId: content.id, error: err }, 'Failed to delete Stream asset during cleanup');
+      }
+    }
+
+    if (content.videoSourceKey) {
+      try {
+        await storage.delete(content.videoSourceKey);
+      } catch (err) {
+        logger.warn({ videoSourceKey: content.videoSourceKey, lessonContentId: content.id, error: err }, 'Failed to delete source video during cleanup');
+      }
+    }
+  }
+
+  logger.info({ count: contents.length }, 'Cleaned up video assets before cascade delete');
 }
 
 // =============================================================================
@@ -204,6 +250,9 @@ export async function getCourse(ctx: Context): Promise<void> {
             isFree: lesson.isFree,
             videoUrl: localized.videoUrl,
             videoId: localized.videoId,
+            videoPlaybackUrl: localized.videoPlaybackUrl,
+            videoThumbnailUrl: localized.videoThumbnailUrl,
+            transcodingStatus: localized.transcodingStatus,
             // Include transcript and description if available
             ...(localized.transcript && { transcript: localized.transcript }),
             ...(localized.description && { description: localized.description }),
@@ -353,6 +402,21 @@ export async function deleteCourse(ctx: Context): Promise<void> {
 
   if (!canEditCourseLocal(user, course)) {
     throw AppError.forbidden('You do not have permission to delete this course');
+  }
+
+  // Clean up video assets before soft-delete (DB cascades don't trigger Sequelize hooks)
+  const chapters = await Chapter.findAll({
+    attributes: ['id'],
+    where: { courseId: id },
+    include: [{
+      model: Lesson,
+      as: 'lessons',
+      attributes: ['id'],
+    }],
+  });
+  const lessonIds = chapters.flatMap((ch) => ch.lessons?.map((l) => l.id) || []);
+  if (lessonIds.length > 0) {
+    await cleanupVideoAssets({ lessonId: { [Op.in]: lessonIds } });
   }
 
   await course.destroy();
@@ -553,6 +617,10 @@ export async function deleteChapter(ctx: Context): Promise<void> {
   }
 
   const lessonCount = chapter.lessons?.length || 0;
+  const lessonIds = chapter.lessons?.map((l) => l.id) || [];
+  if (lessonIds.length > 0) {
+    await cleanupVideoAssets({ lessonId: { [Op.in]: lessonIds } });
+  }
 
   await chapter.destroy();
   await course.decrement('chaptersCount');
@@ -639,6 +707,9 @@ export async function listLessons(ctx: Context): Promise<void> {
       isFree: lesson.isFree,
       videoUrl: localized.videoUrl,
       videoId: localized.videoId,
+      videoPlaybackUrl: localized.videoPlaybackUrl,
+      videoThumbnailUrl: localized.videoThumbnailUrl,
+      transcodingStatus: localized.transcodingStatus,
       ...(localized.transcript && { transcript: localized.transcript }),
       ...(localized.description && { description: localized.description }),
     };
@@ -713,6 +784,9 @@ export async function getLesson(ctx: Context): Promise<void> {
       requiresPrevious: lesson.requiresPrevious,
       videoUrl: localized.videoUrl,
       videoId: localized.videoId,
+      videoPlaybackUrl: localized.videoPlaybackUrl,
+      videoThumbnailUrl: localized.videoThumbnailUrl,
+      transcodingStatus: localized.transcodingStatus,
       transcript: localized.transcript,
       description: localized.description,
       chapter: lesson.chapter ? {
@@ -877,6 +951,7 @@ export async function deleteLesson(ctx: Context): Promise<void> {
   }
 
   const duration = lesson.duration;
+  await cleanupVideoAssets({ lessonId: id });
   await lesson.destroy();
 
   await course.decrement('lessonsCount');

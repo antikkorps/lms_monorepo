@@ -63,6 +63,14 @@ vi.mock('../queue/index.js', () => ({
   addSubmitTranscodingJob: (...args: unknown[]) => mockAddSubmitJob(...args),
 }));
 
+const mockStorageDelete = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+
+vi.mock('../storage/index.js', () => ({
+  getStorage: vi.fn().mockReturnValue({
+    delete: (...args: unknown[]) => mockStorageDelete(...args),
+  }),
+}));
+
 vi.mock('../utils/logger.js', () => ({
   logger: {
     info: vi.fn(),
@@ -129,6 +137,7 @@ function createMockContentInstance(overrides: Record<string, unknown> = {}) {
     videoPlaybackUrl: null,
     videoStreamId: null,
     transcodingError: null,
+    videoThumbnailUrl: null,
     createdAt: new Date('2025-01-01'),
     updatedAt: new Date('2025-01-01'),
     ...overrides,
@@ -243,6 +252,7 @@ describe('LessonContent Controller', () => {
         expect.objectContaining({
           transcodingStatus: 'pending',
           transcodingError: null,
+          videoThumbnailUrl: null,
         })
       );
 
@@ -253,6 +263,38 @@ describe('LessonContent Controller', () => {
         lang: 'en',
         videoSourceKey: 'videos/upload.mp4',
       });
+    });
+
+    it('should delete old source video when replacing with new videoSourceKey', async () => {
+      mockIsTranscodingAvailable.mockReturnValue(true);
+      mockLessonContentModel.findOne.mockResolvedValue(null);
+
+      const content = createMockContentInstance({
+        videoSourceKey: 'videos/old.mp4',
+        videoStreamId: 'old-stream-id',
+      });
+      mockLessonContentModel.create.mockResolvedValue(content);
+
+      const ctx = createMockContext({
+        params: { lessonId: 'lesson-456' },
+        body: {
+          lang: 'en',
+          title: 'Test',
+          videoSourceKey: 'videos/new.mp4',
+        },
+        state: superAdminState,
+      });
+
+      await createLessonContent(ctx);
+
+      // Should delete old stream asset
+      expect(mockGetTranscoding().delete).toHaveBeenCalledWith('old-stream-id');
+      // Should delete old source video
+      expect(mockStorageDelete).toHaveBeenCalledWith('videos/old.mp4');
+      // Should enqueue new transcoding job
+      expect(mockAddSubmitJob).toHaveBeenCalledWith(
+        expect.objectContaining({ videoSourceKey: 'videos/new.mp4' })
+      );
     });
 
     it('should NOT trigger transcoding when transcoding unavailable', async () => {
@@ -365,18 +407,36 @@ describe('LessonContent Controller', () => {
         expect.objectContaining({ videoSourceKey: 'videos/updated.mp4' })
       );
     });
+
+    it('should delete old source video when replacing videoSourceKey', async () => {
+      mockIsTranscodingAvailable.mockReturnValue(true);
+
+      const content = createMockContentInstance({
+        videoSourceKey: 'videos/old-source.mp4',
+        videoStreamId: 'old-stream',
+      });
+      mockLessonContentModel.findOne.mockResolvedValue(content);
+
+      const ctx = createMockContext({
+        params: { lessonId: 'lesson-456', lang: 'en' },
+        body: { videoSourceKey: 'videos/new-source.mp4' },
+        state: superAdminState,
+      });
+
+      await updateLessonContent(ctx);
+
+      // Should delete old stream and old source video
+      expect(mockGetTranscoding().delete).toHaveBeenCalledWith('old-stream');
+      expect(mockStorageDelete).toHaveBeenCalledWith('videos/old-source.mp4');
+    });
   });
 
   // ===========================================================================
-  // deleteLessonContent — Stream cleanup
+  // deleteLessonContent
   // ===========================================================================
 
   describe('deleteLessonContent', () => {
-    it('should delete Cloudflare Stream asset when videoStreamId exists', async () => {
-      mockIsTranscodingAvailable.mockReturnValue(true);
-      const mockDelete = vi.fn().mockResolvedValue(undefined);
-      mockGetTranscoding.mockReturnValue({ delete: mockDelete });
-
+    it('should destroy content and return 204', async () => {
       const content = createMockContentInstance({ videoStreamId: 'stream-to-delete' });
       mockLessonContentModel.findOne.mockResolvedValue(content);
 
@@ -387,16 +447,12 @@ describe('LessonContent Controller', () => {
 
       await deleteLessonContent(ctx);
 
-      expect(mockDelete).toHaveBeenCalledWith('stream-to-delete');
+      // Stream cleanup is handled by LessonContent beforeDestroy hook
       expect(content.destroy).toHaveBeenCalled();
       expect(ctx.status).toBe(204);
     });
 
-    it('should NOT attempt Stream delete when no videoStreamId', async () => {
-      mockIsTranscodingAvailable.mockReturnValue(true);
-      const mockDelete = vi.fn();
-      mockGetTranscoding.mockReturnValue({ delete: mockDelete });
-
+    it('should destroy content without videoStreamId', async () => {
       const content = createMockContentInstance({ videoStreamId: null });
       mockLessonContentModel.findOne.mockResolvedValue(content);
 
@@ -407,45 +463,8 @@ describe('LessonContent Controller', () => {
 
       await deleteLessonContent(ctx);
 
-      expect(mockDelete).not.toHaveBeenCalled();
-      expect(content.destroy).toHaveBeenCalled();
-    });
-
-    it('should still delete content even if Stream delete fails', async () => {
-      mockIsTranscodingAvailable.mockReturnValue(true);
-      const mockDelete = vi.fn().mockRejectedValue(new Error('Stream API error'));
-      mockGetTranscoding.mockReturnValue({ delete: mockDelete });
-
-      const content = createMockContentInstance({ videoStreamId: 'stream-broken' });
-      mockLessonContentModel.findOne.mockResolvedValue(content);
-
-      const ctx = createMockContext({
-        params: { lessonId: 'lesson-456', lang: 'en' },
-        state: superAdminState,
-      });
-
-      await deleteLessonContent(ctx);
-
-      // Should still destroy content even though Stream delete failed
       expect(content.destroy).toHaveBeenCalled();
       expect(ctx.status).toBe(204);
-    });
-
-    it('should skip Stream delete when transcoding not available', async () => {
-      mockIsTranscodingAvailable.mockReturnValue(false);
-
-      const content = createMockContentInstance({ videoStreamId: 'stream-123' });
-      mockLessonContentModel.findOne.mockResolvedValue(content);
-
-      const ctx = createMockContext({
-        params: { lessonId: 'lesson-456', lang: 'en' },
-        state: superAdminState,
-      });
-
-      await deleteLessonContent(ctx);
-
-      expect(mockGetTranscoding).not.toHaveBeenCalled();
-      expect(content.destroy).toHaveBeenCalled();
     });
   });
 

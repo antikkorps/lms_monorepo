@@ -29,7 +29,7 @@ describe('AuthLayout', () => {
     const logoLink = header.find('a');
     expect(logoLink.exists()).toBe(true);
     expect(logoLink.attributes('href')).toBe('/');
-    expect(logoLink.text()).toContain('LMS Platform');
+    expect(logoLink.text()).toContain('IQON-IA');
   });
 
   it('has a footer with copyright', () => {
@@ -40,7 +40,7 @@ describe('AuthLayout', () => {
 
     const currentYear = new Date().getFullYear().toString();
     expect(footer.text()).toContain(currentYear);
-    expect(footer.text()).toContain('LMS Platform');
+    expect(footer.text()).toContain('IQON-IA');
     expect(footer.text()).toContain('All rights reserved');
   });
 

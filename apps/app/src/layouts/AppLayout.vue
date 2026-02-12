@@ -35,6 +35,7 @@ import {
   Receipt,
   Shield,
   Search,
+  Activity,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
@@ -66,11 +67,15 @@ const adminItems = computed(() => {
     { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
     { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
     { href: '/admin/invoices', icon: Receipt, name: t('nav.admin.invoices') },
-    { href: '/admin/sso', icon: Shield, name: t('nav.admin.sso') },
     { href: '/admin/analytics', icon: BarChart3, name: t('nav.admin.analytics') },
   ];
-  // Refunds only visible to super admin (B2C purchases)
+  // SSO config is tenant-scoped, only visible to tenant admins
+  if (!isSuperAdmin.value) {
+    items.push({ href: '/admin/sso', icon: Shield, name: t('nav.admin.sso') });
+  }
+  // Super admin only items
   if (isSuperAdmin.value) {
+    items.push({ href: '/admin/transcoding', icon: Activity, name: t('nav.admin.transcoding') });
     items.push({ href: '/admin/refunds', icon: RefreshCcw, name: t('nav.admin.refunds') });
   }
   return items;

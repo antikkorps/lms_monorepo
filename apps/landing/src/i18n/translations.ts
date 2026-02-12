@@ -108,7 +108,7 @@ export const translations = {
 
     // FAQ
     'faq.title': 'Frequently Asked Questions',
-    'faq.subtitle': 'Find answers to common questions about LMS Platform.',
+    'faq.subtitle': 'Find answers to common questions about IQON-IA.',
     'faq.contact': 'Still have questions? We\'re here to help.',
 
     // Footer
@@ -127,7 +127,7 @@ export const translations = {
     'footer.privacy': 'Privacy Policy',
     'footer.terms': 'Terms of Service',
     'footer.cookies': 'Cookie Policy',
-    'footer.copyright': '© {year} LMS Platform. All rights reserved.',
+    'footer.copyright': '© {year} IQON-IA. All rights reserved.',
 
     // Legal
     'legal.privacy.title': 'Privacy Policy',
@@ -249,7 +249,7 @@ export const translations = {
 
     // FAQ
     'faq.title': 'Questions Frequentes',
-    'faq.subtitle': 'Trouvez des reponses aux questions courantes sur LMS Platform.',
+    'faq.subtitle': 'Trouvez des reponses aux questions courantes sur IQON-IA.',
     'faq.contact': 'Vous avez encore des questions ? Nous sommes la pour vous aider.',
 
     // Footer
@@ -268,7 +268,7 @@ export const translations = {
     'footer.privacy': 'Politique de Confidentialite',
     'footer.terms': 'Conditions d\'Utilisation',
     'footer.cookies': 'Politique des Cookies',
-    'footer.copyright': '© {year} LMS Platform. Tous droits reserves.',
+    'footer.copyright': '© {year} IQON-IA. Tous droits reserves.',
 
     // Legal
     'legal.privacy.title': 'Politique de Confidentialite',

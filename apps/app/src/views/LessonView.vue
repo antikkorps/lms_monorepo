@@ -313,6 +313,7 @@ function navigateToLesson(lesson: LessonItem) {
                     v-if="currentLesson.videoPlaybackUrl"
                     :src="currentLesson.videoPlaybackUrl"
                     :title="currentLesson.title"
+                    :poster="currentLesson.videoThumbnailUrl ?? undefined"
                   />
                   <!-- YouTube embed if videoId is a short YouTube ID (not an R2 key) -->
                   <iframe

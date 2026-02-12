@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { config } from '../../../config/index.js';
 import { logger } from '../../../utils/logger.js';
 import type {
@@ -6,6 +7,7 @@ import type {
   TranscodingSubmitResult,
   TranscodingStatusResult,
   TranscodingProviderStatus,
+  WebhookVerificationResult,
 } from '../transcoding.interface.js';
 
 const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
@@ -77,6 +79,7 @@ export class CloudflareStreamProvider implements TranscodingProvider {
         status: { state: string; errorReasonCode?: string; errorReasonText?: string };
         playback?: { hls?: string };
         duration?: number;
+        thumbnail?: string;
       };
     };
 
@@ -87,6 +90,7 @@ export class CloudflareStreamProvider implements TranscodingProvider {
       uid: result.uid,
       status,
       playbackUrl: status === 'ready' ? result.playback?.hls : undefined,
+      thumbnailUrl: status === 'ready' ? result.thumbnail : undefined,
       duration: result.duration ? Math.round(result.duration) : undefined,
       errorMessage:
         status === 'error'
@@ -110,6 +114,94 @@ export class CloudflareStreamProvider implements TranscodingProvider {
       logger.error({ status: response.status, uid, body: errorBody }, 'Cloudflare Stream delete failed');
       throw new Error(`Cloudflare Stream delete failed: ${response.status}`);
     }
+  }
+
+  supportsWebhook(): boolean {
+    return !!config.cloudflare.webhookSecret;
+  }
+
+  verifyWebhook(rawBody: Buffer, headers: Record<string, string>): WebhookVerificationResult {
+    const secret = config.cloudflare.webhookSecret;
+    if (!secret) {
+      return { valid: false, reason: 'Webhook secret not configured' };
+    }
+
+    const signatureHeader = headers['webhook-signature'];
+    if (!signatureHeader) {
+      return { valid: false, reason: 'Missing webhook-signature header' };
+    }
+
+    // Parse "time=<ts>,sig1=<hex>" format
+    const parts: Record<string, string> = {};
+    for (const part of signatureHeader.split(',')) {
+      const [key, value] = part.split('=', 2);
+      if (key && value) {
+        parts[key.trim()] = value.trim();
+      }
+    }
+
+    const timestamp = parts['time'];
+    const signature = parts['sig1'];
+
+    if (!timestamp || !signature) {
+      return { valid: false, reason: 'Malformed webhook-signature header' };
+    }
+
+    // Reject timestamps older than 5 minutes
+    const TOLERANCE_MS = 5 * 60 * 1000;
+    const ts = Number(timestamp);
+    if (Number.isNaN(ts) || Math.abs(Date.now() - ts * 1000) > TOLERANCE_MS) {
+      return { valid: false, reason: 'Webhook timestamp expired' };
+    }
+
+    // HMAC-SHA256(secret, "${time}.${rawBody}")
+    const signedPayload = `${timestamp}.${rawBody.toString('utf8')}`;
+    const expected = createHmac('sha256', secret).update(signedPayload).digest('hex');
+
+    const sigBuffer = Buffer.from(signature, 'hex');
+    const expectedBuffer = Buffer.from(expected, 'hex');
+
+    if (sigBuffer.length !== expectedBuffer.length || !timingSafeEqual(sigBuffer, expectedBuffer)) {
+      return { valid: false, reason: 'Signature mismatch' };
+    }
+
+    return { valid: true };
+  }
+
+  parseWebhookPayload(body: unknown): TranscodingStatusResult | null {
+    if (!body || typeof body !== 'object') {
+      return null;
+    }
+
+    const payload = body as Record<string, unknown>;
+    const uid = payload['uid'];
+    const status = payload['status'] as Record<string, unknown> | undefined;
+    const playback = payload['playback'] as Record<string, string> | undefined;
+    const duration = payload['duration'] as number | undefined;
+    const thumbnail = payload['thumbnail'] as string | undefined;
+
+    if (typeof uid !== 'string' || !status || typeof status !== 'object') {
+      return null;
+    }
+
+    const state = status['state'] as string | undefined;
+    if (typeof state !== 'string') {
+      return null;
+    }
+
+    const mappedStatus = this.mapStatus(state);
+
+    return {
+      uid,
+      status: mappedStatus,
+      playbackUrl: mappedStatus === 'ready' ? playback?.['hls'] : undefined,
+      thumbnailUrl: mappedStatus === 'ready' && typeof thumbnail === 'string' ? thumbnail : undefined,
+      duration: typeof duration === 'number' ? Math.round(duration) : undefined,
+      errorMessage:
+        mappedStatus === 'error'
+          ? (status['errorReasonText'] as string) || (status['errorReasonCode'] as string) || 'Unknown error'
+          : undefined,
+    };
   }
 
   private mapStatus(state: string | undefined): TranscodingProviderStatus {

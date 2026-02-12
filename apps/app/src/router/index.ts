@@ -167,6 +167,12 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: 'app', requiresAuth: true },
   },
   {
+    path: '/admin/transcoding',
+    name: 'admin-transcoding',
+    component: () => import('../views/admin/TranscodingMonitoringView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
     path: '/admin/reviews',
     name: 'admin-reviews',
     component: () => import('../views/admin/ReviewModerationView.vue'),

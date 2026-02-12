@@ -1,6 +1,7 @@
 ---
 import { getLangFromUrl, useTranslations, getLocalizedPath, getAlternateLinks, type Lang } from '../i18n';
 import CookieConsent from '../components/CookieConsent.astro';
+import { APP_NAME } from '@shared/config';
 import '../styles/global.css';
 
 interface Props {
@@ -100,7 +101,7 @@ const footerLinks = {
           <svg class="w-8 h-8 text-primary" viewBox="0 0 32 32" fill="currentColor">
             <path d="M16 2L4 8v16l12 6 12-6V8L16 2zm0 2.5L25.5 9 16 13.5 6.5 9 16 4.5zM6 10.5l9 4.5v11l-9-4.5v-11zm20 0v11l-9 4.5v-11l9-4.5z"/>
           </svg>
-          <span>LMS Platform</span>
+          <span>{APP_NAME}</span>
         </a>
 
         <!-- Desktop Navigation -->
@@ -272,7 +273,7 @@ const footerLinks = {
               <svg class="w-8 h-8 text-primary" viewBox="0 0 32 32" fill="currentColor">
                 <path d="M16 2L4 8v16l12 6 12-6V8L16 2zm0 2.5L25.5 9 16 13.5 6.5 9 16 4.5zM6 10.5l9 4.5v11l-9-4.5v-11zm20 0v11l-9 4.5v-11l9-4.5z"/>
               </svg>
-              <span>LMS Platform</span>
+              <span>{APP_NAME}</span>
             </a>
             <p class="mt-4 text-sm text-muted-foreground max-w-xs">
               {t('footer.description')}
