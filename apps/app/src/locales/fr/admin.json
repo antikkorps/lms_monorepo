@@ -546,5 +546,56 @@
       "description": "Distribution des ventes de cours par catégorie",
       "empty": "Aucune donnée de catégorie pour cette période"
     }
+  },
+  "transcoding": {
+    "title": "Monitoring du transcodage",
+    "subtitle": "Surveillez la file d'attente de transcodage vidéo et l'état des jobs.",
+    "refresh": "Actualiser",
+    "error": {
+      "loadFailed": "Impossible de charger les données de transcodage",
+      "retry": "Réessayer"
+    },
+    "stats": {
+      "active": "Actifs",
+      "waiting": "En attente",
+      "delayed": "Différés",
+      "completed": "Terminés",
+      "failed": "Échoués"
+    },
+    "content": {
+      "title": "Statut du contenu",
+      "description": "Statut du transcodage vidéo en base de données",
+      "pending": "En attente",
+      "processing": "En cours",
+      "ready": "Prêt",
+      "error": "Erreur"
+    },
+    "filters": {
+      "active": "Actifs",
+      "waiting": "En attente",
+      "delayed": "Différés",
+      "completed": "Terminés",
+      "failed": "Échoués"
+    },
+    "table": {
+      "title": "Jobs",
+      "description": "Jobs de transcodage pour le statut sélectionné.",
+      "id": "ID",
+      "type": "Type",
+      "contentId": "ID contenu",
+      "attempts": "Tentatives",
+      "error": "Erreur",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "actions": {
+      "retry": "Réessayer",
+      "retrySuccess": "Job remis en file d'attente",
+      "retryError": "Échec de la relance du job"
+    },
+    "empty": {
+      "title": "Aucun job trouvé",
+      "message": "Il n'y a aucun job avec ce statut."
+    }
   }
 }

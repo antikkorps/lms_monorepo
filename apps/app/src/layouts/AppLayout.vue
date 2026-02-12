@@ -35,6 +35,7 @@ import {
   Receipt,
   Shield,
   Search,
+  Activity,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
@@ -72,8 +73,9 @@ const adminItems = computed(() => {
   if (!isSuperAdmin.value) {
     items.push({ href: '/admin/sso', icon: Shield, name: t('nav.admin.sso') });
   }
-  // Refunds only visible to super admin (B2C purchases)
+  // Super admin only items
   if (isSuperAdmin.value) {
+    items.push({ href: '/admin/transcoding', icon: Activity, name: t('nav.admin.transcoding') });
     items.push({ href: '/admin/refunds', icon: RefreshCcw, name: t('nav.admin.refunds') });
   }
   return items;

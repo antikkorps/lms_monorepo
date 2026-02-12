@@ -28,6 +28,7 @@
     "invoices": "Factures",
     "sso": "Configuration SSO",
     "analytics": "Analytique",
+    "transcoding": "Transcodage",
     "refunds": "Demandes de remboursement"
   },
   "accessibility": {
