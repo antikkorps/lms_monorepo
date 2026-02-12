@@ -63,6 +63,14 @@ vi.mock('../queue/index.js', () => ({
   addSubmitTranscodingJob: (...args: unknown[]) => mockAddSubmitJob(...args),
 }));
 
+const mockStorageDelete = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+
+vi.mock('../storage/index.js', () => ({
+  getStorage: vi.fn().mockReturnValue({
+    delete: (...args: unknown[]) => mockStorageDelete(...args),
+  }),
+}));
+
 vi.mock('../utils/logger.js', () => ({
   logger: {
     info: vi.fn(),
@@ -257,6 +265,38 @@ describe('LessonContent Controller', () => {
       });
     });
 
+    it('should delete old source video when replacing with new videoSourceKey', async () => {
+      mockIsTranscodingAvailable.mockReturnValue(true);
+      mockLessonContentModel.findOne.mockResolvedValue(null);
+
+      const content = createMockContentInstance({
+        videoSourceKey: 'videos/old.mp4',
+        videoStreamId: 'old-stream-id',
+      });
+      mockLessonContentModel.create.mockResolvedValue(content);
+
+      const ctx = createMockContext({
+        params: { lessonId: 'lesson-456' },
+        body: {
+          lang: 'en',
+          title: 'Test',
+          videoSourceKey: 'videos/new.mp4',
+        },
+        state: superAdminState,
+      });
+
+      await createLessonContent(ctx);
+
+      // Should delete old stream asset
+      expect(mockGetTranscoding().delete).toHaveBeenCalledWith('old-stream-id');
+      // Should delete old source video
+      expect(mockStorageDelete).toHaveBeenCalledWith('videos/old.mp4');
+      // Should enqueue new transcoding job
+      expect(mockAddSubmitJob).toHaveBeenCalledWith(
+        expect.objectContaining({ videoSourceKey: 'videos/new.mp4' })
+      );
+    });
+
     it('should NOT trigger transcoding when transcoding unavailable', async () => {
       mockIsTranscodingAvailable.mockReturnValue(false);
       mockLessonContentModel.findOne.mockResolvedValue(null);
@@ -366,6 +406,28 @@ describe('LessonContent Controller', () => {
       expect(mockAddSubmitJob).toHaveBeenCalledWith(
         expect.objectContaining({ videoSourceKey: 'videos/updated.mp4' })
       );
+    });
+
+    it('should delete old source video when replacing videoSourceKey', async () => {
+      mockIsTranscodingAvailable.mockReturnValue(true);
+
+      const content = createMockContentInstance({
+        videoSourceKey: 'videos/old-source.mp4',
+        videoStreamId: 'old-stream',
+      });
+      mockLessonContentModel.findOne.mockResolvedValue(content);
+
+      const ctx = createMockContext({
+        params: { lessonId: 'lesson-456', lang: 'en' },
+        body: { videoSourceKey: 'videos/new-source.mp4' },
+        state: superAdminState,
+      });
+
+      await updateLessonContent(ctx);
+
+      // Should delete old stream and old source video
+      expect(mockGetTranscoding().delete).toHaveBeenCalledWith('old-stream');
+      expect(mockStorageDelete).toHaveBeenCalledWith('videos/old-source.mp4');
     });
   });
 

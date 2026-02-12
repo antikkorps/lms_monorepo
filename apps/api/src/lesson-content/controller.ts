@@ -3,6 +3,7 @@ import { LessonContent, Lesson, Chapter, Course } from '../database/models/index
 import { UserRole, SupportedLocale, TranscodingStatus } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { isTranscodingAvailable, getTranscoding } from '../services/transcoding/index.js';
+import { getStorage } from '../storage/index.js';
 import { addSubmitTranscodingJob } from '../queue/index.js';
 import { logger } from '../utils/logger.js';
 import type {
@@ -106,6 +107,16 @@ async function triggerTranscoding(content: LessonContent, videoSourceKey: string
       logger.info({ videoStreamId: content.videoStreamId, lessonContentId: content.id }, 'Deleted previous Stream asset');
     } catch (err) {
       logger.warn({ videoStreamId: content.videoStreamId, error: err }, 'Failed to delete previous Stream asset');
+    }
+  }
+
+  // Clean up previous source video file before replacing
+  if (content.videoSourceKey && content.videoSourceKey !== videoSourceKey) {
+    try {
+      await getStorage().delete(content.videoSourceKey);
+      logger.info({ videoSourceKey: content.videoSourceKey, lessonContentId: content.id }, 'Deleted previous source video');
+    } catch (err) {
+      logger.warn({ videoSourceKey: content.videoSourceKey, error: err }, 'Failed to delete previous source video');
     }
   }
 

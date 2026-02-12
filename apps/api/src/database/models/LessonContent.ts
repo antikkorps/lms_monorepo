@@ -144,9 +144,9 @@ LessonContent.init(
     ],
     hooks: {
       beforeDestroy: async (instance: LessonContent) => {
+        // Clean up Cloudflare Stream asset
         if (instance.videoStreamId) {
           try {
-            // Lazy import to avoid circular dependency
             const { isTranscodingAvailable, getTranscoding } = await import(
               '../../services/transcoding/index.js'
             );
@@ -161,6 +161,23 @@ LessonContent.init(
             logger.warn(
               { videoStreamId: instance.videoStreamId, lessonContentId: instance.id, error: err },
               'Failed to delete Stream asset on LessonContent destroy'
+            );
+          }
+        }
+
+        // Clean up source video file from storage (R2/local)
+        if (instance.videoSourceKey) {
+          try {
+            const { getStorage } = await import('../../storage/index.js');
+            await getStorage().delete(instance.videoSourceKey);
+            logger.info(
+              { videoSourceKey: instance.videoSourceKey, lessonContentId: instance.id },
+              'Deleted source video on LessonContent destroy'
+            );
+          } catch (err) {
+            logger.warn(
+              { videoSourceKey: instance.videoSourceKey, lessonContentId: instance.id, error: err },
+              'Failed to delete source video on LessonContent destroy'
             );
           }
         }

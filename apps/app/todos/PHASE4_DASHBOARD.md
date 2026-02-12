@@ -74,6 +74,8 @@
 - [x] Search suggestions autocomplete with pg_trgm (Done: 2026-02-09)
 - [x] Fix missing i18n keys for course editor (Done: 2026-02-12)
 - [x] Hide SSO config from super_admin nav — tenant-scoped only (Done: 2026-02-12)
+- [x] Admin transcoding monitoring dashboard (Done: 2026-02-12)
+- [x] Rebrand LMS Platform → IQON-IA (centralized @shared/config) (Done: 2026-02-12)
 
 ---
 

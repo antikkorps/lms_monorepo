@@ -58,6 +58,13 @@ vi.mock('../services/transcoding/index.js', () => ({
   }),
 }));
 
+const mockStorageDelete = vi.fn().mockResolvedValue(undefined);
+vi.mock('../storage/index.js', () => ({
+  getStorage: vi.fn().mockReturnValue({
+    delete: (...args: unknown[]) => mockStorageDelete(...args),
+  }),
+}));
+
 // Import after mocks
 import {
   listCourses,
@@ -78,7 +85,8 @@ import {
   deleteLesson,
   reorderLessons,
 } from './controller.js';
-import { Course, Chapter, Lesson } from '../database/models/index.js';
+import { Course, Chapter, Lesson, LessonContent } from '../database/models/index.js';
+import { isTranscodingAvailable, getTranscoding } from '../services/transcoding/index.js';
 
 // =============================================================================
 // Test Helpers
@@ -452,6 +460,7 @@ describe('Courses Controller', () => {
     it('should delete course for instructor', async () => {
       const mockCourse = createMockCourse({ instructorId: 'instructor-123' });
       vi.mocked(Course.findByPk).mockResolvedValue(mockCourse as never);
+      vi.mocked(Chapter.findAll).mockResolvedValue([] as never);
 
       const ctx = createMockContext({
         params: { id: 'course-123' },
@@ -463,6 +472,63 @@ describe('Courses Controller', () => {
 
       expect(mockCourse.destroy).toHaveBeenCalled();
       expect(ctx.status).toBe(204);
+    });
+
+    it('should cleanup stream and storage assets before deleting course', async () => {
+      const mockCourse = createMockCourse({ instructorId: 'instructor-123' });
+      vi.mocked(Course.findByPk).mockResolvedValue(mockCourse as never);
+      vi.mocked(Chapter.findAll).mockResolvedValue([
+        { id: 'ch-1', lessons: [{ id: 'l-1' }, { id: 'l-2' }] },
+        { id: 'ch-2', lessons: [{ id: 'l-3' }] },
+      ] as never);
+
+      vi.mocked(LessonContent.findAll).mockResolvedValue([
+        { id: 'c-1', videoStreamId: 'stream-1', videoSourceKey: 'videos/source1.mp4' },
+        { id: 'c-2', videoStreamId: null, videoSourceKey: 'videos/source2.mp4' },
+        { id: 'c-3', videoStreamId: 'stream-3', videoSourceKey: null },
+      ] as never);
+
+      vi.mocked(isTranscodingAvailable).mockReturnValue(true);
+      const mockTranscodingDelete = vi.fn().mockResolvedValue(undefined);
+      vi.mocked(getTranscoding).mockReturnValue({ delete: mockTranscodingDelete } as never);
+
+      const ctx = createMockContext({
+        params: { id: 'course-123' },
+        state: {
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
+        },
+      });
+      await deleteCourse(ctx);
+
+      // Should delete stream assets
+      expect(mockTranscodingDelete).toHaveBeenCalledWith('stream-1');
+      expect(mockTranscodingDelete).toHaveBeenCalledWith('stream-3');
+      expect(mockTranscodingDelete).toHaveBeenCalledTimes(2);
+
+      // Should delete source videos from storage
+      expect(mockStorageDelete).toHaveBeenCalledWith('videos/source1.mp4');
+      expect(mockStorageDelete).toHaveBeenCalledWith('videos/source2.mp4');
+      expect(mockStorageDelete).toHaveBeenCalledTimes(2);
+
+      expect(mockCourse.destroy).toHaveBeenCalled();
+      expect(ctx.status).toBe(204);
+    });
+
+    it('should skip cleanup when course has no lessons', async () => {
+      const mockCourse = createMockCourse({ instructorId: 'instructor-123' });
+      vi.mocked(Course.findByPk).mockResolvedValue(mockCourse as never);
+      vi.mocked(Chapter.findAll).mockResolvedValue([] as never);
+
+      const ctx = createMockContext({
+        params: { id: 'course-123' },
+        state: {
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
+        },
+      });
+      await deleteCourse(ctx);
+
+      expect(LessonContent.findAll).not.toHaveBeenCalled();
+      expect(mockCourse.destroy).toHaveBeenCalled();
     });
   });
 
@@ -734,6 +800,7 @@ describe('Courses Controller', () => {
         chapter: { course: mockCourse },
       });
       vi.mocked(Lesson.findByPk).mockResolvedValue(mockLesson as never);
+      vi.mocked(LessonContent.findAll).mockResolvedValue([] as never);
 
       const ctx = createMockContext({
         params: { id: 'lesson-123' },
@@ -747,6 +814,34 @@ describe('Courses Controller', () => {
       expect(mockCourse.decrement).toHaveBeenCalledWith('lessonsCount');
       expect(mockCourse.decrement).toHaveBeenCalledWith('duration', { by: 300 });
       expect(ctx.status).toBe(204);
+    });
+
+    it('should cleanup stream and storage assets before deleting lesson', async () => {
+      vi.mocked(isTranscodingAvailable).mockReturnValue(true);
+      const mockTranscodingDelete = vi.fn().mockResolvedValue(undefined);
+      vi.mocked(getTranscoding).mockReturnValue({ delete: mockTranscodingDelete } as never);
+
+      const mockCourse = createMockCourse({ instructorId: 'instructor-123' });
+      const mockLesson = createMockLesson({
+        duration: 120,
+        chapter: { course: mockCourse },
+      });
+      vi.mocked(Lesson.findByPk).mockResolvedValue(mockLesson as never);
+      vi.mocked(LessonContent.findAll).mockResolvedValue([
+        { id: 'c-1', videoStreamId: 'stream-1', videoSourceKey: 'videos/src.mp4' },
+      ] as never);
+
+      const ctx = createMockContext({
+        params: { id: 'lesson-123' },
+        state: {
+          user: { userId: 'instructor-123', role: UserRole.INSTRUCTOR },
+        },
+      });
+      await deleteLesson(ctx);
+
+      expect(mockTranscodingDelete).toHaveBeenCalledWith('stream-1');
+      expect(mockStorageDelete).toHaveBeenCalledWith('videos/src.mp4');
+      expect(mockLesson.destroy).toHaveBeenCalled();
     });
   });
 

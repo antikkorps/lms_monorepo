@@ -1,6 +1,6 @@
-# LMS Platform - Backlog
+# IQON-IA - Backlog
 
-## Modified: 2026-02-09
+## Modified: 2026-02-12
 
 ---
 
@@ -41,10 +41,15 @@
 - [x] Video transcoding pipeline (Done: 2026-02-07)
 
 #### Video Transcoding — Production Readiness
-- [ ] Cloudflare Stream webhook endpoint (remplacer le polling par des callbacks)
-- [ ] Cleanup des streams Cloudflare à la suppression de LessonContent
-- [ ] Extraction thumbnail/poster depuis Cloudflare Stream
-- [ ] Admin monitoring des jobs transcoding (liste active/failed)
+- [x] Cloudflare Stream webhook endpoint (remplacer le polling par des callbacks) (Done: 2026-02-11)
+- [x] Cleanup des streams Cloudflare + source R2 à la suppression (Done: 2026-02-12)
+- [x] Extraction thumbnail/poster depuis Cloudflare Stream (Done: 2026-02-11)
+- [x] Admin monitoring des jobs transcoding (liste active/failed) (Done: 2026-02-12)
+
+### Branding
+- [x] Centraliser le nom de marque (rebrand LMS Platform → IQON-IA) (Done: 2026-02-12)
+  - Bibliothèque `@shared/config` avec `APP_NAME` constant
+  - Remplacement dans apps (Vue, API, Landing, locales, certificats, emails)
 
 ### API Integration (Frontend)
 
