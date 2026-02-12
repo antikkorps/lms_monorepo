@@ -90,6 +90,7 @@ function serializeLessonContent(c: LessonContent) {
     videoPlaybackUrl: c.videoPlaybackUrl,
     videoStreamId: c.videoStreamId,
     transcodingError: c.transcodingError,
+    videoThumbnailUrl: c.videoThumbnailUrl,
     createdAt: c.createdAt,
     updatedAt: c.updatedAt,
   };
@@ -113,6 +114,7 @@ async function triggerTranscoding(content: LessonContent, videoSourceKey: string
     transcodingError: null,
     videoPlaybackUrl: null,
     videoStreamId: null,
+    videoThumbnailUrl: null,
   });
 
   await addSubmitTranscodingJob({

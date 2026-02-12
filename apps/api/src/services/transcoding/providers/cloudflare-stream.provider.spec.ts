@@ -102,6 +102,7 @@ describe('CloudflareStreamProvider - Webhook', () => {
         uid: 'stream-abc',
         status: { state: 'ready' },
         playback: { hls: 'https://stream.cloudflare.com/abc/manifest.m3u8' },
+        thumbnail: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
         duration: 125.7,
       };
 
@@ -111,6 +112,7 @@ describe('CloudflareStreamProvider - Webhook', () => {
         uid: 'stream-abc',
         status: 'ready',
         playbackUrl: 'https://stream.cloudflare.com/abc/manifest.m3u8',
+        thumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
         duration: 126,
         errorMessage: undefined,
       });
@@ -128,6 +130,7 @@ describe('CloudflareStreamProvider - Webhook', () => {
         uid: 'stream-def',
         status: 'error',
         playbackUrl: undefined,
+        thumbnailUrl: undefined,
         duration: undefined,
         errorMessage: 'Unsupported codec',
       });
@@ -145,6 +148,7 @@ describe('CloudflareStreamProvider - Webhook', () => {
         uid: 'stream-ghi',
         status: 'processing',
         playbackUrl: undefined,
+        thumbnailUrl: undefined,
         duration: undefined,
         errorMessage: undefined,
       });

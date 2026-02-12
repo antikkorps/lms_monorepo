@@ -232,6 +232,9 @@ export async function getCourse(ctx: Context): Promise<void> {
             isFree: lesson.isFree,
             videoUrl: localized.videoUrl,
             videoId: localized.videoId,
+            videoPlaybackUrl: localized.videoPlaybackUrl,
+            videoThumbnailUrl: localized.videoThumbnailUrl,
+            transcodingStatus: localized.transcodingStatus,
             // Include transcript and description if available
             ...(localized.transcript && { transcript: localized.transcript }),
             ...(localized.description && { description: localized.description }),
@@ -671,6 +674,9 @@ export async function listLessons(ctx: Context): Promise<void> {
       isFree: lesson.isFree,
       videoUrl: localized.videoUrl,
       videoId: localized.videoId,
+      videoPlaybackUrl: localized.videoPlaybackUrl,
+      videoThumbnailUrl: localized.videoThumbnailUrl,
+      transcodingStatus: localized.transcodingStatus,
       ...(localized.transcript && { transcript: localized.transcript }),
       ...(localized.description && { description: localized.description }),
     };
@@ -745,6 +751,9 @@ export async function getLesson(ctx: Context): Promise<void> {
       requiresPrevious: lesson.requiresPrevious,
       videoUrl: localized.videoUrl,
       videoId: localized.videoId,
+      videoPlaybackUrl: localized.videoPlaybackUrl,
+      videoThumbnailUrl: localized.videoThumbnailUrl,
+      transcodingStatus: localized.transcodingStatus,
       transcript: localized.transcript,
       description: localized.description,
       chapter: lesson.chapter ? {

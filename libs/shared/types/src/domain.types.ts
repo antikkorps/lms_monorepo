@@ -196,6 +196,7 @@ export interface LessonItem {
   videoUrl?: string | null;
   videoId?: string | null;
   videoPlaybackUrl?: string | null;
+  videoThumbnailUrl?: string | null;
   transcodingStatus?: TranscodingStatus | null;
 }
 
@@ -221,6 +222,7 @@ export interface LessonContent {
   videoPlaybackUrl: string | null;
   videoStreamId: string | null;
   transcodingError: string | null;
+  videoThumbnailUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -233,6 +235,7 @@ export interface LocalizedLesson {
   videoUrl: string | null;
   videoId: string | null;
   videoPlaybackUrl: string | null;
+  videoThumbnailUrl: string | null;
   transcodingStatus: TranscodingStatus | null;
   duration: number;
   position: number;

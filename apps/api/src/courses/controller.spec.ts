@@ -51,6 +51,13 @@ vi.mock('../utils/logger.js', () => ({
   },
 }));
 
+vi.mock('../services/transcoding/index.js', () => ({
+  isTranscodingAvailable: vi.fn().mockReturnValue(false),
+  getTranscoding: vi.fn().mockReturnValue({
+    delete: vi.fn().mockResolvedValue(undefined),
+  }),
+}));
+
 // Import after mocks
 import {
   listCourses,

@@ -129,6 +129,7 @@ function createMockContentInstance(overrides: Record<string, unknown> = {}) {
     videoPlaybackUrl: null,
     videoStreamId: null,
     transcodingError: null,
+    videoThumbnailUrl: null,
     createdAt: new Date('2025-01-01'),
     updatedAt: new Date('2025-01-01'),
     ...overrides,
@@ -243,6 +244,7 @@ describe('LessonContent Controller', () => {
         expect.objectContaining({
           transcodingStatus: 'pending',
           transcodingError: null,
+          videoThumbnailUrl: null,
         })
       );
 

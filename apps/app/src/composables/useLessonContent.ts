@@ -19,6 +19,7 @@ export interface LessonContentItem {
   videoPlaybackUrl: string | null;
   videoStreamId: string | null;
   transcodingError: string | null;
+  videoThumbnailUrl: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,6 +30,7 @@ export interface TranscodingStatusResponse {
   videoStreamId: string | null;
   transcodingError: string | null;
   videoSourceKey: string | null;
+  videoThumbnailUrl: string | null;
 }
 
 export interface UpsertLessonContentInput {
@@ -136,6 +138,7 @@ export function useLessonContent(lessonId: string) {
         content.videoPlaybackUrl = response.videoPlaybackUrl;
         content.videoStreamId = response.videoStreamId;
         content.transcodingError = response.transcodingError;
+        content.videoThumbnailUrl = response.videoThumbnailUrl;
       }
 
       return response;

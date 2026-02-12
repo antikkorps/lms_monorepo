@@ -84,6 +84,7 @@ async function processCheckStatus(job: Job<CheckTranscodingStatusJobData>): Prom
       await content.update({
         transcodingStatus: TranscodingStatus.READY,
         videoPlaybackUrl: status.playbackUrl || null,
+        videoThumbnailUrl: status.thumbnailUrl || null,
         transcodingError: null,
       });
 

@@ -19,6 +19,8 @@ export interface TranscodingStatusResult {
   status: TranscodingProviderStatus;
   /** HLS playback URL when ready */
   playbackUrl?: string;
+  /** Thumbnail/poster image URL when ready */
+  thumbnailUrl?: string;
   /** Duration in seconds when ready */
   duration?: number;
   /** Error message if status is 'error' */

@@ -276,6 +276,7 @@ describe('TranscodingWorker', () => {
           uid: 'stream-abc',
           status: 'ready',
           playbackUrl: 'https://stream.cloudflare.com/abc/manifest/video.m3u8',
+          thumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
           duration: 120,
         });
 
@@ -294,6 +295,7 @@ describe('TranscodingWorker', () => {
         expect(mockContent.update).toHaveBeenCalledWith({
           transcodingStatus: 'ready',
           videoPlaybackUrl: 'https://stream.cloudflare.com/abc/manifest/video.m3u8',
+          videoThumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
           transcodingError: null,
         });
 
@@ -476,6 +478,7 @@ describe('TranscodingWorker', () => {
           uid: 'stream-abc',
           status: 'ready',
           playbackUrl: 'https://stream.example.com/manifest.m3u8',
+          thumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
           duration: 0,
         });
 

@@ -25,6 +25,7 @@ const mockTranscodingProvider = {
     uid: 'stream-abc',
     status: 'ready',
     playbackUrl: 'https://stream.example.com/abc/manifest.m3u8',
+    thumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
     duration: 120,
   }),
 };
@@ -93,6 +94,7 @@ describe('handleTranscodingWebhook', () => {
       uid: 'stream-abc',
       status: 'ready',
       playbackUrl: 'https://stream.example.com/abc/manifest.m3u8',
+      thumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
       duration: 120,
     });
 
@@ -183,6 +185,7 @@ describe('handleTranscodingWebhook', () => {
     expect(content.update).toHaveBeenCalledWith({
       transcodingStatus: 'ready',
       videoPlaybackUrl: 'https://stream.example.com/abc/manifest.m3u8',
+      videoThumbnailUrl: 'https://customer-xyz.cloudflarestream.com/abc/thumbnails/thumbnail.jpg',
       transcodingError: null,
     });
     expect(mockLessonModel.update).toHaveBeenCalledWith(

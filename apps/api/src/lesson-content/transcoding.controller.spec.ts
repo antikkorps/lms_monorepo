@@ -171,6 +171,7 @@ describe('Transcoding Controller', () => {
         transcodingError: null,
         videoPlaybackUrl: null,
         videoStreamId: null,
+        videoThumbnailUrl: null,
       });
 
       expect(mockAddSubmitJob).toHaveBeenCalledWith({

@@ -34,6 +34,7 @@ export class LessonContent extends Model<
   declare videoPlaybackUrl: CreationOptional<string | null>;
   declare videoStreamId: CreationOptional<string | null>;
   declare transcodingError: CreationOptional<string | null>;
+  declare videoThumbnailUrl: CreationOptional<string | null>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
@@ -109,6 +110,11 @@ LessonContent.init(
       type: DataTypes.TEXT,
       allowNull: true,
       field: 'transcoding_error',
+    },
+    videoThumbnailUrl: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: 'video_thumbnail_url',
     },
     createdAt: {
       type: DataTypes.DATE,

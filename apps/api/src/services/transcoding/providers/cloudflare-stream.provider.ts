@@ -79,6 +79,7 @@ export class CloudflareStreamProvider implements TranscodingProvider {
         status: { state: string; errorReasonCode?: string; errorReasonText?: string };
         playback?: { hls?: string };
         duration?: number;
+        thumbnail?: string;
       };
     };
 
@@ -89,6 +90,7 @@ export class CloudflareStreamProvider implements TranscodingProvider {
       uid: result.uid,
       status,
       playbackUrl: status === 'ready' ? result.playback?.hls : undefined,
+      thumbnailUrl: status === 'ready' ? result.thumbnail : undefined,
       duration: result.duration ? Math.round(result.duration) : undefined,
       errorMessage:
         status === 'error'
@@ -176,6 +178,7 @@ export class CloudflareStreamProvider implements TranscodingProvider {
     const status = payload['status'] as Record<string, unknown> | undefined;
     const playback = payload['playback'] as Record<string, string> | undefined;
     const duration = payload['duration'] as number | undefined;
+    const thumbnail = payload['thumbnail'] as string | undefined;
 
     if (typeof uid !== 'string' || !status || typeof status !== 'object') {
       return null;
@@ -192,6 +195,7 @@ export class CloudflareStreamProvider implements TranscodingProvider {
       uid,
       status: mappedStatus,
       playbackUrl: mappedStatus === 'ready' ? playback?.['hls'] : undefined,
+      thumbnailUrl: mappedStatus === 'ready' && typeof thumbnail === 'string' ? thumbnail : undefined,
       duration: typeof duration === 'number' ? Math.round(duration) : undefined,
       errorMessage:
         mappedStatus === 'error'

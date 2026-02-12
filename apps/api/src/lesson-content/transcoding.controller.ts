@@ -57,6 +57,7 @@ export async function getTranscodingStatus(ctx: Context): Promise<void> {
       videoStreamId: content.videoStreamId,
       transcodingError: content.transcodingError,
       videoSourceKey: content.videoSourceKey,
+      videoThumbnailUrl: content.videoThumbnailUrl,
     },
   };
 }
@@ -96,6 +97,7 @@ export async function retryTranscoding(ctx: Context): Promise<void> {
     transcodingError: null,
     videoPlaybackUrl: null,
     videoStreamId: null,
+    videoThumbnailUrl: null,
   });
 
   await addSubmitTranscodingJob({

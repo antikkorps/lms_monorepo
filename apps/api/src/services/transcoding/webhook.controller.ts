@@ -62,12 +62,13 @@ export async function handleTranscodingWebhook(ctx: Context): Promise<void> {
       await content.update({
         transcodingStatus: TranscodingStatus.READY,
         videoPlaybackUrl: status.playbackUrl || null,
+        videoThumbnailUrl: status.thumbnailUrl || null,
         transcodingError: null,
       });
       if (status.duration && status.duration > 0) {
         await Lesson.update({ duration: status.duration }, { where: { id: content.lessonId } });
       }
-      logger.info({ lessonContentId: content.id, uid: status.uid, playbackUrl: status.playbackUrl }, 'Transcoding ready via webhook');
+      logger.info({ lessonContentId: content.id, uid: status.uid, playbackUrl: status.playbackUrl, thumbnailUrl: status.thumbnailUrl }, 'Transcoding ready via webhook');
       break;
 
     case 'error':
