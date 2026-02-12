@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-02-09
+## Modified: 2026-02-12
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -72,6 +72,8 @@
 - [x] Full-text search with command palette (Cmd+K) (Done: 2026-02-09)
 - [x] Advanced catalog filters: category, level, rating (Done: 2026-02-09)
 - [x] Search suggestions autocomplete with pg_trgm (Done: 2026-02-09)
+- [x] Fix missing i18n keys for course editor (Done: 2026-02-12)
+- [x] Hide SSO config from super_admin nav — tenant-scoped only (Done: 2026-02-12)
 
 ---
 

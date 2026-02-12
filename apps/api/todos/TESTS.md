@@ -1,6 +1,6 @@
 # API - Tests
 
-## Modified: 2026-02-08
+## Modified: 2026-02-12
 
 ### Test Setup
 
@@ -42,8 +42,11 @@
 | Notification Worker | `queue/workers/notification.worker.spec.ts` | 10 | Done |
 | DB Migrator | `database/migrator.spec.ts` | 10 | Done |
 | Auth Controller | `auth/controller.spec.ts` | 65 | Done |
+| Webhook Controller | `services/transcoding/webhook.controller.spec.ts` | 10 | Done |
+| CF Stream Provider | `services/transcoding/providers/cloudflare-stream.provider.spec.ts` | 15 | Done |
+| Admin Transcoding | `admin/transcoding.controller.spec.ts` | 7 | Done |
 
-**Total: 426 tests** (418 passed, 8 skipped)
+**Total: 458 tests** (450 passed, 8 skipped)
 
 *Integration tests: run with `R2_INTEGRATION_TEST=true`
 
