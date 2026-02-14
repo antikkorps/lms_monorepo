@@ -30,7 +30,8 @@
     "analytics": "Analytique",
     "transcoding": "Transcodage",
     "refunds": "Demandes de remboursement",
-    "licenses": "Licences Cours"
+    "licenses": "Licences Cours",
+    "reviews": "Modération des avis"
   },
   "accessibility": {
     "toggleMenu": "Basculer le menu",

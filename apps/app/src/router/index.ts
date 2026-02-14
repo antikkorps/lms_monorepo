@@ -208,6 +208,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/admin/AdminAnalyticsView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
+  {
+    path: '/admin/analytics/courses/:courseId',
+    name: 'admin-course-analytics',
+    component: () => import('../views/admin/AdminCourseAnalyticsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
 
   // Instructor routes (instructors and admins)
   {

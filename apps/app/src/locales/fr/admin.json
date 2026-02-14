@@ -514,13 +514,17 @@
   "analytics": {
     "title": "Tableau de bord analytique",
     "subtitle": "Revenus, utilisateurs et engagement de votre plateforme.",
-    "export": "Exporter CSV",
+    "export": "Exporter",
+    "exportCsv": "Exporter CSV",
+    "exportPdf": "Exporter PDF",
     "error": {
       "loadFailed": "Échec du chargement des analytiques",
       "retry": "Réessayer"
     },
     "stats": {
       "netRevenue": "Revenu net",
+      "b2cRevenue": "Revenu B2C",
+      "b2bRevenue": "Revenu B2B",
       "newUsers": "Nouveaux utilisateurs",
       "activeUsers": "Utilisateurs actifs",
       "completionRate": "Taux de complétion",
@@ -528,10 +532,14 @@
     },
     "charts": {
       "revenue": "Revenu",
+      "b2cRevenue": "Revenu B2C",
+      "b2bRevenue": "Revenu B2B",
       "revenueOverTime": "Revenu dans le temps",
-      "revenueDescription": "Revenu total généré pendant la période sélectionnée",
+      "revenueDescription": "Revenu total (B2C + B2B) pendant la période sélectionnée",
       "dailyEngagement": "Engagement quotidien",
       "engagementDescription": "Utilisateurs actifs et complétion de leçons par jour",
+      "userGrowth": "Croissance des utilisateurs",
+      "userGrowthDescription": "Nouvelles inscriptions par jour",
       "activeUsers": "Utilisateurs actifs",
       "completions": "Complétions"
     },
@@ -539,12 +547,56 @@
       "title": "Top des cours par revenu",
       "description": "Cours les plus performants pendant la période sélectionnée",
       "sales": "ventes",
+      "licenses": "licences",
+      "b2b": "B2B",
+      "viewDetails": "Voir les détails",
       "empty": "Aucune donnée de revenu pour cette période"
     },
     "categories": {
       "title": "Répartition par catégorie",
       "description": "Distribution des ventes de cours par catégorie",
       "empty": "Aucune donnée de catégorie pour cette période"
+    },
+    "licenses": {
+      "title": "Analytique des licences",
+      "seatUtilization": "Utilisation des sièges",
+      "seatsUsed": "{used} sur {total} sièges utilisés",
+      "statusDistribution": "Statut des licences",
+      "revenueSplit": "Répartition des revenus",
+      "upcomingExpirations": "Expirations à venir",
+      "expiringSoon": "{count} licence expire dans 30 jours | {count} licences expirent dans 30 jours",
+      "noLicenses": "Aucune donnée de licence pour cette période"
+    },
+    "courseDetail": {
+      "back": "Retour aux analytiques",
+      "revenue": "Revenu",
+      "enrollments": "Inscriptions",
+      "completionRate": "Taux de complétion",
+      "avgQuizScore": "Score moyen quiz",
+      "enrollmentOverTime": "Inscriptions dans le temps",
+      "completionFunnel": "Entonnoir de complétion",
+      "enrolled": "Inscrits",
+      "started": "Commencés",
+      "completed": "Terminés",
+      "revenueSplit": "Répartition des revenus",
+      "b2c": "B2C (Individuel)",
+      "b2b": "B2B (Licence)",
+      "reviewDistribution": "Distribution des avis",
+      "stars": "étoiles",
+      "avgRating": "note moyenne",
+      "quizPerformance": "Performance quiz",
+      "passRate": "Taux de réussite",
+      "totalAttempts": "tentatives",
+      "watchTime": "Temps de visionnage",
+      "totalWatchTime": "Total",
+      "avgWatchTime": "Moy. par apprenant",
+      "learnerProgress": "Progression des apprenants",
+      "name": "Nom",
+      "email": "Email",
+      "progress": "Progression",
+      "lessonsCompleted": "Leçons",
+      "lastActive": "Dernière activité",
+      "noData": "Aucune donnée pour cette période"
     }
   },
   "transcoding": {
