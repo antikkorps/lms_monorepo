@@ -118,3 +118,35 @@ export const config = {
 } as const;
 
 export type Config = typeof config;
+
+const DEV_DEFAULTS = [
+  'dev-secret-change-in-production',
+  'dev-refresh-secret-change-in-production',
+];
+
+function validateProductionConfig(): void {
+  const secrets = [
+    { name: 'JWT_SECRET', value: config.jwtSecret },
+    { name: 'JWT_REFRESH_SECRET', value: config.jwtRefreshSecret },
+  ];
+
+  for (const { name, value } of secrets) {
+    const isDevDefault = DEV_DEFAULTS.includes(value);
+    const isTooShort = value.length < 32;
+
+    if (config.env === 'production') {
+      if (isDevDefault) {
+        throw new Error(`${name} must not use the default development value in production`);
+      }
+      if (isTooShort) {
+        throw new Error(`${name} must be at least 32 characters in production (got ${value.length})`);
+      }
+    } else {
+      if (isDevDefault) {
+        console.warn(`[config] WARNING: ${name} is using the default development value`);
+      }
+    }
+  }
+}
+
+validateProductionConfig();

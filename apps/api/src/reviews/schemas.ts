@@ -1,16 +1,17 @@
 import { z } from 'zod';
+import { sanitizeText } from '../utils/sanitize.js';
 
 export const createReviewSchema = z.object({
   courseId: z.string().uuid(),
   rating: z.number().int().min(1).max(5),
-  title: z.string().min(1).max(255).optional(),
-  comment: z.string().min(1).max(5000).optional(),
+  title: z.string().min(1).max(255).optional().transform((v) => v ? sanitizeText(v) : v),
+  comment: z.string().min(1).max(5000).optional().transform((v) => v ? sanitizeText(v) : v),
 });
 
 export const updateReviewSchema = z.object({
   rating: z.number().int().min(1).max(5).optional(),
-  title: z.string().min(1).max(255).nullable().optional(),
-  comment: z.string().min(1).max(5000).nullable().optional(),
+  title: z.string().min(1).max(255).nullable().optional().transform((v) => v ? sanitizeText(v) : v),
+  comment: z.string().min(1).max(5000).nullable().optional().transform((v) => v ? sanitizeText(v) : v),
 });
 
 export const listReviewsQuerySchema = z.object({
@@ -26,7 +27,7 @@ export const listPendingReviewsQuerySchema = z.object({
 
 export const moderateReviewSchema = z.object({
   action: z.enum(['approve', 'reject']),
-  note: z.string().max(1000).optional(),
+  note: z.string().max(1000).optional().transform((v) => v ? sanitizeText(v) : v),
 });
 
 export type CreateReviewInput = z.infer<typeof createReviewSchema>;
