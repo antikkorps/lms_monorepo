@@ -1,6 +1,6 @@
 # API - Tests
 
-## Modified: 2026-02-14
+## Modified: 2026-02-14 (updated)
 
 ### Test Setup
 
@@ -88,6 +88,7 @@ cd apps/api && npx vitest run --coverage
 - [ ] Analytics controller tests (overview, revenue, engagement, export, licenses)
 - [ ] Course analytics controller tests
 - [ ] License management controller tests
+- [ ] Newsletter controller tests
 
 ### Notes
 

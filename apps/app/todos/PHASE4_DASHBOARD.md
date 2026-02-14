@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-02-14
+## Modified: 2026-02-14 (updated)
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -84,6 +84,10 @@
 - [x] Analytics: License analytics section (seat utilization, status, expirations) (Done: 2026-02-14)
 - [x] Analytics: Export dropdown (CSV/PDF) + clickable top courses (Done: 2026-02-14)
 - [x] Fix super_admin sidebar: hide tenant-scoped items, add review moderation (Done: 2026-02-14)
+
+### Pending - Deployment Prep
+- [ ] Create AcceptInvitationView.vue (`/invitations/:token` route)
+- [ ] Add invitation i18n keys (EN/FR)
 
 ---
 
