@@ -1,6 +1,6 @@
 # App (Vue) - Phase 4: Dashboard & Features
 
-## Modified: 2026-02-12
+## Modified: 2026-02-14
 
 ### Completed
 - [x] Create learner dashboard layout (Done: 2026-01-20)
@@ -76,6 +76,14 @@
 - [x] Hide SSO config from super_admin nav — tenant-scoped only (Done: 2026-02-12)
 - [x] Admin transcoding monitoring dashboard (Done: 2026-02-12)
 - [x] Rebrand LMS Platform → IQON-IA (centralized @shared/config) (Done: 2026-02-12)
+- [x] Volume discounts, license expiration & frontend UI (Done: 2026-02-14)
+- [x] Analytics: B2B license revenue in all KPIs, charts & CSV export (Done: 2026-02-14)
+- [x] Analytics: User growth time-series chart (Done: 2026-02-14)
+- [x] Analytics: Per-course detail page (funnel, quiz stats, watch time, learner table) (Done: 2026-02-14)
+- [x] Analytics: PDF export with PDFKit (Done: 2026-02-14)
+- [x] Analytics: License analytics section (seat utilization, status, expirations) (Done: 2026-02-14)
+- [x] Analytics: Export dropdown (CSV/PDF) + clickable top courses (Done: 2026-02-14)
+- [x] Fix super_admin sidebar: hide tenant-scoped items, add review moderation (Done: 2026-02-14)
 
 ---
 

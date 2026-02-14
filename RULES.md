@@ -275,22 +275,24 @@ docs/topic            # Documentation
 
 ### Phase 3: Data Logic & Stripe
 
-- [ ] Sequelize migrations
-- [ ] Stripe webhooks (idempotent)
-- [ ] B2B pricing logic
-- [ ] Basic analytics
+- [x] Sequelize migrations
+- [x] Stripe webhooks (idempotent)
+- [x] B2B pricing logic (volume discounts, license management)
+- [x] Basic analytics
+- [x] Advanced analytics (B2B revenue, per-course detail, PDF export, license analytics)
 
 ### Phase 4: Frontend & Dashboard
 
-- [ ] Tailwind 4 design system
-- [ ] VideoPlayer component
-- [ ] QuizzEngine component
-- [ ] Dashboard views
+- [x] Tailwind 4 design system
+- [x] VideoPlayer component
+- [x] QuizzEngine component
+- [x] Dashboard views (learner, tenant admin, super admin)
 
 ### Phase 5: Delivery & Tests
 
 - [ ] Playwright E2E tests
 - [ ] Data isolation validation
+- [ ] Database seeding / demo data
 
 ---
 
