@@ -24,6 +24,8 @@ const DEFAULT_FLAGS: NotificationPreferenceFlags = {
   [NotificationType.PURCHASE_CONFIRMED]: true,
   [NotificationType.REVIEW_APPROVED]: true,
   [NotificationType.STREAK_MILESTONE]: true,
+  [NotificationType.LICENSE_EXPIRING_SOON]: true,
+  [NotificationType.LICENSE_EXPIRED]: true,
 };
 
 export class NotificationPreference extends Model<

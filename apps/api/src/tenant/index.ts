@@ -27,9 +27,11 @@ import {
   createLicenseCheckout,
   listLicenses,
   getLicense,
+  getLicensePricing,
   assignSeat,
   unassignSeat,
   requestLicenseRefund,
+  renewLicense,
 } from './licenses.controller.js';
 import {
   listInvoices,
@@ -77,9 +79,11 @@ tenantRouter.post('/billing/reactivate', ...tenantAdminAuth, reactivateSubscript
 // Course licenses (B2B course access)
 const licenseAdminAuth = [authenticate, requireTenant, requireRole(UserRole.TENANT_ADMIN, UserRole.MANAGER, UserRole.SUPER_ADMIN)];
 tenantRouter.post('/licenses/checkout', ...licenseAdminAuth, createLicenseCheckout);
+tenantRouter.get('/licenses/pricing', ...licenseAdminAuth, getLicensePricing);
 tenantRouter.get('/licenses', ...licenseAdminAuth, listLicenses);
 tenantRouter.get('/licenses/:id', ...licenseAdminAuth, getLicense);
 tenantRouter.post('/licenses/:id/assign', ...licenseAdminAuth, assignSeat);
+tenantRouter.post('/licenses/:id/renew', ...licenseAdminAuth, renewLicense);
 tenantRouter.delete('/licenses/:id/assignments/:userId', ...licenseAdminAuth, unassignSeat);
 tenantRouter.post('/licenses/:id/refund', ...tenantAdminAuth, requestLicenseRefund);
 

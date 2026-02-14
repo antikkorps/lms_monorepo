@@ -4,6 +4,7 @@ import { Purchase, Tenant, TenantCourseLicense } from '../database/models/index.
 import { PurchaseStatus, TenantStatus } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { stripeService } from '../services/stripe/index.js';
+import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 import { onPurchaseConfirmed } from '../triggers/notification.triggers.js';
 
@@ -97,6 +98,11 @@ async function handleCheckoutSessionCompleted(
 
   if (type === 'b2b_license') {
     await handleB2BLicenseCheckout(session);
+    return;
+  }
+
+  if (type === 'b2b_license_renewal') {
+    await handleB2BLicenseRenewal(session);
     return;
   }
 
@@ -203,12 +209,20 @@ async function handleB2BLicenseCheckout(
       ? session.invoice
       : session.invoice?.id;
 
+  // Calculate expiration date if expiration is enabled
+  let expiresAt: Date | null = null;
+  if (config.licensing.enableExpiration) {
+    expiresAt = new Date();
+    expiresAt.setMonth(expiresAt.getMonth() + config.licensing.defaultDurationMonths);
+  }
+
   // Update license status
   await license.update({
     status: PurchaseStatus.COMPLETED,
     stripePaymentIntentId: paymentIntentId || null,
     stripeInvoiceId: invoiceId || null,
     purchasedAt: new Date(),
+    ...(expiresAt ? { expiresAt } : {}),
   });
 
   // Update tenant's Stripe customer ID if not set
@@ -224,8 +238,59 @@ async function handleB2BLicenseCheckout(
   }
 
   logger.info(
-    { licenseId: license.id, tenantId, courseId },
+    { licenseId: license.id, tenantId, courseId, expiresAt },
     'B2B course license activated'
+  );
+}
+
+/**
+ * Handle B2B license renewal checkout completion
+ */
+async function handleB2BLicenseRenewal(
+  session: Stripe.Checkout.Session
+): Promise<void> {
+  const { renewalLicenseId, tenantId } = session.metadata || {};
+
+  if (!renewalLicenseId || !tenantId) {
+    logger.error(
+      { sessionId: session.id },
+      'B2B license renewal missing renewalLicenseId or tenantId'
+    );
+    return;
+  }
+
+  const license = await TenantCourseLicense.findByPk(renewalLicenseId);
+  if (!license) {
+    logger.error(
+      { renewalLicenseId, sessionId: session.id },
+      'License not found for renewal'
+    );
+    return;
+  }
+
+  // Extend expiration from now (or from current expiresAt if still valid)
+  const baseDate = license.expiresAt && new Date(license.expiresAt) > new Date()
+    ? new Date(license.expiresAt)
+    : new Date();
+  const newExpiresAt = new Date(baseDate);
+  newExpiresAt.setMonth(newExpiresAt.getMonth() + config.licensing.defaultDurationMonths);
+
+  const paymentIntentId =
+    typeof session.payment_intent === 'string'
+      ? session.payment_intent
+      : session.payment_intent?.id;
+
+  await license.update({
+    status: PurchaseStatus.COMPLETED,
+    expiresAt: newExpiresAt,
+    renewedAt: new Date(),
+    renewalCount: license.renewalCount + 1,
+    stripePaymentIntentId: paymentIntentId || license.stripePaymentIntentId,
+  });
+
+  logger.info(
+    { licenseId: license.id, tenantId, newExpiresAt, renewalCount: license.renewalCount + 1 },
+    'B2B course license renewed'
   );
 }
 

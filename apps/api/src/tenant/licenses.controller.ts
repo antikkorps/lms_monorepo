@@ -12,6 +12,7 @@ import { stripeService } from '../services/stripe/index.js';
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 import { sequelize } from '../database/sequelize.js';
+import { getDiscountTiers, calculateLicensePrice } from './licenses.pricing.js';
 
 interface AuthenticatedUser {
   userId: string;
@@ -112,34 +113,15 @@ export async function createLicenseCheckout(ctx: Context): Promise<void> {
     throw new AppError('Your organization already has an active license for this course', 409, 'LICENSE_EXISTS');
   }
 
-  // Calculate price
-  // For unlimited: course price * multiplier (e.g., 10x)
-  // For seats: course price * seats (with potential volume discount)
+  // Calculate price using configurable volume discount tiers
   const coursePrice = Number(course.price);
-  let totalPrice: number;
-  let description: string;
+  const tiers = await getDiscountTiers(user.tenantId);
+  const pricing = calculateLicensePrice(coursePrice, licenseType, seats || null, tiers);
 
-  if (licenseType === 'unlimited') {
-    // Unlimited license costs 10x the course price
-    totalPrice = coursePrice * 10;
-    description = `Unlimited license for "${course.title}"`;
-  } else {
-    // Per-seat pricing with volume discounts
-    const seatCount = seats!;
-    let pricePerSeat = coursePrice;
-
-    // Volume discounts
-    if (seatCount >= 50) {
-      pricePerSeat = coursePrice * 0.7; // 30% discount
-    } else if (seatCount >= 20) {
-      pricePerSeat = coursePrice * 0.8; // 20% discount
-    } else if (seatCount >= 10) {
-      pricePerSeat = coursePrice * 0.9; // 10% discount
-    }
-
-    totalPrice = pricePerSeat * seatCount;
-    description = `${seatCount} seat license for "${course.title}"`;
-  }
+  const totalPrice = pricing.totalPrice;
+  const description = licenseType === 'unlimited'
+    ? `Unlimited license for "${course.title}"`
+    : `${seats} seat license for "${course.title}"`;
 
   const priceInCents = Math.round(totalPrice * 100);
 
@@ -208,6 +190,10 @@ export async function listLicenses(ctx: Context): Promise<void> {
     where.status = PurchaseStatus.COMPLETED;
   } else if (status === 'pending') {
     where.status = PurchaseStatus.PENDING;
+  } else if (status === 'expired') {
+    where.status = PurchaseStatus.EXPIRED;
+  } else if (status === 'refunded') {
+    where.status = PurchaseStatus.REFUNDED;
   }
 
   const { rows: licenses, count } = await TenantCourseLicense.findAndCountAll({
@@ -243,6 +229,11 @@ export async function listLicenses(ctx: Context): Promise<void> {
         currency: l.currency,
         status: l.status,
         purchasedAt: l.purchasedAt,
+        expiresAt: l.expiresAt,
+        renewedAt: l.renewedAt,
+        renewalCount: l.renewalCount,
+        isExpired: l.isExpired,
+        isExpiringSoon: l.isExpiringSoon,
         course: l.course,
         purchasedBy: l.purchasedBy,
       })),
@@ -307,6 +298,11 @@ export async function getLicense(ctx: Context): Promise<void> {
       currency: license.currency,
       status: license.status,
       purchasedAt: license.purchasedAt,
+      expiresAt: license.expiresAt,
+      renewedAt: license.renewedAt,
+      renewalCount: license.renewalCount,
+      isExpired: license.isExpired,
+      isExpiringSoon: license.isExpiringSoon,
       course: license.course,
       purchasedBy: license.purchasedBy,
       assignments: license.assignments?.map((a) => ({
@@ -552,6 +548,9 @@ export async function hasLicenseAccess(
 
   if (!license) return false;
 
+  // Check expiration
+  if (license.isExpired) return false;
+
   // Unlimited license: all tenant members have access
   if (license.licenseType === LicenseType.UNLIMITED) {
     return true;
@@ -566,4 +565,174 @@ export async function hasLicenseAccess(
   });
 
   return !!assignment;
+}
+
+/**
+ * Get license pricing preview with discount tiers
+ * GET /tenant/licenses/pricing
+ */
+export async function getLicensePricing(ctx: Context): Promise<void> {
+  const user = getAuthenticatedTenantAdmin(ctx);
+  const { courseId, licenseType = 'seats', seats } = ctx.query as {
+    courseId?: string;
+    licenseType?: string;
+    seats?: string;
+  };
+
+  if (!courseId) {
+    throw AppError.badRequest('Course ID is required');
+  }
+
+  const course = await Course.findByPk(courseId, { attributes: ['id', 'price', 'currency', 'title'] });
+  if (!course) {
+    throw AppError.notFound('Course not found');
+  }
+
+  const tiers = await getDiscountTiers(user.tenantId);
+  const seatCount = seats ? Number.parseInt(seats, 10) : null;
+  const pricing = calculateLicensePrice(Number(course.price), licenseType, seatCount, tiers);
+
+  ctx.body = {
+    data: {
+      ...pricing,
+      currency: course.currency,
+      courseTitle: course.title,
+    },
+  };
+}
+
+/**
+ * Renew an expired or expiring license
+ * POST /tenant/licenses/:id/renew
+ */
+export async function renewLicense(ctx: Context): Promise<void> {
+  const user = getAuthenticatedTenantAdmin(ctx);
+  const { id } = ctx.params;
+
+  const license = await TenantCourseLicense.findOne({
+    where: { id, tenantId: user.tenantId },
+    include: [{ model: Course, as: 'course' }],
+  });
+
+  if (!license) {
+    throw AppError.notFound('License not found');
+  }
+
+  if (!license.course) {
+    throw AppError.badRequest('Course not found for this license');
+  }
+
+  // Get tenant for Stripe customer
+  const tenant = await Tenant.findByPk(user.tenantId);
+  if (!tenant) {
+    throw AppError.notFound('Tenant not found');
+  }
+
+  // Recalculate price based on current tiers
+  const coursePrice = Number(license.course.price);
+  const tiers = await getDiscountTiers(user.tenantId);
+  const pricing = calculateLicensePrice(coursePrice, license.licenseType, license.seatsTotal, tiers);
+  const priceInCents = Math.round(pricing.totalPrice * 100);
+
+  const description = license.licenseType === LicenseType.UNLIMITED
+    ? `Renewal: Unlimited license for "${license.course.title}"`
+    : `Renewal: ${license.seatsTotal} seat license for "${license.course.title}"`;
+
+  // Create Stripe checkout with renewal metadata
+  const { sessionId, url } = await stripeService.createB2BLicenseCheckoutSession({
+    tenantId: user.tenantId,
+    courseId: license.courseId,
+    userId: user.userId,
+    licenseType: license.licenseType as LicenseType,
+    seats: license.seatsTotal,
+    courseName: license.course.title,
+    description,
+    priceInCents,
+    currency: license.course.currency,
+    customerEmail: user.email,
+    stripeCustomerId: tenant.stripeCustomerId || undefined,
+    successUrl: `${config.frontendUrl}/admin/licenses/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancelUrl: `${config.frontendUrl}/admin/licenses/${license.id}`,
+    renewalLicenseId: license.id,
+  });
+
+  logger.info(
+    { licenseId: id, tenantId: user.tenantId, sessionId },
+    'License renewal checkout created'
+  );
+
+  ctx.body = {
+    data: {
+      sessionId,
+      url,
+      amount: pricing.totalPrice,
+      currency: license.course.currency,
+    },
+  };
+}
+
+/**
+ * Update volume discount tiers for a tenant (super admin only)
+ * PUT /admin/tenants/:id/discount-tiers
+ */
+export async function updateTenantDiscountTiers(ctx: Context): Promise<void> {
+  const { id } = ctx.params;
+  const { tiers } = ctx.request.body as { tiers: Array<{ minSeats: number; discountPercent: number }> };
+
+  if (!Array.isArray(tiers) || tiers.length === 0) {
+    throw AppError.badRequest('Tiers must be a non-empty array');
+  }
+
+  for (const tier of tiers) {
+    if (typeof tier.minSeats !== 'number' || tier.minSeats < 1) {
+      throw AppError.badRequest('Each tier must have a positive minSeats value');
+    }
+    if (typeof tier.discountPercent !== 'number' || tier.discountPercent < 0 || tier.discountPercent > 100) {
+      throw AppError.badRequest('Each tier must have a discountPercent between 0 and 100');
+    }
+  }
+
+  const tenant = await Tenant.findByPk(id);
+  if (!tenant) {
+    throw AppError.notFound('Tenant not found');
+  }
+
+  const settings = { ...tenant.settings, volumeDiscountTiers: tiers };
+  await tenant.update({ settings });
+
+  logger.info({ tenantId: id, tiersCount: tiers.length }, 'Tenant discount tiers updated');
+
+  ctx.body = {
+    data: {
+      tenantId: id,
+      volumeDiscountTiers: tiers,
+    },
+  };
+}
+
+/**
+ * Reset volume discount tiers for a tenant to global defaults (super admin only)
+ * DELETE /admin/tenants/:id/discount-tiers
+ */
+export async function deleteTenantDiscountTiers(ctx: Context): Promise<void> {
+  const { id } = ctx.params;
+
+  const tenant = await Tenant.findByPk(id);
+  if (!tenant) {
+    throw AppError.notFound('Tenant not found');
+  }
+
+  const settings = { ...tenant.settings };
+  delete settings.volumeDiscountTiers;
+  await tenant.update({ settings });
+
+  logger.info({ tenantId: id }, 'Tenant discount tiers reset to defaults');
+
+  ctx.body = {
+    data: {
+      tenantId: id,
+      volumeDiscountTiers: config.licensing.volumeDiscountTiers,
+      isDefault: true,
+    },
+  };
 }

@@ -53,6 +53,11 @@ export class TenantCourseLicense extends Model<
   declare refundAmount: CreationOptional<number | null>;
   declare isPartialRefund: CreationOptional<boolean>;
 
+  // Expiration fields
+  declare expiresAt: CreationOptional<Date | null>;
+  declare renewedAt: CreationOptional<Date | null>;
+  declare renewalCount: CreationOptional<number>;
+
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
@@ -85,8 +90,21 @@ export class TenantCourseLicense extends Model<
     return this.status === PurchaseStatus.REFUNDED;
   }
 
+  get isExpired(): NonAttribute<boolean> {
+    if (this.status === PurchaseStatus.EXPIRED) return true;
+    if (!this.expiresAt) return false;
+    return new Date() > new Date(this.expiresAt);
+  }
+
+  get isExpiringSoon(): NonAttribute<boolean> {
+    if (!this.expiresAt || this.isExpired) return false;
+    const now = new Date();
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    return new Date(this.expiresAt) <= thirtyDaysFromNow;
+  }
+
   get isActive(): NonAttribute<boolean> {
-    return this.status === PurchaseStatus.COMPLETED;
+    return this.status === PurchaseStatus.COMPLETED && !this.isExpired;
   }
 }
 
@@ -208,6 +226,19 @@ TenantCourseLicense.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
+    },
+    expiresAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    renewedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    renewalCount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,

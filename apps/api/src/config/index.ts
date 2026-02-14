@@ -103,6 +103,18 @@ export const config = {
       maxRequests: Number.parseInt(process.env.RATE_LIMIT_AUTH_MAX || '10', 10),
     },
   },
+  // Licensing (B2B course licenses)
+  licensing: {
+    unlimitedMultiplier: 10,
+    defaultDurationMonths: 12,
+    enableExpiration: process.env.LICENSE_ENABLE_EXPIRATION === 'true',
+    volumeDiscountTiers: [
+      { minSeats: 50, discountPercent: 30 },
+      { minSeats: 20, discountPercent: 20 },
+      { minSeats: 10, discountPercent: 10 },
+    ],
+    expirationWarningDays: [30, 7],
+  },
 } as const;
 
 export type Config = typeof config;

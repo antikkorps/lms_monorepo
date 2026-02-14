@@ -68,6 +68,8 @@ export function getNotificationText(
     [NotificationType.PURCHASE_CONFIRMED]: 'purchase_confirmed',
     [NotificationType.REVIEW_APPROVED]: 'default',
     [NotificationType.STREAK_MILESTONE]: 'default',
+    [NotificationType.LICENSE_EXPIRING_SOON]: 'default',
+    [NotificationType.LICENSE_EXPIRED]: 'default',
   };
 
   const translationKey = typeKeyMap[type];

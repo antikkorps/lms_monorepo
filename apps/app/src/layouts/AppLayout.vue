@@ -36,6 +36,7 @@ import {
   Shield,
   Search,
   Activity,
+  KeyRound,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
@@ -67,6 +68,7 @@ const adminItems = computed(() => {
     { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
     { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
     { href: '/admin/invoices', icon: Receipt, name: t('nav.admin.invoices') },
+    { href: '/admin/licenses', icon: KeyRound, name: t('nav.admin.licenses') },
     { href: '/admin/analytics', icon: BarChart3, name: t('nav.admin.analytics') },
   ];
   // SSO config is tenant-scoped, only visible to tenant admins
