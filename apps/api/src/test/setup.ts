@@ -47,7 +47,9 @@ vi.mock('../utils/logger.js', () => ({
 // =============================================================================
 
 vi.mock('../config/index.js', () => ({
+  APP_NAME: 'IQON-IA',
   config: {
+    appName: 'IQON-IA',
     env: 'test',
     port: 3000,
     frontendUrl: 'http://localhost:5173',
@@ -80,6 +82,17 @@ vi.mock('../config/index.js', () => ({
       r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
       r2BucketName: process.env.R2_BUCKET_NAME || '',
       r2PublicUrl: process.env.R2_PUBLIC_URL || '',
+    },
+    licensing: {
+      unlimitedMultiplier: 10,
+      defaultDurationMonths: 12,
+      enableExpiration: false,
+      volumeDiscountTiers: [
+        { minSeats: 50, discountPercent: 30 },
+        { minSeats: 20, discountPercent: 20 },
+        { minSeats: 10, discountPercent: 10 },
+      ],
+      expirationWarningDays: [30, 7],
     },
   },
 }));

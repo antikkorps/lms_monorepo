@@ -507,6 +507,8 @@ export interface AdminAnalyticsDeltas {
 
 export interface AdminAnalyticsSummary {
   totalRevenue: number;
+  b2cRevenue: number;
+  b2bRevenue: number;
   newUsers: number;
   activeUsers: number;
   completionRate: number;
@@ -516,6 +518,8 @@ export interface AdminAnalyticsSummary {
 export interface RevenueTimePoint {
   date: string;
   amount: number;
+  b2cAmount?: number;
+  b2bAmount?: number;
 }
 
 export interface TopCourseRevenue {
@@ -523,6 +527,9 @@ export interface TopCourseRevenue {
   title: string;
   revenue: number;
   sales: number;
+  b2cRevenue?: number;
+  b2bRevenue?: number;
+  licenses?: number;
 }
 
 export interface CurrencyBreakdown {
@@ -549,4 +556,47 @@ export interface CategoryDistribution {
   category: string;
   count: number;
   color: string;
+}
+
+export interface UserGrowthPoint {
+  date: string;
+  count: number;
+}
+
+// Per-course analytics
+export interface CourseAnalyticsDetail {
+  courseId: string;
+  title: string;
+  revenue: { total: number; b2c: number; b2b: number };
+  enrollmentTimeSeries: { date: string; count: number }[];
+  completionFunnel: { enrolled: number; started: number; completed: number };
+  quizPerformance: { avgScore: number; passRate: number; totalAttempts: number } | null;
+  watchTime: { totalSeconds: number; avgSeconds: number };
+  reviews: { avgRating: number; distribution: Record<string, number>; total: number } | null;
+  learners: {
+    items: LearnerProgressItem[];
+    total: number;
+    page: number;
+    pageSize: number;
+  };
+}
+
+export interface LearnerProgressItem {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  progressPercent: number;
+  lessonsCompleted: number;
+  totalLessons: number;
+  watchTimeSeconds: number;
+  lastActiveAt: string | null;
+}
+
+// License analytics
+export interface LicenseAnalytics {
+  seatUtilization: { totalSeats: number; usedSeats: number; rate: number };
+  statusDistribution: { status: string; count: number }[];
+  revenueSplit: { b2c: number; b2b: number };
+  upcomingExpirations: number;
 }

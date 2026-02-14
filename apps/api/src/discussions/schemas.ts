@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { sanitizeText } from '../utils/sanitize.js';
 
 export const createDiscussionSchema = z.object({
   lessonId: z.string().uuid(),
-  content: z.string().min(1).max(10000),
+  content: z.string().min(1).max(10000).transform(sanitizeText),
 });
 
 export const listDiscussionsQuerySchema = z.object({
@@ -12,16 +13,16 @@ export const listDiscussionsQuerySchema = z.object({
 });
 
 export const createReplySchema = z.object({
-  content: z.string().min(1).max(10000),
+  content: z.string().min(1).max(10000).transform(sanitizeText),
 });
 
 export const reportSchema = z.object({
   reason: z.enum(['spam', 'inappropriate', 'harassment', 'off_topic', 'other']),
-  description: z.string().max(1000).optional(),
+  description: z.string().max(1000).optional().transform((v) => v ? sanitizeText(v) : v),
 });
 
 export const deleteDiscussionSchema = z.object({
-  reason: z.string().max(500).optional(),
+  reason: z.string().max(500).optional().transform((v) => v ? sanitizeText(v) : v),
 });
 
 export type CreateDiscussionInput = z.infer<typeof createDiscussionSchema>;

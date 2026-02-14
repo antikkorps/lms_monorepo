@@ -8,7 +8,10 @@ import {
   getAnalyticsRevenue,
   getAnalyticsEngagement,
   getAnalyticsExport,
+  getAnalyticsLicenses,
 } from './analytics.controller.js';
+import { getCourseAnalytics } from './analytics-course.controller.js';
+import { updateTenantDiscountTiers, deleteTenantDiscountTiers } from '../tenant/licenses.controller.js';
 
 export const adminRouter = new Router({ prefix: '/admin' });
 
@@ -33,3 +36,9 @@ adminRouter.get('/analytics/overview', ...adminAuth, getAnalyticsOverview);
 adminRouter.get('/analytics/revenue', ...adminAuth, getAnalyticsRevenue);
 adminRouter.get('/analytics/engagement', ...adminAuth, getAnalyticsEngagement);
 adminRouter.get('/analytics/export', ...adminAuth, getAnalyticsExport);
+adminRouter.get('/analytics/licenses', ...adminAuth, getAnalyticsLicenses);
+adminRouter.get('/analytics/courses/:courseId', ...adminAuth, getCourseAnalytics);
+
+// Tenant discount tier overrides (super admin only)
+adminRouter.put('/tenants/:id/discount-tiers', ...superAdminAuth, updateTenantDiscountTiers);
+adminRouter.delete('/tenants/:id/discount-tiers', ...superAdminAuth, deleteTenantDiscountTiers);

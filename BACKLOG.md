@@ -1,6 +1,6 @@
 # IQON-IA - Backlog
 
-## Modified: 2026-02-12
+## Modified: 2026-02-14
 
 ---
 
@@ -94,7 +94,7 @@
   - `z.record(schema)` → `z.record(z.string(), schema)` (common.schema, tenant.schema)
   - Added `zod ^4` as root dependency for Docker hoisting
   - Note: `.flatten()` and `z.nativeEnum()` are unchanged in Zod 4
-- [ ] ESLint 9 → 10 — bloqué, attendre support typescript-eslint (PR #87)
+- [ ] ~~ESLint 9 → 10~~ — **BLOQUÉ** : typescript-eslint ne supporte pas encore ESLint 10 (breaking changes majeurs). Ne pas tenter avant annonce officielle typescript-eslint.
 
 ### Documentation
 
@@ -109,6 +109,21 @@
 - [x] Advanced filters (category, level, price, rating) (Done: 2026-02-09)
 - [x] Search suggestions/autocomplete with pg_trgm (Done: 2026-02-09)
 - [x] Command palette (Cmd+K) with fuzzy search (Done: 2026-02-09)
+
+---
+
+## Next Session — `feat/license-management` (branche depuis `dev`)
+
+### License Management (Payments)
+- [x] Volume discount tiers for large seat purchases (Done: 2026-02-14)
+- [x] License expiration/renewal (if time-limited) (Done: 2026-02-14)
+- [x] License management frontend UI (composable, 4 views, i18n) (Done: 2026-02-14)
+
+### Analytics & Reporting
+- [ ] Admin analytics dashboard (revenue, users, engagement)
+- [ ] Export reports (CSV, PDF)
+- [ ] Video watch analytics (drop-off points)
+- [ ] Quiz performance insights
 
 ---
 

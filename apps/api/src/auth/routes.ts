@@ -22,7 +22,7 @@ export const authRouter = new Router({ prefix: '/auth' });
 // Public routes (with stricter rate limiting)
 authRouter.post('/register', authRateLimiter, register);
 authRouter.post('/login', authRateLimiter, login);
-authRouter.post('/refresh', refresh);
+authRouter.post('/refresh', authRateLimiter, refresh);
 authRouter.post('/forgot-password', authRateLimiter, forgotPassword);
 authRouter.post('/reset-password', authRateLimiter, resetPassword);
 authRouter.post('/verify-email', authRateLimiter, verifyEmail);

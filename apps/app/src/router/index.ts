@@ -167,6 +167,30 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: 'app', requiresAuth: true },
   },
   {
+    path: '/admin/licenses',
+    name: 'admin-licenses',
+    component: () => import('../views/admin/LicensesListView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/licenses/checkout',
+    name: 'admin-license-checkout',
+    component: () => import('../views/admin/LicenseCheckoutView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/licenses/success',
+    name: 'admin-license-success',
+    component: () => import('../views/admin/LicenseSuccessView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/licenses/:id',
+    name: 'admin-license-detail',
+    component: () => import('../views/admin/LicenseDetailView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
     path: '/admin/transcoding',
     name: 'admin-transcoding',
     component: () => import('../views/admin/TranscodingMonitoringView.vue'),
@@ -182,6 +206,12 @@ const routes: RouteRecordRaw[] = [
     path: '/admin/analytics',
     name: 'admin-analytics',
     component: () => import('../views/admin/AdminAnalyticsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/analytics/courses/:courseId',
+    name: 'admin-course-analytics',
+    component: () => import('../views/admin/AdminCourseAnalyticsView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
 

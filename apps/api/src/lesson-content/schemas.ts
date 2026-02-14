@@ -1,29 +1,30 @@
 import { z } from 'zod';
 import { SupportedLocale } from '../database/models/enums.js';
+import { sanitizeText } from '../utils/sanitize.js';
 
 /**
  * Schema for creating lesson content
  */
 export const createLessonContentSchema = z.object({
   lang: z.nativeEnum(SupportedLocale),
-  title: z.string().max(255).optional().nullable(),
+  title: z.string().max(255).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
   videoUrl: z.string().url().max(2048).optional().nullable(),
   videoId: z.string().max(255).optional().nullable(),
   videoSourceKey: z.string().max(1024).optional().nullable(),
-  transcript: z.string().max(100000).optional().nullable(),
-  description: z.string().max(10000).optional().nullable(),
+  transcript: z.string().max(100000).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
+  description: z.string().max(10000).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
 });
 
 /**
  * Schema for updating lesson content
  */
 export const updateLessonContentSchema = z.object({
-  title: z.string().max(255).optional().nullable(),
+  title: z.string().max(255).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
   videoUrl: z.string().url().max(2048).optional().nullable(),
   videoId: z.string().max(255).optional().nullable(),
   videoSourceKey: z.string().max(1024).optional().nullable(),
-  transcript: z.string().max(100000).optional().nullable(),
-  description: z.string().max(10000).optional().nullable(),
+  transcript: z.string().max(100000).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
+  description: z.string().max(10000).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
 });
 
 /**
@@ -31,12 +32,12 @@ export const updateLessonContentSchema = z.object({
  */
 export const upsertLessonContentSchema = z.object({
   lang: z.nativeEnum(SupportedLocale),
-  title: z.string().max(255).optional().nullable(),
+  title: z.string().max(255).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
   videoUrl: z.string().url().max(2048).optional().nullable(),
   videoId: z.string().max(255).optional().nullable(),
   videoSourceKey: z.string().max(1024).optional().nullable(),
-  transcript: z.string().max(100000).optional().nullable(),
-  description: z.string().max(10000).optional().nullable(),
+  transcript: z.string().max(100000).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
+  description: z.string().max(10000).optional().nullable().transform((v) => v ? sanitizeText(v) : v),
 });
 
 /**

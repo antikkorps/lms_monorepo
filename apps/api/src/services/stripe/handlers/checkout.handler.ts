@@ -109,6 +109,7 @@ export function createCheckoutHandler(stripe: Stripe) {
         stripeCustomerId,
         successUrl,
         cancelUrl,
+        renewalLicenseId,
       } = options;
 
       // Build session params with B2B payment options
@@ -136,21 +137,23 @@ export function createCheckoutHandler(stripe: Stripe) {
         customer_email: stripeCustomerId ? undefined : customerEmail,
         customer: stripeCustomerId || undefined,
         metadata: {
-          type: 'b2b_license',
+          type: renewalLicenseId ? 'b2b_license_renewal' : 'b2b_license',
           tenantId,
           courseId,
           userId,
           licenseType,
           seats: seats?.toString() || 'unlimited',
+          ...(renewalLicenseId ? { renewalLicenseId } : {}),
         },
         payment_intent_data: {
           metadata: {
-            type: 'b2b_license',
+            type: renewalLicenseId ? 'b2b_license_renewal' : 'b2b_license',
             tenantId,
             courseId,
             userId,
             licenseType,
             seats: seats?.toString() || 'unlimited',
+            ...(renewalLicenseId ? { renewalLicenseId } : {}),
           },
         },
         // Allow invoice for bank transfer tracking

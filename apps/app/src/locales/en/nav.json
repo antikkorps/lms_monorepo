@@ -29,7 +29,9 @@
     "sso": "SSO Configuration",
     "analytics": "Analytics",
     "transcoding": "Transcoding",
-    "refunds": "Refund Requests"
+    "refunds": "Refund Requests",
+    "licenses": "Course Licenses",
+    "reviews": "Review Moderation"
   },
   "accessibility": {
     "toggleMenu": "Toggle menu",

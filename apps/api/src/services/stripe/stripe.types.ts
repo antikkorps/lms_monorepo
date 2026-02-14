@@ -34,6 +34,7 @@ export interface CreateB2BLicenseCheckoutOptions {
   stripeCustomerId?: string;
   successUrl: string;
   cancelUrl: string;
+  renewalLicenseId?: string;
 }
 
 // Subscription types (B2B)

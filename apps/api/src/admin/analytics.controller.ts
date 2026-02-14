@@ -6,6 +6,7 @@ import {
   Purchase,
   UserProgress,
   Course,
+  TenantCourseLicense,
 } from '../database/models/index.js';
 import {
   UserRole,
@@ -114,9 +115,11 @@ export async function getAnalyticsOverview(ctx: Context): Promise<void> {
   const purchaseFilter = buildTenantPurchaseFilter(tenantId, userIds);
 
   // Current period metrics
-  const [revenue, prevRevenue, newUsers, prevNewUsers, activeUsers, prevActiveUsers] =
-    await Promise.all([
-      // Revenue
+  const [
+    b2cRevenue, prevB2cRevenue, b2bRevenue, prevB2bRevenue,
+    newUsers, prevNewUsers, activeUsers, prevActiveUsers,
+  ] = await Promise.all([
+      // B2C Revenue (purchases)
       Purchase.sum('amount', {
         where: {
           ...purchaseFilter,
@@ -127,6 +130,21 @@ export async function getAnalyticsOverview(ctx: Context): Promise<void> {
       Purchase.sum('amount', {
         where: {
           ...purchaseFilter,
+          status: PurchaseStatus.COMPLETED,
+          purchasedAt: { [Op.between]: [prev.start, prev.end] },
+        },
+      }),
+      // B2B Revenue (licenses)
+      TenantCourseLicense.sum('amount', {
+        where: {
+          ...(tenantId ? { tenantId } : {}),
+          status: PurchaseStatus.COMPLETED,
+          purchasedAt: { [Op.between]: [start, end] },
+        },
+      }),
+      TenantCourseLicense.sum('amount', {
+        where: {
+          ...(tenantId ? { tenantId } : {}),
           status: PurchaseStatus.COMPLETED,
           purchasedAt: { [Op.between]: [prev.start, prev.end] },
         },
@@ -217,8 +235,10 @@ export async function getAnalyticsOverview(ctx: Context): Promise<void> {
     prevCompletionRate = completionRate > 0 ? Math.max(0, completionRate - 5) : 0;
   }
 
-  const safeRevenue = revenue || 0;
-  const safePrevRevenue = prevRevenue || 0;
+  const safeB2c = b2cRevenue || 0;
+  const safeB2b = b2bRevenue || 0;
+  const safeRevenue = safeB2c + safeB2b;
+  const safePrevRevenue = (prevB2cRevenue || 0) + (prevB2bRevenue || 0);
 
   const deltas = {
     revenue: safePrevRevenue > 0
@@ -238,6 +258,8 @@ export async function getAnalyticsOverview(ctx: Context): Promise<void> {
   ctx.body = {
     data: {
       totalRevenue: safeRevenue,
+      b2cRevenue: safeB2c,
+      b2bRevenue: safeB2b,
       newUsers,
       activeUsers,
       completionRate,
@@ -259,52 +281,82 @@ export async function getAnalyticsRevenue(ctx: Context): Promise<void> {
     userIds = await getUserIdsForTenant(tenantId);
   }
 
-  // Time series revenue
-  const dateGroup = period === '12m'
-    ? `TO_CHAR(purchased_at, 'YYYY-MM')`
-    : `TO_CHAR(purchased_at, 'YYYY-MM-DD')`;
+  // Time series revenue (B2C purchases + B2B licenses combined)
+  const dateFormat = period === '12m' ? 'YYYY-MM' : 'YYYY-MM-DD';
 
   const timeSeriesQuery = `
-    SELECT ${dateGroup} as date, COALESCE(SUM(amount), 0) as amount
-    FROM purchases
-    WHERE status = 'completed'
-      AND purchased_at BETWEEN :start AND :end
-      ${tenantId && userIds ? `AND user_id IN (:userIds)` : ''}
-    GROUP BY ${dateGroup}
+    SELECT date, COALESCE(SUM(b2c), 0) as "b2cAmount", COALESCE(SUM(b2b), 0) as "b2bAmount",
+           COALESCE(SUM(b2c), 0) + COALESCE(SUM(b2b), 0) as amount
+    FROM (
+      SELECT TO_CHAR(purchased_at, :dateFormat) as date, amount as b2c, 0 as b2b
+      FROM purchases
+      WHERE status = 'completed'
+        AND purchased_at BETWEEN :start AND :end
+        ${tenantId && userIds ? `AND user_id IN (:userIds)` : ''}
+      UNION ALL
+      SELECT TO_CHAR(purchased_at, :dateFormat) as date, 0 as b2c, amount as b2b
+      FROM tenant_course_licenses
+      WHERE status = 'completed'
+        AND purchased_at BETWEEN :start AND :end
+        ${tenantId ? `AND tenant_id = :tenantId` : ''}
+    ) combined
+    GROUP BY date
     ORDER BY date
   `;
 
-  const timeSeries = await sequelize.query<{ date: string; amount: string }>(
+  const timeSeries = await sequelize.query<{
+    date: string; amount: string; b2cAmount: string; b2bAmount: string;
+  }>(
     timeSeriesQuery,
     {
-      replacements: { start, end, ...(userIds ? { userIds } : {}) },
+      replacements: {
+        dateFormat, start, end,
+        ...(userIds ? { userIds } : {}),
+        ...(tenantId ? { tenantId } : {}),
+      },
       type: 'SELECT' as never,
     },
   );
 
-  // Top courses by revenue
-  const topCourses = await Purchase.findAll({
-    attributes: [
-      'courseId',
-      [fn('SUM', col('Purchase.amount')), 'revenue'],
-      [fn('COUNT', col('Purchase.id')), 'sales'],
-    ],
-    where: {
-      status: PurchaseStatus.COMPLETED,
-      purchasedAt: { [Op.between]: [start, end] },
-      ...(tenantId && userIds ? { userId: { [Op.in]: userIds } } : {}),
+  // Top courses by revenue (B2C + B2B)
+  const topCoursesQuery = `
+    SELECT
+      course_id as "courseId",
+      c.title,
+      COALESCE(SUM(b2c_revenue), 0) as "b2cRevenue",
+      COALESCE(SUM(b2b_revenue), 0) as "b2bRevenue",
+      COALESCE(SUM(b2c_revenue), 0) + COALESCE(SUM(b2b_revenue), 0) as revenue,
+      COALESCE(SUM(sales_count), 0) as sales,
+      COALESCE(SUM(license_count), 0) as licenses
+    FROM (
+      SELECT course_id, amount as b2c_revenue, 0 as b2b_revenue, 1 as sales_count, 0 as license_count
+      FROM purchases
+      WHERE status = 'completed'
+        AND purchased_at BETWEEN :start AND :end
+        ${tenantId && userIds ? `AND user_id IN (:userIds)` : ''}
+      UNION ALL
+      SELECT course_id, 0 as b2c_revenue, amount as b2b_revenue, 0 as sales_count, 1 as license_count
+      FROM tenant_course_licenses
+      WHERE status = 'completed'
+        AND purchased_at BETWEEN :start AND :end
+        ${tenantId ? `AND tenant_id = :tenantId` : ''}
+    ) combined
+    JOIN courses c ON c.id = combined.course_id AND c.status = 'published'
+    GROUP BY course_id, c.title
+    ORDER BY revenue DESC
+    LIMIT 10
+  `;
+
+  const topCourses = await sequelize.query<{
+    courseId: string; title: string; b2cRevenue: string; b2bRevenue: string;
+    revenue: string; sales: string; licenses: string;
+  }>(topCoursesQuery, {
+    replacements: {
+      start, end,
+      ...(userIds ? { userIds } : {}),
+      ...(tenantId ? { tenantId } : {}),
     },
-    include: [{
-      model: Course,
-      as: 'course',
-      attributes: ['title'],
-      where: { status: CourseStatus.PUBLISHED },
-    }],
-    group: ['Purchase.course_id', 'course.id', 'course.title'],
-    order: [[literal('revenue'), 'DESC']],
-    limit: 10,
-    raw: true,
-    nest: true,
+    type: 'SELECT' as never,
   });
 
   // Currency breakdown
@@ -328,12 +380,17 @@ export async function getAnalyticsRevenue(ctx: Context): Promise<void> {
       timeSeries: timeSeries.map((t) => ({
         date: t.date,
         amount: parseFloat(t.amount) || 0,
+        b2cAmount: parseFloat(t.b2cAmount) || 0,
+        b2bAmount: parseFloat(t.b2bAmount) || 0,
       })),
-      topCourses: (topCourses as unknown as Record<string, unknown>[]).map((tc) => ({
-        courseId: tc.courseId as string,
-        title: (tc.course as Record<string, unknown>)?.title as string || 'Unknown',
-        revenue: parseFloat(tc.revenue as string) || 0,
-        sales: parseInt(tc.sales as string, 10) || 0,
+      topCourses: topCourses.map((tc) => ({
+        courseId: tc.courseId,
+        title: tc.title || 'Unknown',
+        revenue: parseFloat(tc.revenue) || 0,
+        sales: parseInt(tc.sales, 10) || 0,
+        b2cRevenue: parseFloat(tc.b2cRevenue) || 0,
+        b2bRevenue: parseFloat(tc.b2bRevenue) || 0,
+        licenses: parseInt(tc.licenses, 10) || 0,
       })),
       currencyBreakdown: (currencyBreakdown as unknown as Record<string, unknown>[]).map((cb) => ({
         currency: cb.currency as string,
@@ -389,6 +446,24 @@ export async function getAnalyticsEngagement(ctx: Context): Promise<void> {
     replacements: { start, end, ...(userIds ? { userIds } : {}) },
     type: 'SELECT' as never,
   });
+
+  // User growth time series
+  const userGrowthQuery = `
+    SELECT TO_CHAR(created_at, 'YYYY-MM-DD') as date, COUNT(*) as count
+    FROM users
+    WHERE created_at BETWEEN :start AND :end
+      ${tenantId ? `AND tenant_id = :tenantId` : ''}
+    GROUP BY TO_CHAR(created_at, 'YYYY-MM-DD')
+    ORDER BY date
+  `;
+
+  const userGrowth = await sequelize.query<{ date: string; count: string }>(
+    userGrowthQuery,
+    {
+      replacements: { start, end, ...(tenantId ? { tenantId } : {}) },
+      type: 'SELECT' as never,
+    },
+  );
 
   // Course completion rates (top 10 courses by enrollment)
   const completionRates = await sequelize.query<{
@@ -463,6 +538,10 @@ export async function getAnalyticsEngagement(ctx: Context): Promise<void> {
         activeUsers: parseInt(d.activeUsers, 10) || 0,
         completions: parseInt(d.completions, 10) || 0,
       })),
+      userGrowth: userGrowth.map((u) => ({
+        date: u.date,
+        count: parseInt(u.count, 10) || 0,
+      })),
       completionRates: completionRates.map((cr) => {
         const enrolled = parseInt(cr.enrolled, 10) || 0;
         const completed = parseInt(cr.completed, 10) || 0;
@@ -486,7 +565,7 @@ export async function getAnalyticsEngagement(ctx: Context): Promise<void> {
 // ─── GET /admin/analytics/export ────────────────────────────────────────────
 
 export async function getAnalyticsExport(ctx: Context): Promise<void> {
-  const { period, type } = exportQuerySchema.parse(ctx.query);
+  const { period, type, format } = exportQuerySchema.parse(ctx.query);
   const tenantId = getTenantScope(ctx);
 
   const { start, end } = getDateRange(period);
@@ -501,13 +580,22 @@ export async function getAnalyticsExport(ctx: Context): Promise<void> {
   switch (type) {
     case 'overview': {
       csvRows = ['Metric,Value'];
-      const revenue = await Purchase.sum('amount', {
-        where: {
-          status: PurchaseStatus.COMPLETED,
-          purchasedAt: { [Op.between]: [start, end] },
-          ...(tenantId && userIds ? { userId: { [Op.in]: userIds } } : {}),
-        },
-      });
+      const [b2cRev, b2bRev] = await Promise.all([
+        Purchase.sum('amount', {
+          where: {
+            status: PurchaseStatus.COMPLETED,
+            purchasedAt: { [Op.between]: [start, end] },
+            ...(tenantId && userIds ? { userId: { [Op.in]: userIds } } : {}),
+          },
+        }),
+        TenantCourseLicense.sum('amount', {
+          where: {
+            ...(tenantId ? { tenantId } : {}),
+            status: PurchaseStatus.COMPLETED,
+            purchasedAt: { [Op.between]: [start, end] },
+          },
+        }),
+      ]);
       const newUsers = await User.count({
         where: {
           ...(tenantId ? { tenantId } : {}),
@@ -522,32 +610,48 @@ export async function getAnalyticsExport(ctx: Context): Promise<void> {
           updatedAt: { [Op.between]: [start, end] },
         },
       });
-      csvRows.push(`Total Revenue,${revenue || 0}`);
+      csvRows.push(`Total Revenue,${(b2cRev || 0) + (b2bRev || 0)}`);
+      csvRows.push(`B2C Revenue,${b2cRev || 0}`);
+      csvRows.push(`B2B Revenue,${b2bRev || 0}`);
       csvRows.push(`New Users,${newUsers}`);
       csvRows.push(`Active Users,${activeUsers}`);
       break;
     }
 
     case 'revenue': {
-      csvRows = ['Date,Amount'];
-      const dateGroup = period === '12m'
-        ? `TO_CHAR(purchased_at, 'YYYY-MM')`
-        : `TO_CHAR(purchased_at, 'YYYY-MM-DD')`;
+      csvRows = ['Date,Total,B2C,B2B'];
+      const exportDateFormat = period === '12m' ? 'YYYY-MM' : 'YYYY-MM-DD';
 
-      const timeSeries = await sequelize.query<{ date: string; amount: string }>(`
-        SELECT ${dateGroup} as date, COALESCE(SUM(amount), 0) as amount
-        FROM purchases
-        WHERE status = 'completed'
-          AND purchased_at BETWEEN :start AND :end
-          ${tenantId && userIds ? `AND user_id IN (:userIds)` : ''}
-        GROUP BY ${dateGroup}
+      const revTimeSeries = await sequelize.query<{
+        date: string; amount: string; b2cAmount: string; b2bAmount: string;
+      }>(`
+        SELECT date, COALESCE(SUM(b2c), 0) as "b2cAmount", COALESCE(SUM(b2b), 0) as "b2bAmount",
+               COALESCE(SUM(b2c), 0) + COALESCE(SUM(b2b), 0) as amount
+        FROM (
+          SELECT TO_CHAR(purchased_at, :dateFormat) as date, amount as b2c, 0 as b2b
+          FROM purchases
+          WHERE status = 'completed'
+            AND purchased_at BETWEEN :start AND :end
+            ${tenantId && userIds ? `AND user_id IN (:userIds)` : ''}
+          UNION ALL
+          SELECT TO_CHAR(purchased_at, :dateFormat) as date, 0 as b2c, amount as b2b
+          FROM tenant_course_licenses
+          WHERE status = 'completed'
+            AND purchased_at BETWEEN :start AND :end
+            ${tenantId ? `AND tenant_id = :tenantId` : ''}
+        ) combined
+        GROUP BY date
         ORDER BY date
       `, {
-        replacements: { start, end, ...(userIds ? { userIds } : {}) },
+        replacements: {
+          dateFormat: exportDateFormat, start, end,
+          ...(userIds ? { userIds } : {}),
+          ...(tenantId ? { tenantId } : {}),
+        },
         type: 'SELECT' as never,
       });
-      for (const row of timeSeries) {
-        csvRows.push(`${row.date},${parseFloat(row.amount) || 0}`);
+      for (const row of revTimeSeries) {
+        csvRows.push(`${row.date},${parseFloat(row.amount) || 0},${parseFloat(row.b2cAmount) || 0},${parseFloat(row.b2bAmount) || 0}`);
       }
       break;
     }
@@ -590,8 +694,119 @@ export async function getAnalyticsExport(ctx: Context): Promise<void> {
     }
   }
 
+  if (format === 'pdf') {
+    const { generateAnalyticsPdf } = await import('./analytics-pdf.js');
+    const pdfStream = generateAnalyticsPdf({ rows: csvRows, type, period });
+    ctx.set('Content-Type', 'application/pdf');
+    ctx.set('Content-Disposition', `attachment; filename=analytics-${type}-${period}.pdf`);
+    ctx.body = pdfStream;
+    return;
+  }
+
   const csv = csvRows.join('\n');
   ctx.set('Content-Type', 'text/csv');
   ctx.set('Content-Disposition', `attachment; filename=analytics-${type}-${period}.csv`);
   ctx.body = csv;
+}
+
+// ─── GET /admin/analytics/licenses ──────────────────────────────────────────
+
+export async function getAnalyticsLicenses(ctx: Context): Promise<void> {
+  const { period } = analyticsQuerySchema.parse(ctx.query);
+  const tenantId = getTenantScope(ctx);
+
+  const { start, end } = getDateRange(period);
+
+  let userIds: string[] | undefined;
+  if (tenantId) {
+    userIds = await getUserIdsForTenant(tenantId);
+  }
+
+  const tenantFilter = tenantId ? `AND tenant_id = :tenantId` : '';
+  const replacements = {
+    start, end,
+    ...(tenantId ? { tenantId } : {}),
+    ...(userIds ? { userIds } : {}),
+  };
+
+  // Seat utilization for SEATS-type licenses
+  const seatUtilization = await sequelize.query<{
+    totalSeats: string; usedSeats: string;
+  }>(`
+    SELECT
+      COALESCE(SUM(seats_total), 0) as "totalSeats",
+      COALESCE(SUM(seats_used), 0) as "usedSeats"
+    FROM tenant_course_licenses
+    WHERE license_type = 'SEATS'
+      AND status = 'completed'
+      ${tenantFilter}
+  `, {
+    replacements,
+    type: 'SELECT' as never,
+  });
+
+  const totalSeats = parseInt(seatUtilization[0]?.totalSeats || '0', 10);
+  const usedSeats = parseInt(seatUtilization[0]?.usedSeats || '0', 10);
+
+  // License status distribution
+  const statusDist = await sequelize.query<{ status: string; count: string }>(`
+    SELECT status, COUNT(*) as count
+    FROM tenant_course_licenses
+    WHERE purchased_at BETWEEN :start AND :end
+      ${tenantFilter}
+    GROUP BY status
+  `, {
+    replacements,
+    type: 'SELECT' as never,
+  });
+
+  // Revenue split
+  const [b2cTotal, b2bTotal] = await Promise.all([
+    Purchase.sum('amount', {
+      where: {
+        status: PurchaseStatus.COMPLETED,
+        purchasedAt: { [Op.between]: [start, end] },
+        ...(tenantId && userIds ? { userId: { [Op.in]: userIds } } : {}),
+      },
+    }),
+    TenantCourseLicense.sum('amount', {
+      where: {
+        ...(tenantId ? { tenantId } : {}),
+        status: PurchaseStatus.COMPLETED,
+        purchasedAt: { [Op.between]: [start, end] },
+      },
+    }),
+  ]);
+
+  // Upcoming expirations (next 30 days)
+  const now = new Date();
+  const thirtyDaysOut = new Date();
+  thirtyDaysOut.setDate(thirtyDaysOut.getDate() + 30);
+
+  const expiringCount = await TenantCourseLicense.count({
+    where: {
+      ...(tenantId ? { tenantId } : {}),
+      status: PurchaseStatus.COMPLETED,
+      expiresAt: { [Op.between]: [now, thirtyDaysOut] },
+    },
+  });
+
+  ctx.body = {
+    data: {
+      seatUtilization: {
+        totalSeats,
+        usedSeats,
+        rate: totalSeats > 0 ? Math.round((usedSeats / totalSeats) * 100) : 0,
+      },
+      statusDistribution: statusDist.map((s) => ({
+        status: s.status,
+        count: parseInt(s.count, 10) || 0,
+      })),
+      revenueSplit: {
+        b2c: b2cTotal || 0,
+        b2b: b2bTotal || 0,
+      },
+      upcomingExpirations: expiringCount,
+    },
+  };
 }
