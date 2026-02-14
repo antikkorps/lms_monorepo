@@ -215,6 +215,14 @@ class NotificationService {
         }
         break;
       }
+      case NotificationType.LICENSE_EXPIRING_SOON:
+      case NotificationType.LICENSE_EXPIRED: {
+        if (data.courseId && !data.courseName) {
+          const course = await Course.findByPk(data.courseId, { attributes: ['title'] });
+          if (course) enrichedData.courseName = course.title;
+        }
+        break;
+      }
     }
 
     // Get translated title and message
@@ -236,6 +244,10 @@ class NotificationService {
         break;
       case NotificationType.PURCHASE_CONFIRMED:
         link = data.courseId ? `/courses/${data.courseId}` : '/my-courses';
+        break;
+      case NotificationType.LICENSE_EXPIRING_SOON:
+      case NotificationType.LICENSE_EXPIRED:
+        link = data.licenseId ? `/admin/licenses/${data.licenseId}` : '/admin/licenses';
         break;
       default:
         link = '/notifications';

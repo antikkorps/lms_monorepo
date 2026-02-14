@@ -35,6 +35,9 @@ import {
   Receipt,
   Shield,
   Search,
+  Activity,
+  KeyRound,
+  Star,
 } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
@@ -60,20 +63,26 @@ const navigationItems = computed(() => [
 const isSuperAdmin = computed(() => authStore.userRole === 'super_admin');
 
 const adminItems = computed(() => {
-  const items = [
+  if (isSuperAdmin.value) {
+    // Super admin: platform-wide tools only (no tenant-scoped items)
+    return [
+      { href: '/admin/analytics', icon: BarChart3, name: t('nav.admin.analytics') },
+      { href: '/admin/transcoding', icon: Activity, name: t('nav.admin.transcoding') },
+      { href: '/admin/refunds', icon: RefreshCcw, name: t('nav.admin.refunds') },
+      { href: '/admin/reviews', icon: Star, name: t('nav.admin.reviews') },
+    ];
+  }
+  // Tenant admin: tenant-scoped items
+  return [
     { href: '/admin', icon: LayoutDashboard, name: t('nav.admin.dashboard') },
     { href: '/admin/members', icon: Users, name: t('nav.admin.members') },
     { href: '/admin/invitations', icon: Mail, name: t('nav.admin.invitations') },
     { href: '/admin/seats', icon: CreditCard, name: t('nav.admin.seats') },
     { href: '/admin/invoices', icon: Receipt, name: t('nav.admin.invoices') },
+    { href: '/admin/licenses', icon: KeyRound, name: t('nav.admin.licenses') },
     { href: '/admin/sso', icon: Shield, name: t('nav.admin.sso') },
     { href: '/admin/analytics', icon: BarChart3, name: t('nav.admin.analytics') },
   ];
-  // Refunds only visible to super admin (B2C purchases)
-  if (isSuperAdmin.value) {
-    items.push({ href: '/admin/refunds', icon: RefreshCcw, name: t('nav.admin.refunds') });
-  }
-  return items;
 });
 
 async function handleLogout() {

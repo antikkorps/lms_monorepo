@@ -1,0 +1,108 @@
+{
+  "title": "Course Licenses",
+  "subtitle": "Manage your organization's course licenses",
+  "purchase": "Purchase License",
+  "noLicenses": "No licenses found",
+  "noLicensesDescription": "Purchase course licenses to give your team access to training content.",
+
+  "status": {
+    "all": "All",
+    "active": "Active",
+    "pending": "Pending",
+    "expired": "Expired",
+    "refunded": "Refunded"
+  },
+
+  "type": {
+    "unlimited": "Unlimited",
+    "seats": "Seats"
+  },
+
+  "table": {
+    "course": "Course",
+    "type": "Type",
+    "seats": "Seats",
+    "status": "Status",
+    "expiration": "Expiration",
+    "amount": "Amount",
+    "actions": "Actions"
+  },
+
+  "stats": {
+    "activeLicenses": "Active Licenses",
+    "expiringSoon": "Expiring Soon",
+    "totalSeats": "Total Seats Assigned"
+  },
+
+  "detail": {
+    "title": "License Details",
+    "courseInfo": "Course Information",
+    "licenseInfo": "License Information",
+    "purchasedBy": "Purchased By",
+    "purchasedAt": "Purchased At",
+    "expiresAt": "Expires At",
+    "renewedAt": "Last Renewed",
+    "renewalCount": "Renewal Count",
+    "amount": "Amount Paid",
+    "seatManagement": "Seat Management",
+    "assignSeat": "Assign Seat",
+    "unassign": "Unassign",
+    "noAssignments": "No users assigned yet",
+    "seatsUsed": "{used} / {total} seats used",
+    "unlimitedAccess": "Unlimited access for all team members",
+    "selectUser": "Select a user to assign",
+    "assign": "Assign",
+    "renewLicense": "Renew License",
+    "requestRefund": "Request Refund",
+    "refundConfirm": "Are you sure you want to request a refund? This will revoke all seat assignments.",
+    "refundReason": "Reason (optional)"
+  },
+
+  "checkout": {
+    "title": "Purchase Course License",
+    "selectCourse": "Select a Course",
+    "licenseType": "License Type",
+    "unlimitedDescription": "All team members get access",
+    "seatsDescription": "Assign specific users",
+    "numberOfSeats": "Number of Seats",
+    "discountTiers": "Volume Discounts",
+    "tierDescription": "{minSeats}+ seats: {discountPercent}% off",
+    "pricing": "Pricing Summary",
+    "pricePerSeat": "Price per seat",
+    "discount": "Volume discount",
+    "savings": "You save",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to Checkout",
+    "redirectingToStripe": "Redirecting to payment..."
+  },
+
+  "success": {
+    "title": "License Purchased Successfully!",
+    "description": "Your course license has been activated. You can now assign seats to your team members.",
+    "viewLicense": "View License",
+    "backToLicenses": "Back to Licenses"
+  },
+
+  "expiration": {
+    "expired": "Expired",
+    "expiringSoon": "Expiring soon",
+    "daysLeft": "{days} days left",
+    "noExpiration": "No expiration"
+  },
+
+  "errors": {
+    "loadFailed": "Failed to load licenses",
+    "pricingFailed": "Failed to load pricing",
+    "checkoutFailed": "Failed to create checkout session",
+    "assignFailed": "Failed to assign user",
+    "unassignFailed": "Failed to unassign user",
+    "renewFailed": "Failed to renew license",
+    "refundFailed": "Failed to request refund"
+  },
+
+  "messages": {
+    "assigned": "User assigned successfully",
+    "unassigned": "User unassigned successfully",
+    "refunded": "Refund processed successfully"
+  }
+}

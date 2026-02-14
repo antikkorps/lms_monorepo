@@ -3,6 +3,7 @@ import type {
   TranscodingSubmitOptions,
   TranscodingSubmitResult,
   TranscodingStatusResult,
+  WebhookVerificationResult,
 } from '../transcoding.interface.js';
 
 export class NoopTranscodingProvider implements TranscodingProvider {
@@ -22,5 +23,17 @@ export class NoopTranscodingProvider implements TranscodingProvider {
 
   async delete(_uid: string): Promise<void> {
     throw new Error('Transcoding is not available (no provider configured)');
+  }
+
+  supportsWebhook(): boolean {
+    return false;
+  }
+
+  verifyWebhook(): WebhookVerificationResult {
+    return { valid: false, reason: 'Noop provider' };
+  }
+
+  parseWebhookPayload(): TranscodingStatusResult | null {
+    return null;
   }
 }

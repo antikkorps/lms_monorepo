@@ -9,6 +9,7 @@ import {
 } from 'sequelize';
 import { sequelize } from '../sequelize.js';
 import { SupportedLocale, TranscodingStatus } from './enums.js';
+import { logger } from '../../utils/logger.js';
 import type { Lesson } from './Lesson.js';
 
 /**
@@ -33,6 +34,7 @@ export class LessonContent extends Model<
   declare videoPlaybackUrl: CreationOptional<string | null>;
   declare videoStreamId: CreationOptional<string | null>;
   declare transcodingError: CreationOptional<string | null>;
+  declare videoThumbnailUrl: CreationOptional<string | null>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
@@ -109,6 +111,11 @@ LessonContent.init(
       allowNull: true,
       field: 'transcoding_error',
     },
+    videoThumbnailUrl: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: 'video_thumbnail_url',
+    },
     createdAt: {
       type: DataTypes.DATE,
       field: 'created_at',
@@ -135,5 +142,46 @@ LessonContent.init(
         fields: ['lang'],
       },
     ],
+    hooks: {
+      beforeDestroy: async (instance: LessonContent) => {
+        // Clean up Cloudflare Stream asset
+        if (instance.videoStreamId) {
+          try {
+            const { isTranscodingAvailable, getTranscoding } = await import(
+              '../../services/transcoding/index.js'
+            );
+            if (isTranscodingAvailable()) {
+              await getTranscoding().delete(instance.videoStreamId);
+              logger.info(
+                { videoStreamId: instance.videoStreamId, lessonContentId: instance.id },
+                'Deleted Stream asset on LessonContent destroy'
+              );
+            }
+          } catch (err) {
+            logger.warn(
+              { videoStreamId: instance.videoStreamId, lessonContentId: instance.id, error: err },
+              'Failed to delete Stream asset on LessonContent destroy'
+            );
+          }
+        }
+
+        // Clean up source video file from storage (R2/local)
+        if (instance.videoSourceKey) {
+          try {
+            const { getStorage } = await import('../../storage/index.js');
+            await getStorage().delete(instance.videoSourceKey);
+            logger.info(
+              { videoSourceKey: instance.videoSourceKey, lessonContentId: instance.id },
+              'Deleted source video on LessonContent destroy'
+            );
+          } catch (err) {
+            logger.warn(
+              { videoSourceKey: instance.videoSourceKey, lessonContentId: instance.id, error: err },
+              'Failed to delete source video on LessonContent destroy'
+            );
+          }
+        }
+      },
+    },
   }
 );

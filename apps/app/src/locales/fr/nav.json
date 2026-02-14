@@ -1,5 +1,5 @@
 {
-  "brand": "LMS Platform",
+  "brand": "IQON-IA",
   "main": {
     "home": "Accueil",
     "dashboard": "Tableau de bord",
@@ -28,7 +28,10 @@
     "invoices": "Factures",
     "sso": "Configuration SSO",
     "analytics": "Analytique",
-    "refunds": "Demandes de remboursement"
+    "transcoding": "Transcodage",
+    "refunds": "Demandes de remboursement",
+    "licenses": "Licences Cours",
+    "reviews": "Modération des avis"
   },
   "accessibility": {
     "toggleMenu": "Basculer le menu",

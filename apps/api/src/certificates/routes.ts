@@ -9,6 +9,7 @@ import { generateCertificate, type CertificateData } from './generator.js';
 import { authenticate } from '../auth/middleware.js';
 import { AppError } from '../utils/app-error.js';
 import { logger } from '../utils/logger.js';
+import { APP_NAME } from '../config/index.js';
 
 // Models would be imported from your models directory
 // import { Course, Enrollment, User, Certificate } from '../models/index.js';
@@ -81,7 +82,7 @@ router.get('/:enrollmentId', authenticate, async (ctx) => {
     completionDate: enrollment.completedAt,
     score: enrollment.quizScore,
     certificateId: certificateId,
-    issuerName: 'LMS Platform',
+    issuerName: APP_NAME,
     issuerTitle: 'Online Learning Provider',
   };
 

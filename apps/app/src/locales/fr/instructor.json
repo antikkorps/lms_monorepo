@@ -74,6 +74,8 @@
     "currency": "Devise",
     "media": "Média",
     "mediaDescription": "Ajoutez une image miniature pour votre cours",
+    "thumbnail": "Image miniature",
+    "dropThumbnail": "Déposez l'image miniature ici",
     "thumbnailUrl": "URL de la miniature",
     "thumbnailPlaceholder": "https://exemple.com/image.jpg",
     "thumbnailHint": "Taille recommandée : 1280x720 pixels",

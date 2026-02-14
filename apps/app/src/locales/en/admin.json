@@ -514,13 +514,17 @@
   "analytics": {
     "title": "Analytics Dashboard",
     "subtitle": "Revenue, users, and engagement insights for your platform.",
-    "export": "Export CSV",
+    "export": "Export",
+    "exportCsv": "Export CSV",
+    "exportPdf": "Export PDF",
     "error": {
       "loadFailed": "Failed to load analytics",
       "retry": "Retry"
     },
     "stats": {
       "netRevenue": "Net Revenue",
+      "b2cRevenue": "B2C Revenue",
+      "b2bRevenue": "B2B Revenue",
       "newUsers": "New Users",
       "activeUsers": "Active Users",
       "completionRate": "Completion Rate",
@@ -528,10 +532,14 @@
     },
     "charts": {
       "revenue": "Revenue",
+      "b2cRevenue": "B2C Revenue",
+      "b2bRevenue": "B2B Revenue",
       "revenueOverTime": "Revenue Over Time",
-      "revenueDescription": "Total revenue generated during the selected period",
+      "revenueDescription": "Total revenue (B2C + B2B) during the selected period",
       "dailyEngagement": "Daily Engagement",
       "engagementDescription": "Active users and lesson completions per day",
+      "userGrowth": "User Growth",
+      "userGrowthDescription": "New user registrations per day",
       "activeUsers": "Active Users",
       "completions": "Completions"
     },
@@ -539,12 +547,107 @@
       "title": "Top Courses by Revenue",
       "description": "Best performing courses during the selected period",
       "sales": "sales",
+      "licenses": "licenses",
+      "b2b": "B2B",
+      "viewDetails": "View Details",
       "empty": "No revenue data for this period"
     },
     "categories": {
       "title": "Category Distribution",
       "description": "Course sales distribution by category",
       "empty": "No category data for this period"
+    },
+    "licenses": {
+      "title": "License Analytics",
+      "seatUtilization": "Seat Utilization",
+      "seatsUsed": "{used} of {total} seats used",
+      "statusDistribution": "License Status",
+      "revenueSplit": "Revenue Split",
+      "upcomingExpirations": "Expiring Soon",
+      "expiringSoon": "{count} license expiring in 30 days | {count} licenses expiring in 30 days",
+      "noLicenses": "No license data for this period"
+    },
+    "courseDetail": {
+      "back": "Back to Analytics",
+      "revenue": "Revenue",
+      "enrollments": "Enrollments",
+      "completionRate": "Completion Rate",
+      "avgQuizScore": "Avg Quiz Score",
+      "enrollmentOverTime": "Enrollment Over Time",
+      "completionFunnel": "Completion Funnel",
+      "enrolled": "Enrolled",
+      "started": "Started",
+      "completed": "Completed",
+      "revenueSplit": "Revenue Split",
+      "b2c": "B2C (Individual)",
+      "b2b": "B2B (License)",
+      "reviewDistribution": "Review Distribution",
+      "stars": "stars",
+      "avgRating": "avg rating",
+      "quizPerformance": "Quiz Performance",
+      "passRate": "Pass Rate",
+      "totalAttempts": "attempts",
+      "watchTime": "Watch Time",
+      "totalWatchTime": "Total",
+      "avgWatchTime": "Avg per learner",
+      "learnerProgress": "Learner Progress",
+      "name": "Name",
+      "email": "Email",
+      "progress": "Progress",
+      "lessonsCompleted": "Lessons",
+      "lastActive": "Last Active",
+      "noData": "No data for this period"
+    }
+  },
+  "transcoding": {
+    "title": "Transcoding Monitoring",
+    "subtitle": "Monitor video transcoding queue and job status.",
+    "refresh": "Refresh",
+    "error": {
+      "loadFailed": "Failed to load transcoding data",
+      "retry": "Retry"
+    },
+    "stats": {
+      "active": "Active",
+      "waiting": "Waiting",
+      "delayed": "Delayed",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "content": {
+      "title": "Content Status",
+      "description": "Video transcoding status in database",
+      "pending": "Pending",
+      "processing": "Processing",
+      "ready": "Ready",
+      "error": "Error"
+    },
+    "filters": {
+      "active": "Active",
+      "waiting": "Waiting",
+      "delayed": "Delayed",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "table": {
+      "title": "Jobs",
+      "description": "Transcoding jobs for the selected status.",
+      "id": "ID",
+      "type": "Type",
+      "contentId": "Content ID",
+      "attempts": "Attempts",
+      "error": "Error",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "actions": {
+      "retry": "Retry",
+      "retrySuccess": "Job queued for retry",
+      "retryError": "Failed to retry job"
+    },
+    "empty": {
+      "title": "No jobs found",
+      "message": "There are no jobs with this status."
     }
   }
 }

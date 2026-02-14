@@ -10,6 +10,7 @@ import {
   reviewRefundRequest,
 } from './controller.js';
 import { handleStripeWebhook } from './webhook.controller.js';
+import { handleTranscodingWebhook } from '../services/transcoding/webhook.controller.js';
 import { authenticate, requireRole } from '../auth/middleware.js';
 import { validate } from '../middlewares/validate.js';
 import {
@@ -94,3 +95,4 @@ paymentsRouter.post(
 // =============================================================================
 
 webhooksRouter.post('/stripe', handleStripeWebhook);
+webhooksRouter.post('/transcoding', handleTranscodingWebhook);

@@ -11,7 +11,7 @@ import { requestLogger } from './request-logger.js';
 import { defaultRateLimiter } from './rate-limiter.js';
 
 // Paths that need raw body preserved (for webhook signature verification)
-const RAW_BODY_PATHS = ['/api/v1/webhooks/stripe'];
+const RAW_BODY_PATHS = ['/api/v1/webhooks/stripe', '/api/v1/webhooks/transcoding'];
 
 // Extend Koa Request type to include rawBodyBuffer
 // Note: koa-bodyparser already declares rawBody as string, so we use a different name
@@ -52,7 +52,17 @@ export function setupMiddlewares(app: Koa): void {
   app.use(errorHandler);
 
   // Security headers
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'none'"],
+          frameAncestors: ["'none'"],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    })
+  );
 
   // CORS
   app.use(
@@ -62,7 +72,7 @@ export function setupMiddlewares(app: Koa): void {
         if (origin && config.corsOrigins.includes(origin)) {
           return origin;
         }
-        return config.corsOrigins[0];
+        return '';
       },
       credentials: true,
       exposeHeaders: [
@@ -84,6 +94,9 @@ export function setupMiddlewares(app: Koa): void {
   // Body parser (skipped for webhook routes that already have body parsed)
   app.use(
     bodyParser({
+      jsonLimit: '1mb',
+      formLimit: '56kb',
+      textLimit: '1mb',
       onerror: (err, ctx) => {
         // If raw body was already captured, don't throw
         if (ctx.request.rawBodyBuffer) return;

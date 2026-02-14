@@ -1,4 +1,7 @@
+export const APP_NAME = 'IQON-IA';
+
 export const config = {
+  appName: APP_NAME,
   env: process.env.NODE_ENV || 'development',
   nodeEnv: process.env.NODE_ENV || 'development',
   port: Number.parseInt(process.env.PORT || '3000', 10),
@@ -33,7 +36,7 @@ export const config = {
   email: {
     provider: process.env.EMAIL_PROVIDER || 'console', // 'console' | 'postmark' | 'sendgrid' | 'mailjet'
     from: process.env.EMAIL_FROM || 'noreply@example.com',
-    fromName: process.env.EMAIL_FROM_NAME || 'LMS Platform',
+    fromName: process.env.EMAIL_FROM_NAME || 'IQON-IA',
     postmarkApiKey: process.env.POSTMARK_API_KEY || '',
     sendgridApiKey: process.env.SENDGRID_API_KEY || '',
     mailjetApiKey: process.env.MAILJET_API_KEY || '',
@@ -61,6 +64,7 @@ export const config = {
   cloudflare: {
     accountId: process.env.CLOUDFLARE_ACCOUNT_ID || '',
     apiToken: process.env.CLOUDFLARE_API_TOKEN || '',
+    webhookSecret: process.env.CLOUDFLARE_STREAM_WEBHOOK_SECRET || '',
   },
 
   // Storage (file uploads)
@@ -99,6 +103,50 @@ export const config = {
       maxRequests: Number.parseInt(process.env.RATE_LIMIT_AUTH_MAX || '10', 10),
     },
   },
+  // Licensing (B2B course licenses)
+  licensing: {
+    unlimitedMultiplier: 10,
+    defaultDurationMonths: 12,
+    enableExpiration: process.env.LICENSE_ENABLE_EXPIRATION === 'true',
+    volumeDiscountTiers: [
+      { minSeats: 50, discountPercent: 30 },
+      { minSeats: 20, discountPercent: 20 },
+      { minSeats: 10, discountPercent: 10 },
+    ],
+    expirationWarningDays: [30, 7],
+  },
 } as const;
 
 export type Config = typeof config;
+
+const DEV_DEFAULTS = [
+  'dev-secret-change-in-production',
+  'dev-refresh-secret-change-in-production',
+];
+
+function validateProductionConfig(): void {
+  const secrets = [
+    { name: 'JWT_SECRET', value: config.jwtSecret },
+    { name: 'JWT_REFRESH_SECRET', value: config.jwtRefreshSecret },
+  ];
+
+  for (const { name, value } of secrets) {
+    const isDevDefault = DEV_DEFAULTS.includes(value);
+    const isTooShort = value.length < 32;
+
+    if (config.env === 'production') {
+      if (isDevDefault) {
+        throw new Error(`${name} must not use the default development value in production`);
+      }
+      if (isTooShort) {
+        throw new Error(`${name} must be at least 32 characters in production (got ${value.length})`);
+      }
+    } else {
+      if (isDevDefault) {
+        console.warn(`[config] WARNING: ${name} is using the default development value`);
+      }
+    }
+  }
+}
+
+validateProductionConfig();

@@ -19,10 +19,17 @@ export interface TranscodingStatusResult {
   status: TranscodingProviderStatus;
   /** HLS playback URL when ready */
   playbackUrl?: string;
+  /** Thumbnail/poster image URL when ready */
+  thumbnailUrl?: string;
   /** Duration in seconds when ready */
   duration?: number;
   /** Error message if status is 'error' */
   errorMessage?: string;
+}
+
+export interface WebhookVerificationResult {
+  valid: boolean;
+  reason?: string;
 }
 
 export interface TranscodingProvider {
@@ -31,4 +38,9 @@ export interface TranscodingProvider {
   submit(options: TranscodingSubmitOptions): Promise<TranscodingSubmitResult>;
   getStatus(uid: string): Promise<TranscodingStatusResult>;
   delete(uid: string): Promise<void>;
+
+  // Webhook support (providers without webhook return false)
+  supportsWebhook(): boolean;
+  verifyWebhook(rawBody: Buffer, headers: Record<string, string>): WebhookVerificationResult;
+  parseWebhookPayload(body: unknown): TranscodingStatusResult | null;
 }

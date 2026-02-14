@@ -3,6 +3,7 @@ import { LessonContent, Lesson, Chapter, Course } from '../database/models/index
 import { UserRole, SupportedLocale, TranscodingStatus } from '../database/models/enums.js';
 import { AppError } from '../utils/app-error.js';
 import { isTranscodingAvailable, getTranscoding } from '../services/transcoding/index.js';
+import { getStorage } from '../storage/index.js';
 import { addSubmitTranscodingJob } from '../queue/index.js';
 import { logger } from '../utils/logger.js';
 import type {
@@ -90,6 +91,7 @@ function serializeLessonContent(c: LessonContent) {
     videoPlaybackUrl: c.videoPlaybackUrl,
     videoStreamId: c.videoStreamId,
     transcodingError: c.transcodingError,
+    videoThumbnailUrl: c.videoThumbnailUrl,
     createdAt: c.createdAt,
     updatedAt: c.updatedAt,
   };
@@ -98,11 +100,32 @@ function serializeLessonContent(c: LessonContent) {
 async function triggerTranscoding(content: LessonContent, videoSourceKey: string): Promise<void> {
   if (!isTranscodingAvailable()) return;
 
+  // Clean up previous Cloudflare Stream asset before replacing
+  if (content.videoStreamId) {
+    try {
+      await getTranscoding().delete(content.videoStreamId);
+      logger.info({ videoStreamId: content.videoStreamId, lessonContentId: content.id }, 'Deleted previous Stream asset');
+    } catch (err) {
+      logger.warn({ videoStreamId: content.videoStreamId, error: err }, 'Failed to delete previous Stream asset');
+    }
+  }
+
+  // Clean up previous source video file before replacing
+  if (content.videoSourceKey && content.videoSourceKey !== videoSourceKey) {
+    try {
+      await getStorage().delete(content.videoSourceKey);
+      logger.info({ videoSourceKey: content.videoSourceKey, lessonContentId: content.id }, 'Deleted previous source video');
+    } catch (err) {
+      logger.warn({ videoSourceKey: content.videoSourceKey, error: err }, 'Failed to delete previous source video');
+    }
+  }
+
   await content.update({
     transcodingStatus: TranscodingStatus.PENDING,
     transcodingError: null,
     videoPlaybackUrl: null,
     videoStreamId: null,
+    videoThumbnailUrl: null,
   });
 
   await addSubmitTranscodingJob({
@@ -361,15 +384,7 @@ export async function deleteLessonContent(ctx: Context): Promise<void> {
     throw AppError.notFound(`Content for locale '${lang}' not found for this lesson`);
   }
 
-  // Clean up Cloudflare Stream asset if exists
-  if (content.videoStreamId && isTranscodingAvailable()) {
-    try {
-      await getTranscoding().delete(content.videoStreamId);
-    } catch (err) {
-      logger.warn({ videoStreamId: content.videoStreamId, error: err }, 'Failed to delete Stream asset');
-    }
-  }
-
+  // Stream cleanup handled by LessonContent beforeDestroy hook
   await content.destroy();
   ctx.status = 204;
 }

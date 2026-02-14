@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { sanitizeText } from '../utils/sanitize.js';
 
 export const createCourseCheckoutSchema = z.object({
   courseId: z.string().uuid(),
@@ -13,6 +14,7 @@ export const processRefundSchema = z.object({
     .string()
     .max(500)
     .optional()
+    .transform((v) => v ? sanitizeText(v) : v)
     .describe('Reason for the refund (stored in database)'),
   amount: z
     .number()
@@ -32,6 +34,7 @@ export const requestRefundSchema = z.object({
     .string()
     .min(10, 'Please provide a reason (at least 10 characters)')
     .max(1000)
+    .transform(sanitizeText)
     .describe('Reason for requesting a refund'),
 });
 
@@ -42,6 +45,7 @@ export const reviewRefundRequestSchema = z.object({
     .string()
     .max(500)
     .optional()
+    .transform((v) => v ? sanitizeText(v) : v)
     .describe('Reason for rejection (required if rejecting)'),
 });
 

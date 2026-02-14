@@ -67,6 +67,7 @@ export enum PurchaseStatus {
   COMPLETED = 'completed',
   REFUNDED = 'refunded',
   FAILED = 'failed',
+  EXPIRED = 'expired',
 }
 
 export enum InvitationStatus {
@@ -109,6 +110,8 @@ export enum NotificationType {
   PURCHASE_CONFIRMED = 'purchase_confirmed',
   REVIEW_APPROVED = 'review_approved',
   STREAK_MILESTONE = 'streak_milestone',
+  LICENSE_EXPIRING_SOON = 'license_expiring_soon',
+  LICENSE_EXPIRED = 'license_expired',
 }
 
 export enum ReviewStatus {

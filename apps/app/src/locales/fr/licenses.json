@@ -1,0 +1,108 @@
+{
+  "title": "Licences Cours",
+  "subtitle": "Gerez les licences de cours de votre organisation",
+  "purchase": "Acheter une licence",
+  "noLicenses": "Aucune licence trouvee",
+  "noLicensesDescription": "Achetez des licences de cours pour donner acces a votre equipe au contenu de formation.",
+
+  "status": {
+    "all": "Toutes",
+    "active": "Actives",
+    "pending": "En attente",
+    "expired": "Expirees",
+    "refunded": "Remboursees"
+  },
+
+  "type": {
+    "unlimited": "Illimitee",
+    "seats": "Places"
+  },
+
+  "table": {
+    "course": "Cours",
+    "type": "Type",
+    "seats": "Places",
+    "status": "Statut",
+    "expiration": "Expiration",
+    "amount": "Montant",
+    "actions": "Actions"
+  },
+
+  "stats": {
+    "activeLicenses": "Licences actives",
+    "expiringSoon": "Expiration proche",
+    "totalSeats": "Places attribuees"
+  },
+
+  "detail": {
+    "title": "Details de la licence",
+    "courseInfo": "Informations du cours",
+    "licenseInfo": "Informations de la licence",
+    "purchasedBy": "Achetee par",
+    "purchasedAt": "Date d'achat",
+    "expiresAt": "Expire le",
+    "renewedAt": "Dernier renouvellement",
+    "renewalCount": "Nombre de renouvellements",
+    "amount": "Montant paye",
+    "seatManagement": "Gestion des places",
+    "assignSeat": "Attribuer une place",
+    "unassign": "Retirer",
+    "noAssignments": "Aucun utilisateur attribue",
+    "seatsUsed": "{used} / {total} places utilisees",
+    "unlimitedAccess": "Acces illimite pour tous les membres",
+    "selectUser": "Selectionnez un utilisateur",
+    "assign": "Attribuer",
+    "renewLicense": "Renouveler la licence",
+    "requestRefund": "Demander un remboursement",
+    "refundConfirm": "Etes-vous sur de vouloir demander un remboursement ? Toutes les attributions seront revoquees.",
+    "refundReason": "Raison (optionnelle)"
+  },
+
+  "checkout": {
+    "title": "Acheter une licence de cours",
+    "selectCourse": "Selectionnez un cours",
+    "licenseType": "Type de licence",
+    "unlimitedDescription": "Tous les membres ont acces",
+    "seatsDescription": "Attribuez des utilisateurs specifiques",
+    "numberOfSeats": "Nombre de places",
+    "discountTiers": "Remises volume",
+    "tierDescription": "{minSeats}+ places : {discountPercent}% de reduction",
+    "pricing": "Resume du prix",
+    "pricePerSeat": "Prix par place",
+    "discount": "Remise volume",
+    "savings": "Vous economisez",
+    "total": "Total",
+    "proceedToCheckout": "Proceder au paiement",
+    "redirectingToStripe": "Redirection vers le paiement..."
+  },
+
+  "success": {
+    "title": "Licence achetee avec succes !",
+    "description": "Votre licence de cours a ete activee. Vous pouvez maintenant attribuer des places a vos membres.",
+    "viewLicense": "Voir la licence",
+    "backToLicenses": "Retour aux licences"
+  },
+
+  "expiration": {
+    "expired": "Expiree",
+    "expiringSoon": "Expire bientot",
+    "daysLeft": "{days} jours restants",
+    "noExpiration": "Sans expiration"
+  },
+
+  "errors": {
+    "loadFailed": "Erreur de chargement des licences",
+    "pricingFailed": "Erreur de chargement des tarifs",
+    "checkoutFailed": "Erreur de creation de la session de paiement",
+    "assignFailed": "Erreur d'attribution de l'utilisateur",
+    "unassignFailed": "Erreur de retrait de l'utilisateur",
+    "renewFailed": "Erreur de renouvellement de la licence",
+    "refundFailed": "Erreur de demande de remboursement"
+  },
+
+  "messages": {
+    "assigned": "Utilisateur attribue avec succes",
+    "unassigned": "Utilisateur retire avec succes",
+    "refunded": "Remboursement traite avec succes"
+  }
+}

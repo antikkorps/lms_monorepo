@@ -19,6 +19,9 @@ export interface LocalizedLessonData {
   videoId: string | null;
   transcript: string | null;
   description: string | null;
+  videoPlaybackUrl: string | null;
+  videoThumbnailUrl: string | null;
+  transcodingStatus: string | null;
 }
 
 export function getLocalizedLessonContent(
@@ -49,6 +52,11 @@ export function getLocalizedLessonContent(
 
     // Description: only from content (no fallback in Lesson model)
     description: content?.description || defaultContent?.description || null,
+
+    // Transcoding fields: only from content (no fallback in Lesson model)
+    videoPlaybackUrl: content?.videoPlaybackUrl || defaultContent?.videoPlaybackUrl || null,
+    videoThumbnailUrl: content?.videoThumbnailUrl || defaultContent?.videoThumbnailUrl || null,
+    transcodingStatus: content?.transcodingStatus || defaultContent?.transcodingStatus || null,
   };
 }
 

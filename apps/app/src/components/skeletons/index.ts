@@ -5,6 +5,7 @@ export { default as CourseDetailSkeleton } from './CourseDetailSkeleton.vue';
 export { default as CourseListSkeleton } from './CourseListSkeleton.vue';
 export { default as AdminDashboardSkeleton } from './AdminDashboardSkeleton.vue';
 export { default as AdminAnalyticsSkeleton } from './AdminAnalyticsSkeleton.vue';
+export { default as AdminCourseAnalyticsSkeleton } from './AdminCourseAnalyticsSkeleton.vue';
 export { default as MembersTableSkeleton } from './MembersTableSkeleton.vue';
 export { default as InvitationsTableSkeleton } from './InvitationsTableSkeleton.vue';
 export { default as SeatsManagementSkeleton } from './SeatsManagementSkeleton.vue';

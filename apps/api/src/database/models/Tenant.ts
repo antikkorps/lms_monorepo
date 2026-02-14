@@ -16,6 +16,11 @@ export interface TenantSSOConfig {
   tenantId?: string; // For Microsoft Azure AD
 }
 
+export interface VolumeDiscountTier {
+  minSeats: number;
+  discountPercent: number;
+}
+
 export interface TenantSettings {
   brandColor?: string;
   customDomain?: string;
@@ -24,6 +29,7 @@ export interface TenantSettings {
   features?: string[];
   discussionVisibility?: DiscussionVisibility;
   discussionsEnabled?: boolean;
+  volumeDiscountTiers?: VolumeDiscountTier[];
 }
 
 export class Tenant extends Model<

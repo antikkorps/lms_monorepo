@@ -1,6 +1,6 @@
-# LMS Platform - Backlog
+# IQON-IA - Backlog
 
-## Modified: 2026-02-09
+## Modified: 2026-02-14
 
 ---
 
@@ -41,10 +41,15 @@
 - [x] Video transcoding pipeline (Done: 2026-02-07)
 
 #### Video Transcoding — Production Readiness
-- [ ] Cloudflare Stream webhook endpoint (remplacer le polling par des callbacks)
-- [ ] Cleanup des streams Cloudflare à la suppression de LessonContent
-- [ ] Extraction thumbnail/poster depuis Cloudflare Stream
-- [ ] Admin monitoring des jobs transcoding (liste active/failed)
+- [x] Cloudflare Stream webhook endpoint (remplacer le polling par des callbacks) (Done: 2026-02-11)
+- [x] Cleanup des streams Cloudflare + source R2 à la suppression (Done: 2026-02-12)
+- [x] Extraction thumbnail/poster depuis Cloudflare Stream (Done: 2026-02-11)
+- [x] Admin monitoring des jobs transcoding (liste active/failed) (Done: 2026-02-12)
+
+### Branding
+- [x] Centraliser le nom de marque (rebrand LMS Platform → IQON-IA) (Done: 2026-02-12)
+  - Bibliothèque `@shared/config` avec `APP_NAME` constant
+  - Remplacement dans apps (Vue, API, Landing, locales, certificats, emails)
 
 ### API Integration (Frontend)
 
@@ -89,7 +94,7 @@
   - `z.record(schema)` → `z.record(z.string(), schema)` (common.schema, tenant.schema)
   - Added `zod ^4` as root dependency for Docker hoisting
   - Note: `.flatten()` and `z.nativeEnum()` are unchanged in Zod 4
-- [ ] ESLint 9 → 10 — bloqué, attendre support typescript-eslint (PR #87)
+- [ ] ~~ESLint 9 → 10~~ — **BLOQUÉ** : typescript-eslint ne supporte pas encore ESLint 10 (breaking changes majeurs). Ne pas tenter avant annonce officielle typescript-eslint.
 
 ### Documentation
 
@@ -104,6 +109,21 @@
 - [x] Advanced filters (category, level, price, rating) (Done: 2026-02-09)
 - [x] Search suggestions/autocomplete with pg_trgm (Done: 2026-02-09)
 - [x] Command palette (Cmd+K) with fuzzy search (Done: 2026-02-09)
+
+---
+
+## Next Session — `feat/license-management` (branche depuis `dev`)
+
+### License Management (Payments)
+- [x] Volume discount tiers for large seat purchases (Done: 2026-02-14)
+- [x] License expiration/renewal (if time-limited) (Done: 2026-02-14)
+- [x] License management frontend UI (composable, 4 views, i18n) (Done: 2026-02-14)
+
+### Analytics & Reporting
+- [ ] Admin analytics dashboard (revenue, users, engagement)
+- [ ] Export reports (CSV, PDF)
+- [ ] Video watch analytics (drop-off points)
+- [ ] Quiz performance insights
 
 ---
 

@@ -159,6 +159,14 @@ export async function checkTenantCourseAccess(
     };
   }
 
+  // Check license expiration
+  if (license.expiresAt && new Date() > new Date(license.expiresAt)) {
+    return {
+      hasAccess: false,
+      reason: 'License has expired',
+    };
+  }
+
   // Unlimited license: all tenant members have access
   if (license.licenseType === LicenseType.UNLIMITED) {
     return { hasAccess: true };
