@@ -40,6 +40,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/VerifyEmailView.vue'),
     meta: { layout: 'auth' },
   },
+  {
+    path: '/invitations/:token',
+    name: 'accept-invitation',
+    component: () => import('../views/AcceptInvitationView.vue'),
+    meta: { layout: 'auth' },
+  },
 
   // App routes (authenticated)
   {

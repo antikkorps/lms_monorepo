@@ -58,13 +58,11 @@ function captureError(error: Error, context: ErrorContext = {}): CapturedError {
 
   // Log to console in development
   if (import.meta.env.DEV) {
-    console.group(`[ErrorService] ${captured.context.type || 'error'}`);
-    console.error('Message:', captured.message);
-    console.error('Context:', captured.context);
+    console.error(`[ErrorService] ${captured.context.type || 'error'}:`, captured.message);
+    console.error('[ErrorService] Context:', captured.context);
     if (captured.stack) {
-      console.error('Stack:', captured.stack);
+      console.error('[ErrorService] Stack:', captured.stack);
     }
-    console.groupEnd();
   } else {
     // In production, log minimal info
     console.error(`[Error] ${captured.message}`);

@@ -38,8 +38,8 @@
 ### Pending
 
 #### Future
-- [ ] Volume discount tiers for large seat purchases
-- [ ] License expiration/renewal (if time-limited)
+- [x] Volume discount tiers for large seat purchases (Done: 2026-02-14 — 10%/20%/30% tiers)
+- [x] License expiration/renewal (Done: 2026-02-14 — configurable duration, expiration warnings)
 
 ### Notes
 

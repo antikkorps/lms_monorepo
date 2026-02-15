@@ -7,14 +7,14 @@
 
 ### Database & Seed Cleanup
 
-- [ ] Create production cleanup script (`cleanup-seed.ts`) — purge seeds + create real superadmin
-- [ ] Add `db:cleanup` npm script to root `package.json`
+- [x] Create production cleanup script (`cleanup-seed.ts`) — purge seeds + create real superadmin (Done: 2026-02-15)
+- [x] Add `db:cleanup` npm script to root `package.json` (Done: 2026-02-15)
 
 ### New Endpoints
 
-- [ ] Create newsletter subscribe endpoint (`POST /api/v1/newsletter/subscribe`) — forward to Mailjet Contacts API
-- [ ] Add `MAILJET_CONTACT_LIST_ID` to config
-- [ ] Add health check endpoint (`GET /api/v1/health`) — DB + Redis connectivity
+- [x] Create newsletter subscribe endpoint (`POST /api/v1/newsletter/subscribe`) — forward to Mailjet Contacts API (Done: 2026-02-15)
+- [x] Add `MAILJET_CONTACT_LIST_ID` to config (Done: 2026-02-15)
+- [x] Health check endpoint (`GET /api/v1/health/ready`) — real DB + Redis connectivity checks (Done: 2026-02-15)
 
 ### Auth Flow Verification
 
@@ -42,4 +42,5 @@
 
 - Stripe in **test mode** — real payment flow with fictitious cards
 - Mailjet must be configured for both transactional emails and newsletter contacts API
-- Health check should return structured JSON with per-service status
+- Health check returns structured JSON with per-service status
+- `npm run db:cleanup` requires `ADMIN_EMAIL` and `ADMIN_PASSWORD` env vars

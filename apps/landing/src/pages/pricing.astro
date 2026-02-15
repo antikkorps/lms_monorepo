@@ -16,7 +16,7 @@ const pricingPlans = [
     description: t('pricing.free.description'),
     features: getTranslation(lang, 'pricing.free.features') as string[],
     cta: t('pricing.free.cta'),
-    ctaHref: '/app/register',
+    ctaHref: '/coming-soon',
   },
   {
     name: t('pricing.pro.name'),
@@ -25,7 +25,7 @@ const pricingPlans = [
     description: t('pricing.pro.description'),
     features: getTranslation(lang, 'pricing.pro.features') as string[],
     cta: t('pricing.pro.cta'),
-    ctaHref: '/app/register?plan=pro',
+    ctaHref: '/coming-soon?plan=pro',
     popular: true,
     badge: t('pricing.pro.badge'),
   },
@@ -205,7 +205,7 @@ const featureComparison = [
   <CTA
     title="Start learning today"
     subtitle="Join thousands of learners advancing their careers with IQON-IA."
-    primaryCta={{ text: 'Get Started for Free', href: '/app/register' }}
+    primaryCta={{ text: 'Get Started for Free', href: '/coming-soon' }}
     note="No credit card required"
     variant="gradient"
   />
