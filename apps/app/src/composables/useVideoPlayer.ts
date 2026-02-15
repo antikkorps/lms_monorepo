@@ -235,8 +235,8 @@ export function useVideoPlayer(
 
     if (container.requestFullscreen) {
       container.requestFullscreen();
-    } else if ((container as any).webkitRequestFullscreen) {
-      (container as any).webkitRequestFullscreen();
+    } else if ((container as HTMLElement & { webkitRequestFullscreen?: () => void }).webkitRequestFullscreen) {
+      (container as HTMLElement & { webkitRequestFullscreen: () => void }).webkitRequestFullscreen();
     }
 
     isFullscreen.value = true;
@@ -245,8 +245,8 @@ export function useVideoPlayer(
   function exitFullscreen() {
     if (document.exitFullscreen) {
       document.exitFullscreen();
-    } else if ((document as any).webkitExitFullscreen) {
-      (document as any).webkitExitFullscreen();
+    } else if ((document as Document & { webkitExitFullscreen?: () => void }).webkitExitFullscreen) {
+      (document as Document & { webkitExitFullscreen: () => void }).webkitExitFullscreen();
     }
 
     isFullscreen.value = false;

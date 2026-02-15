@@ -60,7 +60,7 @@ describe('R2 Storage Integration Tests', () => {
     try {
       await provider.delete(testFileKey);
       logger.info(`🧹 Cleaned up test file: ${testFileKey}`);
-    } catch (err) {
+    } catch {
       logger.warn(`⚠️  Failed to cleanup test file: ${testFileKey}`);
     }
   });

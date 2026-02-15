@@ -38,11 +38,11 @@ const mockWorkerInstance = {
   close: vi.fn().mockResolvedValue(undefined),
 };
 
-const workerCalls: Array<{ queueName: string; processor: Function; options: object }> = [];
+const workerCalls: Array<{ queueName: string; processor: (...args: unknown[]) => unknown; options: object }> = [];
 
 class MockWorker {
-  processor: Function;
-  constructor(queueName: string, processor: Function, options: object) {
+  processor: (...args: unknown[]) => unknown;
+  constructor(queueName: string, processor: (...args: unknown[]) => unknown, options: object) {
     workerCalls.push({ queueName, processor, options });
     this.processor = processor;
   }
