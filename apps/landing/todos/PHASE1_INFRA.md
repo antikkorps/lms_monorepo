@@ -48,7 +48,7 @@
 
 ### Pending - Integrations
 - [ ] Add analytics integration (Google Analytics / Plausible)
-- [ ] Newsletter signup form
+- [x] Newsletter signup form (Done: 2026-02-15 — Coming Soon page with Mailjet integration)
 
 ### Pending - Content
 - [ ] Create blog/resources section

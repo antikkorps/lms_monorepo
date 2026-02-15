@@ -41,6 +41,7 @@ export const config = {
     sendgridApiKey: process.env.SENDGRID_API_KEY || '',
     mailjetApiKey: process.env.MAILJET_API_KEY || '',
     mailjetApiSecret: process.env.MAILJET_API_SECRET || '',
+    mailjetContactListId: process.env.MAILJET_CONTACT_LIST_ID || '',
   },
 
   // SSO (OAuth2/OpenID Connect)

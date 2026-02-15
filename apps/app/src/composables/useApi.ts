@@ -190,7 +190,7 @@ class ApiClient {
       logger.debug('[ApiClient] Refresh response status:', response.status);
 
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         logger.debug('[ApiClient] Refresh successful, got new token');
 
         // Refresh successful - process queued requests

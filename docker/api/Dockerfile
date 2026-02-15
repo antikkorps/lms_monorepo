@@ -67,10 +67,12 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 # Copy built files
 COPY --from=builder /app/dist/apps/api ./
-COPY --from=builder /app/dist/apps/api/package.json ./
+
+# Copy package files for production dependency install
+COPY --from=builder /app/package.json /app/package-lock.json ./
 
 # Install production dependencies only
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Switch to non-root user
 USER api

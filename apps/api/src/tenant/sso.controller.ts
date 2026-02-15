@@ -162,6 +162,7 @@ export async function deleteTenantSSO(ctx: Context): Promise<void> {
   const currentSettings = tenant.settings || {};
 
   // Remove SSO config entirely
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ssoEnabled, ssoConfig, ...restSettings } = currentSettings;
 
   await tenant.update({

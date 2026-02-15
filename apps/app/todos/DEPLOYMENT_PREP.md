@@ -7,8 +7,8 @@
 
 ### New Views
 
-- [ ] Create AcceptInvitationView.vue (`/invitations/:token` route)
-- [ ] Add invitation i18n keys (EN/FR)
+- [x] Create AcceptInvitationView.vue (`/invitations/:token` route) (Done: 2026-02-15)
+- [x] Add invitation i18n keys (EN/FR) (Done: 2026-02-15)
 
 ### Auth Flow Verification
 
@@ -18,11 +18,11 @@
 
 ### Error Handling
 
-- [ ] Add 404 page (catch-all route)
+- [x] Add 404 page (catch-all route) (Already existed: NotFoundView.vue)
 
 ---
 
 ### Notes
 
-- AcceptInvitationView must handle token validation, display tenant/role info, and submit acceptance
-- 404 page should include navigation back to home/dashboard
+- AcceptInvitationView handles token validation, displays tenant/role info, and submits acceptance
+- 404 page includes navigation back to home

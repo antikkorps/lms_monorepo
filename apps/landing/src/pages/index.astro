@@ -51,7 +51,7 @@ const pricingPlans = [
     description: t('pricing.free.description'),
     features: getTranslation(lang, 'pricing.free.features') as string[],
     cta: t('pricing.free.cta'),
-    ctaHref: '/app/register',
+    ctaHref: '/coming-soon',
   },
   {
     name: t('pricing.pro.name'),
@@ -60,7 +60,7 @@ const pricingPlans = [
     description: t('pricing.pro.description'),
     features: getTranslation(lang, 'pricing.pro.features') as string[],
     cta: t('pricing.pro.cta'),
-    ctaHref: '/app/register?plan=pro',
+    ctaHref: '/coming-soon?plan=pro',
     popular: true,
     badge: t('pricing.pro.badge'),
   },
@@ -105,7 +105,7 @@ const testimonials = [
   <Hero
     title={t('hero.title')}
     subtitle={t('hero.subtitle')}
-    primaryCta={{ text: t('hero.cta.primary'), href: '/app/register' }}
+    primaryCta={{ text: t('hero.cta.primary'), href: '/coming-soon' }}
     secondaryCta={{ text: t('hero.cta.secondary'), href: '#features' }}
     trustedText={t('hero.trusted')}
   />
@@ -166,7 +166,7 @@ const testimonials = [
               Learn at your own pace
             </li>
           </ul>
-          <a href="/app/register" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">
+          <a href="/coming-soon" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">
             Start learning for free
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -242,7 +242,7 @@ const testimonials = [
   <CTA
     title={t('cta.title')}
     subtitle={t('cta.subtitle')}
-    primaryCta={{ text: t('cta.button'), href: '/app/register' }}
+    primaryCta={{ text: t('cta.button'), href: '/coming-soon' }}
     note={t('cta.note')}
     variant="gradient"
   />

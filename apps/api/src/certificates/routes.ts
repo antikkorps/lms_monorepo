@@ -200,7 +200,7 @@ router.get('/verify/:certificateId', async (ctx) => {
  * Generate a unique certificate ID
  * In production, this should be stored in the database
  */
-function generateCertificateId(enrollmentId: string, userId: string): string {
+function generateCertificateId(_enrollmentId: string, _userId: string): string {
   const timestamp = Date.now().toString(36);
   const random = Math.random().toString(36).substring(2, 8);
   return `CERT-${timestamp}-${random}`.toUpperCase();
