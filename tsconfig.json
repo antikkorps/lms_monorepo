@@ -20,6 +20,9 @@
     },
     {
       "path": "./e2e"
+    },
+    {
+      "path": "./libs/shared/config"
     }
   ]
 }
