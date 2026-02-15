@@ -1,4 +1,7 @@
 import Router from '@koa/router';
+import { sequelize } from '../database/sequelize.js';
+import { getRedisClient } from '../utils/redis.js';
+import { logger } from '../utils/logger.js';
 
 export const healthRouter = new Router({ prefix: '/health' });
 
@@ -14,11 +17,27 @@ healthRouter.get('/', async (ctx) => {
 });
 
 healthRouter.get('/ready', async (ctx) => {
-  // Add database and Redis connectivity checks here
-  const checks = {
-    database: true, // TODO: implement actual check
-    redis: true, // TODO: implement actual check
+  const checks: Record<string, boolean> = {
+    database: false,
+    redis: false,
   };
+
+  // Database check
+  try {
+    await sequelize.authenticate();
+    checks.database = true;
+  } catch (err) {
+    logger.error({ err }, 'Health check: database unreachable');
+  }
+
+  // Redis check
+  try {
+    const redis = getRedisClient();
+    const pong = await redis.ping();
+    checks.redis = pong === 'PONG';
+  } catch (err) {
+    logger.error({ err }, 'Health check: Redis unreachable');
+  }
 
   const isReady = Object.values(checks).every(Boolean);
 
@@ -29,6 +48,7 @@ healthRouter.get('/ready', async (ctx) => {
       status: isReady ? 'ready' : 'not_ready',
       checks,
       timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
     },
   };
 });

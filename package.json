@@ -18,7 +18,8 @@
     "db:reset": "npm run db:schema && npm run db:seed",
     "db:psql": "docker exec -it lms-postgres psql -U lms -d lms",
     "db:migrate": "npx tsx apps/api/src/database/migrator.ts",
-    "db:migrate:status": "npx tsx apps/api/src/database/migrator.ts status"
+    "db:migrate:status": "npx tsx apps/api/src/database/migrator.ts status",
+    "db:cleanup": "npx tsx apps/api/src/database/cleanup.ts"
   },
   "private": true,
   "devDependencies": {

@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { ref } from 'vue';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // =============================================================================
 // Module Mocks
@@ -90,8 +89,8 @@ describe('useNotifications', () => {
         },
       ];
 
-      mockApiRequest.mockResolvedValue({
-        data: mockNotifications,
+      mockApiGet.mockResolvedValue({
+        notifications: mockNotifications,
         pagination: { page: 1, limit: 20, total: 1, totalPages: 1 },
       });
 
@@ -102,8 +101,8 @@ describe('useNotifications', () => {
 
       await fetchNotifications();
 
-      expect(mockApiRequest).toHaveBeenCalledWith('/notifications', {
-        params: { page: 1, limit: 20, unreadOnly: false },
+      expect(mockApiGet).toHaveBeenCalledWith('/notifications', {
+        page: 1, limit: 20, unreadOnly: false,
       });
 
       expect(notifications.value).toHaveLength(1);
@@ -113,8 +112,8 @@ describe('useNotifications', () => {
     });
 
     it('should filter by unread only', async () => {
-      mockApiRequest.mockResolvedValue({
-        data: [],
+      mockApiGet.mockResolvedValue({
+        notifications: [],
         pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
       });
 
@@ -123,13 +122,13 @@ describe('useNotifications', () => {
 
       await fetchNotifications(1, true);
 
-      expect(mockApiRequest).toHaveBeenCalledWith('/notifications', {
-        params: { page: 1, limit: 20, unreadOnly: true },
+      expect(mockApiGet).toHaveBeenCalledWith('/notifications', {
+        page: 1, limit: 20, unreadOnly: true,
       });
     });
 
     it('should handle fetch errors', async () => {
-      mockApiRequest.mockRejectedValue(new Error('Network error'));
+      mockApiGet.mockRejectedValue(new Error('Network error'));
 
       const { useNotifications } = await import('../useNotifications');
       const { fetchNotifications, error } = useNotifications();
@@ -169,8 +168,8 @@ describe('useNotifications', () => {
 
   describe('markAsRead', () => {
     it('should mark notification as read', async () => {
-      mockApiRequest.mockResolvedValue({
-        data: [
+      mockApiGet.mockResolvedValue({
+        notifications: [
           {
             id: 'notif-1',
             type: 'lesson_completed',
@@ -197,8 +196,8 @@ describe('useNotifications', () => {
     });
 
     it('should not decrement count for already read notifications', async () => {
-      mockApiRequest.mockResolvedValue({
-        data: [
+      mockApiGet.mockResolvedValue({
+        notifications: [
           {
             id: 'notif-1',
             type: 'lesson_completed',
@@ -225,8 +224,8 @@ describe('useNotifications', () => {
 
   describe('markAllAsRead', () => {
     it('should mark all notifications as read', async () => {
-      mockApiRequest.mockResolvedValue({
-        data: [
+      mockApiGet.mockResolvedValue({
+        notifications: [
           {
             id: 'notif-1',
             type: 'lesson_completed',
@@ -262,8 +261,8 @@ describe('useNotifications', () => {
 
   describe('deleteNotification', () => {
     it('should delete notification and update state', async () => {
-      mockApiRequest.mockResolvedValue({
-        data: [
+      mockApiGet.mockResolvedValue({
+        notifications: [
           {
             id: 'notif-1',
             type: 'lesson_completed',
@@ -291,8 +290,8 @@ describe('useNotifications', () => {
     });
 
     it('should not decrement count when deleting read notification', async () => {
-      mockApiRequest.mockResolvedValue({
-        data: [
+      mockApiGet.mockResolvedValue({
+        notifications: [
           {
             id: 'notif-1',
             type: 'lesson_completed',
@@ -327,8 +326,8 @@ describe('useNotifications', () => {
         createdAt: '2024-01-01T00:00:00.000Z',
       }));
 
-      mockApiRequest.mockResolvedValue({
-        data: mockNotifications,
+      mockApiGet.mockResolvedValue({
+        notifications: mockNotifications,
         pagination: { page: 1, limit: 20, total: 10, totalPages: 1 },
       });
 

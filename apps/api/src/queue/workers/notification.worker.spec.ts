@@ -29,13 +29,13 @@ const mockWorkerInstance = {
 };
 
 // Store Worker calls for assertions
-const workerCalls: Array<{ queueName: string; processor: Function; options: object }> = [];
+const workerCalls: Array<{ queueName: string; processor: (...args: unknown[]) => unknown; options: object }> = [];
 
 // Create a proper class mock for Worker
 class MockWorker {
-  processor: Function;
+  processor: (...args: unknown[]) => unknown;
 
-  constructor(queueName: string, processor: Function, options: object) {
+  constructor(queueName: string, processor: (...args: unknown[]) => unknown, options: object) {
     workerCalls.push({ queueName, processor, options });
     this.processor = processor;
   }

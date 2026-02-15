@@ -173,8 +173,8 @@ function createMockUser(overrides: Record<string, unknown> = {}) {
   };
   return {
     ...data,
-    get fullName() {
-      return `${this.firstName} ${this.lastName}`;
+    get fullName(): string {
+      return `${data.firstName} ${data.lastName}`;
     },
     update: vi.fn().mockResolvedValue(undefined),
     toJSON: () => data,

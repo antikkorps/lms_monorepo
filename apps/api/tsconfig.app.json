@@ -25,5 +25,13 @@
     "../../libs/shared/config/src/**/*.ts",
     "../../libs/shared/schemas/src/**/*.ts",
     "../../libs/shared/types/src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../../libs/shared/schemas/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/shared/types/tsconfig.lib.json"
+    }
   ]
 }

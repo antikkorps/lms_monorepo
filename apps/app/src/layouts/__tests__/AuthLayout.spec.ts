@@ -64,7 +64,7 @@ describe('AuthLayout', () => {
 
     const contentContainer = wrapper.find('main > div');
     expect(contentContainer.exists()).toBe(true);
-    expect(contentContainer.classes()).toContain('max-w-md');
+    expect(contentContainer.classes()).toContain('max-w-lg');
   });
 
   it('applies full height layout', () => {

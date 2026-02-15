@@ -9,7 +9,6 @@
 
 const isDev = import.meta.env.DEV;
 
-/* eslint-disable no-console */
 export const logger = {
   /** Debug info — only shown in development (via console.warn) */
   debug(message: string, ...args: unknown[]): void {
@@ -28,4 +27,3 @@ export const logger = {
     console.error(message, ...args);
   },
 };
-/* eslint-enable no-console */

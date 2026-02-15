@@ -86,8 +86,8 @@
 - [x] Fix super_admin sidebar: hide tenant-scoped items, add review moderation (Done: 2026-02-14)
 
 ### Pending - Deployment Prep
-- [ ] Create AcceptInvitationView.vue (`/invitations/:token` route)
-- [ ] Add invitation i18n keys (EN/FR)
+- [x] Create AcceptInvitationView.vue (`/invitations/:token` route) (Done: 2026-02-15)
+- [x] Add invitation i18n keys (EN/FR) (Done: 2026-02-15)
 
 ---
 

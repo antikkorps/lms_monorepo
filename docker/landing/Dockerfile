@@ -49,7 +49,7 @@ RUN npm ci
 COPY . .
 
 # Build the landing page
-RUN npx nx build landing
+RUN npx nx build landing --configuration=production
 
 # -----------------------------------------------------------------------------
 # Production stage - Serve static files with nginx

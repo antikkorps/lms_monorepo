@@ -47,7 +47,7 @@ export function generateAnalyticsPdf(input: PdfInput): Readable {
 
   // Table header
   doc.rect(tableLeft, doc.y, tableWidth, rowHeight).fill(COLORS.primary);
-  let headerY = doc.y + 7;
+  const headerY = doc.y + 7;
   headers.forEach((h, i) => {
     doc.fontSize(9).fillColor('#ffffff')
       .text(h.trim(), tableLeft + i * colWidth + 5, headerY, {

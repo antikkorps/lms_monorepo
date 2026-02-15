@@ -27,7 +27,7 @@
 #### Email Configuration
 - [x] Configure production email provider (Mailjet) (Done: 2026-02-04)
 - [ ] Test email delivery for all templates (verification, password-reset, invitation)
-- [ ] Add email delivery monitoring / logging
+- [x] Add email delivery monitoring / logging (Already existed: EmailLog model + admin endpoints GET /admin/email/stats, GET /admin/email/logs, POST /admin/email/test)
 
 #### SSO Configuration
 

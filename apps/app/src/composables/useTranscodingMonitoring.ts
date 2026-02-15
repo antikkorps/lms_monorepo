@@ -108,11 +108,7 @@ export function useTranscodingMonitoring() {
   }
 
   async function fetchStats(): Promise<void> {
-    try {
-      stats.value = await api.get<TranscodingStats>('/admin/transcoding/stats');
-    } catch (err) {
-      throw err;
-    }
+    stats.value = await api.get<TranscodingStats>('/admin/transcoding/stats');
   }
 
   async function fetchJobs(
@@ -120,16 +116,12 @@ export function useTranscodingMonitoring() {
     limit = 20,
     offset = 0
   ): Promise<void> {
-    try {
-      const data = await api.get<JobsResponse>('/admin/transcoding/jobs', {
-        status: status || statusFilter.value,
-        limit,
-        offset,
-      });
-      jobs.value = data.jobs;
-    } catch (err) {
-      throw err;
-    }
+    const data = await api.get<JobsResponse>('/admin/transcoding/jobs', {
+      status: status || statusFilter.value,
+      limit,
+      offset,
+    });
+    jobs.value = data.jobs;
   }
 
   async function retryJob(jobId: string): Promise<RetryResponse> {

@@ -50,7 +50,7 @@ export function useNotifications() {
   });
 
   let eventSource: EventSource | null = null;
-  let isConnected = ref(false);
+  const isConnected = ref(false);
 
   const recentNotifications = computed(() => {
     return notifications.value.slice(0, 5);

@@ -135,6 +135,18 @@ export const translations = {
     'legal.lastUpdated': 'Last updated',
     'legal.toc': 'Table of Contents',
 
+    // Coming Soon
+    'comingSoon.title': 'Coming Soon',
+    'comingSoon.subtitle': 'We\'re building something amazing. Be the first to know when we launch.',
+    'comingSoon.newsletter.title': 'Get notified',
+    'comingSoon.newsletter.subtitle': 'Subscribe to our newsletter and we\'ll let you know when we\'re ready.',
+    'comingSoon.newsletter.email': 'Your email address',
+    'comingSoon.newsletter.submit': 'Notify Me',
+    'comingSoon.newsletter.success': 'Thanks! We\'ll keep you posted.',
+    'comingSoon.newsletter.error': 'Something went wrong. Please try again.',
+    'comingSoon.newsletter.submitting': 'Subscribing...',
+    'comingSoon.backHome': 'Back to home',
+
     // Cookie Consent
     'cookie.title': 'We value your privacy',
     'cookie.description': 'We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.',
@@ -275,6 +287,18 @@ export const translations = {
     'legal.terms.title': 'Conditions d\'Utilisation',
     'legal.lastUpdated': 'Derniere mise a jour',
     'legal.toc': 'Table des Matieres',
+
+    // Coming Soon
+    'comingSoon.title': 'Bientot Disponible',
+    'comingSoon.subtitle': 'Nous preparons quelque chose d\'exceptionnel. Soyez les premiers informes du lancement.',
+    'comingSoon.newsletter.title': 'Restez informe',
+    'comingSoon.newsletter.subtitle': 'Inscrivez-vous a notre newsletter et nous vous previendrons des que tout sera pret.',
+    'comingSoon.newsletter.email': 'Votre adresse email',
+    'comingSoon.newsletter.submit': 'Me prevenir',
+    'comingSoon.newsletter.success': 'Merci ! Nous vous tiendrons informe.',
+    'comingSoon.newsletter.error': 'Une erreur est survenue. Veuillez reessayer.',
+    'comingSoon.newsletter.submitting': 'Inscription...',
+    'comingSoon.backHome': 'Retour a l\'accueil',
 
     // Cookie Consent
     'cookie.title': 'Nous respectons votre vie privee',

@@ -21,6 +21,9 @@ describe('Transcoding Circuit Breaker', () => {
       submit: vi.fn().mockResolvedValue({ uid: 'stream-123', status: 'pending' }),
       getStatus: vi.fn().mockResolvedValue({ uid: 'stream-123', status: 'processing' }),
       delete: vi.fn().mockResolvedValue(undefined),
+      supportsWebhook: vi.fn().mockReturnValue(false),
+      verifyWebhook: vi.fn().mockReturnValue({ valid: false }),
+      parseWebhookPayload: vi.fn().mockReturnValue(null),
     };
   });
 

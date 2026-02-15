@@ -166,7 +166,7 @@ const footerLinks = {
             {t('nav.login')}
           </a>
           <a
-            href="/app/register"
+            href={getLocalizedPath('/coming-soon', lang)}
             class="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
           >
             {t('nav.signup')}
@@ -248,7 +248,7 @@ const footerLinks = {
               {t('nav.login')}
             </a>
             <a
-              href="/app/register"
+              href={getLocalizedPath('/coming-soon', lang)}
               class="w-full min-h-[48px] flex items-center justify-center font-medium bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors"
             >
               {t('nav.signup')}
