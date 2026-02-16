@@ -4,157 +4,73 @@ on:
   push:
     branches:
       - main
-      - dev
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'staging'
-        type: choice
-        options:
-          - staging
-          - production
 
 env:
-  NODE_VERSION: '22'
-  REGISTRY: ghcr.io
-  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/lms
+  DEPLOY_PATH: /opt/iqon-ia
+  COMPOSE_FILE: deploy/docker-compose.prod.yml
 
 jobs:
   # =============================================================================
-  # Build Docker Images
+  # Deploy to VPS via SSH
   # =============================================================================
-  build-images:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      matrix:
-        app: [api, app, landing]
-    outputs:
-      api-image: ${{ steps.meta-api.outputs.tags }}
-      app-image: ${{ steps.meta-app.outputs.tags }}
-      landing-image: ${{ steps.meta-landing.outputs.tags }}
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta-${{ matrix.app }}
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_PREFIX }}-${{ matrix.app }}
-          tags: |
-            type=ref,event=branch
-            type=sha,prefix=
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: docker/${{ matrix.app }}/Dockerfile
-          target: production
-          push: true
-          tags: ${{ steps.meta-${{ matrix.app }}.outputs.tags }}
-          labels: ${{ steps.meta-${{ matrix.app }}.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  # =============================================================================
-  # Deploy to Staging (on dev branch)
-  # =============================================================================
-  deploy-staging:
-    runs-on: ubuntu-latest
-    needs: build-images
-    if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
-    environment:
-      name: staging
-      url: https://staging.lms.example.com
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Deploy to staging
-        run: |
-          echo "Deploying to staging environment..."
-          # TODO: Add deployment commands (SSH, kubectl, etc.)
-          # Example with SSH:
-          # ssh ${{ secrets.STAGING_SSH_HOST }} "docker compose pull && docker compose up -d"
-
-  # =============================================================================
-  # Deploy to Production (on main branch)
-  # =============================================================================
-  deploy-production:
-    runs-on: ubuntu-latest
-    needs: build-images
-    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
     environment:
       name: production
-      url: https://lms.example.com
+      url: https://iqon-ia.com
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Deploy to production
-        run: |
-          echo "Deploying to production environment..."
-          # TODO: Add deployment commands
-          # Example with kubectl:
-          # kubectl set image deployment/lms-api api=${{ env.IMAGE_PREFIX }}-api:${{ github.sha }}
-          # kubectl set image deployment/lms-app app=${{ env.IMAGE_PREFIX }}-app:${{ github.sha }}
-          # kubectl set image deployment/lms-landing landing=${{ env.IMAGE_PREFIX }}-landing:${{ github.sha }}
-
-  # =============================================================================
-  # Database Migration (optional, triggered manually)
-  # =============================================================================
-  migrate-database:
-    runs-on: ubuntu-latest
-    needs: deploy-production
-    if: github.event_name == 'workflow_dispatch'
-    environment:
-      name: production
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run migrations
-        env:
-          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
-        run: |
-          echo "Running database migrations..."
-          # npx sequelize-cli db:migrate
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            git pull origin main
+            docker compose -f ${{ env.COMPOSE_FILE }} build --parallel
+            docker compose -f ${{ env.COMPOSE_FILE }} up -d
+            docker image prune -f
 
   # =============================================================================
-  # Notify on Deployment
+  # Run Database Migrations
   # =============================================================================
-  notify:
+  migrate:
     runs-on: ubuntu-latest
-    needs: [deploy-staging, deploy-production]
-    if: always() && (needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success')
+    needs: deploy
     steps:
-      - name: Send notification
+      - name: Run migrations via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            docker compose -f ${{ env.COMPOSE_FILE }} exec -T api npx tsx src/database/migrator.ts
+
+  # =============================================================================
+  # Health Check
+  # =============================================================================
+  health-check:
+    runs-on: ubuntu-latest
+    needs: migrate
+    steps:
+      - name: Wait for services
+        run: sleep 15
+
+      - name: Check API health
         run: |
-          echo "Deployment completed successfully!"
-          # TODO: Add Slack/Discord notification
-          # curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
-          #   -H 'Content-type: application/json' \
-          #   -d '{"text":"LMS deployed to ${{ github.ref_name }}"}'
+          curl --fail --retry 5 --retry-delay 5 \
+            https://api.iqon-ia.com/api/v1/health
+
+      - name: Check App
+        run: |
+          curl --fail --retry 3 --retry-delay 5 \
+            https://app.iqon-ia.com
+
+      - name: Check Landing
+        run: |
+          curl --fail --retry 3 --retry-delay 5 \
+            https://iqon-ia.com

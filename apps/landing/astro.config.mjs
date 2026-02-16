@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
-  site: 'https://lms-platform.com',
+  site: 'https://iqon-ia.com',
   vite: {
     plugins: [tailwindcss()],
     resolve: {

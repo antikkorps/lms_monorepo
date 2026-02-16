@@ -1,0 +1,32 @@
+# =============================================================================
+# Caddyfile - Reverse Proxy (HTTP only, TLS handled by Cloudflare)
+# =============================================================================
+
+{
+	auto_https off
+	log {
+		format json
+	}
+}
+
+# Landing page — iqon-ia.com
+http://iqon-ia.com, http://www.iqon-ia.com {
+	reverse_proxy landing:80
+}
+
+# Frontend app — app.iqon-ia.com
+http://app.iqon-ia.com {
+	reverse_proxy app:80
+}
+
+# API — api.iqon-ia.com
+http://api.iqon-ia.com {
+	reverse_proxy api:3000
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}

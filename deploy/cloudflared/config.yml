@@ -1,0 +1,23 @@
+# =============================================================================
+# Cloudflare Tunnel Configuration
+# =============================================================================
+# Replace <TUNNEL_ID> with your actual tunnel ID after running:
+#   cloudflared tunnel create iqon-ia
+#
+# Place credentials file at:
+#   deploy/cloudflared/<TUNNEL_ID>.json
+
+tunnel: <TUNNEL_ID>
+credentials-file: /etc/cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  - hostname: iqon-ia.com
+    service: http://caddy:80
+  - hostname: www.iqon-ia.com
+    service: http://caddy:80
+  - hostname: app.iqon-ia.com
+    service: http://caddy:80
+  - hostname: api.iqon-ia.com
+    service: http://caddy:80
+  # Catch-all rule (required by cloudflared)
+  - service: http_status:404
