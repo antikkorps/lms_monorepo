@@ -16,7 +16,6 @@ services:
       - .env.production
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ../docker/postgres/migrations:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U lms -d lms"]
       interval: 10s
