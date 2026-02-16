@@ -68,11 +68,15 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Copy built files
 COPY --from=builder /app/dist/apps/api ./
 
-# Copy package files for production dependency install (workspace structure required)
+# Copy ALL workspace package.json files for npm ci resolution
 COPY --from=builder /app/package.json /app/package-lock.json ./
 COPY --from=builder /app/apps/api/package.json ./apps/api/
+COPY --from=builder /app/apps/app/package.json ./apps/app/
+COPY --from=builder /app/apps/landing/package.json ./apps/landing/
 COPY --from=builder /app/libs/shared/schemas/package.json ./libs/shared/schemas/
 COPY --from=builder /app/libs/shared/types/package.json ./libs/shared/types/
+COPY --from=builder /app/libs/shared/ui/package.json ./libs/shared/ui/
+COPY --from=builder /app/libs/shared/config/package.json ./libs/shared/config/
 
 # Install production dependencies only (--ignore-scripts to skip husky prepare)
 RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
