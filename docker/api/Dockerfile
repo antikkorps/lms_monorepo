@@ -71,8 +71,8 @@ COPY --from=builder /app/dist/apps/api ./
 # Copy package files for production dependency install
 COPY --from=builder /app/package.json /app/package-lock.json ./
 
-# Install production dependencies only
-RUN npm ci --omit=dev && npm cache clean --force
+# Install production dependencies only (--ignore-scripts to skip husky prepare)
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 # Switch to non-root user
 USER api
