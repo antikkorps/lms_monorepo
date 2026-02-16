@@ -26,6 +26,9 @@ import { disconnectPublisher } from './services/notifications/index.js';
 
 const app = new Koa();
 
+// Trust proxy headers (X-Forwarded-*) from Caddy/Cloudflare
+app.proxy = true;
+
 // Setup middlewares (error handling, logging, cors, etc.)
 setupMiddlewares(app);
 

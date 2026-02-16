@@ -48,6 +48,12 @@ FROM base AS builder
 # Install all dependencies
 RUN npm ci
 
+# Build args for Vite environment variables
+ARG VITE_API_URL=https://api.iqon-ia.com
+ARG VITE_STRIPE_PUBLISHABLE_KEY=
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY
+
 # Copy all source files
 COPY . .
 
