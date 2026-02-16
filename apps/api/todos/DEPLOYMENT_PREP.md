@@ -16,6 +16,18 @@
 - [x] Add `MAILJET_CONTACT_LIST_ID` to config (Done: 2026-02-15)
 - [x] Health check endpoint (`GET /api/v1/health/ready`) — real DB + Redis connectivity checks (Done: 2026-02-15)
 
+### Production Infrastructure
+
+- [x] docker-compose.prod.yml — full stack (postgres, redis, api, app, landing, caddy, cloudflared) (Done: 2026-02-16)
+- [x] Caddyfile reverse proxy (HTTP, TLS via Cloudflare) (Done: 2026-02-16)
+- [x] Cloudflare Tunnel config template (Done: 2026-02-16)
+- [x] .env.production.example with Docker-internal hostnames (Done: 2026-02-16)
+- [x] .dockerignore for optimized build context (Done: 2026-02-16)
+- [x] VITE_API_URL / VITE_STRIPE_PUBLISHABLE_KEY build args in app Dockerfile (Done: 2026-02-16)
+- [x] `app.proxy = true` in Koa for X-Forwarded-* headers (Done: 2026-02-16)
+- [x] Landing site URL updated to iqon-ia.com (Done: 2026-02-16)
+- [x] Deploy workflow rewritten to SSH-based (git pull + docker compose build) (Done: 2026-02-16)
+
 ### Auth Flow Verification
 
 - [ ] Verify B2C registration flow end-to-end (register → verify email → login)
@@ -25,6 +37,12 @@
 
 - [ ] Configure Stripe test mode (`sk_test_*` keys in `.env.production`)
 - [ ] Configure Stripe webhook URL for production domain
+
+### CI Typecheck Fix
+
+- [ ] Fix `tsc --build` resolution: `@shared/types` resolves to `libs/shared/schemas/src/index.js` instead of `libs/shared/types/src/index.ts` — Invoice types not found (12 errors)
+- [ ] Fix `@shared/schemas` not finding `updateTenantSSOSchema` / `tenantSSOConfigSchema` in `tsc --build` mode (despite declarations being correct in `dist/out-tsc/`)
+- [ ] Root cause: `tsconfig.app.json` has `composite: false` + path mappings conflict with project references in `--build` mode. Investigate `baseUrl` resolution with extended paths.
 
 ### Cloudflare
 
