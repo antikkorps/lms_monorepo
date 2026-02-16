@@ -1,4 +1,7 @@
-import 'dotenv/config';
+// Load .env file in development (in production, Docker injects env vars)
+if (process.env.NODE_ENV !== 'production') {
+  await import('dotenv/config');
+}
 import Koa from 'koa';
 import { config } from './config/index.js';
 import { setupMiddlewares } from './middlewares/index.js';
