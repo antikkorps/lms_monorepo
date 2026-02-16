@@ -44,6 +44,6 @@
     "@types/koa-static": "^4.0.4",
     "@types/multer": "^2.0.0",
     "@types/opossum": "^8.1.9",
-    "@types/pdfkit": "^0.17.4"
+    "@types/pdfkit": "^0.17.5"
   }
 }
