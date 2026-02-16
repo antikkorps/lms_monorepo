@@ -12,11 +12,15 @@ WORKDIR /app
 # Install dependencies for native modules
 RUN apk add --no-cache libc6-compat
 
-# Copy package files
+# Copy ALL workspace package.json files (npm ci needs complete workspace structure)
 COPY package*.json ./
 COPY apps/api/package.json ./apps/api/
+COPY apps/app/package.json ./apps/app/
+COPY apps/landing/package.json ./apps/landing/
 COPY libs/shared/schemas/package.json ./libs/shared/schemas/
 COPY libs/shared/types/package.json ./libs/shared/types/
+COPY libs/shared/ui/package.json ./libs/shared/ui/
+COPY libs/shared/config/package.json ./libs/shared/config/
 
 # -----------------------------------------------------------------------------
 # Development stage - With hot-reload
