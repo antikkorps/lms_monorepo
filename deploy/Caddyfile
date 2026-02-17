@@ -21,7 +21,9 @@ http://app.iqon-ia.com {
 
 # API — api.iqon-ia.com
 http://api.iqon-ia.com {
-	reverse_proxy api:3000
+	reverse_proxy api:3000 {
+		header_up X-Forwarded-Proto "https"
+	}
 
 	header {
 		X-Content-Type-Options "nosniff"
