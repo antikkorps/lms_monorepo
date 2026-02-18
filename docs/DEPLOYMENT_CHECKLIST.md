@@ -11,7 +11,7 @@
 
 - [x] Provision Hetzner VPS (recommended: CX31 or higher)
 - [x] Install Docker + Docker Compose
-- [ ] Configure Cloudflare DNS + Tunnel
+- [x] Configure Cloudflare DNS + Tunnel
 - [ ] Create `deploy/docker-compose.prod.yml` (api, app, landing, postgres, redis, caddy)
 - [ ] Create `deploy/Caddyfile` (reverse proxy: landing, app, api — auto HTTPS via Cloudflare DNS challenge)
 - [ ] Create `deploy/cloudflared/config.yml` (Cloudflare Tunnel)
