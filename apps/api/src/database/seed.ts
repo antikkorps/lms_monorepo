@@ -47,7 +47,7 @@ import { logger } from '../utils/logger.js';
 // Configuration
 // =============================================================================
 
-const DEFAULT_PASSWORD = 'Password123!';
+const DEFAULT_PASSWORD = 'IQON-ia123%';
 
 // Fixed UUIDs for predictable testing
 const IDS = {

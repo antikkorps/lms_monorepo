@@ -1,8 +1,8 @@
 -- =============================================================================
 -- LMS Database Seed Script
 -- =============================================================================
--- Default password for all users: Password123!
--- Password hash (bcrypt): $2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS
+-- Default password for all users: IQON-ia123%
+-- Password hash (bcrypt): $2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW
 
 BEGIN;
 
@@ -17,27 +17,27 @@ VALUES
 -- =============================================================================
 -- USERS
 -- =============================================================================
--- Password for all: Password123!
+-- Password for all: IQON-ia123%
 INSERT INTO users (id, email, password_hash, first_name, last_name, role, status, tenant_id, created_at, updated_at)
 VALUES
   -- SuperAdmin (global, no tenant)
-  ('550e8400-e29b-41d4-a716-446655440100', 'superadmin@lms.local', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Super', 'Admin', 'super_admin'::user_role, 'active'::user_status, NULL, NOW(), NOW()),
+  ('550e8400-e29b-41d4-a716-446655440100', 'superadmin@lms.local', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Super', 'Admin', 'super_admin'::user_role, 'active'::user_status, NULL, NOW(), NOW()),
 
   -- Instructor (global, creates courses)
-  ('550e8400-e29b-41d4-a716-446655440101', 'instructor@lms.local', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Ian', 'Instructor', 'instructor'::user_role, 'active'::user_status, NULL, NOW(), NOW()),
+  ('550e8400-e29b-41d4-a716-446655440101', 'instructor@lms.local', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Ian', 'Instructor', 'instructor'::user_role, 'active'::user_status, NULL, NOW(), NOW()),
 
   -- Solo learner (B2C, no tenant)
-  ('550e8400-e29b-41d4-a716-446655440102', 'solo@example.com', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Solo', 'Learner', 'learner'::user_role, 'active'::user_status, NULL, NOW(), NOW()),
+  ('550e8400-e29b-41d4-a716-446655440102', 'solo@example.com', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Solo', 'Learner', 'learner'::user_role, 'active'::user_status, NULL, NOW(), NOW()),
 
   -- Acme Corp users
-  ('550e8400-e29b-41d4-a716-446655440201', 'admin@acme-corp.com', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Alice', 'Admin', 'tenant_admin'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
-  ('550e8400-e29b-41d4-a716-446655440202', 'manager@acme-corp.com', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Mike', 'Manager', 'manager'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
-  ('550e8400-e29b-41d4-a716-446655440203', 'learner1@acme-corp.com', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Laura', 'Learner', 'learner'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
-  ('550e8400-e29b-41d4-a716-446655440204', 'learner2@acme-corp.com', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Leo', 'Student', 'learner'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+  ('550e8400-e29b-41d4-a716-446655440201', 'admin@acme-corp.com', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Alice', 'Admin', 'tenant_admin'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+  ('550e8400-e29b-41d4-a716-446655440202', 'manager@acme-corp.com', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Mike', 'Manager', 'manager'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+  ('550e8400-e29b-41d4-a716-446655440203', 'learner1@acme-corp.com', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Laura', 'Learner', 'learner'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+  ('550e8400-e29b-41d4-a716-446655440204', 'learner2@acme-corp.com', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Leo', 'Student', 'learner'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
 
   -- Tech Startup users
-  ('550e8400-e29b-41d4-a716-446655440301', 'admin@tech-startup.com', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Tom', 'TechAdmin', 'tenant_admin'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440002', NOW(), NOW()),
-  ('550e8400-e29b-41d4-a716-446655440302', 'dev@tech-startup.com', '$2b$10$flAHb1MRwUpvvBxGrX5CqOGIvSS/cax7K1GaeUzlzOXqEJZievkDS', 'Diana', 'Developer', 'learner'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440002', NOW(), NOW());
+  ('550e8400-e29b-41d4-a716-446655440301', 'admin@tech-startup.com', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Tom', 'TechAdmin', 'tenant_admin'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440002', NOW(), NOW()),
+  ('550e8400-e29b-41d4-a716-446655440302', 'dev@tech-startup.com', '$2b$10$CH0NPpFoXSe.v0442kgvsugIF9f4tVxXqi2Pc9l2rrv2dyI5WsijW', 'Diana', 'Developer', 'learner'::user_role, 'active'::user_status, '550e8400-e29b-41d4-a716-446655440002', NOW(), NOW());
 
 -- =============================================================================
 -- GROUPS
@@ -152,8 +152,8 @@ COMMIT;
 -- Badges: 3
 --
 -- Test credentials:
--- - superadmin@lms.local / Password123!
--- - instructor@lms.local / Password123!
--- - solo@example.com / Password123!
--- - admin@acme-corp.com / Password123!
+-- - superadmin@lms.local / IQON-ia123%
+-- - instructor@lms.local / IQON-ia123%
+-- - solo@example.com / IQON-ia123%
+-- - admin@acme-corp.com / IQON-ia123%
 -- =============================================================================
