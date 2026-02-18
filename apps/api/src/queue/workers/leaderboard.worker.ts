@@ -126,7 +126,7 @@ async function computeAvgQuizScore(
 ): Promise<{ userId: string; score: number }[]> {
   const results = await sequelize.query<{ userId: string; score: string }>(
     `SELECT user_id AS "userId",
-            ROUND(AVG(score_percentage)::numeric, 2) AS score
+            ROUND(AVG(score * 100.0 / NULLIF(max_score, 0))::numeric, 2) AS score
      FROM quiz_results
      WHERE completed_at >= :periodStart
      GROUP BY user_id
