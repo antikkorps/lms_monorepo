@@ -30,23 +30,28 @@ import { logger } from '../utils/logger.js';
 import { emailService } from '../services/email/index.js';
 import { parseLocaleFromRequest } from '../utils/locale.js';
 
-// Cookie options for tokens
-const COOKIE_OPTIONS: {
-  httpOnly: boolean;
-  secure: boolean;
-  sameSite: 'lax' | 'strict' | 'none';
-  domain?: string;
-  path?: string;
-} = {
-  httpOnly: true,
-  secure: config.cookieSecure,
-  sameSite: 'lax',
-  path: '/',
-};
+/**
+ * Build cookie options using ctx.secure (proxy-aware via app.proxy = true)
+ */
+function getCookieOptions(ctx: Context) {
+  const opts: {
+    httpOnly: boolean;
+    secure: boolean;
+    sameSite: 'lax' | 'strict' | 'none';
+    domain?: string;
+    path?: string;
+  } = {
+    httpOnly: true,
+    secure: ctx.secure,
+    sameSite: 'lax',
+    path: '/',
+  };
 
-// Only add domain if explicitly set (undefined domain can cause issues)
-if (config.cookieDomain) {
-  COOKIE_OPTIONS.domain = config.cookieDomain;
+  if (config.cookieDomain) {
+    opts.domain = config.cookieDomain;
+  }
+
+  return opts;
 }
 
 /**
@@ -57,15 +62,17 @@ function setAuthCookies(
   accessToken: string,
   refreshToken: string
 ): void {
+  const cookieOpts = getCookieOptions(ctx);
+
   // Access token: short-lived
   ctx.cookies.set('access_token', accessToken, {
-    ...COOKIE_OPTIONS,
+    ...cookieOpts,
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
 
   // Refresh token: long-lived
   ctx.cookies.set('refresh_token', refreshToken, {
-    ...COOKIE_OPTIONS,
+    ...cookieOpts,
     path: '/api/v1/auth/refresh', // Only sent to refresh endpoint
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
@@ -75,9 +82,10 @@ function setAuthCookies(
  * Clear auth cookies
  */
 function clearAuthCookies(ctx: Context): void {
-  ctx.cookies.set('access_token', '', { ...COOKIE_OPTIONS, maxAge: 0 });
+  const cookieOpts = getCookieOptions(ctx);
+  ctx.cookies.set('access_token', '', { ...cookieOpts, maxAge: 0 });
   ctx.cookies.set('refresh_token', '', {
-    ...COOKIE_OPTIONS,
+    ...cookieOpts,
     path: '/api/v1/auth/refresh',
     maxAge: 0,
   });
