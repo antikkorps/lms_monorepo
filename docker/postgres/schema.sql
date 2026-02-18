@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS users (
     status user_status NOT NULL DEFAULT 'pending',
     tenant_id UUID REFERENCES tenants(id) ON DELETE SET NULL,
     avatar_url TEXT,
+    locale VARCHAR(5) NOT NULL DEFAULT 'en',
     last_login_at TIMESTAMPTZ,
-    -- SSO fields
     sso_provider VARCHAR(50),
     sso_provider_id VARCHAR(255),
     sso_metadata JSONB,
@@ -127,10 +127,17 @@ CREATE TABLE IF NOT EXISTS courses (
     thumbnail_url TEXT,
     status course_status NOT NULL DEFAULT 'draft',
     price DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    currency VARCHAR(3) NOT NULL DEFAULT 'EUR',
     instructor_id UUID NOT NULL REFERENCES users(id),
     duration INTEGER NOT NULL DEFAULT 0,
     chapters_count INTEGER NOT NULL DEFAULT 0,
     lessons_count INTEGER NOT NULL DEFAULT 0,
+    average_rating DECIMAL(3, 2) NOT NULL DEFAULT 0,
+    ratings_count INTEGER NOT NULL DEFAULT 0,
+    category course_category NOT NULL DEFAULT 'other',
+    level course_level NOT NULL DEFAULT 'all_levels',
+    stripe_product_id VARCHAR(255),
+    stripe_price_id VARCHAR(255),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMPTZ
@@ -139,6 +146,8 @@ CREATE TABLE IF NOT EXISTS courses (
 CREATE INDEX IF NOT EXISTS idx_courses_slug ON courses(slug);
 CREATE INDEX IF NOT EXISTS idx_courses_status ON courses(status);
 CREATE INDEX IF NOT EXISTS idx_courses_instructor ON courses(instructor_id);
+CREATE INDEX IF NOT EXISTS idx_courses_category ON courses(category);
+CREATE INDEX IF NOT EXISTS idx_courses_level ON courses(level);
 
 -- =============================================================================
 -- CHAPTERS
@@ -176,6 +185,32 @@ CREATE TABLE IF NOT EXISTS lessons (
 CREATE INDEX IF NOT EXISTS idx_lessons_chapter_id ON lessons(chapter_id);
 
 -- =============================================================================
+-- LESSON_CONTENTS (Multi-language content per lesson)
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS lesson_contents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lesson_id UUID NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
+    lang supported_locale NOT NULL,
+    title VARCHAR(255),
+    video_url TEXT,
+    video_id VARCHAR(255),
+    transcript TEXT,
+    description TEXT,
+    transcoding_status transcoding_status,
+    video_source_key TEXT,
+    video_playback_url TEXT,
+    video_stream_id VARCHAR(255),
+    transcoding_error TEXT,
+    video_thumbnail_url TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE(lesson_id, lang)
+);
+
+CREATE INDEX IF NOT EXISTS idx_lesson_contents_lesson_id ON lesson_contents(lesson_id);
+CREATE INDEX IF NOT EXISTS idx_lesson_contents_lang ON lesson_contents(lang);
+
+-- =============================================================================
 -- QUIZ_QUESTIONS
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS quiz_questions (
@@ -206,6 +241,17 @@ CREATE TABLE IF NOT EXISTS purchases (
     stripe_payment_intent_id VARCHAR(255),
     stripe_checkout_session_id VARCHAR(255),
     purchased_at TIMESTAMPTZ,
+    stripe_refund_id VARCHAR(255),
+    refunded_at TIMESTAMPTZ,
+    refund_reason VARCHAR(500),
+    refund_amount DECIMAL(10, 2),
+    is_partial_refund BOOLEAN NOT NULL DEFAULT false,
+    refund_request_status refund_request_status NOT NULL DEFAULT 'none',
+    refund_requested_at TIMESTAMPTZ,
+    refund_request_reason TEXT,
+    refund_reviewed_by UUID REFERENCES users(id),
+    refund_reviewed_at TIMESTAMPTZ,
+    refund_rejection_reason TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -259,6 +305,8 @@ CREATE TABLE IF NOT EXISTS badges (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     image_url TEXT NOT NULL,
+    category VARCHAR(20) NOT NULL DEFAULT 'milestone',
+    rarity VARCHAR(20) NOT NULL DEFAULT 'common',
     criteria JSONB NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -345,7 +393,7 @@ CREATE INDEX IF NOT EXISTS idx_discussion_reports_reported_by_id ON discussion_r
 CREATE INDEX IF NOT EXISTS idx_discussion_reports_status ON discussion_reports(status);
 
 -- =============================================================================
--- NOTES (Personal notes per user per lesson)
+-- NOTES
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS notes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -359,6 +407,179 @@ CREATE TABLE IF NOT EXISTS notes (
 
 CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id);
 CREATE INDEX IF NOT EXISTS idx_notes_lesson_id ON notes(lesson_id);
+
+-- =============================================================================
+-- NOTIFICATIONS
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type notification_type NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT,
+    data JSONB NOT NULL DEFAULT '{}',
+    link TEXT,
+    read BOOLEAN NOT NULL DEFAULT false,
+    read_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_user_read ON notifications(user_id, read);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at);
+
+-- =============================================================================
+-- NOTIFICATION_PREFERENCES
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS notification_preferences (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    email_enabled JSONB NOT NULL DEFAULT '{}',
+    in_app_enabled JSONB NOT NULL DEFAULT '{}',
+    digest_frequency digest_frequency NOT NULL DEFAULT 'weekly',
+    digest_day INTEGER NOT NULL DEFAULT 1,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notification_preferences_digest ON notification_preferences(digest_frequency, digest_day);
+
+-- =============================================================================
+-- COURSE_REVIEWS
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS course_reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    title VARCHAR(255),
+    comment TEXT,
+    status review_status NOT NULL DEFAULT 'pending',
+    moderated_by_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    moderated_at TIMESTAMPTZ,
+    moderation_note TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ
+);
+
+-- =============================================================================
+-- EMAIL_LOGS
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS email_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    type VARCHAR(50) NOT NULL,
+    recipient VARCHAR(255) NOT NULL,
+    subject VARCHAR(500) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'sent',
+    provider VARCHAR(50) NOT NULL,
+    message_id VARCHAR(255),
+    error TEXT,
+    metadata JSONB NOT NULL DEFAULT '{}',
+    sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_email_logs_type ON email_logs(type);
+CREATE INDEX IF NOT EXISTS idx_email_logs_recipient ON email_logs(recipient);
+CREATE INDEX IF NOT EXISTS idx_email_logs_status ON email_logs(status);
+CREATE INDEX IF NOT EXISTS idx_email_logs_sent_at ON email_logs(sent_at);
+
+-- =============================================================================
+-- USER_ACTIVITY_LOG
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS user_activity_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    activity_type VARCHAR(50) NOT NULL,
+    activity_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    reference_id UUID,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE(user_id, activity_type, activity_date, reference_id)
+);
+
+-- =============================================================================
+-- USER_STREAKS
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS user_streaks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    current_streak INTEGER NOT NULL DEFAULT 0,
+    longest_streak INTEGER NOT NULL DEFAULT 0,
+    last_active_date DATE,
+    streak_updated_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- LEADERBOARD_ENTRIES
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS leaderboard_entries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
+    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+    metric leaderboard_metric NOT NULL,
+    period leaderboard_period NOT NULL,
+    score DECIMAL(12, 2) NOT NULL DEFAULT 0,
+    rank INTEGER NOT NULL DEFAULT 0,
+    period_start DATE NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_leaderboard_entries_metric_period ON leaderboard_entries(metric, period, period_start, rank);
+CREATE INDEX IF NOT EXISTS idx_leaderboard_entries_user_id ON leaderboard_entries(user_id);
+
+-- =============================================================================
+-- TENANT_COURSE_LICENSES
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS tenant_course_licenses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id),
+    course_id UUID NOT NULL REFERENCES courses(id),
+    purchased_by_id UUID NOT NULL REFERENCES users(id),
+    license_type license_type NOT NULL,
+    seats_total INTEGER,
+    seats_used INTEGER NOT NULL DEFAULT 0,
+    amount DECIMAL(10, 2) NOT NULL,
+    currency VARCHAR(3) NOT NULL DEFAULT 'EUR',
+    status purchase_status NOT NULL DEFAULT 'pending',
+    stripe_payment_intent_id VARCHAR(255),
+    stripe_checkout_session_id VARCHAR(255),
+    stripe_invoice_id VARCHAR(255),
+    purchased_at TIMESTAMPTZ,
+    stripe_refund_id VARCHAR(255),
+    refunded_at TIMESTAMPTZ,
+    refund_reason VARCHAR(500),
+    refund_amount DECIMAL(10, 2),
+    is_partial_refund BOOLEAN NOT NULL DEFAULT false,
+    expires_at TIMESTAMPTZ,
+    renewed_at TIMESTAMPTZ,
+    renewal_count INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tenant_course_licenses_tenant ON tenant_course_licenses(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_tenant_course_licenses_course ON tenant_course_licenses(course_id);
+CREATE INDEX IF NOT EXISTS idx_tenant_course_licenses_tenant_course ON tenant_course_licenses(tenant_id, course_id);
+
+-- =============================================================================
+-- TENANT_COURSE_LICENSE_ASSIGNMENTS
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS tenant_course_license_assignments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    license_id UUID NOT NULL REFERENCES tenant_course_licenses(id),
+    user_id UUID NOT NULL REFERENCES users(id),
+    assigned_by_id UUID NOT NULL REFERENCES users(id),
+    assigned_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE(license_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_license_assignments_license ON tenant_course_license_assignments(license_id);
+CREATE INDEX IF NOT EXISTS idx_license_assignments_user ON tenant_course_license_assignments(user_id);
 
 -- =============================================================================
 -- LOG
