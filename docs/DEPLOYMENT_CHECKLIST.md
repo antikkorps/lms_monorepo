@@ -12,16 +12,16 @@
 - [x] Provision Hetzner VPS (recommended: CX31 or higher)
 - [x] Install Docker + Docker Compose
 - [x] Configure Cloudflare DNS + Tunnel
-- [ ] Create `deploy/docker-compose.prod.yml` (api, app, landing, postgres, redis, caddy)
-- [ ] Create `deploy/Caddyfile` (reverse proxy: landing, app, api — auto HTTPS via Cloudflare DNS challenge)
-- [ ] Create `deploy/cloudflared/config.yml` (Cloudflare Tunnel)
+- [x] Create `deploy/docker-compose.prod.yml` (api, app, landing, postgres, redis, caddy)
+- [x] Create `deploy/Caddyfile` (reverse proxy: landing, app, api — auto HTTPS via Cloudflare DNS challenge)
+- [x] Create `deploy/cloudflared/config.yml` (Cloudflare Tunnel)
 
 ### 1.2 DNS Configuration
 
-- [ ] Point landing domain (e.g. `iqon-ia.com`) to Cloudflare Tunnel
-- [ ] Point app domain (e.g. `app.iqon-ia.com`) to Cloudflare Tunnel
-- [ ] Point API domain (e.g. `api.iqon-ia.com`) to Cloudflare Tunnel
-- [ ] TLS handled by Caddy + Cloudflare DNS challenge
+- [x] Point landing domain (e.g. `iqon-ia.com`) to Cloudflare Tunnel
+- [x] Point app domain (e.g. `app.iqon-ia.com`) to Cloudflare Tunnel
+- [x] Point API domain (e.g. `api.iqon-ia.com`) to Cloudflare Tunnel
+- [x] TLS handled by Caddy + Cloudflare DNS challenge
 
 ---
 

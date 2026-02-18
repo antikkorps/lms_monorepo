@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
 import { APP_NAME } from '@shared/config';
+
+const landingUrl = import.meta.env.VITE_LANDING_URL || '/';
 </script>
 
 <template>
@@ -8,9 +9,9 @@ import { APP_NAME } from '@shared/config';
     <!-- Header with logo -->
     <header class="py-6">
       <div class="container mx-auto px-4">
-        <RouterLink to="/" class="text-2xl font-bold text-foreground">
+        <a :href="landingUrl" class="text-2xl font-bold text-foreground">
           {{ APP_NAME }}
-        </RouterLink>
+        </a>
       </div>
     </header>
 

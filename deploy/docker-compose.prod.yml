@@ -78,6 +78,7 @@ services:
       args:
         VITE_API_URL: https://api.iqon-ia.com
         VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY:-}
+        VITE_LANDING_URL: https://iqon-ia.com
     restart: unless-stopped
     depends_on:
       api:
