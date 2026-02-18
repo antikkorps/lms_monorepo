@@ -54,31 +54,11 @@ export async function authenticate(ctx: Context, next: Next): Promise<void> {
     throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
   }
 
+  let payload: AccessTokenPayload;
   try {
     logger.debug({ path: ctx.path }, 'Auth middleware: verifying token...');
-    const payload = verifyAccessToken(token);
+    payload = verifyAccessToken(token);
     logger.debug({ path: ctx.path, userId: payload.userId, role: payload.role }, 'Auth middleware: token verified');
-
-    // Check if token is blacklisted
-    const blacklisted = await isTokenBlacklisted(payload.userId);
-    logger.debug({ path: ctx.path, blacklisted }, 'Auth middleware: blacklist check');
-    if (blacklisted) {
-      throw new AppError('Token has been revoked', 401, 'TOKEN_REVOKED');
-    }
-
-    // Attach user info to context
-    ctx.state.user = payload;
-
-    // If user has tenant, load tenant info for rate limiting and feature checks
-    if (payload.tenantId) {
-      const tenant = await Tenant.findByPk(payload.tenantId);
-      if (tenant) {
-        ctx.state.tenant = tenant;
-      }
-    }
-
-    logger.debug({ path: ctx.path }, 'Auth middleware: calling next()');
-    await next();
   } catch (error) {
     logger.warn({ path: ctx.path, error: (error as Error).message, errorName: (error as Error).name }, 'Auth middleware: error');
     if (error instanceof AppError) {
@@ -96,6 +76,27 @@ export async function authenticate(ctx: Context, next: Next): Promise<void> {
 
     throw new AppError('Authentication failed', 401, 'AUTH_FAILED');
   }
+
+  // Check if token is blacklisted
+  const blacklisted = await isTokenBlacklisted(payload.userId);
+  logger.debug({ path: ctx.path, blacklisted }, 'Auth middleware: blacklist check');
+  if (blacklisted) {
+    throw new AppError('Token has been revoked', 401, 'TOKEN_REVOKED');
+  }
+
+  // Attach user info to context
+  ctx.state.user = payload;
+
+  // If user has tenant, load tenant info for rate limiting and feature checks
+  if (payload.tenantId) {
+    const tenant = await Tenant.findByPk(payload.tenantId);
+    if (tenant) {
+      ctx.state.tenant = tenant;
+    }
+  }
+
+  logger.debug({ path: ctx.path }, 'Auth middleware: calling next()');
+  await next();
 }
 
 /**

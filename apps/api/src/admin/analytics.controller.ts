@@ -1,17 +1,15 @@
 import type { Context } from 'koa';
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import { sequelize } from '../database/sequelize.js';
 import {
   User,
   Purchase,
   UserProgress,
-  Course,
   TenantCourseLicense,
 } from '../database/models/index.js';
 import {
   UserRole,
   PurchaseStatus,
-  CourseStatus,
 } from '../database/models/enums.js';
 import { analyticsQuerySchema, exportQuerySchema } from './analytics.schemas.js';
 import { AppError } from '../utils/app-error.js';
@@ -500,24 +498,22 @@ export async function getAnalyticsEngagement(ctx: Context): Promise<void> {
   });
 
   // Category distribution
-  const categories = await Purchase.findAll({
-    attributes: [
-      [col('course.category'), 'category'],
-      [fn('COUNT', literal('DISTINCT "Purchase"."course_id"')), 'count'],
-    ],
-    where: {
-      status: PurchaseStatus.COMPLETED,
-      purchasedAt: { [Op.between]: [start, end] },
-      ...(tenantId && userIds ? { userId: { [Op.in]: userIds } } : {}),
-    },
-    include: [{
-      model: Course,
-      as: 'course',
-      attributes: [],
-      where: { status: CourseStatus.PUBLISHED },
-    }],
-    group: ['course.category'],
-    raw: true,
+  const categories = await sequelize.query<{
+    category: string;
+    count: string;
+  }>(`
+    SELECT
+      c.category,
+      COUNT(DISTINCT p.course_id) as count
+    FROM purchases p
+    JOIN courses c ON c.id = p.course_id AND c.status = 'published'
+    WHERE p.status = 'completed'
+      AND p.purchased_at BETWEEN :start AND :end
+      ${tenantId && userIds ? `AND p.user_id IN (:userIds)` : ''}
+    GROUP BY c.category
+  `, {
+    replacements: { start, end, ...(userIds ? { userIds } : {}) },
+    type: 'SELECT' as never,
   });
 
   const chartColors = [
