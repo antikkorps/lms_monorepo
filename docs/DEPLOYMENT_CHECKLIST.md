@@ -249,7 +249,7 @@ curl https://api.yourdomain.com/api/v1/health/ready
 
 ## 9. Backup & Monitoring
 
-- [ ] Create backup script (cron + `pg_dump` → R2 via rclone)
+- [ ] Create backup script (cron + `pg_dump` → gzip → R2 via rclone) — **CRITICAL: data loss risk without this**
 - [ ] API logs accessible (`docker compose logs -f api`)
 - [ ] Email delivery stats visible via admin endpoint
 - [ ] Stripe dashboard shows webhook deliveries

@@ -75,11 +75,17 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Copy built files
 COPY --from=builder /app/dist/apps/api ./
 
+# Copy migration SQL files for db:migrate
+COPY --from=builder /app/docker/postgres/migrations ./migrations
+
 # Copy production node_modules from builder (already pruned)
 COPY --from=builder /app/node_modules ./node_modules
 
 # Switch to non-root user
 USER api
+
+# Set migrations path for production container
+ENV MIGRATIONS_DIR=/app/migrations
 
 # Expose port
 EXPOSE 3000

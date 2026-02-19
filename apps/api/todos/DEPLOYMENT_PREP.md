@@ -48,6 +48,21 @@
 - [x] Fix `@shared/schemas` not finding `updateTenantSSOSchema` / `tenantSSOConfigSchema` in `tsc --build` mode (despite declarations being correct in `dist/out-tsc/`) (Done: 2026-02-19)
 - [x] Root cause: `tsconfig.app.json` paths used `../../` prefix resolved from baseUrl (monorepo root), pointing outside project. Fixed paths + emptied `references` to stop stale `.d.ts` redirect. Deleted stale `dist/out-tsc/src/`. (Done: 2026-02-19)
 
+### Database Migrations in Production
+
+- [x] Add migrator as esbuild additional entry point (`database/migrator.mjs`) (Done: 2026-02-19)
+- [x] Copy migration SQL files into Docker production image (`/app/migrations/`) (Done: 2026-02-19)
+- [x] Add `MIGRATIONS_DIR` env var support in migrator (Done: 2026-02-19)
+
+### Database Backup (Critical)
+
+- [ ] Create automated backup script: `pg_dump` → compress → upload to R2 via rclone
+- [ ] Configure rclone with R2 credentials on the server
+- [ ] Set up cron job (daily backup, e.g. `0 3 * * *`)
+- [ ] Add backup retention policy (keep last 30 days)
+- [ ] Test backup restore procedure (`pg_restore` from R2)
+- [ ] Document disaster recovery procedure
+
 ### Cloudflare
 
 - [ ] Configure Cloudflare Stream webhook URL for production domain
