@@ -306,6 +306,7 @@ describe('InvitationService', () => {
       });
 
       vi.mocked(Invitation.findOne).mockResolvedValue(pendingInvitation as never);
+      vi.mocked(Tenant.findByPk).mockResolvedValue(mockTenant as never);
       vi.mocked(User.findOne).mockResolvedValue(null as never);
       vi.mocked(User.create).mockResolvedValue(mockUser as never);
 
@@ -375,6 +376,7 @@ describe('InvitationService', () => {
 
       vi.mocked(validatePasswordStrength).mockReturnValue({ valid: true, errors: [] });
       vi.mocked(Invitation.findOne).mockResolvedValue(pendingInvitation as never);
+      vi.mocked(Tenant.findByPk).mockResolvedValue(fullTenant as never);
 
       await expect(acceptInvitation('abc123token', 'SecurePass123!')).rejects.toThrow(
         'No available seats'

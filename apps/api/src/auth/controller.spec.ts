@@ -23,6 +23,15 @@ vi.mock('../database/models/Tenant.js', () => ({
   },
 }));
 
+vi.mock('../database/sequelize.js', () => ({
+  sequelize: {
+    transaction: vi.fn(async (callback: (t: object) => Promise<unknown>) => {
+      const mockTransaction = { commit: vi.fn(), rollback: vi.fn() };
+      return callback(mockTransaction);
+    }),
+  },
+}));
+
 vi.mock('./password.js', () => ({
   hashPassword: vi.fn(),
   verifyPassword: vi.fn(),
@@ -315,7 +324,8 @@ describe('Auth Controller', () => {
           email: 'new@test.com',
           status: UserStatus.PENDING,
           passwordHash: 'hashed-pw',
-        })
+        }),
+        expect.objectContaining({ transaction: expect.anything() })
       );
       expect(emailService.sendVerificationEmail).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -357,10 +367,12 @@ describe('Auth Controller', () => {
 
       expect(ctx.status).toBe(201);
       expect(User.create).toHaveBeenCalledWith(
-        expect.objectContaining({ tenantId: 'tenant-123' })
+        expect.objectContaining({ tenantId: 'tenant-123' }),
+        expect.objectContaining({ transaction: expect.anything() })
       );
       expect(Tenant.increment).toHaveBeenCalledWith('seatsUsed', {
         where: { id: 'tenant-123' },
+        transaction: expect.anything(),
       });
     });
 
