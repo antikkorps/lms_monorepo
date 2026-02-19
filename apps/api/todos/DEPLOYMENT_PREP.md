@@ -81,3 +81,5 @@
 - Mailjet must be configured for both transactional emails and newsletter contacts API
 - Health check returns structured JSON with per-service status
 - `npm run db:cleanup` requires `ADMIN_EMAIL` and `ADMIN_PASSWORD` env vars
+- **Production migration command**: `docker compose exec api node database/migrator.mjs`
+- **Migration status**: `docker compose exec api node database/migrator.mjs status`
