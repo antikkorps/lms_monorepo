@@ -148,6 +148,14 @@ function validateProductionConfig(): void {
       }
     }
   }
+
+  // Cookie domain is required in production for cross-subdomain auth
+  if (config.env === 'production' && !config.cookieDomain) {
+    console.warn(
+      '[config] WARNING: COOKIE_DOMAIN is not set. Auth cookies will only work on the exact API hostname. ' +
+      'Set COOKIE_DOMAIN=.yourdomain.com if frontend and API are on different subdomains.'
+    );
+  }
 }
 
 validateProductionConfig();

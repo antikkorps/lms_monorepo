@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-vue-next';
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
@@ -19,7 +21,7 @@ onMounted(async () => {
 
   if (!token.value) {
     verificationStatus.value = 'error';
-    authStore.error = 'Invalid or missing verification token';
+    authStore.error = t('auth.verifyEmail.errors.invalidToken');
     return;
   }
 
@@ -27,9 +29,10 @@ onMounted(async () => {
   verificationStatus.value = success ? 'success' : 'error';
 
   if (success) {
+    // Store loads user from verify response — redirect to dashboard or login
     setTimeout(() => {
-      router.push('/login');
-    }, 3000);
+      router.push(authStore.isAuthenticated ? '/dashboard' : '/login');
+    }, 2000);
   }
 });
 </script>
@@ -37,26 +40,26 @@ onMounted(async () => {
 <template>
   <Card>
     <CardHeader class="text-center">
-      <CardTitle class="text-2xl">Email Verification</CardTitle>
+      <CardTitle class="text-2xl">{{ t('auth.verifyEmail.title') }}</CardTitle>
     </CardHeader>
     <CardContent class="text-center">
       <!-- Verifying -->
       <div v-if="verificationStatus === 'verifying'" class="space-y-4">
         <Loader2 class="h-12 w-12 mx-auto animate-spin text-primary" />
-        <p class="text-muted-foreground">Verifying your email...</p>
+        <p class="text-muted-foreground">{{ t('auth.verifyEmail.verifying') }}</p>
       </div>
 
       <!-- Success -->
       <div v-else-if="verificationStatus === 'success'" class="space-y-4">
-        <Alert class="border-green-500 bg-green-50 text-green-700">
+        <Alert class="border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
           <CheckCircle class="h-4 w-4" />
-          <AlertTitle>Email Verified!</AlertTitle>
+          <AlertTitle>{{ t('auth.verifyEmail.success.title') }}</AlertTitle>
           <AlertDescription>
-            Your email has been verified successfully. Redirecting to sign in...
+            {{ t('auth.verifyEmail.success.message') }}
           </AlertDescription>
         </Alert>
-        <RouterLink to="/login">
-          <Button variant="link">Sign In Now</Button>
+        <RouterLink to="/dashboard">
+          <Button variant="link">{{ t('auth.login.submit') }}</Button>
         </RouterLink>
       </div>
 
@@ -64,18 +67,15 @@ onMounted(async () => {
       <div v-else class="space-y-4">
         <Alert variant="destructive">
           <XCircle class="h-4 w-4" />
-          <AlertTitle>Verification Failed</AlertTitle>
+          <AlertTitle>{{ t('auth.verifyEmail.errors.invalidToken') }}</AlertTitle>
           <AlertDescription>
-            {{ authStore.error || 'Unable to verify your email. The link may have expired.' }}
+            {{ authStore.error || t('auth.verifyEmail.errors.invalidToken') }}
           </AlertDescription>
         </Alert>
         <div class="space-y-2">
           <RouterLink to="/login">
-            <Button variant="link">Sign In</Button>
+            <Button variant="link">{{ t('auth.login.submit') }}</Button>
           </RouterLink>
-          <p class="text-sm text-muted-foreground">
-            Need a new verification link? Sign in and request a new one.
-          </p>
         </div>
       </div>
     </CardContent>

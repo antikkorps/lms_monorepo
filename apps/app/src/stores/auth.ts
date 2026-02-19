@@ -302,13 +302,22 @@ export const useAuthStore = defineStore('auth', () => {
 
   /**
    * Verify email with token
+   * Backend auto-logs in on success (sets cookies + returns user data)
    */
   async function verifyEmail(token: string): Promise<boolean> {
     isLoading.value = true;
     error.value = null;
 
     try {
-      await apiClient.post('/auth/verify-email', { token });
+      const response = await apiClient.post<{ user?: AuthenticatedUser }>('/auth/verify-email', { token });
+      // Backend returns user data on first verification (auto-login)
+      if (response.user) {
+        user.value = response.user;
+        const ws = getAuthWindowState();
+        ws.userData = response.user;
+        ws.initialized = true;
+        isInitialized.value = true;
+      }
       return true;
     } catch (err) {
       if (err instanceof ApiRequestError) {

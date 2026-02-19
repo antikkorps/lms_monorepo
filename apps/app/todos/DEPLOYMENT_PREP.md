@@ -12,9 +12,12 @@
 
 ### Auth Flow Verification
 
-- [ ] Verify register page works correctly
-- [ ] Verify login page works correctly
-- [ ] Verify email verification page works correctly
+- [x] Fix register page — add shared password validation (strength rules: uppercase, lowercase, digit, special char) via `lib/password-validation.ts` (Done: 2026-02-19)
+- [x] Fix AcceptInvitationView — same shared password validation (DRY) (Done: 2026-02-19)
+- [x] Fix VerifyEmailView — auto-load user from verify response, redirect to dashboard if authenticated (Done: 2026-02-19)
+- [ ] Live test register page end-to-end
+- [ ] Live test login page end-to-end
+- [ ] Live test email verification page end-to-end
 
 ### Error Handling
 

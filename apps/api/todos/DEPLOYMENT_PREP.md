@@ -30,8 +30,12 @@
 
 ### Auth Flow Verification
 
-- [ ] Verify B2C registration flow end-to-end (register → verify email → login)
-- [ ] Verify B2B invitation flow end-to-end (invite → accept → login)
+- [x] Code review B2C registration flow — fix race condition (register user + seat increment wrapped in transaction) (Done: 2026-02-19)
+- [x] Code review B2B invitation flow — fix seat race condition (SELECT FOR UPDATE row locking in acceptInvitation) (Done: 2026-02-19)
+- [x] Add email send failure handling in createInvitation — try/catch with logging, invitation still committed (Done: 2026-02-19)
+- [x] Add COOKIE_DOMAIN production warning in config validation (Done: 2026-02-19)
+- [ ] Live test B2C registration flow end-to-end (register → verify email → login)
+- [ ] Live test B2B invitation flow end-to-end (invite → accept → login)
 
 ### Stripe Configuration
 
@@ -40,9 +44,9 @@
 
 ### CI Typecheck Fix
 
-- [ ] Fix `tsc --build` resolution: `@shared/types` resolves to `libs/shared/schemas/src/index.js` instead of `libs/shared/types/src/index.ts` — Invoice types not found (12 errors)
-- [ ] Fix `@shared/schemas` not finding `updateTenantSSOSchema` / `tenantSSOConfigSchema` in `tsc --build` mode (despite declarations being correct in `dist/out-tsc/`)
-- [ ] Root cause: `tsconfig.app.json` has `composite: false` + path mappings conflict with project references in `--build` mode. Investigate `baseUrl` resolution with extended paths.
+- [x] Fix `tsc --build` resolution: `@shared/types` resolves to `libs/shared/schemas/src/index.js` instead of `libs/shared/types/src/index.ts` — Invoice types not found (12 errors) (Done: 2026-02-19)
+- [x] Fix `@shared/schemas` not finding `updateTenantSSOSchema` / `tenantSSOConfigSchema` in `tsc --build` mode (despite declarations being correct in `dist/out-tsc/`) (Done: 2026-02-19)
+- [x] Root cause: `tsconfig.app.json` paths used `../../` prefix resolved from baseUrl (monorepo root), pointing outside project. Fixed paths + emptied `references` to stop stale `.d.ts` redirect. Deleted stale `dist/out-tsc/src/`. (Done: 2026-02-19)
 
 ### Cloudflare
 

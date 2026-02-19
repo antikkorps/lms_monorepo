@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
+import { validatePassword } from '@/lib/password-validation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,8 +31,9 @@ async function handleSubmit() {
     return;
   }
 
-  if (password.value.length < 8) {
-    localError.value = t('auth.register.errors.passwordTooShort');
+  const { valid, errorKey } = validatePassword(password.value);
+  if (!valid) {
+    localError.value = t(`auth.register.errors.${errorKey}`);
     return;
   }
 

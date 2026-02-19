@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '@/composables/useApi';
+import { validatePassword } from '@/lib/password-validation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -64,8 +65,9 @@ onMounted(async () => {
 async function handleSubmit() {
   formError.value = '';
 
-  if (password.value.length < 8) {
-    formError.value = t('auth.acceptInvitation.errors.passwordTooShort');
+  const { valid, errorKey } = validatePassword(password.value);
+  if (!valid) {
+    formError.value = t(`auth.acceptInvitation.errors.${errorKey}`);
     return;
   }
 
