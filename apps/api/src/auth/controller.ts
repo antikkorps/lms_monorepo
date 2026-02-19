@@ -24,6 +24,7 @@ import {
   getEmailVerificationToken,
   deleteEmailVerificationToken,
 } from './session.js';
+import { sequelize } from '../database/sequelize.js';
 import { AppError } from '../utils/app-error.js';
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
@@ -139,22 +140,26 @@ export async function register(ctx: Context): Promise<void> {
     tenantId = tenant.id;
   }
 
-  // Hash password and create user
+  // Hash password and create user (in transaction for seat consistency)
   const passwordHash = await hashPassword(password);
-  const user = await User.create({
-    email,
-    passwordHash,
-    firstName,
-    lastName,
-    role: tenantId ? UserRole.LEARNER : UserRole.LEARNER,
-    status: UserStatus.PENDING, // Requires email verification
-    tenantId,
-  });
+  const user = await sequelize.transaction(async (t) => {
+    const newUser = await User.create({
+      email,
+      passwordHash,
+      firstName,
+      lastName,
+      role: UserRole.LEARNER,
+      status: UserStatus.PENDING, // Requires email verification
+      tenantId,
+    }, { transaction: t });
 
-  // Update tenant seat count if B2B
-  if (tenantId) {
-    await Tenant.increment('seatsUsed', { where: { id: tenantId } });
-  }
+    // Update tenant seat count if B2B (atomic with user creation)
+    if (tenantId) {
+      await Tenant.increment('seatsUsed', { where: { id: tenantId }, transaction: t });
+    }
+
+    return newUser;
+  });
 
   // Generate email verification token
   const verificationToken = generateEmailVerificationToken();

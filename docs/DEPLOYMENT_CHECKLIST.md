@@ -132,7 +132,7 @@ psql $DATABASE_URL -c "SELECT id, email, role, status FROM users;"
 
 ### 5.1 Stripe (Test Mode)
 
-- [ ] Create Stripe account / verify test mode is active
+- [x] Create Stripe account / verify test mode is active
 - [ ] Create products and prices matching config (B2C courses, B2B subscriptions)
 - [ ] Configure webhook endpoint: `https://api.yourdomain.com/api/v1/payments/webhook`
 - [ ] Enable webhook events: `checkout.session.completed`, `invoice.paid`, `customer.subscription.*`
@@ -141,7 +141,7 @@ psql $DATABASE_URL -c "SELECT id, email, role, status FROM users;"
 ### 5.2 Mailjet
 
 - [ ] Verify sender email address in Mailjet
-- [ ] Create a Contact List for newsletter subscribers → copy list ID
+- [x] Create a Contact List for newsletter subscribers → copy list ID
 - [ ] Copy API Key, Secret, and Contact List ID to `.env.production`
 
 ### 5.3 Cloudflare R2 + Stream

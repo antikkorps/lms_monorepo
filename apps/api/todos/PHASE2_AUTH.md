@@ -1,6 +1,6 @@
 # API - Phase 2: Authentication & Security
 
-## Modified: 2026-02-12
+## Modified: 2026-02-19
 
 ### Completed
 
@@ -44,6 +44,14 @@
 - [x] Support OIDC discovery URL for enterprise IdPs (Okta, Auth0, Keycloak) (Done: 2026-02-05)
 - [x] Add documentation for B2B clients to configure their SSO (docs/guides/b2b-sso-setup.md) (Done: 2026-02-05)
 - [x] Update LoginView.vue to support tenant-specific SSO (?tenant=slug) (Done: 2026-02-05)
+
+#### Security Hardening (Code Review 2026-02-19)
+
+- [x] Fix race condition in register() — user creation + seat increment wrapped in Sequelize transaction (Done: 2026-02-19)
+- [x] Fix seat race condition in acceptInvitation() — `SELECT FOR UPDATE` row locking on tenant row (Done: 2026-02-19)
+- [x] Add email send failure handling in createInvitation — invitation committed, email failure logged (Done: 2026-02-19)
+- [x] Add COOKIE_DOMAIN production warning in config validation (Done: 2026-02-19)
+- [x] Align frontend password validation with backend rules (shared `lib/password-validation.ts`) (Done: 2026-02-19)
 
 #### Optional
 

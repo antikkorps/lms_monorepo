@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { sequelize } from '../database/sequelize.js';
 import { Invitation, InvitationGroup } from '../database/models/Invitation.js';
 import { User } from '../database/models/User.js';
@@ -164,7 +164,16 @@ export async function createInvitation(
     return newInvitation;
   });
 
-  await sendInvitationEmail(invitation, tenant);
+  try {
+    await sendInvitationEmail(invitation, tenant);
+  } catch (emailError) {
+    // Invitation is committed — log prominently but don't fail the request.
+    // Admin can resend via the UI.
+    logger.error(
+      { invitationId: invitation.id, email, tenantId, err: emailError },
+      'Failed to send invitation email — invitation created but user was not notified'
+    );
+  }
 
   logger.info(
     { invitationId: invitation.id, email, tenantId, invitedById: userId },
@@ -262,17 +271,23 @@ export async function acceptInvitation(
     throw new AppError('Invitation has expired', 400, 'INVITATION_EXPIRED');
   }
 
-  const tenant = invitation.tenant!;
-  if (tenant.seatsUsed >= tenant.seatsPurchased) {
-    throw new AppError('No available seats in this organization', 403, 'NO_SEATS_AVAILABLE');
-  }
-
-  const existingUser = await User.findOne({ where: { email: invitation.email } });
-  if (existingUser) {
-    throw new AppError('A user with this email already exists', 409, 'EMAIL_EXISTS');
-  }
-
+  // All seat checks + user creation in a single transaction with row locking
   const result = await sequelize.transaction(async (t) => {
+    // Lock tenant row to prevent concurrent seat over-allocation
+    const tenant = await Tenant.findByPk(invitation.tenantId, {
+      lock: Transaction.LOCK.UPDATE,
+      transaction: t,
+    });
+
+    if (!tenant || tenant.seatsUsed >= tenant.seatsPurchased) {
+      throw new AppError('No available seats in this organization', 403, 'NO_SEATS_AVAILABLE');
+    }
+
+    const existingUser = await User.findOne({ where: { email: invitation.email }, transaction: t });
+    if (existingUser) {
+      throw new AppError('A user with this email already exists', 409, 'EMAIL_EXISTS');
+    }
+
     const passwordHash = await hashPassword(password);
 
     const user = await User.create(
