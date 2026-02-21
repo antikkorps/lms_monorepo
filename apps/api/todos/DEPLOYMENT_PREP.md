@@ -48,6 +48,21 @@
 - [x] Fix `@shared/schemas` not finding `updateTenantSSOSchema` / `tenantSSOConfigSchema` in `tsc --build` mode (despite declarations being correct in `dist/out-tsc/`) (Done: 2026-02-19)
 - [x] Root cause: `tsconfig.app.json` paths used `../../` prefix resolved from baseUrl (monorepo root), pointing outside project. Fixed paths + emptied `references` to stop stale `.d.ts` redirect. Deleted stale `dist/out-tsc/src/`. (Done: 2026-02-19)
 
+### Database Migrations in Production
+
+- [x] Add migrator as esbuild additional entry point (`database/migrator.mjs`) (Done: 2026-02-19)
+- [x] Copy migration SQL files into Docker production image (`/app/migrations/`) (Done: 2026-02-19)
+- [x] Add `MIGRATIONS_DIR` env var support in migrator (Done: 2026-02-19)
+
+### Database Backup (Critical)
+
+- [x] Create automated backup script: `pg_dump` → compress → upload to R2 via rclone (Done: 2026-02-21)
+- [x] Configure rclone with R2 credentials on the server — via `RCLONE_CONFIG_R2_*` env vars in docker-compose (Done: 2026-02-21)
+- [x] Set up cron job (daily backup, e.g. `0 3 * * *`) — in `docker/backup/Dockerfile` (Done: 2026-02-21)
+- [x] Add backup retention policy (keep last 30 days) — `BACKUP_RETENTION_DAYS` env var (Done: 2026-02-21)
+- [x] Test backup restore procedure — `deploy/scripts/restore.sh` (Done: 2026-02-21)
+- [x] Document disaster recovery procedure — backup.sh/restore.sh usage in docker-compose (Done: 2026-02-21)
+
 ### Cloudflare
 
 - [ ] Configure Cloudflare Stream webhook URL for production domain
@@ -66,3 +81,5 @@
 - Mailjet must be configured for both transactional emails and newsletter contacts API
 - Health check returns structured JSON with per-service status
 - `npm run db:cleanup` requires `ADMIN_EMAIL` and `ADMIN_PASSWORD` env vars
+- **Production migration command**: `docker compose exec api node database/migrator.mjs`
+- **Migration status**: `docker compose exec api node database/migrator.mjs status`

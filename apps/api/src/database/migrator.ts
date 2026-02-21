@@ -18,7 +18,7 @@ import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const MIGRATIONS_DIR = resolve(__dirname, '../../../../docker/postgres/migrations');
+const MIGRATIONS_DIR = process.env.MIGRATIONS_DIR || resolve(__dirname, '../../../../docker/postgres/migrations');
 const ADVISORY_LOCK_ID = 839271; // arbitrary unique lock ID for migrations
 
 interface MigrationRecord {

@@ -1,6 +1,6 @@
 # API - Tests
 
-## Modified: 2026-02-14 (updated)
+## Modified: 2026-02-21
 
 ### Test Setup
 
@@ -45,8 +45,18 @@
 | Webhook Controller | `services/transcoding/webhook.controller.spec.ts` | 10 | Done |
 | CF Stream Provider | `services/transcoding/providers/cloudflare-stream.provider.spec.ts` | 15 | Done |
 | Admin Transcoding | `admin/transcoding.controller.spec.ts` | 7 | Done |
+| Newsletter | `newsletter/controller.spec.ts` | 7 | Done (2026-02-21) |
+| Streaks | `streaks/controller.spec.ts` | 13 | Done (2026-02-21) |
+| Leaderboards | `leaderboards/controller.spec.ts` | 16 | Done (2026-02-21) |
+| Streak Worker | `queue/workers/streak.worker.spec.ts` | 9 | Done (2026-02-21) |
+| Leaderboard Worker | `queue/workers/leaderboard.worker.spec.ts` | 9 | Done (2026-02-21) |
+| Reviews | `reviews/controller.spec.ts` | 23 | Done (2026-02-21) |
+| Learner Analytics | `analytics/controller.spec.ts` | 7 | Done (2026-02-21) |
+| Admin Analytics | `admin/analytics.controller.spec.ts` | 15 | Done (2026-02-21) |
+| Course Analytics | `admin/analytics-course.controller.spec.ts` | 6 | Done (2026-02-21) |
+| Licenses | `tenant/licenses.controller.spec.ts` | 50 | Done (2026-02-21) |
 
-**Total: 484 tests** (484 passed, 8 skipped)
+**Total: 639 tests** (639 passed, 8 skipped)
 
 *Integration tests: run with `R2_INTEGRATION_TEST=true`
 
@@ -80,15 +90,15 @@ cd apps/api && npx vitest run --coverage
 
 - [x] Auth controller tests (65 tests, 12 endpoints) (Done: 2026-02-08)
 - [ ] Redis session tests (requires Redis mock)
-- [ ] Reviews controller tests
-- [ ] Streaks controller tests
-- [ ] Leaderboard controller tests
-- [ ] Streak worker tests
-- [ ] Leaderboard worker tests
-- [ ] Analytics controller tests (overview, revenue, engagement, export, licenses)
-- [ ] Course analytics controller tests
-- [ ] License management controller tests
-- [ ] Newsletter controller tests
+- [x] Reviews controller tests (Done: 2026-02-21, 23 tests)
+- [x] Streaks controller tests (Done: 2026-02-21, 13 tests)
+- [x] Leaderboard controller tests (Done: 2026-02-21, 16 tests)
+- [x] Streak worker tests (Done: 2026-02-21, 9 tests)
+- [x] Leaderboard worker tests (Done: 2026-02-21, 9 tests)
+- [x] Analytics controller tests (Done: 2026-02-21, 15 tests — overview, revenue, engagement, export, licenses)
+- [x] Course analytics controller tests (Done: 2026-02-21, 6 tests)
+- [x] License management controller tests (Done: 2026-02-21, 50 tests)
+- [x] Newsletter controller tests (Done: 2026-02-21, 7 tests)
 
 ### Notes
 
