@@ -649,5 +649,33 @@
       "title": "Aucun job trouvé",
       "message": "Il n'y a aucun job avec ce statut."
     }
+  },
+  "userManagement": {
+    "title": "Gestion des utilisateurs",
+    "subtitle": "Voir et gérer tous les utilisateurs de la plateforme.",
+    "searchPlaceholder": "Rechercher par nom ou email...",
+    "allRoles": "Tous les rôles",
+    "showing": "Affichage de {from} à {to} sur {total} utilisateurs",
+    "changeRole": "Changer le rôle",
+    "error": {
+      "loadFailed": "Impossible de charger les utilisateurs",
+      "retry": "Réessayer"
+    },
+    "empty": {
+      "title": "Aucun utilisateur trouvé",
+      "message": "Aucun utilisateur ne correspond à vos critères."
+    },
+    "table": {
+      "title": "Utilisateurs de la plateforme",
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "status": "Statut",
+      "tenant": "Organisation",
+      "lastLogin": "Dernière connexion"
+    },
+    "toast": {
+      "roleUpdated": "{name} est maintenant {role}",
+      "roleUpdateFailed": "Échec de la mise à jour du rôle"
+    }
   }
 }

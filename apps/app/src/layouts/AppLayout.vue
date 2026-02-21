@@ -66,6 +66,7 @@ const adminItems = computed(() => {
   if (isSuperAdmin.value) {
     // Super admin: platform-wide tools only (no tenant-scoped items)
     return [
+      { href: '/admin/users', icon: Users, name: t('nav.admin.users') },
       { href: '/admin/analytics', icon: BarChart3, name: t('nav.admin.analytics') },
       { href: '/admin/transcoding', icon: Activity, name: t('nav.admin.transcoding') },
       { href: '/admin/refunds', icon: RefreshCcw, name: t('nav.admin.refunds') },

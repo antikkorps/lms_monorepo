@@ -31,7 +31,8 @@
     "transcoding": "Transcoding",
     "refunds": "Refund Requests",
     "licenses": "Course Licenses",
-    "reviews": "Review Moderation"
+    "reviews": "Review Moderation",
+    "users": "User Management"
   },
   "accessibility": {
     "toggleMenu": "Toggle menu",
