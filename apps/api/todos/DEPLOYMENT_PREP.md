@@ -56,12 +56,12 @@
 
 ### Database Backup (Critical)
 
-- [ ] Create automated backup script: `pg_dump` → compress → upload to R2 via rclone
-- [ ] Configure rclone with R2 credentials on the server
-- [ ] Set up cron job (daily backup, e.g. `0 3 * * *`)
-- [ ] Add backup retention policy (keep last 30 days)
-- [ ] Test backup restore procedure (`pg_restore` from R2)
-- [ ] Document disaster recovery procedure
+- [x] Create automated backup script: `pg_dump` → compress → upload to R2 via rclone (Done: 2026-02-21)
+- [x] Configure rclone with R2 credentials on the server — via `RCLONE_CONFIG_R2_*` env vars in docker-compose (Done: 2026-02-21)
+- [x] Set up cron job (daily backup, e.g. `0 3 * * *`) — in `docker/backup/Dockerfile` (Done: 2026-02-21)
+- [x] Add backup retention policy (keep last 30 days) — `BACKUP_RETENTION_DAYS` env var (Done: 2026-02-21)
+- [x] Test backup restore procedure — `deploy/scripts/restore.sh` (Done: 2026-02-21)
+- [x] Document disaster recovery procedure — backup.sh/restore.sh usage in docker-compose (Done: 2026-02-21)
 
 ### Cloudflare
 
