@@ -1,6 +1,6 @@
 # IQON-IA - Backlog
 
-## Modified: 2026-02-14
+## Modified: 2026-02-21
 
 ---
 
@@ -84,6 +84,7 @@
 
 - [x] E2E tests with Playwright setup (Done: 2026-01-28)
 - [x] Auth controller unit tests (65 tests, 12 endpoints) (Done: 2026-02-08)
+- [x] Unit tests: newsletter, streaks, leaderboards, reviews, analytics, licenses, workers (+155 tests, 639 total) (Done: 2026-02-21)
 - [ ] Redis session tests
 - [ ] Integration tests (API + DB)
 - [ ] Performance testing
@@ -120,10 +121,13 @@
 - [x] License management frontend UI (composable, 4 views, i18n) (Done: 2026-02-14)
 
 ### Analytics & Reporting
-- [ ] Admin analytics dashboard (revenue, users, engagement)
-- [ ] Export reports (CSV, PDF)
+- [x] Admin analytics dashboard (revenue, users, engagement) (Done: 2026-02-21)
+- [x] Export reports (CSV, PDF) (Done: 2026-02-21)
 - [ ] Video watch analytics (drop-off points)
 - [ ] Quiz performance insights
+
+### Infrastructure
+- [x] Automated DB backup (pg_dump → R2 via rclone, 30-day retention, restore script) (Done: 2026-02-21)
 
 ---
 
@@ -138,8 +142,8 @@
 
 ### Analytics & Reporting
 
-- [ ] Admin analytics dashboard (revenue, users, engagement)
-- [ ] Export reports (CSV, PDF)
+- [x] Admin analytics dashboard (revenue, users, engagement) (Done: 2026-02-21)
+- [x] Export reports (CSV, PDF) (Done: 2026-02-21)
 - [ ] Video watch analytics (drop-off points)
 - [ ] Quiz performance insights
 
