@@ -649,5 +649,33 @@
       "title": "No jobs found",
       "message": "There are no jobs with this status."
     }
+  },
+  "userManagement": {
+    "title": "User Management",
+    "subtitle": "View and manage all platform users.",
+    "searchPlaceholder": "Search by name or email...",
+    "allRoles": "All Roles",
+    "showing": "Showing {from} to {to} of {total} users",
+    "changeRole": "Change Role",
+    "error": {
+      "loadFailed": "Failed to load users",
+      "retry": "Retry"
+    },
+    "empty": {
+      "title": "No users found",
+      "message": "No users match your search criteria."
+    },
+    "table": {
+      "title": "Platform Users",
+      "user": "User",
+      "role": "Role",
+      "status": "Status",
+      "tenant": "Organization",
+      "lastLogin": "Last Login"
+    },
+    "toast": {
+      "roleUpdated": "{name} is now {role}",
+      "roleUpdateFailed": "Failed to update role"
+    }
   }
 }
