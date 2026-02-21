@@ -35,6 +35,7 @@ coverage
 # Docker
 docker-compose*.yml
 deploy/
+!deploy/scripts/
 
 # CI/CD
 .github
