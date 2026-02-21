@@ -142,11 +142,11 @@ psql $DATABASE_URL -c "SELECT id, email, role, status FROM users;"
 
 - [ ] Verify sender email address in Mailjet
 - [x] Create a Contact List for newsletter subscribers → copy list ID
-- [ ] Copy API Key, Secret, and Contact List ID to `.env.production`
+- [x] Copy API Key, Secret, and Contact List ID to `.env.production`
 
 ### 5.3 Cloudflare R2 + Stream
 
-- [ ] Create R2 bucket (e.g. `iqon-ia-assets`)
+- [x] Create R2 bucket (e.g. `iqon-ia-assets`)
 - [ ] Configure public access / custom domain for R2
 - [ ] Create API token with R2 + Stream permissions
 - [ ] Configure Stream webhook URL: `https://api.yourdomain.com/api/v1/webhooks/cloudflare-stream`
@@ -249,7 +249,7 @@ curl https://api.yourdomain.com/api/v1/health/ready
 
 ## 9. Backup & Monitoring
 
-- [ ] Create backup script (cron + `pg_dump` → R2 via rclone)
+- [x] Create backup script (cron + `pg_dump` → gzip → R2 via rclone) — Done: `docker/backup/Dockerfile` + `deploy/scripts/backup.sh` + `deploy/scripts/restore.sh`
 - [ ] API logs accessible (`docker compose logs -f api`)
 - [ ] Email delivery stats visible via admin endpoint
 - [ ] Stripe dashboard shows webhook deliveries

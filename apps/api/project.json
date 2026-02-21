@@ -31,6 +31,7 @@
         "format": ["esm"],
         "bundle": true,
         "main": "apps/api/src/main.ts",
+        "additionalEntryPoints": ["apps/api/src/database/migrator.ts"],
         "tsConfig": "apps/api/tsconfig.app.json",
         "assets": ["apps/api/src/assets"],
         "generatePackageJson": false,
