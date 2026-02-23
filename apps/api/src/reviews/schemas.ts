@@ -4,14 +4,14 @@ import { sanitizeText } from '../utils/sanitize.js';
 export const createReviewSchema = z.object({
   courseId: z.string().uuid(),
   rating: z.number().int().min(1).max(5),
-  title: z.string().min(1).max(255).optional().transform((v) => v ? sanitizeText(v) : v),
-  comment: z.string().min(1).max(5000).optional().transform((v) => v ? sanitizeText(v) : v),
+  title: z.string().max(255).optional().transform((v) => v && v.trim() ? sanitizeText(v.trim()) : undefined),
+  comment: z.string().max(5000).optional().transform((v) => v && v.trim() ? sanitizeText(v.trim()) : undefined),
 });
 
 export const updateReviewSchema = z.object({
   rating: z.number().int().min(1).max(5).optional(),
-  title: z.string().min(1).max(255).nullable().optional().transform((v) => v ? sanitizeText(v) : v),
-  comment: z.string().min(1).max(5000).nullable().optional().transform((v) => v ? sanitizeText(v) : v),
+  title: z.string().max(255).nullable().optional().transform((v) => v && v.trim() ? sanitizeText(v.trim()) : v),
+  comment: z.string().max(5000).nullable().optional().transform((v) => v && v.trim() ? sanitizeText(v.trim()) : v),
 });
 
 export const listReviewsQuerySchema = z.object({

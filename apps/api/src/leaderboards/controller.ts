@@ -96,7 +96,7 @@ export async function getLeaderboard(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
     ],
     order: [['rank', 'ASC']],
@@ -114,6 +114,8 @@ export async function getLeaderboard(ctx: Context): Promise<void> {
             firstName: entry.user.firstName,
             lastName: entry.user.lastName,
             avatarUrl: entry.user.avatarUrl,
+            avatarStyle: entry.user.avatarStyle,
+            avatarVariation: entry.user.avatarVariation,
           }
         : null,
     })),

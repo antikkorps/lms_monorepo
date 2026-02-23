@@ -200,7 +200,16 @@
     "actions": {
       "save": "Save Translation",
       "delete": "Delete"
-    }
+    },
+    "videoSourceHint": "Upload a file or paste an external URL",
+    "documentSourceHint": "Upload a file or paste an external URL",
+    "fileUploaded": "File uploaded",
+    "externalUrlSet": "External URL set",
+    "clearSource": "Remove source",
+    "uploadVideoDesc": "MP4, WebM, MOV — auto-transcoded",
+    "uploadDocDesc": "PDF, PPTX, DOCX",
+    "externalUrlVideoDesc": "YouTube, Vimeo, or any URL",
+    "externalUrlDocDesc": "Link to hosted document"
   },
   "instructor": {
     "courseList": {

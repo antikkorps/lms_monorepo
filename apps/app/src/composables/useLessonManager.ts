@@ -192,7 +192,7 @@ export function useLessonManager(courseId: string) {
     try {
       await api.patch(
         `/courses/${courseId}/chapters/${chapterId}/lessons/reorder`,
-        { lessonIds }
+        { order: lessonIds }
       );
       return true;
     } catch (err) {

@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import StarRating from './StarRating.vue';
+import { UserAvatar } from '@/components/user';
 import type { Review } from '@/composables/useReviews';
 
 const props = defineProps<{
@@ -13,11 +14,6 @@ const { t } = useI18n();
 const authorName = computed(() => {
   if (!props.review.user) return t('reviews.anonymous');
   return `${props.review.user.firstName} ${props.review.user.lastName}`;
-});
-
-const initials = computed(() => {
-  if (!props.review.user) return '?';
-  return `${props.review.user.firstName[0]}${props.review.user.lastName[0]}`.toUpperCase();
 });
 
 const formattedDate = computed(() => {
@@ -33,18 +29,15 @@ const formattedDate = computed(() => {
   <div class="flex gap-4 py-4">
     <!-- Avatar -->
     <div class="shrink-0">
-      <div
-        v-if="review.user?.avatarUrl"
-        class="h-10 w-10 rounded-full overflow-hidden"
-      >
-        <img :src="review.user.avatarUrl" :alt="authorName" class="h-full w-full object-cover" />
-      </div>
-      <div
-        v-else
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-sm font-medium"
-      >
-        {{ initials }}
-      </div>
+      <UserAvatar
+        :user-id="review.user?.id || ''"
+        :first-name="review.user?.firstName"
+        :last-name="review.user?.lastName"
+        :avatar-url="review.user?.avatarUrl"
+        :style="(review.user?.avatarStyle as any) || 'initials'"
+        :variation="review.user?.avatarVariation ?? 0"
+        size="md"
+      />
     </div>
 
     <!-- Content -->
