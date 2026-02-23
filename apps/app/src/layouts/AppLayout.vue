@@ -247,6 +247,8 @@ async function handleLogout() {
                 :first-name="authStore.user?.firstName"
                 :last-name="authStore.user?.lastName"
                 :avatar-url="authStore.user?.avatarUrl"
+                :style="(authStore.user?.avatarStyle as any) || 'initials'"
+                :variation="authStore.user?.avatarVariation ?? 0"
                 size="sm"
                 class="ring-2 ring-sidebar-border transition-all duration-200 group-hover:ring-primary/50"
               />
@@ -410,6 +412,8 @@ async function handleLogout() {
                     :first-name="authStore.user?.firstName"
                     :last-name="authStore.user?.lastName"
                     :avatar-url="authStore.user?.avatarUrl"
+                    :style="(authStore.user?.avatarStyle as any) || 'initials'"
+                    :variation="authStore.user?.avatarVariation ?? 0"
                     size="sm"
                     class="ring-2 ring-sidebar-border"
                   />
@@ -456,6 +460,8 @@ async function handleLogout() {
               :first-name="authStore.user?.firstName"
               :last-name="authStore.user?.lastName"
               :avatar-url="authStore.user?.avatarUrl"
+              :style="(authStore.user?.avatarStyle as any) || 'initials'"
+              :variation="authStore.user?.avatarVariation ?? 0"
               size="sm"
             />
           </Button>
@@ -526,6 +532,8 @@ async function handleLogout() {
                 :first-name="authStore.user?.firstName"
                 :last-name="authStore.user?.lastName"
                 :avatar-url="authStore.user?.avatarUrl"
+                :style="(authStore.user?.avatarStyle as any) || 'initials'"
+                :variation="authStore.user?.avatarVariation ?? 0"
                 size="sm"
               />
             </Button>

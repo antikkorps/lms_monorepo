@@ -410,7 +410,7 @@ export async function me(ctx: Context): Promise<void> {
   }
 
   const user = await User.findByPk(userId, {
-    attributes: ['id', 'email', 'firstName', 'lastName', 'role', 'status', 'tenantId', 'avatarUrl', 'locale', 'lastLoginAt', 'createdAt'],
+    attributes: ['id', 'email', 'firstName', 'lastName', 'role', 'status', 'tenantId', 'avatarUrl', 'avatarStyle', 'avatarVariation', 'locale', 'lastLoginAt', 'createdAt'],
   });
 
   if (!user) {
@@ -437,6 +437,8 @@ export async function me(ctx: Context): Promise<void> {
         status: user.status,
         tenantId: user.tenantId,
         avatarUrl: user.avatarUrl,
+        avatarStyle: user.avatarStyle,
+        avatarVariation: user.avatarVariation,
         locale: user.locale,
         lastLoginAt: user.lastLoginAt,
         createdAt: user.createdAt,
@@ -481,6 +483,57 @@ export async function updateLocale(ctx: Context): Promise<void> {
     success: true,
     data: {
       locale: user.locale,
+    },
+  };
+}
+
+/**
+ * Update user avatar preferences
+ * PATCH /auth/me/avatar
+ */
+export async function updateAvatar(ctx: Context): Promise<void> {
+  const userId = ctx.state.user?.userId;
+  const { avatarStyle, avatarVariation } = ctx.request.body as {
+    avatarStyle?: string;
+    avatarVariation?: number;
+  };
+
+  if (!userId) {
+    throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
+  }
+
+  const validStyles = [
+    'avataaars', 'bottts', 'initials', 'lorelei', 'notionists',
+    'personas', 'thumbs', 'shapes', 'bottts-alt', 'thumbs-alt',
+    'shapes-alt', 'initials-alt',
+  ];
+
+  if (avatarStyle && !validStyles.includes(avatarStyle)) {
+    throw new AppError(`Invalid avatar style. Supported: ${validStyles.join(', ')}`, 400, 'INVALID_AVATAR_STYLE');
+  }
+
+  if (avatarVariation !== undefined && (typeof avatarVariation !== 'number' || avatarVariation < 0 || avatarVariation > 20)) {
+    throw new AppError('Avatar variation must be a number between 0 and 20', 400, 'INVALID_AVATAR_VARIATION');
+  }
+
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  const updates: Record<string, unknown> = {};
+  if (avatarStyle) updates.avatarStyle = avatarStyle;
+  if (avatarVariation !== undefined) updates.avatarVariation = avatarVariation;
+
+  await user.update(updates);
+
+  logger.info({ userId, avatarStyle, avatarVariation }, 'User avatar preferences updated');
+
+  ctx.body = {
+    success: true,
+    data: {
+      avatarStyle: user.avatarStyle,
+      avatarVariation: user.avatarVariation,
     },
   };
 }

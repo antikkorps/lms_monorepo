@@ -200,7 +200,16 @@
     "actions": {
       "save": "Enregistrer la traduction",
       "delete": "Supprimer"
-    }
+    },
+    "videoSourceHint": "Importez un fichier ou collez une URL externe",
+    "documentSourceHint": "Importez un fichier ou collez une URL externe",
+    "fileUploaded": "Fichier importé",
+    "externalUrlSet": "URL externe définie",
+    "clearSource": "Supprimer la source",
+    "uploadVideoDesc": "MP4, WebM, MOV — transcodage automatique",
+    "uploadDocDesc": "PDF, PPTX, DOCX",
+    "externalUrlVideoDesc": "YouTube, Vimeo, ou toute URL",
+    "externalUrlDocDesc": "Lien vers un document hébergé"
   },
   "instructor": {
     "courseList": {

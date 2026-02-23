@@ -24,6 +24,8 @@ export class User extends Model<
   declare status: CreationOptional<UserStatus>;
   declare tenantId: ForeignKey<Tenant['id']> | null;
   declare avatarUrl: CreationOptional<string | null>;
+  declare avatarStyle: CreationOptional<string>;
+  declare avatarVariation: CreationOptional<number>;
   declare lastLoginAt: CreationOptional<Date | null>;
   // SSO fields
   declare ssoProvider: CreationOptional<string | null>;
@@ -108,6 +110,16 @@ User.init(
     avatarUrl: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+    avatarStyle: {
+      type: DataTypes.STRING(30),
+      allowNull: false,
+      defaultValue: 'initials',
+    },
+    avatarVariation: {
+      type: DataTypes.SMALLINT,
+      allowNull: false,
+      defaultValue: 0,
     },
     lastLoginAt: {
       type: DataTypes.DATE,

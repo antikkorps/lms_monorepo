@@ -3,7 +3,8 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/composables/useToast';
-import { getAvatarStyle, getAvatarVariation, setAvatarStyle, type AvatarStyle } from '@/composables/useAvatar';
+import { apiClient } from '@/composables/useApi';
+import type { AvatarStyle } from '@/composables/useAvatar';
 import { UserAvatar } from '@/components/user';
 import AvatarSelector from '@/components/user/AvatarSelector.vue';
 import { Button } from '@/components/ui/button';
@@ -28,8 +29,8 @@ const toast = useToast();
 // Profile form state - use computed to stay reactive with authStore
 const firstName = computed(() => authStore.user?.firstName || '');
 const lastName = computed(() => authStore.user?.lastName || '');
-const selectedAvatarStyle = ref<AvatarStyle>(getAvatarStyle());
-const selectedAvatarVariation = ref<number>(getAvatarVariation());
+const selectedAvatarStyle = ref<AvatarStyle>((authStore.user?.avatarStyle as AvatarStyle) || 'initials');
+const selectedAvatarVariation = ref<number>(authStore.user?.avatarVariation ?? 0);
 
 // Password form state
 const currentPassword = ref('');
@@ -81,10 +82,23 @@ async function changePassword() {
   isChangingPassword.value = false;
 }
 
-function onAvatarSelect(style: AvatarStyle, variation: number) {
+async function onAvatarSelect(style: AvatarStyle, variation: number) {
   selectedAvatarStyle.value = style;
   selectedAvatarVariation.value = variation;
-  setAvatarStyle(style, variation); // Persist globally
+
+  try {
+    await apiClient.patch('/auth/me/avatar', {
+      avatarStyle: style,
+      avatarVariation: variation,
+    });
+    // Update local auth store
+    if (authStore.user) {
+      authStore.user.avatarStyle = style;
+      authStore.user.avatarVariation = variation;
+    }
+  } catch {
+    toast.error(t('common.errors.generic'));
+  }
 }
 </script>
 

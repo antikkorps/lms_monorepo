@@ -67,6 +67,7 @@
     "progress": "Progression",
     "lessonsCompleted": "{completed} sur {total} leçons terminées",
     "courseCompleted": "Cours terminé",
+    "downloadCertificate": "Télécharger le certificat",
     "enrolled": "Inscrit",
     "error": {
       "notFound": "Cours introuvable",

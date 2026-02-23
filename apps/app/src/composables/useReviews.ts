@@ -15,6 +15,8 @@ export interface Review {
     firstName: string;
     lastName: string;
     avatarUrl: string | null;
+    avatarStyle?: string;
+    avatarVariation?: number;
   } | null;
   course?: {
     id: string;

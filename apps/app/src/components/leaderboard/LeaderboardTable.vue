@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { Trophy } from 'lucide-vue-next';
+import { UserAvatar } from '@/components/user';
 import type { LeaderboardEntryData } from '@/composables/useLeaderboard';
 import { useAuthStore } from '@/stores/auth';
 
@@ -41,9 +42,6 @@ function formatScore(score: number, metric: string): string {
   }
 }
 
-function getInitials(user: { firstName: string; lastName: string }): string {
-  return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
-}
 </script>
 
 <template>
@@ -71,22 +69,16 @@ function getInitials(user: { firstName: string; lastName: string }): string {
 
       <!-- Avatar -->
       <div class="shrink-0">
-        <div
-          v-if="entry.user?.avatarUrl"
-          class="h-8 w-8 rounded-full overflow-hidden"
-        >
-          <img
-            :src="entry.user.avatarUrl"
-            :alt="`${entry.user.firstName} ${entry.user.lastName}`"
-            class="h-full w-full object-cover"
-          />
-        </div>
-        <div
-          v-else-if="entry.user"
-          class="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium"
-        >
-          {{ getInitials(entry.user) }}
-        </div>
+        <UserAvatar
+          v-if="entry.user"
+          :user-id="entry.user.id"
+          :first-name="entry.user.firstName"
+          :last-name="entry.user.lastName"
+          :avatar-url="entry.user.avatarUrl"
+          :style="(entry.user.avatarStyle as any) || 'initials'"
+          :variation="entry.user.avatarVariation ?? 0"
+          size="sm"
+        />
       </div>
 
       <!-- Name -->

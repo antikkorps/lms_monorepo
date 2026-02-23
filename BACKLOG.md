@@ -1,6 +1,6 @@
 # IQON-IA - Backlog
 
-## Modified: 2026-02-21
+## Modified: 2026-02-23
 
 ---
 
@@ -128,6 +128,25 @@
 
 ### Infrastructure
 - [x] Automated DB backup (pg_dump → R2 via rclone, 30-day retention, restore script) (Done: 2026-02-21)
+
+---
+
+## Reported Bugs & UX Issues (2026-02-23)
+
+### Bugs
+
+- [x] **Review submit 400** — Schema Zod `min(1).optional()` rejetait les strings vides. Fix: supprimé `min(1)`, ajouté trim + transform. (Fixed: 2026-02-23)
+- [x] **Lesson reorder 400 (instructor)** — Frontend envoyait `{ lessonIds }` au lieu de `{ order }`. Fix: aligné le nom de champ. (Fixed: 2026-02-23)
+- [x] **Invoice 400 (admin tenant)** — `success: true` manquant dans les 3 réponses du controller invoices. Fix: ajouté. (Fixed: 2026-02-23)
+- [x] **Avatar identique partout après changement** — Style/variation stockés en localStorage global, pas per-user en DB. Fix: migration DB, endpoint API `PATCH /auth/me/avatar`, props per-user dans tous les composants. (Fixed: 2026-02-23)
+
+### UX Improvements
+
+- [x] **Choix upload/URL pour vidéo (course builder)** — UX redesign: tabs remplacés par 2 cartes visuelles (Upload / URL externe), indicateur de fichier actuel avec bouton supprimer, auto-détection du mode, descriptions d'aide, défaut sur Upload. i18n EN/FR. (Fixed: 2026-02-23)
+
+### Features
+
+- [x] **Certificat de fin de formation (learner)** — Endpoints certificat connectés aux vrais modèles (UserProgress + Course), composable `useCertificate.ts`, bouton "Download Certificate" dans CourseDetailView quand progress=100%. (Fixed: 2026-02-23)
 
 ---
 
