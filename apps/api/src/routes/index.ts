@@ -23,6 +23,7 @@ import { streaksRouter } from '../streaks/index.js';
 import { leaderboardsRouter } from '../leaderboards/index.js';
 import { searchRouter } from '../search/index.js';
 import { newsletterRouter } from '../newsletter/index.js';
+import { pathsRouter, prerequisitesRouter } from '../paths/index.js';
 
 const apiRouter = new Router({ prefix: '/api/v1' });
 
@@ -76,6 +77,10 @@ apiRouter.use(searchRouter.routes());
 apiRouter.use(searchRouter.allowedMethods());
 apiRouter.use(newsletterRouter.routes());
 apiRouter.use(newsletterRouter.allowedMethods());
+apiRouter.use(pathsRouter.routes());
+apiRouter.use(pathsRouter.allowedMethods());
+apiRouter.use(prerequisitesRouter.routes());
+apiRouter.use(prerequisitesRouter.allowedMethods());
 
 export function setupRoutes(app: Koa): void {
   app.use(apiRouter.routes());

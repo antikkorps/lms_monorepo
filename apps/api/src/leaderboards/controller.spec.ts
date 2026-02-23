@@ -89,8 +89,9 @@ describe('LeaderboardsController', () => {
       // Should be a valid date string
       expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
-      // Should be a Monday
-      const date = new Date(result);
+      // Should be a Monday (parse as local date to match local-time formatting)
+      const [y, m, d] = result.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
       expect(date.getDay()).toBe(1);
     });
 

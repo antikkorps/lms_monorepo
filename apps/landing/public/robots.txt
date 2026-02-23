@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lms-platform.com/sitemap-index.xml
+Sitemap: https://iqon-ia.com/sitemap-index.xml

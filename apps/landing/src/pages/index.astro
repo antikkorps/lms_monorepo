@@ -5,6 +5,7 @@ import Features from '../components/sections/Features.astro';
 import Pricing from '../components/sections/Pricing.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
 import CTA from '../components/sections/CTA.astro';
+import JsonLd from '../components/seo/JsonLd.astro';
 import { useTranslations, getTranslation } from '../i18n';
 
 const t = useTranslations('en');
@@ -102,6 +103,18 @@ const testimonials = [
   description="The AI-powered learning platform that empowers individuals and teams to master new skills. Start learning today with personalized courses and certifications."
   canonicalPath="/"
 >
+  <JsonLd slot="head" schema={{
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'IQON-IA',
+    url: 'https://iqon-ia.com',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://app.iqon-ia.com/search?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  }} />
+
   <Hero
     title={t('hero.title')}
     subtitle={t('hero.subtitle')}

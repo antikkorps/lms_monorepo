@@ -10,4 +10,6 @@ export { leaderboardQueue } from './leaderboard.queue.js';
 export { startLeaderboardWorker, stopLeaderboardWorker, scheduleLeaderboardRefresh } from './workers/leaderboard.worker.js';
 export { licenseExpirationQueue } from './license-expiration.queue.js';
 export { startLicenseExpirationWorker, stopLicenseExpirationWorker, scheduleLicenseExpirationCheck } from './workers/license-expiration.worker.js';
+export { importQueue, addImportJob } from './import.queue.js';
+export { startImportWorker, stopImportWorker } from './workers/import.worker.js';
 export { queueConnection } from './connection.js';
