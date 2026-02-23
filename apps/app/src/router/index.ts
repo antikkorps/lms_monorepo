@@ -72,6 +72,20 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/LessonView.vue'),
     meta: { layout: 'minimal', requiresAuth: true },
   },
+
+  // Learning paths
+  {
+    path: '/paths',
+    name: 'paths',
+    component: () => import('../views/PathsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/paths/:slug',
+    name: 'path-detail',
+    component: () => import('../views/PathDetailView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
   {
     path: '/learning',
     name: 'my-learning',
@@ -224,6 +238,31 @@ const routes: RouteRecordRaw[] = [
     path: '/admin/analytics/courses/:courseId',
     name: 'admin-course-analytics',
     component: () => import('../views/admin/AdminCourseAnalyticsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+
+  {
+    path: '/admin/import',
+    name: 'admin-import',
+    component: () => import('../views/admin/UserImportView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/paths',
+    name: 'admin-paths',
+    component: () => import('../views/PathsView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/paths/new',
+    name: 'admin-path-create',
+    component: () => import('../views/admin/PathEditorView.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+  },
+  {
+    path: '/admin/paths/:id/edit',
+    name: 'admin-path-edit',
+    component: () => import('../views/admin/PathEditorView.vue'),
     meta: { layout: 'app', requiresAuth: true },
   },
 

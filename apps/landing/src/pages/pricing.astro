@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Pricing from '../components/sections/Pricing.astro';
 import FAQ from '../components/sections/FAQ.astro';
 import CTA from '../components/sections/CTA.astro';
+import JsonLd from '../components/seo/JsonLd.astro';
 import { useTranslations, getTranslation } from '../i18n';
 
 const t = useTranslations('en');
@@ -91,6 +92,39 @@ const featureComparison = [
   description="Simple, transparent pricing for individuals and teams. Start free, upgrade when you're ready."
   canonicalPath="/pricing"
 >
+  <JsonLd slot="head" schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'IQON-IA Learning Platform',
+    description: 'AI-powered learning management system for individuals and teams.',
+    brand: { '@type': 'Brand', name: 'IQON-IA' },
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Free',
+        price: '0',
+        priceCurrency: 'USD',
+        url: 'https://iqon-ia.com/pricing',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Pro',
+        price: '19',
+        priceCurrency: 'USD',
+        url: 'https://iqon-ia.com/pricing',
+        priceValidUntil: '2027-12-31',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Team',
+        price: '49',
+        priceCurrency: 'USD',
+        url: 'https://iqon-ia.com/pricing',
+        priceValidUntil: '2027-12-31',
+      },
+    ],
+  }} />
+
   <!-- Hero Section -->
   <section class="pt-24 pb-12 sm:pt-32 sm:pb-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

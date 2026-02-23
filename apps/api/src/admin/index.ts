@@ -13,6 +13,7 @@ import {
 import { getCourseAnalytics } from './analytics-course.controller.js';
 import { updateTenantDiscountTiers, deleteTenantDiscountTiers } from '../tenant/licenses.controller.js';
 import { listUsers, updateUserRole } from './users.controller.js';
+import { uploadCsvImport, getImportStatus, getCsvTemplate } from './import.controller.js';
 
 export const adminRouter = new Router({ prefix: '/admin' });
 
@@ -43,6 +44,14 @@ adminRouter.get('/analytics/courses/:courseId', ...adminAuth, getCourseAnalytics
 // User management (super admin only)
 adminRouter.get('/users', ...superAdminAuth, listUsers);
 adminRouter.patch('/users/:id/role', ...superAdminAuth, updateUserRole);
+
+// CSV Import endpoints
+adminRouter.post('/import/csv', ...superAdminAuth, uploadCsvImport);
+adminRouter.get('/import/csv/template', ...adminAuth, getCsvTemplate);
+adminRouter.get('/import/:importId', ...adminAuth, getImportStatus);
+
+// Tenant-scoped import (tenant admin)
+adminRouter.post('/tenant/import/csv', ...adminAuth, uploadCsvImport);
 
 // Tenant discount tier overrides (super admin only)
 adminRouter.put('/tenants/:id/discount-tiers', ...superAdminAuth, updateTenantDiscountTiers);

@@ -1,0 +1,46 @@
+{
+  "catalog": {
+    "title": "Learning Paths",
+    "subtitle": "Follow structured learning paths to master new skills step by step.",
+    "empty": "No learning paths available yet.",
+    "courses": "{count} courses",
+    "duration": "{duration}",
+    "progress": "{percent}% complete",
+    "viewPath": "View Path"
+  },
+  "detail": {
+    "coursesInPath": "Courses in this Path",
+    "progress": "Your Progress",
+    "overallProgress": "{percent}% complete",
+    "completedCourses": "{completed} of {total} courses completed",
+    "locked": "Complete prerequisites to unlock",
+    "startCourse": "Start Course",
+    "continueCourse": "Continue",
+    "completed": "Completed"
+  },
+  "editor": {
+    "createTitle": "Create Learning Path",
+    "editTitle": "Edit Learning Path",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Enter path title",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Describe this learning path",
+    "thumbnailLabel": "Thumbnail URL",
+    "courses": "Courses",
+    "addCourse": "Add Course",
+    "removeCourse": "Remove",
+    "noCourses": "No courses added yet. Add courses to build the learning path.",
+    "save": "Save Path",
+    "publish": "Publish",
+    "delete": "Delete Path",
+    "deleteConfirm": "Are you sure you want to delete this path?"
+  },
+  "prerequisites": {
+    "title": "Prerequisites",
+    "description": "You must complete these courses before starting this one.",
+    "completed": "Completed",
+    "notCompleted": "Not completed",
+    "allMet": "All prerequisites met!",
+    "locked": "This course is locked. Complete the prerequisites first."
+  }
+}

@@ -172,6 +172,13 @@ export enum CourseLevel {
   ALL_LEVELS = 'all_levels',
 }
 
+export enum ImportStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+}
+
 // B2B Course Licensing
 export enum LicenseType {
   UNLIMITED = 'unlimited', // All tenant members have access
