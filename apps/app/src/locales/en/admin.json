@@ -183,24 +183,34 @@
       "title": "Title",
       "videoUrl": "Video URL",
       "videoId": "Video ID",
+      "videoSource": "Video Source",
+      "documentSource": "Document Source",
+      "documentUrl": "Document URL",
       "description": "Description",
       "transcript": "Transcript"
     },
     "placeholders": {
       "title": "Localized lesson title...",
-      "videoUrl": "https://example.com/video.mp4",
-      "videoId": "Video identifier (YouTube, Vimeo, etc.)",
+      "videoUrl": "https://youtube.com/watch?v=... or direct video link",
+      "videoId": "YouTube or Cloudflare Stream ID",
+      "documentUrl": "https://example.com/document.pdf",
       "description": "Brief description of the lesson...",
       "transcript": "Full transcript of the video..."
     },
     "hints": {
       "title": "Leave empty to use the default lesson title",
+      "videoId": "For YouTube: the video ID from the URL. For Cloudflare Stream: the stream ID.",
       "transcript": "Adding a transcript improves accessibility and SEO"
     },
     "actions": {
       "save": "Save Translation",
       "delete": "Delete"
     },
+    "uploadFile": "Upload file",
+    "externalUrl": "External URL",
+    "dropVideo": "Drop video here or click to browse",
+    "dropDocument": "Drop document here or click to browse",
+    "currentFile": "Current file:",
     "videoSourceHint": "Upload a file or paste an external URL",
     "documentSourceHint": "Upload a file or paste an external URL",
     "fileUploaded": "File uploaded",
@@ -685,6 +695,43 @@
     "toast": {
       "roleUpdated": "{name} is now {role}",
       "roleUpdateFailed": "Failed to update role"
+    }
+  },
+  "import": {
+    "title": "Import Users",
+    "subtitle": "Bulk import users from a CSV file.",
+    "downloadTemplate": "Download CSV Template",
+    "uploadCsv": "Upload CSV",
+    "selectFile": "Select a CSV file",
+    "dragDrop": "or drag and drop",
+    "csvFormat": "CSV file with columns: email, firstName, lastName, role",
+    "maxRows": "Maximum 500 rows per import",
+    "preview": "Preview",
+    "previewSubtitle": "Review the data before importing.",
+    "rowsDetected": "{count} rows detected",
+    "startImport": "Start Import",
+    "cancel": "Cancel",
+    "processing": "Processing Import...",
+    "processingSubtitle": "Please wait while we process your import.",
+    "progress": "{success} of {total} processed",
+    "results": "Import Results",
+    "successCount": "{count} users imported successfully",
+    "errorCount": "{count} errors",
+    "noErrors": "All users were imported successfully!",
+    "errors": "Errors",
+    "errorRow": "Row {row}",
+    "newImport": "New Import",
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "validation": {
+      "invalidFile": "Please select a valid CSV file",
+      "emptyFile": "The CSV file is empty",
+      "missingColumns": "Missing required columns: {columns}",
+      "tooManyRows": "Too many rows. Maximum is 500."
     }
   }
 }

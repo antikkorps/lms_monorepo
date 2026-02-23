@@ -1,6 +1,7 @@
 ---
 import { getLangFromUrl, useTranslations, getLocalizedPath, getAlternateLinks, type Lang } from '../i18n';
 import CookieConsent from '../components/CookieConsent.astro';
+import JsonLd from '../components/seo/JsonLd.astro';
 import { APP_NAME } from '@shared/config';
 import '../styles/global.css';
 
@@ -63,29 +64,47 @@ const footerLinks = {
     <title>{title}</title>
 
     <!-- Canonical and alternate language links -->
-    <link rel="canonical" href={`https://lms-platform.com${canonicalPath}`} />
+    <link rel="canonical" href={`https://iqon-ia.com${canonicalPath}`} />
     {alternateLinks.map(({ lang: altLang, href }) => (
-      <link rel="alternate" hreflang={altLang} href={`https://lms-platform.com${href}`} />
+      <link rel="alternate" hreflang={altLang} href={`https://iqon-ia.com${href}`} />
     ))}
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={`https://lms-platform.com${canonicalPath}`} />
-    <meta property="og:image" content="https://lms-platform.com/og-image.png" />
+    <meta property="og:url" content={`https://iqon-ia.com${canonicalPath}`} />
+    <meta property="og:image" content="https://iqon-ia.com/og-image.png" />
     <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_US'} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="https://lms-platform.com/og-image.png" />
+    <meta name="twitter:image" content="https://iqon-ia.com/og-image.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- JSON-LD: Organization (all pages) -->
+    <JsonLd schema={{
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: APP_NAME,
+      url: 'https://iqon-ia.com',
+      logo: 'https://iqon-ia.com/favicon.svg',
+      sameAs: [],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'hello@iqon-ia.com',
+        contactType: 'customer service',
+      },
+    }} />
+
+    <!-- Page-specific structured data -->
+    <slot name="head" />
   </head>
   <body class="min-h-screen bg-background text-foreground antialiased">
     <!-- Skip to content -->

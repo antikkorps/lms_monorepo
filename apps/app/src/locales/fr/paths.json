@@ -1,0 +1,46 @@
+{
+  "catalog": {
+    "title": "Parcours d'apprentissage",
+    "subtitle": "Suivez des parcours structurés pour maîtriser de nouvelles compétences étape par étape.",
+    "empty": "Aucun parcours d'apprentissage disponible pour le moment.",
+    "courses": "{count} cours",
+    "duration": "{duration}",
+    "progress": "{percent}% terminé",
+    "viewPath": "Voir le parcours"
+  },
+  "detail": {
+    "coursesInPath": "Cours dans ce parcours",
+    "progress": "Votre progression",
+    "overallProgress": "{percent}% terminé",
+    "completedCourses": "{completed} sur {total} cours terminés",
+    "locked": "Complétez les prérequis pour débloquer",
+    "startCourse": "Commencer",
+    "continueCourse": "Continuer",
+    "completed": "Terminé"
+  },
+  "editor": {
+    "createTitle": "Créer un parcours",
+    "editTitle": "Modifier le parcours",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Entrez le titre du parcours",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Décrivez ce parcours d'apprentissage",
+    "thumbnailLabel": "URL de la miniature",
+    "courses": "Cours",
+    "addCourse": "Ajouter un cours",
+    "removeCourse": "Retirer",
+    "noCourses": "Aucun cours ajouté. Ajoutez des cours pour construire le parcours.",
+    "save": "Enregistrer le parcours",
+    "publish": "Publier",
+    "delete": "Supprimer le parcours",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce parcours ?"
+  },
+  "prerequisites": {
+    "title": "Prérequis",
+    "description": "Vous devez terminer ces cours avant de commencer celui-ci.",
+    "completed": "Terminé",
+    "notCompleted": "Non terminé",
+    "allMet": "Tous les prérequis sont remplis !",
+    "locked": "Ce cours est verrouillé. Complétez d'abord les prérequis."
+  }
+}

@@ -183,24 +183,34 @@
       "title": "Titre",
       "videoUrl": "URL de la vidéo",
       "videoId": "ID de la vidéo",
+      "videoSource": "Source vidéo",
+      "documentSource": "Source du document",
+      "documentUrl": "URL du document",
       "description": "Description",
       "transcript": "Transcription"
     },
     "placeholders": {
       "title": "Titre localisé de la leçon...",
-      "videoUrl": "https://exemple.com/video.mp4",
-      "videoId": "Identifiant vidéo (YouTube, Vimeo, etc.)",
+      "videoUrl": "https://youtube.com/watch?v=... ou lien vidéo direct",
+      "videoId": "ID YouTube ou Cloudflare Stream",
+      "documentUrl": "https://exemple.com/document.pdf",
       "description": "Brève description de la leçon...",
       "transcript": "Transcription complète de la vidéo..."
     },
     "hints": {
       "title": "Laissez vide pour utiliser le titre par défaut",
+      "videoId": "Pour YouTube : l'ID vidéo de l'URL. Pour Cloudflare Stream : l'ID du stream.",
       "transcript": "Ajouter une transcription améliore l'accessibilité et le SEO"
     },
     "actions": {
       "save": "Enregistrer la traduction",
       "delete": "Supprimer"
     },
+    "uploadFile": "Importer un fichier",
+    "externalUrl": "URL externe",
+    "dropVideo": "Déposez la vidéo ici ou cliquez pour parcourir",
+    "dropDocument": "Déposez le document ici ou cliquez pour parcourir",
+    "currentFile": "Fichier actuel :",
     "videoSourceHint": "Importez un fichier ou collez une URL externe",
     "documentSourceHint": "Importez un fichier ou collez une URL externe",
     "fileUploaded": "Fichier importé",
@@ -685,6 +695,43 @@
     "toast": {
       "roleUpdated": "{name} est maintenant {role}",
       "roleUpdateFailed": "Échec de la mise à jour du rôle"
+    }
+  },
+  "import": {
+    "title": "Importer des utilisateurs",
+    "subtitle": "Importation en masse d'utilisateurs depuis un fichier CSV.",
+    "downloadTemplate": "Télécharger le modèle CSV",
+    "uploadCsv": "Importer un CSV",
+    "selectFile": "Sélectionner un fichier CSV",
+    "dragDrop": "ou glisser-déposer",
+    "csvFormat": "Fichier CSV avec colonnes : email, firstName, lastName, role",
+    "maxRows": "Maximum 500 lignes par import",
+    "preview": "Aperçu",
+    "previewSubtitle": "Vérifiez les données avant l'importation.",
+    "rowsDetected": "{count} lignes détectées",
+    "startImport": "Lancer l'import",
+    "cancel": "Annuler",
+    "processing": "Import en cours...",
+    "processingSubtitle": "Veuillez patienter pendant le traitement de votre import.",
+    "progress": "{success} sur {total} traités",
+    "results": "Résultats de l'import",
+    "successCount": "{count} utilisateurs importés avec succès",
+    "errorCount": "{count} erreurs",
+    "noErrors": "Tous les utilisateurs ont été importés avec succès !",
+    "errors": "Erreurs",
+    "errorRow": "Ligne {row}",
+    "newImport": "Nouvel import",
+    "status": {
+      "pending": "En attente",
+      "processing": "En cours",
+      "completed": "Terminé",
+      "failed": "Échoué"
+    },
+    "validation": {
+      "invalidFile": "Veuillez sélectionner un fichier CSV valide",
+      "emptyFile": "Le fichier CSV est vide",
+      "missingColumns": "Colonnes manquantes : {columns}",
+      "tooManyRows": "Trop de lignes. Le maximum est 500."
     }
   }
 }

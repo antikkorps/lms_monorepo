@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Pricing from '../../components/sections/Pricing.astro';
 import FAQ from '../../components/sections/FAQ.astro';
 import CTA from '../../components/sections/CTA.astro';
+import JsonLd from '../../components/seo/JsonLd.astro';
 import { useTranslations, getTranslation } from '../../i18n';
 
 const t = useTranslations('fr');
@@ -91,6 +92,39 @@ const featureComparison = [
   lang="fr"
   canonicalPath="/fr/pricing"
 >
+  <JsonLd slot="head" schema={{
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'IQON-IA Learning Platform',
+    description: 'Plateforme d\'apprentissage propulsee par l\'IA pour les individus et les equipes.',
+    brand: { '@type': 'Brand', name: 'IQON-IA' },
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Gratuit',
+        price: '0',
+        priceCurrency: 'USD',
+        url: 'https://iqon-ia.com/fr/pricing',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Pro',
+        price: '19',
+        priceCurrency: 'USD',
+        url: 'https://iqon-ia.com/fr/pricing',
+        priceValidUntil: '2027-12-31',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Equipe',
+        price: '49',
+        priceCurrency: 'USD',
+        url: 'https://iqon-ia.com/fr/pricing',
+        priceValidUntil: '2027-12-31',
+      },
+    ],
+  }} />
+
   <section class="pt-24 pb-12 sm:pt-32 sm:pb-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <h1 class="text-4xl sm:text-5xl font-bold text-foreground">

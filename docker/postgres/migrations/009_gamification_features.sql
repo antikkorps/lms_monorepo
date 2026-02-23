@@ -6,15 +6,26 @@ BEGIN;
 -- Enum Types
 -- =============================================================================
 
-CREATE TYPE review_status AS ENUM ('pending', 'approved', 'rejected');
-CREATE TYPE leaderboard_metric AS ENUM ('courses_completed', 'avg_quiz_score', 'current_streak', 'total_learning_time');
-CREATE TYPE leaderboard_period AS ENUM ('weekly', 'monthly', 'all_time');
+DO $$ BEGIN
+  CREATE TYPE review_status AS ENUM ('pending', 'approved', 'rejected');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE leaderboard_metric AS ENUM ('courses_completed', 'avg_quiz_score', 'current_streak', 'total_learning_time');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE leaderboard_period AS ENUM ('weekly', 'monthly', 'all_time');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- =============================================================================
 -- Course Reviews
 -- =============================================================================
 
-CREATE TABLE course_reviews (
+CREATE TABLE IF NOT EXISTS course_reviews (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -31,23 +42,23 @@ CREATE TABLE course_reviews (
 );
 
 -- One review per user per course (soft delete aware)
-CREATE UNIQUE INDEX idx_course_reviews_user_course
+CREATE UNIQUE INDEX IF NOT EXISTS idx_course_reviews_user_course
   ON course_reviews (course_id, user_id)
   WHERE deleted_at IS NULL;
 
-CREATE INDEX idx_course_reviews_course_status ON course_reviews (course_id, status) WHERE deleted_at IS NULL;
-CREATE INDEX idx_course_reviews_user ON course_reviews (user_id) WHERE deleted_at IS NULL;
-CREATE INDEX idx_course_reviews_status ON course_reviews (status) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_course_reviews_course_status ON course_reviews (course_id, status) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_course_reviews_user ON course_reviews (user_id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_course_reviews_status ON course_reviews (status) WHERE deleted_at IS NULL;
 
 -- Add rating columns to courses
-ALTER TABLE courses ADD COLUMN average_rating DECIMAL(3,2) DEFAULT 0;
-ALTER TABLE courses ADD COLUMN ratings_count INTEGER DEFAULT 0;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS average_rating DECIMAL(3,2) DEFAULT 0;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS ratings_count INTEGER DEFAULT 0;
 
 -- =============================================================================
 -- User Streaks
 -- =============================================================================
 
-CREATE TABLE user_streaks (
+CREATE TABLE IF NOT EXISTS user_streaks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
   current_streak INTEGER NOT NULL DEFAULT 0,
@@ -62,7 +73,7 @@ CREATE TABLE user_streaks (
 -- User Activity Log
 -- =============================================================================
 
-CREATE TABLE user_activity_log (
+CREATE TABLE IF NOT EXISTS user_activity_log (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   activity_type VARCHAR(50) NOT NULL,
@@ -72,16 +83,16 @@ CREATE TABLE user_activity_log (
 );
 
 -- Idempotent: one entry per user/type/date/reference
-CREATE UNIQUE INDEX idx_user_activity_unique
+CREATE UNIQUE INDEX IF NOT EXISTS idx_user_activity_unique
   ON user_activity_log (user_id, activity_type, activity_date, reference_id);
 
-CREATE INDEX idx_user_activity_user_date ON user_activity_log (user_id, activity_date DESC);
+CREATE INDEX IF NOT EXISTS idx_user_activity_user_date ON user_activity_log (user_id, activity_date DESC);
 
 -- =============================================================================
 -- Leaderboard Entries
 -- =============================================================================
 
-CREATE TABLE leaderboard_entries (
+CREATE TABLE IF NOT EXISTS leaderboard_entries (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
@@ -94,11 +105,11 @@ CREATE TABLE leaderboard_entries (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE UNIQUE INDEX idx_leaderboard_unique
+CREATE UNIQUE INDEX IF NOT EXISTS idx_leaderboard_unique
   ON leaderboard_entries (user_id, COALESCE(tenant_id, '00000000-0000-0000-0000-000000000000'), COALESCE(course_id, '00000000-0000-0000-0000-000000000000'), metric, period, period_start);
 
-CREATE INDEX idx_leaderboard_query ON leaderboard_entries (metric, period, period_start, rank);
-CREATE INDEX idx_leaderboard_user ON leaderboard_entries (user_id);
+CREATE INDEX IF NOT EXISTS idx_leaderboard_query ON leaderboard_entries (metric, period, period_start, rank);
+CREATE INDEX IF NOT EXISTS idx_leaderboard_user ON leaderboard_entries (user_id);
 
 -- =============================================================================
 -- Triggers for updated_at (Sequelize handles updatedAt in the app layer,
@@ -113,11 +124,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_course_reviews_updated_at ON course_reviews;
 CREATE TRIGGER update_course_reviews_updated_at
   BEFORE UPDATE ON course_reviews
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_user_streaks_updated_at ON user_streaks;
 CREATE TRIGGER update_user_streaks_updated_at
   BEFORE UPDATE ON user_streaks
   FOR EACH ROW

@@ -599,6 +599,55 @@ export interface LearnerProgressItem {
   lastActiveAt: string | null;
 }
 
+// Course Paths
+export interface CoursePathListItem {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  status: 'draft' | 'published' | 'archived';
+  coursesCount: number;
+  estimatedDuration: number;
+  createdBy?: { id: string; firstName: string; lastName: string };
+  progress?: number;
+}
+
+export interface CoursePathDetail extends CoursePathListItem {
+  items: {
+    courseId: string;
+    position: number;
+    course: CourseListItem;
+  }[];
+}
+
+export interface CoursePathProgress {
+  pathId: string;
+  overallProgress: number;
+  completedCourses: number;
+  totalCourses: number;
+  courses: {
+    courseId: string;
+    progress: number;
+    completed: boolean;
+  }[];
+}
+
+// Course Prerequisites
+export interface CoursePrerequisiteInfo {
+  id: string;
+  title: string;
+  slug: string;
+  thumbnailUrl: string | null;
+  duration: number;
+  lessonsCount: number;
+}
+
+export interface PrerequisiteCheckResult {
+  met: boolean;
+  missing: string[];
+}
+
 // License analytics
 export interface LicenseAnalytics {
   seatUtilization: { totalSeats: number; usedSeats: number; rate: number };

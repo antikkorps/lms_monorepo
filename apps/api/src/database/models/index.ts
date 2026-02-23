@@ -34,6 +34,10 @@ export { CourseReview } from './CourseReview.js';
 export { UserStreak } from './UserStreak.js';
 export { UserActivityLog } from './UserActivityLog.js';
 export { LeaderboardEntry } from './LeaderboardEntry.js';
+export { UserImport, type ImportError } from './UserImport.js';
+export { CoursePrerequisite } from './CoursePrerequisite.js';
+export { CoursePath } from './CoursePath.js';
+export { CoursePathItem } from './CoursePathItem.js';
 
 // Import for associations setup
 import { Tenant } from './Tenant.js';
@@ -61,6 +65,10 @@ import { CourseReview } from './CourseReview.js';
 import { UserStreak } from './UserStreak.js';
 import { UserActivityLog } from './UserActivityLog.js';
 import { LeaderboardEntry } from './LeaderboardEntry.js';
+import { UserImport } from './UserImport.js';
+import { CoursePrerequisite } from './CoursePrerequisite.js';
+import { CoursePath } from './CoursePath.js';
+import { CoursePathItem } from './CoursePathItem.js';
 
 /**
  * Setup all model associations
@@ -608,6 +616,89 @@ export function setupAssociations(): void {
     foreignKey: 'userId',
     as: 'leaderboardEntries',
   });
+
+  // =============================================================================
+  // UserImport Associations
+  // =============================================================================
+  UserImport.belongsTo(User, {
+    foreignKey: 'importedById',
+    as: 'importedBy',
+  });
+
+  UserImport.belongsTo(Tenant, {
+    foreignKey: 'tenantId',
+    as: 'tenant',
+  });
+
+  User.hasMany(UserImport, {
+    foreignKey: 'importedById',
+    as: 'imports',
+  });
+
+  Tenant.hasMany(UserImport, {
+    foreignKey: 'tenantId',
+    as: 'imports',
+  });
+
+  // =============================================================================
+  // CoursePrerequisite Associations
+  // =============================================================================
+  Course.belongsToMany(Course, {
+    through: CoursePrerequisite,
+    foreignKey: 'courseId',
+    otherKey: 'prerequisiteCourseId',
+    as: 'prerequisites',
+  });
+
+  Course.belongsToMany(Course, {
+    through: CoursePrerequisite,
+    foreignKey: 'prerequisiteCourseId',
+    otherKey: 'courseId',
+    as: 'prerequisiteOf',
+  });
+
+  // =============================================================================
+  // CoursePath Associations
+  // =============================================================================
+  CoursePath.belongsTo(User, {
+    foreignKey: 'createdById',
+    as: 'createdBy',
+  });
+
+  CoursePath.hasMany(CoursePathItem, {
+    foreignKey: 'pathId',
+    as: 'items',
+  });
+
+  CoursePath.belongsToMany(Course, {
+    through: CoursePathItem,
+    foreignKey: 'pathId',
+    otherKey: 'courseId',
+    as: 'courses',
+  });
+
+  User.hasMany(CoursePath, {
+    foreignKey: 'createdById',
+    as: 'createdPaths',
+  });
+
+  // =============================================================================
+  // CoursePathItem Associations
+  // =============================================================================
+  CoursePathItem.belongsTo(CoursePath, {
+    foreignKey: 'pathId',
+    as: 'path',
+  });
+
+  CoursePathItem.belongsTo(Course, {
+    foreignKey: 'courseId',
+    as: 'course',
+  });
+
+  Course.hasMany(CoursePathItem, {
+    foreignKey: 'courseId',
+    as: 'pathItems',
+  });
 }
 
 // All models for easy iteration
@@ -641,4 +732,8 @@ export const models = {
   UserStreak,
   UserActivityLog,
   LeaderboardEntry,
+  UserImport,
+  CoursePrerequisite,
+  CoursePath,
+  CoursePathItem,
 } as const;

@@ -33,7 +33,7 @@ export function calculatePeriodStart(period: LeaderboardPeriod): string {
       const dayOfWeek = now.getDay();
       const monday = new Date(now);
       monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
-      return monday.toISOString().split('T')[0];
+      return `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, '0')}-${String(monday.getDate()).padStart(2, '0')}`;
     }
     case LeaderboardPeriod.MONTHLY: {
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;

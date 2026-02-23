@@ -60,6 +60,7 @@ async function loadLocaleMessages(locale: SupportedLocale): Promise<Record<strin
     streaks: () => import(`./${locale}/streaks.json`),
     search: () => import(`./${locale}/search.json`),
     licenses: () => import(`./${locale}/licenses.json`),
+    paths: () => import(`./${locale}/paths.json`),
   };
 
   const messages: Record<string, unknown> = {};

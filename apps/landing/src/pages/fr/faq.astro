@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import FAQ from '../../components/sections/FAQ.astro';
 import CTA from '../../components/sections/CTA.astro';
+import JsonLd from '../../components/seo/JsonLd.astro';
 
 const faqCategories = [
   {
@@ -110,6 +111,19 @@ const faqCategories = [
     ],
   },
 ];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqCategories.flatMap(cat => cat.items.map(item => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  }))),
+};
 ---
 
 <Layout
@@ -118,6 +132,7 @@ const faqCategories = [
   lang="fr"
   canonicalPath="/fr/faq"
 >
+  <JsonLd slot="head" schema={faqJsonLd} />
   <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-muted">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <h1 class="text-4xl sm:text-5xl font-bold text-foreground">
