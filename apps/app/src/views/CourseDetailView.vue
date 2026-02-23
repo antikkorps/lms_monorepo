@@ -20,8 +20,11 @@ import {
   AlertCircle,
   Eye,
   CreditCard,
+  Award,
+  Download,
 } from 'lucide-vue-next';
 import { useCourseDetail } from '@/composables/useCourseDetail';
+import { useCertificate } from '@/composables/useCertificate';
 import { usePreview } from '@/composables/usePreview';
 import { useToast } from '@/composables/useToast';
 import { usePayments } from '@/composables/usePayments';
@@ -64,6 +67,13 @@ const {
 } = useCourseDetail(slug, { previewMode: isPreviewMode.value });
 
 const isEnrolling = ref(false);
+const { downloadCertificate } = useCertificate();
+const isCompleted = ref(false);
+
+// Track course completion
+watch(progress, (p) => {
+  isCompleted.value = p >= 100;
+});
 const expandedChapters = ref<Set<string>>(new Set());
 
 const {
@@ -303,10 +313,21 @@ function getProgressColor(pct: number): string {
                       {{ completedLessonsCount > 0 ? t('courses.enrollment.continueLearning') : t('courses.enrollment.startLearning') }}
                     </Button>
                   </RouterLink>
-                  <Button v-else class="w-full" size="lg" disabled>
-                    <CheckCircle2 class="mr-2 h-5 w-5" />
-                    {{ t('courses.detail.courseCompleted') }}
-                  </Button>
+                  <div v-else class="space-y-2">
+                    <div class="flex items-center justify-center gap-2 rounded-lg bg-green-50 p-3 text-green-700 dark:bg-green-950 dark:text-green-300">
+                      <Award class="h-5 w-5" />
+                      <span class="font-semibold">{{ t('courses.detail.courseCompleted') }}</span>
+                    </div>
+                    <Button
+                      class="w-full"
+                      size="lg"
+                      variant="outline"
+                      @click="downloadCertificate(course.id)"
+                    >
+                      <Download class="mr-2 h-5 w-5" />
+                      {{ t('courses.detail.downloadCertificate', 'Download Certificate') }}
+                    </Button>
+                  </div>
                 </div>
                 <div v-else>
                   <!-- Free course: direct enrollment -->

@@ -2,6 +2,7 @@
 import type { Discussion } from '@shared/types';
 import { computed } from 'vue';
 import { MessageCircle, Trash2, Flag, MoreVertical } from 'lucide-vue-next';
+import { UserAvatar } from '@/components/user';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Props {
@@ -21,11 +22,6 @@ const authorName = computed(() => {
   return `${props.discussion.user.firstName} ${props.discussion.user.lastName}`;
 });
 
-const authorInitials = computed(() => {
-  if (!props.discussion.user) return '?';
-  return `${props.discussion.user.firstName[0]}${props.discussion.user.lastName[0]}`.toUpperCase();
-});
-
 const isPending = computed(() => (props.discussion as Discussion & { isPending?: boolean }).isPending === true);
 
 const timeAgo = computed(() => {
@@ -41,22 +37,15 @@ const timeAgo = computed(() => {
     <div class="flex items-start justify-between gap-4">
       <div class="flex items-start gap-3">
         <!-- Avatar -->
-        <div
-          v-if="discussion.user?.avatarUrl"
-          class="h-10 w-10 shrink-0 overflow-hidden rounded-full"
-        >
-          <img
-            :src="discussion.user.avatarUrl"
-            :alt="authorName"
-            class="h-full w-full object-cover"
-          />
-        </div>
-        <div
-          v-else
-          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary"
-        >
-          {{ authorInitials }}
-        </div>
+        <UserAvatar
+          :user-id="discussion.user?.id || ''"
+          :first-name="discussion.user?.firstName"
+          :last-name="discussion.user?.lastName"
+          :avatar-url="discussion.user?.avatarUrl"
+          :style="(discussion.user?.avatarStyle as any) || 'initials'"
+          :variation="discussion.user?.avatarVariation ?? 0"
+          size="md"
+        />
 
         <!-- Author info -->
         <div>

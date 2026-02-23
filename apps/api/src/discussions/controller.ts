@@ -143,7 +143,7 @@ export async function listDiscussions(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
     ],
     order: [['createdAt', 'DESC']],
@@ -165,6 +165,8 @@ export async function listDiscussions(ctx: Context): Promise<void> {
             firstName: d.user.firstName,
             lastName: d.user.lastName,
             avatarUrl: d.user.avatarUrl,
+            avatarStyle: d.user.avatarStyle,
+            avatarVariation: d.user.avatarVariation,
           }
         : null,
       isOwner: d.userId === user.userId,
@@ -203,7 +205,7 @@ export async function createDiscussion(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
     ],
   });
@@ -223,6 +225,8 @@ export async function createDiscussion(ctx: Context): Promise<void> {
             firstName: fullDiscussion!.user.firstName,
             lastName: fullDiscussion!.user.lastName,
             avatarUrl: fullDiscussion!.user.avatarUrl,
+            avatarStyle: fullDiscussion!.user.avatarStyle,
+            avatarVariation: fullDiscussion!.user.avatarVariation,
           }
         : null,
       isOwner: true,
@@ -329,7 +333,7 @@ export async function listReplies(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
     ],
     order: [['createdAt', 'ASC']],
@@ -350,6 +354,8 @@ export async function listReplies(ctx: Context): Promise<void> {
             firstName: r.user.firstName,
             lastName: r.user.lastName,
             avatarUrl: r.user.avatarUrl,
+            avatarStyle: r.user.avatarStyle,
+            avatarVariation: r.user.avatarVariation,
           }
         : null,
       isOwner: r.userId === user.userId,
@@ -394,7 +400,7 @@ export async function createReply(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
     ],
   });
@@ -419,6 +425,8 @@ export async function createReply(ctx: Context): Promise<void> {
             firstName: fullReply!.user.firstName,
             lastName: fullReply!.user.lastName,
             avatarUrl: fullReply!.user.avatarUrl,
+            avatarStyle: fullReply!.user.avatarStyle,
+            avatarVariation: fullReply!.user.avatarVariation,
           }
         : null,
       isOwner: true,

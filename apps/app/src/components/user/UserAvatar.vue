@@ -15,16 +15,18 @@ interface Props {
   class?: HTMLAttributes['class'];
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  style: 'initials',
+  variation: 0,
+});
 
-// Use global preference if no style/variation is explicitly provided
-const { avatarUrl: generatedAvatarUrl, globalAvatarStyle, globalAvatarVariation } = useAvatar(
+const { avatarUrl: generatedAvatarUrl } = useAvatar(
   () => props.userId,
   () => props.firstName,
   () => props.lastName,
   () => props.avatarUrl,
-  () => props.style ?? globalAvatarStyle.value,
-  () => props.variation ?? globalAvatarVariation.value,
+  () => props.style,
+  () => props.variation,
 );
 
 const imageLoaded = ref(false);

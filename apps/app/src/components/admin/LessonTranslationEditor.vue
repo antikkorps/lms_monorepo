@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// Tabs removed — using custom card-based selector for video source mode
 import { UploadZone } from '@/components/upload';
 import {
   Loader2,
@@ -17,11 +17,14 @@ import {
   AlertCircle,
   Upload,
   Link,
+  Film,
+  Youtube,
+  X,
+  RefreshCw,
 } from 'lucide-vue-next';
 import { useLessonContent, type UpsertLessonContentInput } from '@/composables/useLessonContent';
 import type { SupportedLocale, LessonType } from '@shared/types';
 import type { UploadResult } from '@/composables/useUpload';
-import { RefreshCw, Clock, Zap } from 'lucide-vue-next';
 
 const props = defineProps<{
   lessonId: string;
@@ -52,7 +55,7 @@ const {
 
 const activeLocale = ref<SupportedLocale>('en');
 const saveSuccess = ref(false);
-const videoSourceMode = ref<'upload' | 'url'>('url');
+const videoSourceMode = ref<'upload' | 'url'>('upload');
 
 // Check if lesson type supports video/document upload
 const showVideoUpload = computed(() => props.lessonType === 'video');
@@ -87,6 +90,23 @@ const hasContentForLocale = computed(() => {
   return !!getContentByLocale(activeLocale.value);
 });
 
+// Detect if current video source is an uploaded file (has a sourceKey) or external URL
+const hasUploadedFile = computed(() => !!formData.value.videoSourceKey);
+const hasExternalUrl = computed(() => !!formData.value.videoUrl && !formData.value.videoSourceKey);
+const currentFileName = computed(() => {
+  if (!formData.value.videoId) return null;
+  const key = formData.value.videoId;
+  // Extract filename from key (last segment after /)
+  const parts = key.split('/');
+  return parts[parts.length - 1] || key;
+});
+
+function clearVideoSource() {
+  formData.value.videoUrl = null;
+  formData.value.videoId = null;
+  formData.value.videoSourceKey = null;
+}
+
 function loadLocaleData(locale: SupportedLocale) {
   activeLocale.value = locale;
   const content = getContentByLocale(locale);
@@ -100,6 +120,13 @@ function loadLocaleData(locale: SupportedLocale) {
     transcript: content?.transcript ?? null,
     description: content?.description ?? null,
   };
+
+  // Auto-detect source mode from existing data
+  if (content?.videoSourceKey) {
+    videoSourceMode.value = 'upload';
+  } else if (content?.videoUrl) {
+    videoSourceMode.value = 'url';
+  }
 
   // Auto-start polling if transcoding is in progress
   stopTranscodingPolling();
@@ -236,78 +263,141 @@ onMounted(async () => {
             </p>
           </div>
 
-          <!-- Video/Document Upload Section -->
-          <div v-if="showVideoUpload || showDocumentUpload" class="space-y-3">
-            <Label>
-              {{ showVideoUpload
-                ? t('admin.lessonContent.fields.videoSource', 'Video Source')
-                : t('admin.lessonContent.fields.documentSource', 'Document Source')
-              }}
-            </Label>
+          <!-- Video/Document Source Section -->
+          <div v-if="showVideoUpload || showDocumentUpload" class="space-y-4">
+            <div class="flex items-center justify-between">
+              <Label class="text-base font-semibold">
+                {{ showVideoUpload
+                  ? t('admin.lessonContent.fields.videoSource', 'Video Source')
+                  : t('admin.lessonContent.fields.documentSource', 'Document Source')
+                }}
+              </Label>
+              <span class="text-xs text-muted-foreground">
+                {{ showVideoUpload
+                  ? t('admin.lessonContent.videoSourceHint', 'Upload a file or paste an external URL')
+                  : t('admin.lessonContent.documentSourceHint', 'Upload a file or paste an external URL')
+                }}
+              </span>
+            </div>
 
-            <Tabs v-model="videoSourceMode" class="w-full">
-              <TabsList class="grid w-full grid-cols-2">
-                <TabsTrigger value="upload" class="flex items-center gap-2">
-                  <Upload class="h-4 w-4" />
-                  {{ t('admin.lessonContent.uploadFile', 'Upload') }}
-                </TabsTrigger>
-                <TabsTrigger value="url" class="flex items-center gap-2">
-                  <Link class="h-4 w-4" />
-                  {{ t('admin.lessonContent.externalUrl', 'External URL') }}
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="upload" class="mt-3">
-                <UploadZone
-                  v-if="showVideoUpload"
-                  category="video"
-                  :label="t('admin.lessonContent.dropVideo', 'Drop video here')"
-                  @upload="handleVideoUpload"
-                />
-                <UploadZone
-                  v-else-if="showDocumentUpload"
-                  category="document"
-                  :label="t('admin.lessonContent.dropDocument', 'Drop document here')"
-                  @upload="handleDocumentUpload"
-                />
-                <p v-if="formData.videoUrl && videoSourceMode === 'upload'" class="mt-2 text-sm text-muted-foreground">
-                  {{ t('admin.lessonContent.currentFile', 'Current file:') }} {{ formData.videoId }}
-                </p>
-              </TabsContent>
-
-              <TabsContent value="url" class="mt-3 space-y-3">
-                <!-- Video/Document URL -->
-                <div class="space-y-2">
-                  <Label for="videoUrl">
-                    {{ showVideoUpload
-                      ? t('admin.lessonContent.fields.videoUrl', 'Video URL')
-                      : t('admin.lessonContent.fields.documentUrl', 'Document URL')
+            <!-- Current file indicator (when a source already exists) -->
+            <div v-if="hasUploadedFile || hasExternalUrl" class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950 p-3">
+              <div class="flex items-center gap-2 flex-1 min-w-0">
+                <Film v-if="showVideoUpload" class="h-5 w-5 text-green-600 dark:text-green-400 shrink-0" />
+                <CheckCircle2 v-else class="h-5 w-5 text-green-600 dark:text-green-400 shrink-0" />
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-green-700 dark:text-green-300">
+                    {{ hasUploadedFile
+                      ? t('admin.lessonContent.fileUploaded', 'File uploaded')
+                      : t('admin.lessonContent.externalUrlSet', 'External URL set')
                     }}
-                  </Label>
-                  <Input
-                    id="videoUrl"
-                    v-model="formData.videoUrl"
-                    type="url"
-                    :placeholder="showVideoUpload
-                      ? t('admin.lessonContent.placeholders.videoUrl', 'https://youtube.com/watch?v=... or video URL')
-                      : t('admin.lessonContent.placeholders.documentUrl', 'https://example.com/document.pdf')"
-                  />
-                </div>
-
-                <!-- Video ID (only for videos) -->
-                <div v-if="showVideoUpload" class="space-y-2">
-                  <Label for="videoId">{{ t('admin.lessonContent.fields.videoId', 'Video ID') }}</Label>
-                  <Input
-                    id="videoId"
-                    v-model="formData.videoId"
-                    :placeholder="t('admin.lessonContent.placeholders.videoId', 'YouTube or Cloudflare Stream ID')"
-                  />
-                  <p class="text-xs text-muted-foreground">
-                    {{ t('admin.lessonContent.hints.videoId', 'For YouTube: the video ID from the URL. For Cloudflare Stream: the stream ID.') }}
+                  </p>
+                  <p class="text-xs text-green-600 dark:text-green-400 truncate">
+                    {{ hasUploadedFile ? currentFileName : formData.videoUrl }}
                   </p>
                 </div>
-              </TabsContent>
-            </Tabs>
+              </div>
+              <button
+                type="button"
+                class="p-1 rounded hover:bg-green-200 dark:hover:bg-green-800 text-green-600 dark:text-green-400 transition-colors"
+                :title="t('admin.lessonContent.clearSource', 'Remove source')"
+                @click="clearVideoSource"
+              >
+                <X class="h-4 w-4" />
+              </button>
+            </div>
+
+            <!-- Source mode selector — two prominent cards -->
+            <div class="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                class="flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all text-left"
+                :class="videoSourceMode === 'upload'
+                  ? 'border-primary bg-primary/5 shadow-sm'
+                  : 'border-muted hover:border-muted-foreground/30'"
+                @click="videoSourceMode = 'upload'"
+              >
+                <Upload class="h-6 w-6" :class="videoSourceMode === 'upload' ? 'text-primary' : 'text-muted-foreground'" />
+                <span class="text-sm font-medium" :class="videoSourceMode === 'upload' ? 'text-primary' : 'text-muted-foreground'">
+                  {{ t('admin.lessonContent.uploadFile', 'Upload file') }}
+                </span>
+                <span class="text-xs text-muted-foreground text-center">
+                  {{ showVideoUpload
+                    ? t('admin.lessonContent.uploadVideoDesc', 'MP4, WebM, MOV — auto-transcoded')
+                    : t('admin.lessonContent.uploadDocDesc', 'PDF, PPTX, DOCX')
+                  }}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                class="flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all text-left"
+                :class="videoSourceMode === 'url'
+                  ? 'border-primary bg-primary/5 shadow-sm'
+                  : 'border-muted hover:border-muted-foreground/30'"
+                @click="videoSourceMode = 'url'"
+              >
+                <Youtube v-if="showVideoUpload" class="h-6 w-6" :class="videoSourceMode === 'url' ? 'text-primary' : 'text-muted-foreground'" />
+                <Link v-else class="h-6 w-6" :class="videoSourceMode === 'url' ? 'text-primary' : 'text-muted-foreground'" />
+                <span class="text-sm font-medium" :class="videoSourceMode === 'url' ? 'text-primary' : 'text-muted-foreground'">
+                  {{ t('admin.lessonContent.externalUrl', 'External URL') }}
+                </span>
+                <span class="text-xs text-muted-foreground text-center">
+                  {{ showVideoUpload
+                    ? t('admin.lessonContent.externalUrlVideoDesc', 'YouTube, Vimeo, or any URL')
+                    : t('admin.lessonContent.externalUrlDocDesc', 'Link to hosted document')
+                  }}
+                </span>
+              </button>
+            </div>
+
+            <!-- Upload panel -->
+            <div v-if="videoSourceMode === 'upload'" class="rounded-lg border border-dashed p-1">
+              <UploadZone
+                v-if="showVideoUpload"
+                category="video"
+                :label="t('admin.lessonContent.dropVideo', 'Drop video here or click to browse')"
+                @upload="handleVideoUpload"
+              />
+              <UploadZone
+                v-else-if="showDocumentUpload"
+                category="document"
+                :label="t('admin.lessonContent.dropDocument', 'Drop document here or click to browse')"
+                @upload="handleDocumentUpload"
+              />
+            </div>
+
+            <!-- URL panel -->
+            <div v-else-if="videoSourceMode === 'url'" class="space-y-3 rounded-lg border p-4">
+              <div class="space-y-2">
+                <Label for="videoUrl">
+                  {{ showVideoUpload
+                    ? t('admin.lessonContent.fields.videoUrl', 'Video URL')
+                    : t('admin.lessonContent.fields.documentUrl', 'Document URL')
+                  }}
+                </Label>
+                <Input
+                  id="videoUrl"
+                  v-model="formData.videoUrl"
+                  type="url"
+                  :placeholder="showVideoUpload
+                    ? t('admin.lessonContent.placeholders.videoUrl', 'https://youtube.com/watch?v=... or direct video link')
+                    : t('admin.lessonContent.placeholders.documentUrl', 'https://example.com/document.pdf')"
+                />
+              </div>
+
+              <div v-if="showVideoUpload" class="space-y-2">
+                <Label for="videoId">{{ t('admin.lessonContent.fields.videoId', 'Video ID') }}</Label>
+                <Input
+                  id="videoId"
+                  v-model="formData.videoId"
+                  :placeholder="t('admin.lessonContent.placeholders.videoId', 'YouTube or Cloudflare Stream ID')"
+                />
+                <p class="text-xs text-muted-foreground">
+                  {{ t('admin.lessonContent.hints.videoId', 'For YouTube: the video ID from the URL. For Cloudflare Stream: the stream ID.') }}
+                </p>
+              </div>
+            </div>
           </div>
 
           <!-- Transcoding Status Banner -->

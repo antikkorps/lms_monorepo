@@ -2,6 +2,7 @@
 import type { DiscussionReply } from '@shared/types';
 import { computed } from 'vue';
 import { Trash2, Flag } from 'lucide-vue-next';
+import { UserAvatar } from '@/components/user';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Props {
@@ -20,11 +21,6 @@ const authorName = computed(() => {
   return `${props.reply.user.firstName} ${props.reply.user.lastName}`;
 });
 
-const authorInitials = computed(() => {
-  if (!props.reply.user) return '?';
-  return `${props.reply.user.firstName[0]}${props.reply.user.lastName[0]}`.toUpperCase();
-});
-
 const isPending = computed(() => (props.reply as DiscussionReply & { isPending?: boolean }).isPending === true);
 
 const timeAgo = computed(() => {
@@ -37,22 +33,15 @@ const timeAgo = computed(() => {
 <template>
   <div class="flex gap-3 py-3" :class="{ 'opacity-60': isPending }">
     <!-- Avatar -->
-    <div
-      v-if="reply.user?.avatarUrl"
-      class="h-8 w-8 shrink-0 overflow-hidden rounded-full"
-    >
-      <img
-        :src="reply.user.avatarUrl"
-        :alt="authorName"
-        class="h-full w-full object-cover"
-      />
-    </div>
-    <div
-      v-else
-      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary"
-    >
-      {{ authorInitials }}
-    </div>
+    <UserAvatar
+      :user-id="reply.user?.id || ''"
+      :first-name="reply.user?.firstName"
+      :last-name="reply.user?.lastName"
+      :avatar-url="reply.user?.avatarUrl"
+      :style="(reply.user?.avatarStyle as any) || 'initials'"
+      :variation="reply.user?.avatarVariation ?? 0"
+      size="sm"
+    />
 
     <!-- Content -->
     <div class="flex-1 min-w-0">

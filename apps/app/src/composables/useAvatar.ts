@@ -3,7 +3,7 @@
  * Generates DiceBear avatar URLs for users
  */
 
-import { computed, ref, type MaybeRef, toValue } from 'vue';
+import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 
 export type AvatarStyle =
   | 'avataaars'
@@ -44,40 +44,6 @@ export interface AvatarOptions {
 }
 
 const DICEBEAR_BASE_URL = 'https://api.dicebear.com/9.x';
-const AVATAR_STYLE_KEY = 'lms-avatar-style';
-const AVATAR_VARIATION_KEY = 'lms-avatar-variation';
-
-// Global reactive state for avatar preferences
-const globalAvatarStyle = ref<AvatarStyle>(
-  (localStorage.getItem(AVATAR_STYLE_KEY) as AvatarStyle) || 'initials'
-);
-const globalAvatarVariation = ref<number>(
-  parseInt(localStorage.getItem(AVATAR_VARIATION_KEY) || '0', 10)
-);
-
-/**
- * Get the global avatar style preference
- */
-export function getAvatarStyle(): AvatarStyle {
-  return globalAvatarStyle.value;
-}
-
-/**
- * Get the global avatar variation index
- */
-export function getAvatarVariation(): number {
-  return globalAvatarVariation.value;
-}
-
-/**
- * Set the global avatar style preference (persisted to localStorage)
- */
-export function setAvatarStyle(style: AvatarStyle, variation: number = 0): void {
-  globalAvatarStyle.value = style;
-  globalAvatarVariation.value = variation;
-  localStorage.setItem(AVATAR_STYLE_KEY, style);
-  localStorage.setItem(AVATAR_VARIATION_KEY, variation.toString());
-}
 
 /**
  * Generate a DiceBear avatar URL
@@ -135,12 +101,12 @@ export function getUserAvatarUrl(
  * Composable for avatar generation
  */
 export function useAvatar(
-  userId: MaybeRef<string>,
-  firstName?: MaybeRef<string | undefined>,
-  lastName?: MaybeRef<string | undefined>,
-  customUrl?: MaybeRef<string | null | undefined>,
-  style: MaybeRef<AvatarStyle> = 'initials',
-  variation: MaybeRef<number> = 0,
+  userId: MaybeRefOrGetter<string>,
+  firstName?: MaybeRefOrGetter<string | undefined>,
+  lastName?: MaybeRefOrGetter<string | undefined>,
+  customUrl?: MaybeRefOrGetter<string | null | undefined>,
+  style: MaybeRefOrGetter<AvatarStyle> = 'initials',
+  variation: MaybeRefOrGetter<number> = 0,
 ) {
   const avatarUrl = computed(() => {
     const url = toValue(customUrl);
@@ -173,8 +139,5 @@ export function useAvatar(
     funAvatarUrl,
     generateAvatarUrl,
     getUserAvatarUrl,
-    globalAvatarStyle,
-    globalAvatarVariation,
-    setAvatarStyle,
   };
 }

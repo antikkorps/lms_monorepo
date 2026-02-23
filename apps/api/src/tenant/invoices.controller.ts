@@ -85,6 +85,7 @@ export async function listInvoices(ctx: Context): Promise<void> {
   );
 
   ctx.body = {
+    success: true,
     data: {
       invoices: result.invoices,
       pagination: {
@@ -123,6 +124,7 @@ export async function getInvoice(ctx: Context): Promise<void> {
   );
 
   ctx.body = {
+    success: true,
     data: invoice,
   };
 }
@@ -169,6 +171,7 @@ export async function getInvoicePdf(ctx: Context): Promise<void> {
 
   // Otherwise return the URL
   ctx.body = {
+    success: true,
     data: {
       url: pdfUrl,
     },

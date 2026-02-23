@@ -36,6 +36,8 @@ function serializeReview(review: CourseReview) {
           firstName: review.user.firstName,
           lastName: review.user.lastName,
           avatarUrl: review.user.avatarUrl,
+          avatarStyle: review.user.avatarStyle,
+          avatarVariation: review.user.avatarVariation,
         }
       : null,
   };
@@ -91,7 +93,7 @@ export async function listCourseReviews(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
     ],
     order: [['createdAt', 'DESC']],
@@ -304,7 +306,7 @@ export async function listPendingReviews(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
       {
         model: Course,
@@ -363,7 +365,7 @@ export async function getInstructorReviews(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
       {
         model: Course,

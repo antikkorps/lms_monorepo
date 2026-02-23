@@ -23,6 +23,8 @@ export interface AuthenticatedUser {
   role: Role;
   tenantId: string | null;
   avatarUrl: string | null;
+  avatarStyle: string;
+  avatarVariation: number;
   locale?: 'en' | 'fr';
 }
 

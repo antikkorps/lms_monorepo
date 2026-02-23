@@ -147,7 +147,7 @@ export async function listCourses(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'instructor',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
     ],
     order: [[sort, order]],
@@ -190,7 +190,7 @@ export async function getCourse(ctx: Context): Promise<void> {
       {
         model: User,
         as: 'instructor',
-        attributes: ['id', 'firstName', 'lastName', 'avatarUrl'],
+        attributes: ['id', 'firstName', 'lastName', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
       },
       {
         model: Chapter,

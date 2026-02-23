@@ -275,7 +275,7 @@ export async function getLicense(ctx: Context): Promise<void> {
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'firstName', 'lastName', 'email', 'avatarUrl'],
+            attributes: ['id', 'firstName', 'lastName', 'email', 'avatarUrl', 'avatarStyle', 'avatarVariation'],
           },
         ],
       },

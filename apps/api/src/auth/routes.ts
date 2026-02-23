@@ -7,6 +7,7 @@ import {
   logoutAll,
   me,
   updateLocale,
+  updateAvatar,
   changePassword,
   forgotPassword,
   resetPassword,
@@ -33,6 +34,7 @@ authRouter.post('/logout', authenticate, logout);
 authRouter.post('/logout-all', authenticate, logoutAll);
 authRouter.get('/me', authenticate, me);
 authRouter.patch('/me/locale', authenticate, updateLocale);
+authRouter.patch('/me/avatar', authenticate, updateAvatar);
 authRouter.post('/change-password', authenticate, changePassword);
 
 // Mount SSO routes under /auth/sso

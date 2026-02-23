@@ -381,6 +381,8 @@ export interface DiscussionUser {
   firstName: string;
   lastName: string;
   avatarUrl: string | null;
+  avatarStyle?: string;
+  avatarVariation?: number;
 }
 
 export interface Discussion {
@@ -465,6 +467,8 @@ export interface CourseReview {
     firstName: string;
     lastName: string;
     avatarUrl: string | null;
+    avatarStyle?: string;
+    avatarVariation?: number;
   } | null;
 }
 
@@ -492,6 +496,8 @@ export interface LeaderboardEntry {
     firstName: string;
     lastName: string;
     avatarUrl: string | null;
+    avatarStyle?: string;
+    avatarVariation?: number;
   };
 }
 
