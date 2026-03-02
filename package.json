@@ -33,7 +33,7 @@
     "@swc-node/register": "~1.11.1",
     "@swc/core": "1.15.8",
     "@swc/helpers": "~0.5.19",
-    "@tailwindcss/vite": "^4.1.18",
+    "@tailwindcss/vite": "^4.2.1",
     "@vitejs/plugin-vue": "^6.0.4",
     "@vitest/coverage-v8": "^4.0.18",
     "@vue/compiler-sfc": "^3.5.28",
