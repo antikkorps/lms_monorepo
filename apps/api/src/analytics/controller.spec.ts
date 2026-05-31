@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Context } from 'koa';
-import { UserRole, CourseStatus, PurchaseStatus } from '../database/models/enums.js';
+import { UserRole } from '../database/models/enums.js';
 
 // =============================================================================
 // Module Mocks

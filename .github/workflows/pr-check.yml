@@ -40,9 +40,10 @@ jobs:
             infra
             deps
           requireScope: false
-          subjectPattern: ^[A-Z].+$
+          # Allow both cases: humans tend to capitalize, Dependabot uses lowercase ("bump …").
+          subjectPattern: ^[A-Za-z].+$
           subjectPatternError: |
-            The subject "{subject}" should start with an uppercase letter.
+            The subject "{subject}" should start with a letter.
 
   # =============================================================================
   # PR Size Check - Warn on large PRs

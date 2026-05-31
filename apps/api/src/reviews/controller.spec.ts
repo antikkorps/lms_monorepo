@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Context } from 'koa';
-import { ReviewStatus, UserRole, PurchaseStatus, CourseStatus } from '../database/models/enums.js';
+import { ReviewStatus, UserRole, CourseStatus } from '../database/models/enums.js';
 
 // =============================================================================
 // Module Mocks
@@ -392,7 +392,7 @@ describe('ReviewsController', () => {
 
       const ctx = createMockContext({
         state: {
-          user: { userId: 'admin-1', email: 'admin@test.com', role: UserRole.SUPER_ADMIN },
+          user: { userId: 'admin-1', email: 'admin@test.com', role: UserRole.SUPER_ADMIN, tenantId: null, type: 'access' },
         },
         query: { page: 1, limit: 20 } as unknown as Record<string, string>,
       });
@@ -409,7 +409,7 @@ describe('ReviewsController', () => {
 
       const ctx = createMockContext({
         state: {
-          user: { userId: 'instructor-1', email: 'i@test.com', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-1', email: 'i@test.com', role: UserRole.INSTRUCTOR, tenantId: null, type: 'access' },
         },
         query: { page: 1, limit: 20 } as unknown as Record<string, string>,
       });
@@ -439,7 +439,7 @@ describe('ReviewsController', () => {
 
       const ctx = createMockContext({
         state: {
-          user: { userId: 'instructor-1', email: 'i@test.com', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-1', email: 'i@test.com', role: UserRole.INSTRUCTOR, tenantId: null, type: 'access' },
         },
         query: { page: 1, limit: 20 } as unknown as Record<string, string>,
       });
@@ -464,7 +464,7 @@ describe('ReviewsController', () => {
 
       const ctx = createMockContext({
         state: {
-          user: { userId: 'admin-1', email: 'admin@test.com', role: UserRole.SUPER_ADMIN },
+          user: { userId: 'admin-1', email: 'admin@test.com', role: UserRole.SUPER_ADMIN, tenantId: null, type: 'access' },
         },
         params: { id: 'review-1' },
         request: { body: { action: 'approve' } } as unknown as Context['request'],
@@ -492,7 +492,7 @@ describe('ReviewsController', () => {
 
       const ctx = createMockContext({
         state: {
-          user: { userId: 'admin-1', email: 'admin@test.com', role: UserRole.SUPER_ADMIN },
+          user: { userId: 'admin-1', email: 'admin@test.com', role: UserRole.SUPER_ADMIN, tenantId: null, type: 'access' },
         },
         params: { id: 'review-1' },
         request: { body: { action: 'reject', note: 'Inappropriate' } } as unknown as Context['request'],
@@ -514,7 +514,7 @@ describe('ReviewsController', () => {
 
       const ctx = createMockContext({
         state: {
-          user: { userId: 'admin-1', email: 'admin@test.com', role: UserRole.SUPER_ADMIN },
+          user: { userId: 'admin-1', email: 'admin@test.com', role: UserRole.SUPER_ADMIN, tenantId: null, type: 'access' },
         },
         params: { id: 'missing' },
         request: { body: { action: 'approve' } } as unknown as Context['request'],
@@ -536,7 +536,7 @@ describe('ReviewsController', () => {
 
       const ctx = createMockContext({
         state: {
-          user: { userId: 'instructor-1', email: 'i@test.com', role: UserRole.INSTRUCTOR },
+          user: { userId: 'instructor-1', email: 'i@test.com', role: UserRole.INSTRUCTOR, tenantId: null, type: 'access' },
         },
         params: { id: 'review-1' },
         request: { body: { action: 'approve' } } as unknown as Context['request'],

@@ -331,7 +331,7 @@ describe('LicensesController', () => {
     it('should throw 403 for learner role', async () => {
       const ctx = createMockContext({
         state: {
-          user: { userId: 'u-1', email: 'u@t.com', role: UserRole.LEARNER, tenantId: 'tenant-1' },
+          user: { userId: 'u-1', email: 'u@t.com', role: UserRole.LEARNER, tenantId: 'tenant-1', type: 'access' },
         },
         request: { body: { courseId: 'c-1', licenseType: 'seats', seats: 5 } } as unknown as Context['request'],
       });
@@ -625,7 +625,7 @@ describe('LicensesController', () => {
     it('should throw 403 for manager role', async () => {
       const ctx = createMockContext({
         state: {
-          user: { userId: 'm-1', email: 'm@t.com', role: UserRole.MANAGER, tenantId: 'tenant-1' },
+          user: { userId: 'm-1', email: 'm@t.com', role: UserRole.MANAGER, tenantId: 'tenant-1', type: 'access' },
         },
         params: { id: 'license-1' },
         request: { body: {} } as unknown as Context['request'],
