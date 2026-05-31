@@ -7,6 +7,10 @@ updates:
       day: "monday"
     target-branch: "dev"
     open-pull-requests-limit: 10
+    # 90-day cooldown before non-security upgrades.
+    # Security updates bypass this entirely (separate Dependabot security flow).
+    cooldown:
+      default-days: 90
     groups:
       nx:
         patterns:

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Context } from 'koa';
-import { UserRole, PurchaseStatus } from '../database/models/enums.js';
+import { UserRole } from '../database/models/enums.js';
 
 // =============================================================================
 // Module Mocks
@@ -179,6 +179,7 @@ describe('AdminAnalyticsController', () => {
             email: 'ta@test.com',
             role: UserRole.TENANT_ADMIN,
             tenantId: 'tenant-1',
+            type: 'access',
           },
         },
       });
@@ -212,6 +213,7 @@ describe('AdminAnalyticsController', () => {
             email: 'ta@test.com',
             role: UserRole.TENANT_ADMIN,
             tenantId: null,
+            type: 'access',
           },
         },
       });

@@ -76,7 +76,9 @@ jobs:
         run: npm ci
 
       - name: Run lint
-        run: npx nx affected -t lint --base=HEAD~1
+        run: |
+          BASE=$([ "${{ github.event_name }}" = "pull_request" ] && echo "origin/${{ github.base_ref }}" || echo "HEAD~1")
+          npx nx affected -t lint --base="$BASE"
 
   # =============================================================================
   # Typecheck - TypeScript validation
@@ -99,7 +101,9 @@ jobs:
         run: npm ci
 
       - name: Run typecheck
-        run: npx nx affected -t typecheck --base=HEAD~1
+        run: |
+          BASE=$([ "${{ github.event_name }}" = "pull_request" ] && echo "origin/${{ github.base_ref }}" || echo "HEAD~1")
+          npx nx affected -t typecheck --base="$BASE"
 
   # =============================================================================
   # Test - Unit and integration tests
@@ -152,7 +156,9 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npx nx affected -t test --base=HEAD~1 --coverage
+        run: |
+          BASE=$([ "${{ github.event_name }}" = "pull_request" ] && echo "origin/${{ github.base_ref }}" || echo "HEAD~1")
+          npx nx affected -t test --base="$BASE" --coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@v5
@@ -182,7 +188,9 @@ jobs:
         run: npm ci
 
       - name: Build affected projects
-        run: npx nx affected -t build --base=HEAD~1 --configuration=production
+        run: |
+          BASE=$([ "${{ github.event_name }}" = "pull_request" ] && echo "origin/${{ github.base_ref }}" || echo "HEAD~1")
+          npx nx affected -t build --base="$BASE" --configuration=production
 
       - name: Upload API artifact
         uses: actions/upload-artifact@v7
