@@ -89,7 +89,7 @@ async function processRow(
   tenantId: string | null,
   importedById: string,
   inviterName: string,
-  errors: ImportError[]
+  _errors: ImportError[]
 ): Promise<void> {
   const { email, firstName, lastName } = row;
   const role = (row.role as UserRole) || UserRole.LEARNER;
