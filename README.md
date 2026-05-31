@@ -6,6 +6,54 @@
 
 [Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
 
+## 🚀 Getting Started (local dev)
+
+> Quickstart to get the full stack running locally. Deployment details live in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+
+### Prerequisites
+
+- **Node.js 22.x** — run `nvm use` (pinned in [`.nvmrc`](.nvmrc))
+- **Docker** + Docker Compose — PostgreSQL & Redis run in containers
+- **npm** — install with `npm ci` (uses `package-lock.json`)
+
+### Setup
+
+```bash
+git clone <repo-url>
+cd lms_monorepo
+
+nvm use                 # Node 22.16.0 (install it if missing)
+npm ci                  # install workspace dependencies
+
+cp .env.example .env    # then fill in secrets: Stripe, Google/Microsoft OAuth, Mailjet, Cloudflare…
+
+npm run db:up           # start PostgreSQL (:5433) + Redis (:6379) via docker compose
+npm run db:reset        # build schema + seed data (fresh DB)
+```
+
+### Run
+
+```bash
+npm run start:api       # API      → http://localhost:3000
+npm run start:app       # Frontend → http://localhost:5173
+npm run start:landing   # Landing  → http://localhost:4321
+```
+
+### Useful commands
+
+| Command | Description |
+| --- | --- |
+| `npm run db:up` / `npm run db:down` | Start / stop Postgres + Redis containers |
+| `npm run db:migrate` | Apply incremental migrations (`apps/api/src/database/migrator.ts`) |
+| `npm run db:reset` | Rebuild schema + reseed (**destructive**) |
+| `npm run build` | Build all projects |
+| `npm run test` | Run all tests (Vitest) |
+| `npm run lint` | Lint all projects |
+
+> ⚠️ **Secrets**: `.env` is git-ignored — never commit it. To set up a second machine, copy `.env` through a secure channel (secret manager), not git.
+
+---
+
 ## Generate a library
 
 ```sh
