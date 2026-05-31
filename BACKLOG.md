@@ -1,6 +1,67 @@
 # IQON-IA - Backlog
 
-## Modified: 2026-02-23
+## Modified: 2026-06-01
+
+---
+
+## 🚀 V1 Launch — Go-Live Priorities (2026-06-01)
+
+> Goal: ship the product publicly (V1). Most MVP features are already built
+> (payments, content, media, notifications, search, licensing). The remaining
+> work is **activation, go-live hardening, and public-facing readiness**.
+
+### ✅ Done this session (2026-05-31 → 2026-06-01)
+
+- [x] **CI/build repair** — every PR (incl. all 29 Dependabot PRs) was red. Root causes fixed: shared-lib TS `outDir` collision (broke `@shared/schemas` resolution for the api), nx out-of-sync project references, 6 lint errors, 11 spec mock type errors, `pr-title` uppercase rule vs Dependabot's lowercase titles, CI `--base=HEAD~1` → `origin/<base_ref>`, missing Vite library config for `shared-ui`. (PR #229)
+- [x] **Dependabot policy** — 90-day cooldown before non-security version updates (security updates exempt). (PR #229)
+- [x] **Dependency refresh** — closed 29 stale Dependabot PRs, consolidated local `npm update` (in-range), Stripe SDK `apiVersion` → `2026-02-25.clover`. Verified lint/typecheck/test/build green. (PR #231)
+- [x] **Local dev onboarding** — `.nvmrc` (Node 22.16.0), README Getting Started, `.env.example` sync (`CLOUDFLARE_STREAM_WEBHOOK_SECRET`). (PR #229)
+
+### 🔴 Critical for V1 (in priority order)
+
+**1. Activate authentication providers** _(code exists in `services/sso/`, needs real credentials + live testing)_
+- [ ] Google OAuth — wire real client ID/secret, test the SSO callback end-to-end
+- [ ] Microsoft Entra ID — wire real credentials, test callback (tenant: `common`)
+- [ ] Verify SSO circuit breaker + error handling on provider downtime
+
+**2. Activate Stripe (go-live)** _(code exists in `services/stripe/`, needs live config + verification)_
+- [ ] Switch to live keys; create products/prices matching config (B2C courses, B2B subscriptions)
+- [ ] Verify webhook signature validation + idempotency on `/webhooks/stripe`
+- [ ] Enable webhook events (`checkout.session.completed`, `invoice.paid`, `customer.subscription.*`)
+- [ ] End-to-end test: B2C purchase + B2B license checkout (card + SEPA)
+
+**3. Demo access**
+- [ ] Shared **read-only** demo account with access to courses (seeded)
+- [ ] Periodic reset; ensure the demo account can't mutate other users' data or escalate privileges
+- [ ] "Try the demo" CTA on the landing
+
+**4. Open registrations**
+- [ ] Re-enable the (currently hidden) registration link on the landing
+- [ ] Rate limiting on public auth endpoints (config exists — confirm it's enforced)
+- [ ] Mandatory email verification on signup (Mailjet operational)
+- [ ] Anti-abuse on signup (rate limit / captcha)
+
+**5. Legal / RGPD** _(mandatory before public signups in FR)_
+- [ ] Real content for Mentions légales, CGU/CGV, Politique de confidentialité (landing has `/privacy` + `/terms` shells)
+- [ ] Cookie consent banner
+- [ ] Confirm data-deletion path (soft-deletes / `paranoid` already in place)
+
+**6. SEO — maximize the landing** _(already has meta/OG/Twitter/hreflang/sitemap, 2026-01-28)_
+- [ ] Now that videos exist: add `VideoObject` JSON-LD; ensure videos don't hurt LCP
+- [ ] Audit/extend structured data (Organization, Course, FAQ JSON-LD)
+- [ ] Verify sitemap / robots / hreflang / canonical / OG across all 16 pages
+- [ ] Performance pass (Lighthouse / Core Web Vitals)
+
+### 🟠 Go-live hardening (should-have)
+
+- [ ] Resolve 15 `npm audit` vulnerabilities (all require major bumps) — via Dependabot security PRs (exempt from cooldown) or deliberate upgrades
+- [ ] Confirm error monitoring in prod (Sentry DSN configured)
+- [ ] Verify graceful shutdown + health checks under load
+- [ ] Astro 5 → 6 major (landing) — do alongside the SEO work
+
+### 🟢 Post-launch (already tracked below)
+
+Video watch analytics, quiz performance insights, Redis session tests, integration/perf tests, batch CSV import, course bundles/paths, etc.
 
 ---
 
