@@ -39,6 +39,7 @@ jobs:
             shared
             infra
             deps
+            ci
           requireScope: false
           # Allow both cases: humans tend to capitalize, Dependabot uses lowercase ("bump …").
           subjectPattern: ^[A-Za-z].+$
