@@ -31,7 +31,7 @@ function mockFetchOnce(value: { ok: boolean; json?: unknown; status?: number }) 
 
 describe('TurnstileService', () => {
   beforeEach(() => {
-    config.signup.turnstile.secretKey = '';
+    (config.signup.turnstile as { secretKey: string }).secretKey = '';
     vi.clearAllMocks();
   });
 
@@ -49,7 +49,7 @@ describe('TurnstileService', () => {
   });
 
   it('rejects a missing token when configured', async () => {
-    config.signup.turnstile.secretKey = 'secret';
+    (config.signup.turnstile as { secretKey: string }).secretKey = 'secret';
     const fetchMock = mockFetchOnce({ ok: true, json: { success: true } });
 
     await expect(getTurnstileService().verify(undefined)).resolves.toBe(false);
@@ -57,7 +57,7 @@ describe('TurnstileService', () => {
   });
 
   it('returns true when siteverify succeeds', async () => {
-    config.signup.turnstile.secretKey = 'secret';
+    (config.signup.turnstile as { secretKey: string }).secretKey = 'secret';
     const fetchMock = mockFetchOnce({ ok: true, json: { success: true } });
 
     await expect(getTurnstileService().verify('good-token', '1.2.3.4')).resolves.toBe(true);
@@ -65,14 +65,14 @@ describe('TurnstileService', () => {
   });
 
   it('returns false when siteverify rejects the token', async () => {
-    config.signup.turnstile.secretKey = 'secret';
+    (config.signup.turnstile as { secretKey: string }).secretKey = 'secret';
     mockFetchOnce({ ok: true, json: { success: false, 'error-codes': ['invalid-input-response'] } });
 
     await expect(getTurnstileService().verify('bad-token')).resolves.toBe(false);
   });
 
   it('fails closed on network/HTTP error', async () => {
-    config.signup.turnstile.secretKey = 'secret';
+    (config.signup.turnstile as { secretKey: string }).secretKey = 'secret';
     mockFetchOnce({ ok: false, status: 500 });
 
     await expect(getTurnstileService().verify('any-token')).resolves.toBe(false);
