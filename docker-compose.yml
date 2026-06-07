@@ -107,6 +107,8 @@ services:
       VITE_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
       # Cloudflare Turnstile site key (public). Empty = captcha widget hidden.
       VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-}
+      # Vite dev proxy must reach the API by its compose service name.
+      VITE_PROXY_TARGET: http://api:3000
     ports:
       - '${APP_PORT:-5173}:5173'
     volumes:
