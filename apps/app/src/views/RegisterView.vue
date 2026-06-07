@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle } from 'lucide-vue-next';
+import TurnstileWidget from '@/components/TurnstileWidget.vue';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -21,6 +22,12 @@ const password = ref('');
 const confirmPassword = ref('');
 const localError = ref('');
 const registrationSuccess = ref(false);
+
+// Anti-abuse
+const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
+const captchaToken = ref('');
+const website = ref(''); // Honeypot — must stay empty.
+const turnstileRef = ref<InstanceType<typeof TurnstileWidget> | null>(null);
 
 async function handleSubmit() {
   localError.value = '';
@@ -37,15 +44,26 @@ async function handleSubmit() {
     return;
   }
 
+  if (turnstileSiteKey && !captchaToken.value) {
+    localError.value = t('auth.register.errors.captchaRequired');
+    return;
+  }
+
   const success = await authStore.register({
     firstName: firstName.value,
     lastName: lastName.value,
     email: email.value,
     password: password.value,
+    captchaToken: captchaToken.value || undefined,
+    website: website.value || undefined,
   });
 
   if (success) {
     registrationSuccess.value = true;
+  } else {
+    // Token is single-use — reset so the user can retry.
+    captchaToken.value = '';
+    turnstileRef.value?.reset();
   }
 }
 </script>
@@ -137,6 +155,27 @@ async function handleSubmit() {
             :disabled="authStore.isLoading"
           />
         </div>
+
+        <!-- Honeypot: hidden from real users, off the tab order and from assistive tech. -->
+        <div style="position: absolute; left: -9999px" aria-hidden="true">
+          <Label for="website">Website</Label>
+          <Input
+            id="website"
+            v-model="website"
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
+
+        <TurnstileWidget
+          v-if="turnstileSiteKey"
+          ref="turnstileRef"
+          :site-key="turnstileSiteKey"
+          @verified="(token: string) => (captchaToken = token)"
+          @expired="captchaToken = ''"
+          @error="captchaToken = ''"
+        />
 
         <Button
           type="submit"

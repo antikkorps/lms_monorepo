@@ -29,6 +29,8 @@ import { AppError } from '../utils/app-error.js';
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 import { emailService } from '../services/email/index.js';
+import { getTurnstileService } from '../services/turnstile/index.js';
+import { isDisposableEmail } from './disposable-emails.js';
 import { parseLocaleFromRequest } from '../utils/locale.js';
 
 /**
@@ -97,20 +99,45 @@ function clearAuthCookies(ctx: Context): void {
  * POST /auth/register
  */
 export async function register(ctx: Context): Promise<void> {
-  const { email, password, firstName, lastName, tenantSlug } = ctx.request.body as {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    tenantSlug?: string;
-  };
+  // Body is validated by the registerSchema middleware on the route.
+  const { email, password, firstName, lastName, tenantSlug, captchaToken, website } =
+    ctx.request.body as {
+      email: string;
+      password: string;
+      firstName: string;
+      lastName: string;
+      tenantSlug?: string;
+      captchaToken?: string;
+      website?: string;
+    };
 
-  // Validate required fields
-  if (!email || !password || !firstName || !lastName) {
-    throw new AppError('Missing required fields', 400, 'VALIDATION_ERROR');
+  // Honeypot: a real user never fills the hidden `website` field. Bots that
+  // auto-fill every input do. Respond with the normal success shape so the bot
+  // can't tell it was caught, but create nothing.
+  if (website && website.trim().length > 0) {
+    logger.warn({ ip: ctx.ip }, 'Signup honeypot triggered - rejecting silently');
+    ctx.status = 201;
+    ctx.body = {
+      success: true,
+      data: {
+        message: 'Registration successful. Please check your email to verify your account.',
+      },
+    };
+    return;
   }
 
-  // Validate password strength
+  // Captcha (Cloudflare Turnstile). No-op when not configured (dev).
+  const captchaOk = await getTurnstileService().verify(captchaToken, ctx.ip);
+  if (!captchaOk) {
+    throw new AppError('Captcha verification failed', 400, 'CAPTCHA_FAILED');
+  }
+
+  // Block known disposable / throwaway email providers.
+  if (config.signup.blockDisposableEmails && isDisposableEmail(email)) {
+    throw new AppError('Disposable email addresses are not allowed', 400, 'DISPOSABLE_EMAIL');
+  }
+
+  // Validate password strength (stricter than the schema regex).
   const passwordValidation = validatePasswordStrength(password);
   if (!passwordValidation.valid) {
     throw new AppError('Password does not meet requirements', 400, 'WEAK_PASSWORD', {

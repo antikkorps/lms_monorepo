@@ -16,12 +16,14 @@ import {
 } from './controller.js';
 import { authenticate } from './middleware.js';
 import { authRateLimiter } from '../middlewares/index.js';
+import { validate } from '../middlewares/validate.js';
+import { registerSchema } from '@shared/schemas';
 import { ssoRouter } from '../sso/index.js';
 
 export const authRouter = new Router({ prefix: '/auth' });
 
 // Public routes (with stricter rate limiting)
-authRouter.post('/register', authRateLimiter, register);
+authRouter.post('/register', authRateLimiter, validate(registerSchema), register);
 authRouter.post('/login', authRateLimiter, login);
 authRouter.post('/refresh', authRateLimiter, refresh);
 authRouter.post('/forgot-password', authRateLimiter, forgotPassword);

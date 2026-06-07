@@ -83,6 +83,13 @@ vi.mock('../config/index.js', () => ({
       from: 'test@example.com',
       fromName: 'Test LMS',
     },
+    signup: {
+      turnstile: {
+        secretKey: '', // disabled in tests -> captcha verification is a no-op
+        verifyUrl: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      },
+      blockDisposableEmails: true,
+    },
   },
 }));
 
@@ -220,12 +227,40 @@ describe('Auth Controller', () => {
   // ===========================================================================
 
   describe('register', () => {
-    it('should throw VALIDATION_ERROR on missing required fields', async () => {
-      const ctx = createMockContext({ body: { email: 'a@b.com' } });
+    // Note: required-field validation now lives in the registerSchema route
+    // middleware (see validate.spec.ts), not in the controller.
+
+    it('should reject disposable email addresses', async () => {
+      const ctx = createMockContext({
+        body: { email: 'bot@mailinator.com', password: 'Strong1!', firstName: 'A', lastName: 'B' },
+      });
+      vi.mocked(validatePasswordStrength).mockReturnValue({ valid: true, errors: [] });
+
       await expect(register(ctx)).rejects.toMatchObject({
-        code: 'VALIDATION_ERROR',
+        code: 'DISPOSABLE_EMAIL',
         statusCode: 400,
       });
+      expect(User.create).not.toHaveBeenCalled();
+    });
+
+    it('should silently reject when the honeypot field is filled', async () => {
+      const ctx = createMockContext({
+        body: {
+          email: 'a@b.com',
+          password: 'Strong1!',
+          firstName: 'A',
+          lastName: 'B',
+          website: 'http://spam.example',
+        },
+      });
+
+      await register(ctx);
+
+      // Looks like success to the bot, but nothing is created and no email sent.
+      expect(ctx.status).toBe(201);
+      expect(User.findOne).not.toHaveBeenCalled();
+      expect(User.create).not.toHaveBeenCalled();
+      expect(emailService.sendVerificationEmail).not.toHaveBeenCalled();
     });
 
     it('should throw WEAK_PASSWORD on weak password', async () => {
