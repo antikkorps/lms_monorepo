@@ -13,7 +13,9 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        // Configurable so the dockerized dev server can reach the API by its
+        // service name (api:3000); defaults to localhost for host-run dev.
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:3000',
         changeOrigin: true,
         // Ensure cookies are properly forwarded
         cookieDomainRewrite: '',
