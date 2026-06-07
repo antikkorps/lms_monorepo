@@ -1,5 +1,10 @@
 # Deployment Strategy
 
+> **Operating the stack day-to-day?** See [`DEPLOYMENT_RUNBOOK.md`](./DEPLOYMENT_RUNBOOK.md)
+> (deploy, migrate, roll back, troubleshoot). This file is the high-level
+> strategy; [`DEPLOYMENT_CHECKLIST.md`](./DEPLOYMENT_CHECKLIST.md) is the
+> one-time pre-launch checklist.
+
 ## Target Date
 Mid-February 2026 (within ~15 days from 2026-01-20)
 

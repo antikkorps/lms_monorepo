@@ -163,7 +163,7 @@ Video watch analytics, quiz performance insights, Redis session tests, integrati
 - [ ] OpenAPI/Swagger documentation
 - [ ] API versioning docs
 - [ ] Developer onboarding guide
-- [ ] Deployment runbook
+- [x] Deployment runbook (Done: 2026-06-04 — `docs/DEPLOYMENT_RUNBOOK.md`: deploy/migrate/rollback/troubleshoot ops)
 
 ### Search & Discovery
 
