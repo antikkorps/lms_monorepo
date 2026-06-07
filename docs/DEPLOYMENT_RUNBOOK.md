@@ -56,8 +56,9 @@ docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.producti
   up -d --remove-orphans
 
 # 4. Apply DB migrations (idempotent — tracked in schema_migrations)
+#    Prod runs the COMPILED migrator (no tsx in the image) — see §3.
 docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.production \
-  exec -T api npx tsx src/database/migrator.ts
+  exec -T api node database/migrator.mjs
 
 # 5. Reclaim disk from dangling images
 docker image prune -f
@@ -76,20 +77,25 @@ Then run the health checks in §4.
 
 ## 3. Database migrations
 
-The migrator (`apps/api/src/database/migrator.ts`, run via `npm run db:migrate`)
-applies SQL files from `docker/postgres/migrations/00X_*.sql` sequentially,
-tracking applied files in a `schema_migrations` table and using a PostgreSQL
-advisory lock to prevent concurrent runs. It is **safe to re-run** — already
-applied migrations are skipped.
+The migrator applies SQL files from `docker/postgres/migrations/00X_*.sql`
+sequentially, tracking applied files in a `schema_migrations` table and using a
+PostgreSQL advisory lock to prevent concurrent runs. It is **safe to re-run** —
+already applied migrations are skipped.
+
+> **Prod vs dev:** the production image ships **compiled** code (no TS source,
+> no `tsx`), so it runs the bundled `database/migrator.mjs`. The dev command
+> `npm run db:migrate` (`npx tsx apps/api/src/database/migrator.ts`) only works
+> in a checkout and fails in the container with `ERR_MODULE_NOT_FOUND`.
+> `MIGRATIONS_DIR=/app/migrations` is baked into the image.
 
 ```bash
 # Apply pending migrations (inside the running api container)
 docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.production \
-  exec -T api npx tsx src/database/migrator.ts
+  exec -T api node database/migrator.mjs
 
 # Show migration status without applying
 docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.production \
-  exec -T api npx tsx src/database/migrator.ts status
+  exec -T api node database/migrator.mjs status
 ```
 
 First-time / fresh DB only: see `DEPLOYMENT_CHECKLIST.md` §4 for the
@@ -258,7 +264,7 @@ C="docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.produ
 git pull origin main
 $C build --parallel
 $C up -d --remove-orphans
-$C exec -T api npx tsx src/database/migrator.ts
+$C exec -T api node database/migrator.mjs
 docker image prune -f
 curl -s https://api.iqon-ia.com/api/v1/health/ready
 ```
