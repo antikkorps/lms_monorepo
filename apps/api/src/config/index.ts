@@ -68,6 +68,20 @@ export const config = {
     webhookSecret: process.env.CLOUDFLARE_STREAM_WEBHOOK_SECRET || '',
   },
 
+  // Signup anti-abuse
+  signup: {
+    // Cloudflare Turnstile captcha. Verification is skipped when no secret is set
+    // (e.g. local dev), so the flow stays usable without keys.
+    turnstile: {
+      secretKey: process.env.TURNSTILE_SECRET_KEY || '',
+      verifyUrl:
+        process.env.TURNSTILE_VERIFY_URL ||
+        'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+    },
+    // Reject signups from known disposable/temporary email domains.
+    blockDisposableEmails: process.env.SIGNUP_BLOCK_DISPOSABLE_EMAILS !== 'false',
+  },
+
   // Storage (file uploads)
   storage: {
     provider: process.env.STORAGE_PROVIDER || 'local', // 'local' | 'r2'

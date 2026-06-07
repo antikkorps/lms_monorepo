@@ -16,6 +16,14 @@ export const registerSchema = z.object({
     ),
   firstName: z.string().min(1, 'First name is required').max(100),
   lastName: z.string().min(1, 'Last name is required').max(100),
+  // Optional B2B tenant the user is joining.
+  tenantSlug: z.string().min(1).max(100).optional(),
+  // Cloudflare Turnstile token from the captcha widget (required server-side
+  // only when Turnstile is configured — enforced in the controller).
+  captchaToken: z.string().optional(),
+  // Honeypot: must stay empty. Bots that auto-fill every field trip this.
+  // Accepted by the schema, then silently rejected in the controller.
+  website: z.string().optional(),
 });
 
 export const forgotPasswordSchema = z.object({
