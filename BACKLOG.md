@@ -157,6 +157,7 @@ Video watch analytics, quiz performance insights, Redis session tests, integrati
   - Added `zod ^4` as root dependency for Docker hoisting
   - Note: `.flatten()` and `z.nativeEnum()` are unchanged in Zod 4
 - [ ] ~~ESLint 9 → 10~~ — **BLOQUÉ** : typescript-eslint ne supporte pas encore ESLint 10 (breaking changes majeurs). Ne pas tenter avant annonce officielle typescript-eslint.
+- [ ] **TypeScript 6/7 readiness — retirer `baseUrl` des tsconfig** — `baseUrl` est déprécié à partir de TS 6.x (suppression prévue en 7.0). Le projet épingle TS 5.9.3 (CI verte, `baseUrl` non déprécié) ; c'est l'IDE qui embarque un TS 6.x et signale la dépréciation. À traiter **quand on bumpera TS**, dans sa propre branche : supprimer `baseUrl` des 5 tsconfig (`tsconfig.base.json`, `apps/app`, `apps/landing`, `apps/api/tsconfig.app.json`, `apps/api/tsconfig.spec.json`) et **réécrire les `paths` relativement à chaque tsconfig**. ⚠️ Incohérence à corriger : `tsconfig.app.json` utilise des chemins racine-relatifs (via le `baseUrl` hérité) alors que `tsconfig.spec.json` utilise `../../`. Typecheck chaque projet après. **Ne pas** utiliser `ignoreDeprecations` (masque sans corriger). Soulagement IDE immédiat possible en attendant : pin `typescript.tsdk` → `node_modules/typescript/lib` dans `.vscode/settings.json`.
 
 ### Documentation
 
