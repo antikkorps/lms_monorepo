@@ -19,6 +19,10 @@ interface RegisterData {
   password: string;
   firstName: string;
   lastName: string;
+  /** Cloudflare Turnstile token from the captcha widget. */
+  captchaToken?: string;
+  /** Honeypot field — left empty by real users. */
+  website?: string;
 }
 
 // Use window to persist state across HMR reloads

@@ -37,9 +37,9 @@
 
 **4. Open registrations**
 - [ ] Re-enable the (currently hidden) registration link on the landing
-- [ ] Rate limiting on public auth endpoints (config exists — confirm it's enforced)
-- [ ] Mandatory email verification on signup (Mailjet operational)
-- [ ] Anti-abuse on signup (rate limit / captcha)
+- [x] Rate limiting on public auth endpoints — confirmed enforced (auth tier 10 req/60s on all `/auth/*` public routes + SSO callbacks)
+- [x] Mandatory email verification on signup — PENDING status blocks login until verified; 24h Redis token; Mailjet operational
+- [x] Anti-abuse on signup — Cloudflare Turnstile captcha (circuit-breaker, fail-closed), honeypot field, disposable-email blocklist; register body now validated via shared `registerSchema`
 
 **5. Legal / RGPD** _(mandatory before public signups in FR)_
 - [ ] Real content for Mentions légales, CGU/CGV, Politique de confidentialité (landing has `/privacy` + `/terms` shells)

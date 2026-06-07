@@ -64,6 +64,13 @@ vi.mock('../config/index.js', () => ({
       postmarkApiKey: '',
       sendgridApiKey: '',
     },
+    signup: {
+      turnstile: {
+        secretKey: '', // disabled in tests -> captcha verification is a no-op
+        verifyUrl: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      },
+      blockDisposableEmails: true,
+    },
     redis: {
       url: 'redis://localhost:6379',
     },
