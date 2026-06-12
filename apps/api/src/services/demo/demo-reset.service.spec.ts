@@ -12,22 +12,20 @@ vi.mock('../../database/sequelize.js', () => ({
   },
 }));
 
-const destroy = vi.fn().mockResolvedValue(0);
-const model = () => ({ destroy });
-
 vi.mock('../../database/models/index.js', () => ({
+  // Each model gets its own destroy mock; no top-level vars (vi.mock is hoisted).
   User: { findOne: vi.fn() },
-  UserProgress: model(),
-  QuizResult: model(),
-  Note: model(),
-  Discussion: model(),
-  DiscussionReply: model(),
-  UserBadge: model(),
-  UserStreak: model(),
-  UserActivityLog: model(),
-  Notification: model(),
-  NotificationPreference: model(),
-  CourseReview: model(),
+  UserProgress: { destroy: vi.fn() },
+  QuizResult: { destroy: vi.fn() },
+  Note: { destroy: vi.fn() },
+  Discussion: { destroy: vi.fn() },
+  DiscussionReply: { destroy: vi.fn() },
+  UserBadge: { destroy: vi.fn() },
+  UserStreak: { destroy: vi.fn() },
+  UserActivityLog: { destroy: vi.fn() },
+  Notification: { destroy: vi.fn() },
+  NotificationPreference: { destroy: vi.fn() },
+  CourseReview: { destroy: vi.fn() },
 }));
 
 vi.mock('../../utils/logger.js', () => ({
