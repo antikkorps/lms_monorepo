@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { Building2, Loader2 } from 'lucide-vue-next';
+import { Building2, Loader2, PlayCircle } from 'lucide-vue-next';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -20,6 +20,10 @@ const toast = useToast();
 
 const email = ref('');
 const password = ref('');
+
+// Demo access — the "Try the demo" button is shown only when the build enables it.
+const demoEnabled = import.meta.env.VITE_DEMO_ENABLED === 'true';
+const isDemoLoading = ref(false);
 
 // Tenant SSO state
 const tenantSlug = computed(() => route.query.tenant as string | undefined);
@@ -44,6 +48,22 @@ async function handleSubmit() {
   }
 }
 
+async function handleDemoLogin() {
+  authStore.clearError();
+  isDemoLoading.value = true;
+
+  const success = await authStore.demoLogin();
+
+  isDemoLoading.value = false;
+
+  if (success) {
+    toast.success(t('auth.demo.started'));
+    await router.push('/dashboard');
+  } else {
+    toast.error(authStore.error || t('auth.demo.unavailable'));
+  }
+}
+
 async function handleSSOLogin(provider: 'google' | 'microsoft' | 'oidc') {
   const authUrl = await authStore.getSSOAuthUrl(provider, tenantSlug.value);
   if (authUrl) {
@@ -65,6 +85,12 @@ async function handleTenantSSOLogin() {
 
 // Load tenant SSO config on mount if tenant param exists
 onMounted(async () => {
+  // Auto-start the demo session when arriving from the landing "Try the demo" CTA.
+  if (route.query.demo === 'true') {
+    await handleDemoLogin();
+    return;
+  }
+
   if (tenantSlug.value) {
     isLoadingTenant.value = true;
     try {
@@ -233,6 +259,19 @@ onMounted(async () => {
             {{ t('auth.sso.microsoft') }}
           </Button>
         </div>
+
+        <Button
+          v-if="demoEnabled"
+          type="button"
+          variant="ghost"
+          class="mt-3 w-full"
+          @click="handleDemoLogin"
+          :disabled="authStore.isLoading || isDemoLoading"
+        >
+          <Loader2 v-if="isDemoLoading" class="mr-2 h-4 w-4 animate-spin" />
+          <PlayCircle v-else class="mr-2 h-4 w-4" />
+          {{ t('auth.demo.tryButton') }}
+        </Button>
 
         <p class="mt-6 text-center text-sm text-muted-foreground">
           {{ t('auth.login.noAccount') }}

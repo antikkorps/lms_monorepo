@@ -2,6 +2,7 @@ import type { Context, Next } from 'koa';
 import { verifyAccessToken, type AccessTokenPayload } from './jwt.js';
 import { isTokenBlacklisted } from './session.js';
 import { AppError } from '../utils/app-error.js';
+import { config } from '../config/index.js';
 import { UserRole } from '../database/models/enums.js';
 import { User } from '../database/models/User.js';
 import { Tenant } from '../database/models/Tenant.js';
@@ -193,6 +194,28 @@ export async function requireSuperAdmin(ctx: Context, next: Next): Promise<void>
 
   if (ctx.state.user.role !== UserRole.SUPER_ADMIN) {
     throw new AppError('SuperAdmin access required', 403, 'SUPER_ADMIN_REQUIRED');
+  }
+
+  await next();
+}
+
+/**
+ * Block the shared demo account from an endpoint.
+ * Applied to account-mutating and payment routes so the demo stays stable
+ * and can't trigger real charges. The demo is recognized by its configured
+ * email, which is always present in the access-token payload.
+ */
+export async function requireNotDemo(ctx: Context, next: Next): Promise<void> {
+  if (!ctx.state.user) {
+    throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
+  }
+
+  if (ctx.state.user.email === config.demo.email) {
+    throw new AppError(
+      'This action is disabled for the demo account',
+      403,
+      'DEMO_READONLY'
+    );
   }
 
   await next();

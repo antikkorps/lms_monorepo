@@ -12,4 +12,6 @@ export { licenseExpirationQueue } from './license-expiration.queue.js';
 export { startLicenseExpirationWorker, stopLicenseExpirationWorker, scheduleLicenseExpirationCheck } from './workers/license-expiration.worker.js';
 export { importQueue, addImportJob } from './import.queue.js';
 export { startImportWorker, stopImportWorker } from './workers/import.worker.js';
+export { demoResetQueue } from './demo-reset.queue.js';
+export { startDemoResetWorker, stopDemoResetWorker, scheduleDemoReset } from './workers/demo-reset.worker.js';
 export { queueConnection } from './connection.js';

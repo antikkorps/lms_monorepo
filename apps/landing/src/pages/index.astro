@@ -11,6 +11,13 @@ import { useTranslations, getTranslation } from '../i18n';
 const t = useTranslations('en');
 const lang = 'en';
 
+// "Try the demo" CTA — shown only when the build enables demo access.
+const appUrl = import.meta.env.PUBLIC_APP_URL || 'https://app.iqon-ia.com';
+const demoEnabled = import.meta.env.PUBLIC_DEMO_ENABLED === 'true';
+const demoCta = demoEnabled
+  ? { text: t('hero.cta.demo'), href: `${appUrl}/login?demo=true` }
+  : undefined;
+
 const features = [
   {
     icon: 'ai',
@@ -120,6 +127,7 @@ const testimonials = [
     subtitle={t('hero.subtitle')}
     primaryCta={{ text: t('hero.cta.primary'), href: '/coming-soon' }}
     secondaryCta={{ text: t('hero.cta.secondary'), href: '#features' }}
+    demoCta={demoCta}
     trustedText={t('hero.trusted')}
   />
 

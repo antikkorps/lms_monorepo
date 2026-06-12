@@ -13,6 +13,10 @@ vi.mock('../config/index.js', () => ({
     jwtRefreshSecret: 'test-refresh-secret',
     jwtAccessExpiresIn: '15m',
     jwtRefreshExpiresIn: '7d',
+    demo: {
+      enabled: true,
+      email: 'demo@iqon-ia.com',
+    },
   },
 }));
 
@@ -48,6 +52,7 @@ import {
   requireRole,
   requireTenant,
   requireSuperAdmin,
+  requireNotDemo,
   loadFullUser,
 } from './middleware.js';
 import { generateAccessToken } from './jwt.js';
@@ -336,6 +341,44 @@ describe('Auth Middleware', () => {
       const next = createMockNext();
 
       await expect(requireTenant(ctx as unknown as Context, next)).rejects.toThrow(
+        'Authentication required'
+      );
+    });
+  });
+
+  // ===========================================================================
+  // requireNotDemo
+  // ===========================================================================
+
+  describe('requireNotDemo', () => {
+    it('allows a regular account through', async () => {
+      const ctx = createMockContext({
+        state: { user: { userId: 'user-123', email: 'real@example.com' } },
+      });
+      const next = createMockNext();
+
+      await requireNotDemo(ctx as unknown as Context, next);
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('blocks the demo account', async () => {
+      const ctx = createMockContext({
+        state: { user: { userId: 'demo-1', email: 'demo@iqon-ia.com' } },
+      });
+      const next = createMockNext();
+
+      await expect(requireNotDemo(ctx as unknown as Context, next)).rejects.toThrow(
+        'This action is disabled for the demo account'
+      );
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('throws when not authenticated', async () => {
+      const ctx = createMockContext();
+      const next = createMockNext();
+
+      await expect(requireNotDemo(ctx as unknown as Context, next)).rejects.toThrow(
         'Authentication required'
       );
     });
