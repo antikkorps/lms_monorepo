@@ -103,6 +103,7 @@ import {
   me,
   updateLocale,
   changePassword,
+  deleteAccount,
   forgotPassword,
   resetPassword,
   verifyEmail,
@@ -192,7 +193,11 @@ function createMockUser(overrides: Record<string, unknown> = {}) {
     get fullName(): string {
       return `${data.firstName} ${data.lastName}`;
     },
+    get isSSO(): boolean {
+      return data.ssoProvider != null;
+    },
     update: vi.fn().mockResolvedValue(undefined),
+    destroy: vi.fn().mockResolvedValue(undefined),
     toJSON: () => data,
   };
 }
@@ -1391,6 +1396,91 @@ describe('Auth Controller', () => {
       );
       const body = ctx.body as { success: boolean };
       expect(body.success).toBe(true);
+    });
+  });
+
+  describe('deleteAccount', () => {
+    it('rejects unauthenticated requests', async () => {
+      const ctx = createMockContext({ body: { password: 'pw' } });
+      await expect(deleteAccount(ctx)).rejects.toThrow('Authentication required');
+    });
+
+    it('rejects when the password is missing for a password account', async () => {
+      const user = createMockUser();
+      vi.mocked(User.findByPk).mockResolvedValue(user as never);
+      const ctx = createMockContext({ state: { user: { userId: 'user-123' } }, body: {} });
+
+      await expect(deleteAccount(ctx)).rejects.toThrow('Password is required');
+      expect(user.destroy).not.toHaveBeenCalled();
+    });
+
+    it('rejects when the password is incorrect', async () => {
+      const user = createMockUser();
+      vi.mocked(User.findByPk).mockResolvedValue(user as never);
+      vi.mocked(verifyPassword).mockResolvedValue(false);
+      const ctx = createMockContext({
+        state: { user: { userId: 'user-123' } },
+        body: { password: 'wrong' },
+      });
+
+      await expect(deleteAccount(ctx)).rejects.toThrow('Password is incorrect');
+      expect(user.destroy).not.toHaveBeenCalled();
+    });
+
+    it('forbids super admins from self-deleting', async () => {
+      const user = createMockUser({ role: UserRole.SUPER_ADMIN });
+      vi.mocked(User.findByPk).mockResolvedValue(user as never);
+      const ctx = createMockContext({
+        state: { user: { userId: 'user-123' } },
+        body: { password: 'pw' },
+      });
+
+      await expect(deleteAccount(ctx)).rejects.toThrow(
+        'Super admin accounts cannot be self-deleted'
+      );
+      expect(user.destroy).not.toHaveBeenCalled();
+    });
+
+    it('anonymizes PII, soft-deletes, revokes sessions and clears cookies', async () => {
+      const user = createMockUser();
+      vi.mocked(User.findByPk).mockResolvedValue(user as never);
+      vi.mocked(verifyPassword).mockResolvedValue(true);
+      const ctx = createMockContext({
+        state: { user: { userId: 'user-123' } },
+        body: { password: 'correct' },
+      });
+
+      await deleteAccount(ctx);
+
+      expect(user.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'deleted-user-123@deleted.invalid',
+          firstName: 'Deleted',
+          lastName: 'User',
+          passwordHash: '',
+          ssoProvider: null,
+          status: UserStatus.INACTIVE,
+        }),
+        expect.any(Object)
+      );
+      expect(user.destroy).toHaveBeenCalled();
+      expect(invalidateAllUserSessions).toHaveBeenCalledWith('user-123');
+      expect(ctx.cookies.set).toHaveBeenCalledWith('access_token', '', expect.any(Object));
+      expect(ctx.cookies.set).toHaveBeenCalledWith('refresh_token', '', expect.any(Object));
+      const body = ctx.body as { success: boolean };
+      expect(body.success).toBe(true);
+    });
+
+    it('deletes an SSO account without requiring a password', async () => {
+      const user = createMockUser({ ssoProvider: 'google', passwordHash: '' });
+      vi.mocked(User.findByPk).mockResolvedValue(user as never);
+      const ctx = createMockContext({ state: { user: { userId: 'user-123' } }, body: {} });
+
+      await deleteAccount(ctx);
+
+      expect(verifyPassword).not.toHaveBeenCalled();
+      expect(user.destroy).toHaveBeenCalled();
+      expect(invalidateAllUserSessions).toHaveBeenCalledWith('user-123');
     });
   });
 });

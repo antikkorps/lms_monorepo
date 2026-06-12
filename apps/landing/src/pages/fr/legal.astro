@@ -1,0 +1,112 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const lastUpdated = '12 juin 2026';
+
+// NOTE: les valeurs entre crochets [A COMPLETER: ...] sont des placeholders a
+// remplir avec les vraies informations legales avant la mise en ligne.
+const sections = [
+  {
+    id: 'editeur',
+    title: 'Editeur du site',
+    content: `
+      <p>Ce site est edite par :</p>
+      <ul>
+        <li><strong>Denomination sociale :</strong> [A COMPLETER : raison sociale]</li>
+        <li><strong>Forme juridique :</strong> [A COMPLETER : ex. SAS, SARL]</li>
+        <li><strong>Capital social :</strong> [A COMPLETER : montant en euros]</li>
+        <li><strong>Siege social :</strong> [A COMPLETER : adresse postale complete]</li>
+        <li><strong>Immatriculation :</strong> [A COMPLETER : RCS / SIRET / SIREN]</li>
+        <li><strong>Numero de TVA :</strong> [A COMPLETER : TVA intracommunautaire]</li>
+        <li><strong>Email :</strong> [A COMPLETER : email de contact]</li>
+        <li><strong>Telephone :</strong> [A COMPLETER : telephone de contact]</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'directeur-publication',
+    title: 'Directeur de la publication',
+    content: `
+      <p>Le directeur de la publication est [A COMPLETER : nom complet], en sa qualite de [A COMPLETER : fonction, ex. President / Gerant].</p>
+    `,
+  },
+  {
+    id: 'hebergement',
+    title: 'Hebergement',
+    content: `
+      <p>Ce site est heberge par :</p>
+      <ul>
+        <li><strong>Hebergeur :</strong> [A COMPLETER : nom de l'hebergeur]</li>
+        <li><strong>Adresse :</strong> [A COMPLETER : adresse postale de l'hebergeur]</li>
+        <li><strong>Telephone :</strong> [A COMPLETER : telephone de l'hebergeur]</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'propriete-intellectuelle',
+    title: 'Propriete intellectuelle',
+    content: `
+      <p>L'ensemble des contenus de ce site (textes, images, logos, graphismes, logiciels et marques) est la propriete de [A COMPLETER : raison sociale] ou de ses partenaires et est protege par les lois en vigueur relatives a la propriete intellectuelle.</p>
+      <p>Toute reproduction, representation, modification ou diffusion, totale ou partielle, sans autorisation ecrite prealable est interdite et est susceptible de constituer une contrefacon.</p>
+    `,
+  },
+  {
+    id: 'responsabilite',
+    title: 'Responsabilite',
+    content: `
+      <p>[A COMPLETER : raison sociale] s'efforce d'assurer l'exactitude des informations publiees sur ce site mais ne peut garantir qu'elles sont completes ou exemptes d'erreurs. L'editeur ne saurait etre tenu responsable des dommages directs ou indirects resultant de l'acces ou de l'utilisation du site.</p>
+    `,
+  },
+  {
+    id: 'contact',
+    title: 'Contact',
+    content: `
+      <p>Pour toute question relative a ces mentions legales, vous pouvez nous contacter a l'adresse [A COMPLETER : email de contact].</p>
+    `,
+  },
+];
+---
+
+<Layout
+  title="Mentions Legales - IQON-IA"
+  description="Mentions legales de la plateforme IQON-IA : editeur, hebergement et propriete intellectuelle."
+  lang="fr"
+  canonicalPath="/fr/legal"
+>
+  <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-muted">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl sm:text-5xl font-bold text-foreground">Mentions Legales</h1>
+      <p class="mt-4 text-muted-foreground">Derniere mise a jour : {lastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Table des matieres -->
+      <nav class="mb-12 p-6 bg-muted rounded-lg">
+        <h2 class="font-semibold text-foreground mb-4">Table des Matieres</h2>
+        <ul class="space-y-2">
+          {sections.map((section, index) => (
+            <li>
+              <a href={`#${section.id}`} class="text-muted-foreground hover:text-primary transition-colors">
+                {index + 1}. {section.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Contenu -->
+      <div class="prose prose-gray dark:prose-invert max-w-none">
+        {sections.map((section, index) => (
+          <div id={section.id} class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold text-foreground mb-4">
+              {index + 1}. {section.title}
+            </h2>
+            <div class="text-muted-foreground space-y-4 [&_h4]:text-foreground [&_h4]:font-semibold [&_h4]:mt-6 [&_h4]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:text-muted-foreground [&_strong]:text-foreground" set:html={section.content} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

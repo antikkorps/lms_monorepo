@@ -437,7 +437,7 @@ export async function me(ctx: Context): Promise<void> {
   }
 
   const user = await User.findByPk(userId, {
-    attributes: ['id', 'email', 'firstName', 'lastName', 'role', 'status', 'tenantId', 'avatarUrl', 'avatarStyle', 'avatarVariation', 'locale', 'lastLoginAt', 'createdAt'],
+    attributes: ['id', 'email', 'firstName', 'lastName', 'role', 'status', 'tenantId', 'avatarUrl', 'avatarStyle', 'avatarVariation', 'locale', 'lastLoginAt', 'createdAt', 'ssoProvider'],
   });
 
   if (!user) {
@@ -469,6 +469,7 @@ export async function me(ctx: Context): Promise<void> {
         locale: user.locale,
         lastLoginAt: user.lastLoginAt,
         createdAt: user.createdAt,
+        isSSO: user.isSSO,
       },
       tenant,
     },
@@ -628,6 +629,85 @@ export async function changePassword(ctx: Context): Promise<void> {
     data: {
       message: 'Password changed successfully',
       accessToken,
+    },
+  };
+}
+
+/**
+ * Delete the current user's account (GDPR right to erasure, Art. 17)
+ * POST /auth/me/delete
+ *
+ * Anonymizes personal data and soft-deletes the row (paranoid) inside a
+ * transaction. Anonymizing the email frees it for future re-registration
+ * (the DB unique index spans soft-deleted rows) while scrubbing PII.
+ * All sessions are then revoked and auth cookies cleared.
+ */
+export async function deleteAccount(ctx: Context): Promise<void> {
+  const userId = ctx.state.user?.userId;
+  const { password } = ctx.request.body as { password?: string };
+
+  if (!userId) {
+    throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
+  }
+
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  // Guard against self-lockout: super admins must be removed by another admin.
+  if (user.role === UserRole.SUPER_ADMIN) {
+    throw new AppError(
+      'Super admin accounts cannot be self-deleted',
+      403,
+      'FORBIDDEN'
+    );
+  }
+
+  // Verify identity. Password accounts must re-enter their password; SSO
+  // accounts have no local password, so the UI gates them with a typed
+  // confirmation instead.
+  if (!user.isSSO) {
+    if (!password) {
+      throw new AppError('Password is required', 400, 'VALIDATION_ERROR');
+    }
+    const isValid = await verifyPassword(password, user.passwordHash);
+    if (!isValid) {
+      throw new AppError('Password is incorrect', 401, 'INVALID_PASSWORD');
+    }
+  }
+
+  await sequelize.transaction(async (transaction) => {
+    await user.update(
+      {
+        email: `deleted-${user.id}@deleted.invalid`,
+        firstName: 'Deleted',
+        lastName: 'User',
+        passwordHash: '',
+        avatarUrl: null,
+        avatarStyle: 'initials',
+        avatarVariation: 0,
+        lastLoginAt: null,
+        ssoProvider: null,
+        ssoProviderId: null,
+        ssoMetadata: null,
+        status: UserStatus.INACTIVE,
+      },
+      { transaction }
+    );
+    // Soft delete (paranoid) — sets deleted_at, preserves FK integrity.
+    await user.destroy({ transaction });
+  });
+
+  await invalidateAllUserSessions(userId);
+  clearAuthCookies(ctx);
+
+  logger.info({ userId }, 'User account deleted (GDPR erasure)');
+
+  ctx.body = {
+    success: true,
+    data: {
+      message: 'Account deleted successfully',
     },
   };
 }

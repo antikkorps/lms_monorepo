@@ -1,0 +1,111 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const lastUpdated = 'June 12, 2026';
+
+// NOTE: Bracketed [TODO: ...] values are placeholders that must be filled in
+// with the real legal entity details before this page goes live.
+const sections = [
+  {
+    id: 'publisher',
+    title: 'Site Publisher',
+    content: `
+      <p>This website is published by:</p>
+      <ul>
+        <li><strong>Company name:</strong> [TODO: legal company name]</li>
+        <li><strong>Legal form:</strong> [TODO: e.g. SAS, SARL]</li>
+        <li><strong>Share capital:</strong> [TODO: amount in EUR]</li>
+        <li><strong>Registered office:</strong> [TODO: full postal address]</li>
+        <li><strong>Registration number:</strong> [TODO: RCS / SIRET / SIREN]</li>
+        <li><strong>VAT number:</strong> [TODO: intra-community VAT number]</li>
+        <li><strong>Email:</strong> [TODO: contact email]</li>
+        <li><strong>Phone:</strong> [TODO: contact phone]</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'publication-director',
+    title: 'Publication Director',
+    content: `
+      <p>The publication director is [TODO: full name], in their capacity as [TODO: role, e.g. CEO / President].</p>
+    `,
+  },
+  {
+    id: 'hosting',
+    title: 'Hosting',
+    content: `
+      <p>This website is hosted by:</p>
+      <ul>
+        <li><strong>Host:</strong> [TODO: hosting provider name]</li>
+        <li><strong>Address:</strong> [TODO: host postal address]</li>
+        <li><strong>Phone:</strong> [TODO: host phone]</li>
+      </ul>
+    `,
+  },
+  {
+    id: 'intellectual-property',
+    title: 'Intellectual Property',
+    content: `
+      <p>All content on this website (text, images, logos, graphics, software, and trademarks) is the property of [TODO: company name] or its partners and is protected by applicable intellectual property laws.</p>
+      <p>Any reproduction, representation, modification, or distribution, in whole or in part, without prior written authorization is prohibited and may constitute an infringement.</p>
+    `,
+  },
+  {
+    id: 'liability',
+    title: 'Liability',
+    content: `
+      <p>[TODO: company name] strives to ensure the accuracy of the information published on this website but cannot guarantee that it is complete or error-free. The publisher cannot be held liable for any direct or indirect damage resulting from access to or use of the website.</p>
+    `,
+  },
+  {
+    id: 'contact',
+    title: 'Contact',
+    content: `
+      <p>For any question regarding this legal notice, you can contact us at [TODO: contact email].</p>
+    `,
+  },
+];
+---
+
+<Layout
+  title="Legal Notice - IQON-IA"
+  description="Legal notice for the IQON-IA platform: publisher, hosting, and intellectual property information."
+  canonicalPath="/legal"
+>
+  <section class="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-muted">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl sm:text-5xl font-bold text-foreground">Legal Notice</h1>
+      <p class="mt-4 text-muted-foreground">Last updated: {lastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Table of Contents -->
+      <nav class="mb-12 p-6 bg-muted rounded-lg">
+        <h2 class="font-semibold text-foreground mb-4">Table of Contents</h2>
+        <ul class="space-y-2">
+          {sections.map((section, index) => (
+            <li>
+              <a href={`#${section.id}`} class="text-muted-foreground hover:text-primary transition-colors">
+                {index + 1}. {section.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Content -->
+      <div class="prose prose-gray dark:prose-invert max-w-none">
+        {sections.map((section, index) => (
+          <div id={section.id} class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold text-foreground mb-4">
+              {index + 1}. {section.title}
+            </h2>
+            <div class="text-muted-foreground space-y-4 [&_h4]:text-foreground [&_h4]:font-semibold [&_h4]:mt-6 [&_h4]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:text-muted-foreground [&_strong]:text-foreground" set:html={section.content} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

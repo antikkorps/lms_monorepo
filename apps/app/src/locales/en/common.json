@@ -156,6 +156,17 @@
     "updatePassword": "Update Password",
     "updateSuccess": "Profile updated successfully",
     "passwordChanged": "Password changed successfully",
+    "dangerZone": "Danger zone",
+    "deleteAccount": {
+      "description": "Permanently delete your account and all associated personal data. This cannot be undone.",
+      "button": "Delete my account",
+      "confirmTitle": "Delete your account?",
+      "confirmWarning": "This will permanently delete your account and anonymize your personal data, in accordance with your right to erasure. This action cannot be undone.",
+      "emailConfirmLabel": "Type your email ({email}) to confirm",
+      "passwordLabel": "Enter your password to confirm",
+      "confirmButton": "Permanently delete",
+      "success": "Your account has been deleted"
+    },
     "roles": {
       "super_admin": "Super Administrator",
       "tenant_admin": "Organization Administrator",

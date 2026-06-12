@@ -42,9 +42,9 @@
 - [x] Anti-abuse on signup — Cloudflare Turnstile captcha (circuit-breaker, fail-closed), honeypot field, disposable-email blocklist; register body now validated via shared `registerSchema`
 
 **5. Legal / RGPD** _(mandatory before public signups in FR)_
-- [ ] Real content for Mentions légales, CGU/CGV, Politique de confidentialité (landing has `/privacy` + `/terms` shells)
-- [ ] Cookie consent banner
-- [ ] Confirm data-deletion path (soft-deletes / `paranoid` already in place)
+- [~] Legal pages — Politique de confidentialité (`/privacy`) + CGU/CGV (`/terms`) + cookies (`/cookies`) have real content (EN/FR). **Mentions légales** page (`/legal`, `/fr/legal`) scaffolded + linked in footer — **placeholders `[TODO/A COMPLETER]` for éditeur/hébergeur/SIRET still need Franck's real legal details**
+- [x] Cookie consent banner — landing `CookieConsent.astro` wired in `Layout.astro`; app needs none (only essential auth cookies, exempt from ePrivacy consent)
+- [x] Data-deletion path — self-service account deletion (GDPR right to erasure): `POST /auth/me/delete` anonymizes PII + soft-deletes (paranoid) in a transaction, revokes all sessions, clears cookies; "Danger zone" in app profile (password confirm, or email-typed confirm for SSO)
 
 **6. SEO — maximize the landing** _(already has meta/OG/Twitter/hreflang/sitemap, 2026-01-28)_
 - [ ] Now that videos exist: add `VideoObject` JSON-LD; ensure videos don't hurt LCP

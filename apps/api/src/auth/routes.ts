@@ -9,6 +9,7 @@ import {
   updateLocale,
   updateAvatar,
   changePassword,
+  deleteAccount,
   forgotPassword,
   resetPassword,
   verifyEmail,
@@ -38,6 +39,7 @@ authRouter.get('/me', authenticate, me);
 authRouter.patch('/me/locale', authenticate, updateLocale);
 authRouter.patch('/me/avatar', authenticate, updateAvatar);
 authRouter.post('/change-password', authenticate, changePassword);
+authRouter.post('/me/delete', authenticate, deleteAccount);
 
 // Mount SSO routes under /auth/sso
 authRouter.use(ssoRouter.routes());
