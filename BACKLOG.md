@@ -44,7 +44,7 @@
 **5. Legal / RGPD** _(mandatory before public signups in FR)_
 - [ ] Real content for Mentions légales, CGU/CGV, Politique de confidentialité (landing has `/privacy` + `/terms` shells)
 - [ ] Cookie consent banner
-- [ ] Confirm data-deletion path (soft-deletes / `paranoid` already in place)
+- [x] Data-deletion path — self-service account deletion (GDPR right to erasure): `POST /auth/me/delete` anonymizes PII + soft-deletes (paranoid) in a transaction, revokes all sessions, clears cookies; "Danger zone" in app profile (password confirm, or email-typed confirm for SSO)
 
 **6. SEO — maximize the landing** _(already has meta/OG/Twitter/hreflang/sitemap, 2026-01-28)_
 - [ ] Now that videos exist: add `VideoObject` JSON-LD; ensure videos don't hurt LCP

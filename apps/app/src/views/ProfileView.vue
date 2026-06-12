@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/composables/useToast';
 import { apiClient } from '@/composables/useApi';
@@ -17,12 +18,24 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { User, Lock, Shield, Loader2, ShoppingBag, ChevronRight } from 'lucide-vue-next';
+import { User, Lock, Shield, Loader2, ShoppingBag, ChevronRight, Trash2, AlertTriangle } from 'lucide-vue-next';
 import { RouterLink } from 'vue-router';
 
 const { t } = useI18n();
+const router = useRouter();
 const authStore = useAuthStore();
 const toast = useToast();
 
@@ -80,6 +93,49 @@ async function changePassword() {
   }
 
   isChangingPassword.value = false;
+}
+
+// Account deletion (GDPR right to erasure) state
+const deleteDialogOpen = ref(false);
+const deletePassword = ref('');
+const deleteConfirmEmail = ref('');
+const isDeletingAccount = ref(false);
+const deleteError = ref<string | null>(null);
+
+const isSSO = computed(() => authStore.user?.isSSO === true);
+
+// Confirm by typing the exact account email (locale-neutral, unambiguous).
+const emailConfirmed = computed(
+  () => deleteConfirmEmail.value.trim().toLowerCase() === (authStore.user?.email || '').toLowerCase(),
+);
+
+const canDeleteAccount = computed(
+  () => emailConfirmed.value && (isSSO.value || deletePassword.value.length > 0),
+);
+
+function resetDeleteForm() {
+  deletePassword.value = '';
+  deleteConfirmEmail.value = '';
+  deleteError.value = null;
+}
+
+async function confirmDeleteAccount() {
+  if (!canDeleteAccount.value) return;
+
+  isDeletingAccount.value = true;
+  deleteError.value = null;
+
+  const success = await authStore.deleteAccount(isSSO.value ? undefined : deletePassword.value);
+
+  if (success) {
+    deleteDialogOpen.value = false;
+    toast.success(t('common.profile.deleteAccount.success'));
+    router.push('/login');
+  } else {
+    deleteError.value = authStore.error;
+  }
+
+  isDeletingAccount.value = false;
 }
 
 async function onAvatarSelect(style: AvatarStyle, variation: number) {
@@ -282,6 +338,78 @@ async function onAvatarSelect(style: AvatarStyle, variation: number) {
             {{ t('common.profile.updatePassword') }}
           </Button>
         </form>
+      </CardContent>
+    </Card>
+
+    <!-- Danger Zone: Account Deletion (GDPR right to erasure) -->
+    <Card class="border-destructive/50">
+      <CardHeader>
+        <div class="flex items-center gap-2">
+          <AlertTriangle class="h-5 w-5 text-destructive" />
+          <CardTitle class="text-destructive">{{ t('common.profile.dangerZone') }}</CardTitle>
+        </div>
+        <CardDescription>{{ t('common.profile.deleteAccount.description') }}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <AlertDialog v-model:open="deleteDialogOpen" @update:open="(open: boolean) => { if (!open) resetDeleteForm(); }">
+          <AlertDialogTrigger as-child>
+            <Button variant="destructive">
+              <Trash2 class="mr-2 h-4 w-4" />
+              {{ t('common.profile.deleteAccount.button') }}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{{ t('common.profile.deleteAccount.confirmTitle') }}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {{ t('common.profile.deleteAccount.confirmWarning') }}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <div class="space-y-4 py-2">
+              <Alert v-if="deleteError" variant="destructive">
+                <AlertDescription>{{ deleteError }}</AlertDescription>
+              </Alert>
+
+              <div class="space-y-2">
+                <Label for="deleteConfirmEmail">
+                  {{ t('common.profile.deleteAccount.emailConfirmLabel', { email: authStore.user?.email }) }}
+                </Label>
+                <Input
+                  id="deleteConfirmEmail"
+                  v-model="deleteConfirmEmail"
+                  type="email"
+                  autocomplete="off"
+                  :placeholder="authStore.user?.email"
+                />
+              </div>
+
+              <div v-if="!isSSO" class="space-y-2">
+                <Label for="deletePassword">{{ t('common.profile.deleteAccount.passwordLabel') }}</Label>
+                <Input
+                  id="deletePassword"
+                  v-model="deletePassword"
+                  type="password"
+                  autocomplete="current-password"
+                />
+              </div>
+            </div>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel :disabled="isDeletingAccount">
+                {{ t('common.cancel') }}
+              </AlertDialogCancel>
+              <Button
+                variant="destructive"
+                :disabled="!canDeleteAccount || isDeletingAccount"
+                @click="confirmDeleteAccount"
+              >
+                <Loader2 v-if="isDeletingAccount" class="mr-2 h-4 w-4 animate-spin" />
+                {{ t('common.profile.deleteAccount.confirmButton') }}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   </div>

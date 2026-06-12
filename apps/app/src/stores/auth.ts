@@ -305,6 +305,35 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * Permanently delete the current user's account (GDPR right to erasure).
+   * On success the backend clears auth cookies; we drop local state too.
+   * `password` is required for password accounts and ignored for SSO ones.
+   */
+  async function deleteAccount(password?: string): Promise<boolean> {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      await apiClient.post('/auth/me/delete', { password });
+      user.value = null;
+      const ws = getAuthWindowState();
+      ws.userData = null;
+      ws.initialized = false;
+      isInitialized.value = false;
+      return true;
+    } catch (err) {
+      if (err instanceof ApiRequestError) {
+        error.value = err.message;
+      } else {
+        error.value = 'An unexpected error occurred';
+      }
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /**
    * Verify email with token
    * Backend auto-logs in on success (sets cookies + returns user data)
    */
@@ -448,6 +477,7 @@ export const useAuthStore = defineStore('auth', () => {
     forgotPassword,
     resetPassword,
     changePassword,
+    deleteAccount,
     verifyEmail,
     resendVerification,
     getSSOAuthUrl,

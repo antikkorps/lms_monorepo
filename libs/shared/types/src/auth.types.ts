@@ -26,6 +26,8 @@ export interface AuthenticatedUser {
   avatarStyle: string;
   avatarVariation: number;
   locale?: 'en' | 'fr';
+  /** True when the account authenticates via SSO and has no local password. */
+  isSSO?: boolean;
 }
 
 export interface LoginResponse {

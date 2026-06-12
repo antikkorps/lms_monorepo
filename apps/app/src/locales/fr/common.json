@@ -156,6 +156,17 @@
     "updatePassword": "Mettre à jour le mot de passe",
     "updateSuccess": "Profil mis à jour avec succès",
     "passwordChanged": "Mot de passe modifié avec succès",
+    "dangerZone": "Zone de danger",
+    "deleteAccount": {
+      "description": "Supprimez définitivement votre compte et toutes les données personnelles associées. Cette action est irréversible.",
+      "button": "Supprimer mon compte",
+      "confirmTitle": "Supprimer votre compte ?",
+      "confirmWarning": "Votre compte sera définitivement supprimé et vos données personnelles anonymisées, conformément à votre droit à l'effacement. Cette action est irréversible.",
+      "emailConfirmLabel": "Saisissez votre e-mail ({email}) pour confirmer",
+      "passwordLabel": "Saisissez votre mot de passe pour confirmer",
+      "confirmButton": "Supprimer définitivement",
+      "success": "Votre compte a été supprimé"
+    },
     "roles": {
       "super_admin": "Super administrateur",
       "tenant_admin": "Administrateur d'organisation",
