@@ -52,6 +52,19 @@
 - [ ] Verify sitemap / robots / hreflang / canonical / OG across all 16 pages
 - [ ] Performance pass (Lighthouse / Core Web Vitals)
 
+### 🔴🔒 Security audit — paid-course access bypass (2026-06-12) _(BLOCKS public launch)_
+
+> Threat audited: "can a user get a paid course without paying (and without a legit demo/free/instructor/B2B entitlement)?" **Yes — content is served without any entitlement check.** Root cause: two access-guard middlewares exist (`apps/api/src/middlewares/course-access.middleware.ts`: `requireCourseAccessMiddleware`, `requireLessonAccessMiddleware`) but are **dead code — never wired to any route**. `videoPlaybackUrl` is the **unsigned** Cloudflare Stream HLS manifest (`services/transcoding/providers/cloudflare-stream.provider.ts:92` returns `result.playback.hls`, no `requireSignedURLs`), so a leaked URL is directly playable.
+
+- [ ] **CRITICAL — `GET /lessons/:id` leaks paid video to anyone.** `courses/routes.ts:211` (`optionalAuthenticate` only) → `courses/controller.ts:725` `getLesson` checks only that the course is PUBLISHED, then returns `videoUrl/videoPlaybackUrl/videoId/transcript/description` (controller.ts:785-791) with no purchase/license/`isFree` check. Exploit: unauthenticated `GET /api/v1/lessons/<id>` → playable HLS URL. Fix: require access (or `isFree`) and strip video/transcript fields otherwise.
+- [ ] **CRITICAL — `GET /courses/:courseId/chapters/:chapterId/lessons` bulk-leaks.** `courses/routes.ts:189` (`optionalAuthenticate`) → `listLessons` (controller.ts:699-715) returns `videoPlaybackUrl` for every lesson in the chapter. Same fix.
+- [ ] **CRITICAL — `GET /courses/:id` embeds playback URLs for all lessons.** `courses/routes.ts:116` (`optionalAuthenticate`) → `getCourse` lesson mapping (controller.ts:242-260) includes `videoPlaybackUrl`/`videoUrl` for non-purchasers; also the easiest way to enumerate lesson IDs for the above. Fix: compute access first, include media only for entitled or `isFree` lessons.
+- [ ] **CRITICAL — `GET /uploads/*key` IDOR.** `uploads/index.ts` (`authenticate` only) → `uploads/controller.ts:253` `getFileInfo` explicitly discards the user ("result not needed for file access") and returns a signed R2 URL for **any** key → any learner downloads the raw source video/document of any course (keys leak via lesson/course APIs as `videoSourceKey`). Fix: ownership/entitlement check before signing. ⚠️ Also audit `DELETE /uploads/*key` (`deleteFile`, same `authenticate`-only) — possible any-user file deletion.
+- [ ] **HIGH — lesson-content GET handlers lack ownership check.** `lesson-content/routes.ts:25,35` gate by `requireRole(INSTRUCTOR,…)` but `getLessonContentByLang`/`listLessonContents` don't verify the instructor owns the course (the mutating handlers do, via `canManageLessonContent`). Any instructor reads any other instructor's paid content + `videoSourceKey`. Fix: apply `canManageLessonContent` to the GET handlers too.
+- [ ] **Defense-in-depth** — enable Cloudflare Stream **signed URLs** (`requireSignedURLs`) so a leaked `videoPlaybackUrl` isn't indefinitely playable, behind the access checks above.
+
+_Audited and found SAFE (no action): Stripe webhook signature IS verified + idempotent (`payments/webhook.controller.ts`); `POST /payments/verify` only reads back status and enforces `session.metadata.userId === user.userId` (no self-grant); `createCourseCheckout` takes amount/status from the DB, not the body (no mass-assignment of `status`/`amount`); B2B `assignSeat` is tenant-scoped + admin-gated; no free "enroll" endpoint exists; the demo grants access only via real seeded `Purchase` rows keyed on `userId` (never by `config.demo.email`)._
+
 ### 🟠 Go-live hardening (should-have)
 
 - [ ] Resolve 15 `npm audit` vulnerabilities (all require major bumps) — via Dependabot security PRs (exempt from cooldown) or deliberate upgrades
