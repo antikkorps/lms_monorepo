@@ -11,7 +11,7 @@ import {
 } from './controller.js';
 import { handleStripeWebhook } from './webhook.controller.js';
 import { handleTranscodingWebhook } from '../services/transcoding/webhook.controller.js';
-import { authenticate, requireRole } from '../auth/middleware.js';
+import { authenticate, requireRole, requireNotDemo } from '../auth/middleware.js';
 import { validate } from '../middlewares/validate.js';
 import {
   createCourseCheckoutSchema,
@@ -33,6 +33,7 @@ export const webhooksRouter = new Router({ prefix: '/webhooks' });
 paymentsRouter.post(
   '/checkout/course',
   authenticate,
+  requireNotDemo,
   validate(createCourseCheckoutSchema),
   createCourseCheckout
 );
@@ -69,6 +70,7 @@ paymentsRouter.post(
 paymentsRouter.post(
   '/:purchaseId/request-refund',
   authenticate,
+  requireNotDemo,
   validate(requestRefundSchema),
   requestRefund
 );

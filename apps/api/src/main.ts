@@ -26,6 +26,9 @@ import {
   scheduleLicenseExpirationCheck,
   startImportWorker,
   stopImportWorker,
+  startDemoResetWorker,
+  stopDemoResetWorker,
+  scheduleDemoReset,
 } from './queue/index.js';
 import { disconnectPublisher } from './services/notifications/index.js';
 
@@ -60,6 +63,8 @@ async function bootstrap() {
     startLicenseExpirationWorker();
     await scheduleLicenseExpirationCheck();
     startImportWorker();
+    startDemoResetWorker();
+    await scheduleDemoReset();
     logger.info('Queue workers started');
 
     // Start HTTP server
@@ -84,6 +89,7 @@ async function bootstrap() {
           await stopLeaderboardWorker();
           await stopLicenseExpirationWorker();
           await stopImportWorker();
+          await stopDemoResetWorker();
           logger.info('Queue workers stopped');
 
           // Close notification pub/sub

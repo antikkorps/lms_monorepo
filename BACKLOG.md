@@ -31,9 +31,9 @@
 - [ ] End-to-end test: B2C purchase + B2B license checkout (card + SEPA)
 
 **3. Demo access**
-- [ ] Shared **read-only** demo account with access to courses (seeded)
-- [ ] Periodic reset; ensure the demo account can't mutate other users' data or escalate privileges
-- [ ] "Try the demo" CTA on the landing
+- [x] Shared demo learner account (seeded, free access to published B2C courses); entered via `POST /auth/demo-login` (no creds, gated by `DEMO_ENABLED`). Recognized by `config.demo.email`.
+- [x] Periodic reset — nightly BullMQ job (3:00 AM) wipes the demo's generated data, keeps course access. Guardrails: `requireNotDemo` blocks shared-account mutation + B2C payments; admin/instructor & other-user actions already gated by role/ownership.
+- [x] "Try the demo" CTA on the landing (gated by `PUBLIC_DEMO_ENABLED` → `{PUBLIC_APP_URL}/login?demo=true`) + login-page button (`VITE_DEMO_ENABLED`)
 
 **4. Open registrations**
 - [ ] Re-enable the (currently hidden) registration link on the landing

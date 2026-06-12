@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import {
   register,
   login,
+  demoLogin,
   refresh,
   logout,
   logoutAll,
@@ -15,7 +16,7 @@ import {
   verifyEmail,
   resendVerification,
 } from './controller.js';
-import { authenticate } from './middleware.js';
+import { authenticate, requireNotDemo } from './middleware.js';
 import { authRateLimiter } from '../middlewares/index.js';
 import { validate } from '../middlewares/validate.js';
 import { registerSchema } from '@shared/schemas';
@@ -26,6 +27,7 @@ export const authRouter = new Router({ prefix: '/auth' });
 // Public routes (with stricter rate limiting)
 authRouter.post('/register', authRateLimiter, validate(registerSchema), register);
 authRouter.post('/login', authRateLimiter, login);
+authRouter.post('/demo-login', authRateLimiter, demoLogin);
 authRouter.post('/refresh', authRateLimiter, refresh);
 authRouter.post('/forgot-password', authRateLimiter, forgotPassword);
 authRouter.post('/reset-password', authRateLimiter, resetPassword);
@@ -36,10 +38,10 @@ authRouter.post('/resend-verification', authRateLimiter, resendVerification);
 authRouter.post('/logout', authenticate, logout);
 authRouter.post('/logout-all', authenticate, logoutAll);
 authRouter.get('/me', authenticate, me);
-authRouter.patch('/me/locale', authenticate, updateLocale);
-authRouter.patch('/me/avatar', authenticate, updateAvatar);
-authRouter.post('/change-password', authenticate, changePassword);
-authRouter.post('/me/delete', authenticate, deleteAccount);
+authRouter.patch('/me/locale', authenticate, requireNotDemo, updateLocale);
+authRouter.patch('/me/avatar', authenticate, requireNotDemo, updateAvatar);
+authRouter.post('/change-password', authenticate, requireNotDemo, changePassword);
+authRouter.post('/me/delete', authenticate, requireNotDemo, deleteAccount);
 
 // Mount SSO routes under /auth/sso
 authRouter.use(ssoRouter.routes());

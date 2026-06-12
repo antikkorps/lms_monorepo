@@ -165,6 +165,36 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * Start a session as the shared demo account (no credentials).
+   * Gated server-side by config.demo.enabled.
+   */
+  async function demoLogin(): Promise<boolean> {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const response = await apiClient.post<{ user: AuthenticatedUser }>(
+        '/auth/demo-login',
+      );
+      user.value = response.user;
+      const ws = getAuthWindowState();
+      ws.userData = response.user;
+      ws.initialized = true;
+      isInitialized.value = true;
+      return true;
+    } catch (err) {
+      if (err instanceof ApiRequestError) {
+        error.value = err.message;
+      } else {
+        error.value = 'An unexpected error occurred';
+      }
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /**
    * Register a new account
    */
   async function register(data: RegisterData): Promise<boolean> {
@@ -471,6 +501,7 @@ export const useAuthStore = defineStore('auth', () => {
     hasAnyRole,
     initialize,
     login,
+    demoLogin,
     register,
     logout,
     logoutAll,

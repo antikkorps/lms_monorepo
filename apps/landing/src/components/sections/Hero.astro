@@ -12,6 +12,10 @@ interface Props {
     text: string;
     href: string;
   };
+  demoCta?: {
+    text: string;
+    href: string;
+  };
   trustedText?: string;
   centered?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -22,6 +26,7 @@ const {
   subtitle,
   primaryCta,
   secondaryCta,
+  demoCta,
   trustedText,
   centered = true,
   size = 'lg',
@@ -50,11 +55,16 @@ const sizeClasses = {
         {subtitle}
       </p>
 
-      {(primaryCta || secondaryCta) && (
+      {(primaryCta || secondaryCta || demoCta) && (
         <div class={`mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up stagger-2 ${centered ? 'justify-center' : ''}`}>
           {primaryCta && (
             <Button href={primaryCta.href} size="lg" class="bg-white text-primary hover:bg-white/90">
               {primaryCta.text}
+            </Button>
+          )}
+          {demoCta && (
+            <Button href={demoCta.href} size="lg" variant="outline" class="border-white/30 text-white hover:bg-white/10">
+              {demoCta.text}
             </Button>
           )}
           {secondaryCta && (

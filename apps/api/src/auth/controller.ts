@@ -296,6 +296,59 @@ export async function login(ctx: Context): Promise<void> {
 }
 
 /**
+ * Log in as the shared demo account (no credentials).
+ * POST /auth/demo-login
+ *
+ * Gated by config.demo.enabled. Looks up the demo user by its configured
+ * email and issues a normal session — the account is recognized as demo
+ * everywhere by that email, so account/payment endpoints stay gated.
+ */
+export async function demoLogin(ctx: Context): Promise<void> {
+  if (!config.demo.enabled) {
+    throw new AppError('Demo access is not available', 404, 'DEMO_DISABLED');
+  }
+
+  const user = await User.findOne({ where: { email: config.demo.email } });
+  if (!user) {
+    logger.error({ email: config.demo.email }, 'Demo account is enabled but not seeded');
+    throw new AppError('Demo account is not available', 503, 'DEMO_UNAVAILABLE');
+  }
+
+  if (user.status !== UserStatus.ACTIVE) {
+    throw new AppError('Demo account is not active', 503, 'DEMO_UNAVAILABLE');
+  }
+
+  const { accessToken, refreshToken, tokenFamily } = generateTokenPair({
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    tenantId: user.tenantId,
+  });
+
+  await storeRefreshTokenFamily(user.id, tokenFamily, refreshToken);
+  await user.update({ lastLoginAt: new Date() });
+  setAuthCookies(ctx, accessToken, refreshToken);
+
+  logger.info({ userId: user.id }, 'Demo session started');
+
+  ctx.body = {
+    success: true,
+    data: {
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        tenantId: user.tenantId,
+        isDemo: true,
+      },
+      accessToken,
+    },
+  };
+}
+
+/**
  * Refresh access token using refresh token
  * POST /auth/refresh
  */
@@ -470,6 +523,7 @@ export async function me(ctx: Context): Promise<void> {
         lastLoginAt: user.lastLoginAt,
         createdAt: user.createdAt,
         isSSO: user.isSSO,
+        isDemo: user.email === config.demo.email,
       },
       tenant,
     },

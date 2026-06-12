@@ -40,6 +40,7 @@ import {
 } from './models/enums.js';
 import type { BadgeCriteria, BadgeCategory, BadgeRarity } from './models/Badge.js';
 import { hashPassword } from '../auth/password.js';
+import { config } from '../config/index.js';
 import { randomUUID } from 'crypto';
 import { logger } from '../utils/logger.js';
 
@@ -58,6 +59,7 @@ const IDS = {
   learner1: '00000000-0000-0000-0000-000000000004',
   learner2: '00000000-0000-0000-0000-000000000005',
   soloLearner: '00000000-0000-0000-0000-000000000006',
+  demo: '00000000-0000-0000-0000-000000000007',
 
   // Tenant
   tenant: '00000000-0000-0000-0000-000000000100',
@@ -177,6 +179,18 @@ async function seedUsers(): Promise<void> {
       passwordHash,
       firstName: 'Solo',
       lastName: 'Learner',
+      role: UserRole.LEARNER,
+      status: UserStatus.ACTIVE,
+      tenantId: null,
+    },
+    {
+      // Shared demo account — entered via POST /auth/demo-login (no password).
+      // Recognized as demo everywhere by its email (config.demo.email).
+      id: IDS.demo,
+      email: config.demo.email,
+      passwordHash,
+      firstName: 'Demo',
+      lastName: 'User',
       role: UserRole.LEARNER,
       status: UserStatus.ACTIVE,
       tenantId: null,
@@ -741,6 +755,23 @@ async function seedPurchasesAndProgress(): Promise<void> {
     {
       id: randomUUID(),
       userId: IDS.instructor,
+      courseId: IDS.course2,
+      tenantId: null,
+      amount: 0,
+      status: PurchaseStatus.COMPLETED,
+    },
+    // Demo account gets free access to the published B2C courses to explore.
+    {
+      id: randomUUID(),
+      userId: IDS.demo,
+      courseId: IDS.course1,
+      tenantId: null,
+      amount: 0,
+      status: PurchaseStatus.COMPLETED,
+    },
+    {
+      id: randomUUID(),
+      userId: IDS.demo,
       courseId: IDS.course2,
       tenantId: null,
       amount: 0,

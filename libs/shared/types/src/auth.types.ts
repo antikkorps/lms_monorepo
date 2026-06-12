@@ -28,6 +28,8 @@ export interface AuthenticatedUser {
   locale?: 'en' | 'fr';
   /** True when the account authenticates via SSO and has no local password. */
   isSSO?: boolean;
+  /** True for the shared demo account (read-mostly, gated from account/payment changes). */
+  isDemo?: boolean;
 }
 
 export interface LoginResponse {

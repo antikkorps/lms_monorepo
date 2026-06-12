@@ -29,6 +29,14 @@ export const config = {
   stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
 
+  // Demo account — a shared learner account for visitors to explore the app.
+  // Recognized everywhere by its email (no DB flag); gated from account-mutating
+  // and payment endpoints, and reset nightly.
+  demo: {
+    enabled: process.env.DEMO_ENABLED === 'true',
+    email: process.env.DEMO_EMAIL || 'demo@iqon-ia.com',
+  },
+
   // CORS
   corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:5173').split(','),
 

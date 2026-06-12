@@ -26,6 +26,7 @@ export const translations = {
     'hero.subtitle': 'The modern learning platform that empowers individuals and teams to master new skills with AI-powered personalization.',
     'hero.cta.primary': 'Start Learning Free',
     'hero.cta.secondary': 'Watch Demo',
+    'hero.cta.demo': 'Try the Demo',
     'hero.trusted': 'Trusted by leading companies',
 
     // Features
@@ -180,6 +181,7 @@ export const translations = {
     'hero.subtitle': 'La plateforme d\'apprentissage moderne qui permet aux individus et aux equipes de maitriser de nouvelles competences grace a l\'IA.',
     'hero.cta.primary': 'Commencer Gratuitement',
     'hero.cta.secondary': 'Voir la Demo',
+    'hero.cta.demo': 'Essayer la démo',
     'hero.trusted': 'Approuve par les entreprises leaders',
 
     // Features

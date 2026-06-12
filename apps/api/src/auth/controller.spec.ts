@@ -90,13 +90,19 @@ vi.mock('../config/index.js', () => ({
       },
       blockDisposableEmails: true,
     },
+    demo: {
+      enabled: true,
+      email: 'demo@iqon-ia.com',
+    },
   },
 }));
 
 // Import after mocks
+import { config } from '../config/index.js';
 import {
   register,
   login,
+  demoLogin,
   refresh,
   logout,
   logoutAll,
@@ -1481,6 +1487,57 @@ describe('Auth Controller', () => {
       expect(verifyPassword).not.toHaveBeenCalled();
       expect(user.destroy).toHaveBeenCalled();
       expect(invalidateAllUserSessions).toHaveBeenCalledWith('user-123');
+    });
+  });
+
+  describe('demoLogin', () => {
+    const demoConfig = config.demo as { enabled: boolean; email: string };
+
+    beforeEach(() => {
+      demoConfig.enabled = true;
+    });
+
+    it('returns 404 when demo access is disabled', async () => {
+      demoConfig.enabled = false;
+      const ctx = createMockContext();
+
+      await expect(demoLogin(ctx)).rejects.toThrow('Demo access is not available');
+      expect(User.findOne).not.toHaveBeenCalled();
+    });
+
+    it('returns 503 when the demo account is not seeded', async () => {
+      vi.mocked(User.findOne).mockResolvedValue(null as never);
+      const ctx = createMockContext();
+
+      await expect(demoLogin(ctx)).rejects.toThrow('Demo account is not available');
+    });
+
+    it('rejects when the demo account is not active', async () => {
+      const user = createMockUser({ email: 'demo@iqon-ia.com', status: UserStatus.SUSPENDED });
+      vi.mocked(User.findOne).mockResolvedValue(user as never);
+      const ctx = createMockContext();
+
+      await expect(demoLogin(ctx)).rejects.toThrow('Demo account is not active');
+    });
+
+    it('issues a session for the demo account without credentials', async () => {
+      const user = createMockUser({ id: 'demo-1', email: 'demo@iqon-ia.com' });
+      vi.mocked(User.findOne).mockResolvedValue(user as never);
+      vi.mocked(generateTokenPair).mockReturnValue({
+        accessToken: 'demo-at',
+        refreshToken: 'demo-rt',
+        tokenFamily: 'demo-fam',
+      });
+      const ctx = createMockContext();
+
+      await demoLogin(ctx);
+
+      expect(verifyPassword).not.toHaveBeenCalled();
+      expect(storeRefreshTokenFamily).toHaveBeenCalledWith('demo-1', 'demo-fam', 'demo-rt');
+      expect(ctx.cookies.set).toHaveBeenCalledWith('access_token', 'demo-at', expect.any(Object));
+      const body = ctx.body as { success: boolean; data: { user: { isDemo: boolean } } };
+      expect(body.success).toBe(true);
+      expect(body.data.user.isDemo).toBe(true);
     });
   });
 });
