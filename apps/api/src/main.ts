@@ -31,6 +31,7 @@ import {
   scheduleDemoReset,
 } from './queue/index.js';
 import { disconnectPublisher } from './services/notifications/index.js';
+import { beginShutdown } from './utils/shutdown.js';
 
 const app = new Koa();
 
@@ -75,6 +76,12 @@ async function bootstrap() {
 
     // Graceful shutdown handler
     const gracefulShutdown = async (signal: string) => {
+      // Guard against double signals (e.g. SIGTERM then SIGINT). beginShutdown()
+      // also flips the readiness probe to 503 so the LB drains this instance.
+      if (!beginShutdown()) {
+        logger.warn(`Received ${signal} during shutdown — ignoring`);
+        return;
+      }
       logger.info(`Received ${signal}. Starting graceful shutdown...`);
 
       server.close(async () => {
@@ -109,11 +116,12 @@ async function bootstrap() {
         }
       });
 
-      // Force shutdown after timeout
+      // Force shutdown after timeout. unref() so this timer never keeps the
+      // event loop alive on its own if everything else has already settled.
       setTimeout(() => {
         logger.error('Forced shutdown due to timeout');
         process.exit(1);
-      }, 30000);
+      }, 30000).unref();
     };
 
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));

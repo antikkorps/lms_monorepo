@@ -1,11 +1,16 @@
 import Router from '@koa/router';
+import type { Context } from 'koa';
 import { sequelize } from '../database/sequelize.js';
 import { getRedisClient } from '../utils/redis.js';
 import { logger } from '../utils/logger.js';
+import { isShuttingDown } from '../utils/shutdown.js';
 
 export const healthRouter = new Router({ prefix: '/health' });
 
-healthRouter.get('/', async (ctx) => {
+/**
+ * Liveness probe — is the process up at all? Cheap, no dependency checks.
+ */
+export async function healthCheck(ctx: Context): Promise<void> {
   ctx.body = {
     success: true,
     data: {
@@ -14,9 +19,28 @@ healthRouter.get('/', async (ctx) => {
       uptime: process.uptime(),
     },
   };
-});
+}
 
-healthRouter.get('/ready', async (ctx) => {
+/**
+ * Readiness probe — should this instance receive traffic?
+ *
+ * Returns 503 as soon as graceful shutdown begins so the load balancer drains
+ * this instance before connections are cut. Otherwise verifies DB + Redis.
+ */
+export async function readinessCheck(ctx: Context): Promise<void> {
+  if (isShuttingDown()) {
+    ctx.status = 503;
+    ctx.body = {
+      success: false,
+      data: {
+        status: 'shutting_down',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+      },
+    };
+    return;
+  }
+
   const checks: Record<string, boolean> = {
     database: false,
     redis: false,
@@ -51,4 +75,7 @@ healthRouter.get('/ready', async (ctx) => {
       uptime: process.uptime(),
     },
   };
-});
+}
+
+healthRouter.get('/', healthCheck);
+healthRouter.get('/ready', readinessCheck);
