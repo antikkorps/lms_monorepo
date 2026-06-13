@@ -174,7 +174,7 @@ describe('LessonContent Controller', () => {
       const content = createMockContentInstance({ transcodingStatus: 'ready', videoPlaybackUrl: 'https://stream.example.com/hls.m3u8' });
       mockLessonContentModel.findAll.mockResolvedValue([content]);
 
-      const ctx = createMockContext({ params: { lessonId: 'lesson-456' } });
+      const ctx = createMockContext({ params: { lessonId: 'lesson-456' }, state: superAdminState });
       await listLessonContents(ctx);
 
       const data = (ctx.body as { data: unknown[] }).data;
@@ -186,6 +186,23 @@ describe('LessonContent Controller', () => {
         transcodingError: null,
         videoSourceKey: null,
       });
+    });
+
+    it('should deny an instructor who does not own the course', async () => {
+      mockLessonModel.findByPk.mockResolvedValue({
+        id: 'lesson-456',
+        chapter: { course: { id: 'course-1', instructorId: 'other-instructor' } },
+      });
+
+      const ctx = createMockContext({
+        params: { lessonId: 'lesson-456' },
+        state: { user: { userId: 'instructor-1', role: 'instructor' } },
+      });
+
+      await expect(listLessonContents(ctx)).rejects.toThrow(
+        'You do not have permission to manage this lesson content'
+      );
+      expect(mockLessonContentModel.findAll).not.toHaveBeenCalled();
     });
   });
 
@@ -201,7 +218,7 @@ describe('LessonContent Controller', () => {
       });
       mockLessonContentModel.findOne.mockResolvedValue(content);
 
-      const ctx = createMockContext({ params: { lessonId: 'lesson-456', lang: 'en' } });
+      const ctx = createMockContext({ params: { lessonId: 'lesson-456', lang: 'en' }, state: superAdminState });
       await getLessonContentByLang(ctx);
 
       const data = (ctx.body as { data: Record<string, unknown> }).data;
@@ -212,10 +229,27 @@ describe('LessonContent Controller', () => {
     it('should return null data when content not found', async () => {
       mockLessonContentModel.findOne.mockResolvedValue(null);
 
-      const ctx = createMockContext({ params: { lessonId: 'lesson-456', lang: 'en' } });
+      const ctx = createMockContext({ params: { lessonId: 'lesson-456', lang: 'en' }, state: superAdminState });
       await getLessonContentByLang(ctx);
 
       expect((ctx.body as { data: null }).data).toBeNull();
+    });
+
+    it('should deny an instructor who does not own the course', async () => {
+      mockLessonModel.findByPk.mockResolvedValue({
+        id: 'lesson-456',
+        chapter: { course: { id: 'course-1', instructorId: 'other-instructor' } },
+      });
+
+      const ctx = createMockContext({
+        params: { lessonId: 'lesson-456', lang: 'en' },
+        state: { user: { userId: 'instructor-1', role: 'instructor' } },
+      });
+
+      await expect(getLessonContentByLang(ctx)).rejects.toThrow(
+        'You do not have permission to manage this lesson content'
+      );
+      expect(mockLessonContentModel.findOne).not.toHaveBeenCalled();
     });
   });
 
@@ -483,7 +517,7 @@ describe('LessonContent Controller', () => {
       });
       mockLessonContentModel.findAll.mockResolvedValue([content]);
 
-      const ctx = createMockContext({ params: { lessonId: 'lesson-456' } });
+      const ctx = createMockContext({ params: { lessonId: 'lesson-456' }, state: superAdminState });
       await listLessonContents(ctx);
 
       const item = (ctx.body as { data: Record<string, unknown>[] }).data[0];
@@ -501,7 +535,7 @@ describe('LessonContent Controller', () => {
       });
       mockLessonContentModel.findOne.mockResolvedValue(content);
 
-      const ctx = createMockContext({ params: { lessonId: 'lesson-456', lang: 'en' } });
+      const ctx = createMockContext({ params: { lessonId: 'lesson-456', lang: 'en' }, state: superAdminState });
       await getLessonContentByLang(ctx);
 
       const data = (ctx.body as { data: Record<string, unknown> }).data;

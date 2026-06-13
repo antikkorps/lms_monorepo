@@ -143,6 +143,7 @@ async function triggerTranscoding(content: LessonContent, videoSourceKey: string
 // =============================================================================
 
 export async function listLessonContents(ctx: Context): Promise<void> {
+  const user = getAuthenticatedUser(ctx);
   const { lessonId } = ctx.params;
   const { lang } = ctx.query as { lang?: SupportedLocale };
 
@@ -150,6 +151,13 @@ export async function listLessonContents(ctx: Context): Promise<void> {
   const lesson = await Lesson.findByPk(lessonId);
   if (!lesson) {
     throw AppError.notFound('Lesson not found');
+  }
+
+  // Authoring content (raw source keys, drafts) is owner-scoped, not just
+  // role-gated — an instructor must own the course to read another's content.
+  const canManage = await canManageLessonContent(user, lessonId);
+  if (!canManage) {
+    throw AppError.forbidden('You do not have permission to manage this lesson content');
   }
 
   const where: Record<string, unknown> = { lessonId };
@@ -172,6 +180,7 @@ export async function listLessonContents(ctx: Context): Promise<void> {
 // =============================================================================
 
 export async function getLessonContentByLang(ctx: Context): Promise<void> {
+  const user = getAuthenticatedUser(ctx);
   const { lessonId, lang } = ctx.params;
 
   // Validate lang
@@ -183,6 +192,12 @@ export async function getLessonContentByLang(ctx: Context): Promise<void> {
   const lesson = await Lesson.findByPk(lessonId);
   if (!lesson) {
     throw AppError.notFound('Lesson not found');
+  }
+
+  // Owner-scoped: an instructor must own the course to read its content.
+  const canManage = await canManageLessonContent(user, lessonId);
+  if (!canManage) {
+    throw AppError.forbidden('You do not have permission to manage this lesson content');
   }
 
   const content = await LessonContent.findOne({

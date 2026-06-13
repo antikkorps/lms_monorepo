@@ -8,6 +8,8 @@ import type { File } from '@koa/multer';
 import { getStorage, validateFile, type FileCategory } from '../storage/index.js';
 import { AppError } from '../utils/app-error.js';
 import { UserRole } from '../database/models/enums.js';
+import { LessonContent, Lesson, Chapter, Course } from '../database/models/index.js';
+import { checkCourseAccess } from '../utils/course-access.js';
 
 interface AuthenticatedUser {
   userId: string;
@@ -33,6 +35,48 @@ function canUpload(user: AuthenticatedUser): boolean {
     UserRole.TENANT_ADMIN,
     UserRole.SUPER_ADMIN,
   ].includes(user.role);
+}
+
+/**
+ * Authorize read access to a stored file by its key.
+ *
+ * If the key is a tracked lesson source video, access follows course
+ * entitlement (purchase / license / instructor / admin / free). For any other
+ * key (images, documents, direct-upload keys not yet attached to content), we
+ * fall back to upload-capable roles — never an open signed URL.
+ */
+async function assertFileAccess(user: AuthenticatedUser, key: string): Promise<void> {
+  const content = await LessonContent.findOne({
+    where: { videoSourceKey: key },
+    include: [
+      {
+        model: Lesson,
+        as: 'lesson',
+        include: [
+          {
+            model: Chapter,
+            as: 'chapter',
+            include: [{ model: Course, as: 'course', attributes: ['id'] }],
+          },
+        ],
+      },
+    ],
+  });
+
+  const courseId = content?.lesson?.chapter?.course?.id;
+
+  if (courseId) {
+    const access = await checkCourseAccess(user, courseId);
+    if (!access.hasAccess) {
+      throw AppError.forbidden('You do not have access to this file');
+    }
+    return;
+  }
+
+  // Untracked key: restrict to roles allowed to upload/manage files.
+  if (!canUpload(user)) {
+    throw AppError.forbidden('You do not have access to this file');
+  }
 }
 
 /**
@@ -249,16 +293,22 @@ export async function deleteFile(ctx: Context): Promise<void> {
 /**
  * Get file info / signed URL for private files
  * GET /uploads/:key
+ *
+ * Signing a URL for ANY key would be an IDOR (e.g. raw source video of a paid
+ * course). We resolve the key to its owning course when possible and require
+ * course entitlement; otherwise the file is only reachable by upload-capable
+ * roles (instructor / tenant admin / super admin).
  */
 export async function getFileInfo(ctx: Context): Promise<void> {
-  // Verify user is authenticated (result not needed for file access)
-  getAuthenticatedUser(ctx);
+  const user = getAuthenticatedUser(ctx);
 
   const key = decodeURIComponent(ctx.params.key);
 
   if (!key) {
     throw AppError.badRequest('File key is required');
   }
+
+  await assertFileAccess(user, key);
 
   const storage = getStorage();
 

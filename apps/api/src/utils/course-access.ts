@@ -5,6 +5,7 @@
 
 import { Course, Purchase, Lesson, Chapter, Tenant, TenantCourseLicense, TenantCourseLicenseAssignment } from '../database/models/index.js';
 import { PurchaseStatus, UserRole, TenantStatus, SubscriptionStatus, LicenseType } from '../database/models/enums.js';
+import type { LocalizedLessonData } from './locale.js';
 
 export type AccessType = 'purchase' | 'tenant' | 'free' | 'instructor' | 'admin';
 
@@ -268,6 +269,61 @@ export async function checkCourseAccessFromLesson(
 
   const accessResult = await checkCourseAccess(user, course.id);
   return { ...accessResult, courseId: course.id };
+}
+
+/**
+ * Minimal lesson shape required to gate media. Avoids depending on the full
+ * Sequelize Lesson instance so the helper stays trivially unit-testable.
+ */
+export interface GatableLesson {
+  id: string;
+  type: unknown;
+  duration: number;
+  position: number;
+  isFree: boolean;
+}
+
+/**
+ * Secure-by-default lesson serializer.
+ *
+ * Returns metadata that is always safe to expose (title, type, duration,
+ * thumbnail, transcoding status, description) and includes the *gated* media
+ * fields (videoUrl/videoId/videoPlaybackUrl/transcript) ONLY when the viewer is
+ * entitled — i.e. `hasAccess` is true OR the lesson itself is free.
+ *
+ * Default output is metadata-only, so an accidental omission at a call site
+ * leaks nothing playable.
+ */
+export function gateLessonMedia(
+  lesson: GatableLesson,
+  localized: LocalizedLessonData,
+  opts: { hasAccess: boolean }
+): Record<string, unknown> {
+  const base: Record<string, unknown> = {
+    id: lesson.id,
+    title: localized.title,
+    type: lesson.type,
+    duration: lesson.duration,
+    position: lesson.position,
+    isFree: lesson.isFree,
+    videoThumbnailUrl: localized.videoThumbnailUrl,
+    transcodingStatus: localized.transcodingStatus,
+    // Description is marketing/summary copy, not playable media — keep it ungated.
+    ...(localized.description && { description: localized.description }),
+  };
+
+  const entitled = opts.hasAccess || lesson.isFree;
+  if (!entitled) {
+    return base;
+  }
+
+  return {
+    ...base,
+    videoUrl: localized.videoUrl,
+    videoId: localized.videoId,
+    videoPlaybackUrl: localized.videoPlaybackUrl,
+    ...(localized.transcript && { transcript: localized.transcript }),
+  };
 }
 
 /**
