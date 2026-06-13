@@ -34,7 +34,11 @@ export default defineConfig({
           fr: 'fr-FR',
         },
       },
-      filter: (page) => !page.includes('/app/'),
+      // Keep noindex / placeholder pages out of the sitemap
+      filter: (page) =>
+        !page.includes('/app/') &&
+        !page.includes('/coming-soon') &&
+        !page.includes('/404'),
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),
