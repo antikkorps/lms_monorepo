@@ -33,8 +33,10 @@ import {
   checkTenantAccess,
   checkCourseAccessFromLesson,
   canEditCourse,
+  gateLessonMedia,
   type AuthenticatedUser,
 } from './course-access.js';
+import type { LocalizedLessonData } from './locale.js';
 import { Course, Purchase, Lesson, Tenant, TenantCourseLicense } from '../database/models/index.js';
 
 // =============================================================================
@@ -396,6 +398,73 @@ describe('Course Access Utility', () => {
       const course = createMockCourse();
 
       expect(canEditCourse(user, course as never)).toBe(false);
+    });
+  });
+
+  // ===========================================================================
+  // gateLessonMedia
+  // ===========================================================================
+
+  describe('gateLessonMedia', () => {
+    function createLocalized(overrides: Partial<LocalizedLessonData> = {}): LocalizedLessonData {
+      return {
+        title: 'Lesson Title',
+        videoUrl: 'https://cdn.example.com/source.mp4',
+        videoId: 'vid-123',
+        transcript: 'Full transcript text',
+        description: 'Lesson description',
+        videoPlaybackUrl: 'https://stream.example.com/playback.m3u8',
+        videoThumbnailUrl: 'https://cdn.example.com/thumb.jpg',
+        transcodingStatus: 'ready',
+        ...overrides,
+      };
+    }
+
+    const baseLesson = { id: 'lesson-1', type: 'video', duration: 300, position: 1, isFree: false };
+
+    it('includes playable media when the viewer is entitled', () => {
+      const view = gateLessonMedia(baseLesson, createLocalized(), { hasAccess: true });
+
+      expect(view).toMatchObject({
+        id: 'lesson-1',
+        title: 'Lesson Title',
+        videoUrl: 'https://cdn.example.com/source.mp4',
+        videoId: 'vid-123',
+        videoPlaybackUrl: 'https://stream.example.com/playback.m3u8',
+        transcript: 'Full transcript text',
+      });
+    });
+
+    it('omits all gated media for a paid lesson when NOT entitled', () => {
+      const view = gateLessonMedia(baseLesson, createLocalized(), { hasAccess: false });
+
+      // Safe metadata is still present
+      expect(view).toMatchObject({
+        id: 'lesson-1',
+        title: 'Lesson Title',
+        isFree: false,
+        videoThumbnailUrl: 'https://cdn.example.com/thumb.jpg',
+        transcodingStatus: 'ready',
+        description: 'Lesson description',
+      });
+      // Gated media must NOT leak
+      expect(view).not.toHaveProperty('videoUrl');
+      expect(view).not.toHaveProperty('videoId');
+      expect(view).not.toHaveProperty('videoPlaybackUrl');
+      expect(view).not.toHaveProperty('transcript');
+    });
+
+    it('includes media for a free lesson even without access', () => {
+      const view = gateLessonMedia(
+        { ...baseLesson, isFree: true },
+        createLocalized(),
+        { hasAccess: false }
+      );
+
+      expect(view).toMatchObject({
+        videoUrl: 'https://cdn.example.com/source.mp4',
+        videoPlaybackUrl: 'https://stream.example.com/playback.m3u8',
+      });
     });
   });
 });

@@ -33,6 +33,9 @@ vi.mock('../database/models/index.js', () => ({
     findAll: vi.fn(),
     findOne: vi.fn(),
   },
+  UserProgress: {
+    findAll: vi.fn().mockResolvedValue([]),
+  },
   User: {},
 }));
 
@@ -65,6 +68,16 @@ vi.mock('../storage/index.js', () => ({
   }),
 }));
 
+// Keep the real gateLessonMedia (security logic under test); stub only the DB-backed
+// entitlement check so we can drive hasAccess deterministically.
+vi.mock('../utils/course-access.js', async (importActual) => {
+  const actual = await importActual<typeof import('../utils/course-access.js')>();
+  return {
+    ...actual,
+    checkCourseAccess: vi.fn().mockResolvedValue({ hasAccess: false }),
+  };
+});
+
 // Import after mocks
 import {
   listCourses,
@@ -87,6 +100,7 @@ import {
 } from './controller.js';
 import { Course, Chapter, Lesson, LessonContent } from '../database/models/index.js';
 import { isTranscodingAvailable, getTranscoding } from '../services/transcoding/index.js';
+import { checkCourseAccess } from '../utils/course-access.js';
 
 // =============================================================================
 // Test Helpers
@@ -842,6 +856,142 @@ describe('Courses Controller', () => {
       expect(mockTranscodingDelete).toHaveBeenCalledWith('stream-1');
       expect(mockStorageDelete).toHaveBeenCalledWith('videos/src.mp4');
       expect(mockLesson.destroy).toHaveBeenCalled();
+    });
+  });
+
+  // ===========================================================================
+  // Media gating (secure-by-default) — getCourse / listLessons
+  // ===========================================================================
+
+  describe('media gating', () => {
+    const paidContent = {
+      lang: 'en',
+      title: 'Lesson 1',
+      videoUrl: 'https://cdn.example.com/source.mp4',
+      videoId: 'vid-123',
+      videoPlaybackUrl: 'https://stream.example.com/playback.m3u8',
+      videoThumbnailUrl: 'https://cdn.example.com/thumb.jpg',
+      transcodingStatus: 'ready',
+      transcript: 'secret transcript',
+      description: 'Lesson description',
+    };
+
+    function createGatedLesson() {
+      return {
+        id: 'lesson-1',
+        title: 'Lesson 1',
+        type: LessonType.VIDEO,
+        duration: 100,
+        position: 1,
+        isFree: false,
+        contents: [paidContent],
+      };
+    }
+
+    function createCourseWithLesson() {
+      const data = {
+        id: 'course-123',
+        title: 'Test Course',
+        slug: 'test-course',
+        status: CourseStatus.PUBLISHED,
+        instructorId: 'instructor-123',
+        isFree: false,
+        lessonsCount: 1,
+      };
+      const chapter = {
+        id: 'chapter-1',
+        title: 'Chapter 1',
+        lessons: [createGatedLesson()],
+        toJSON: () => ({ id: 'chapter-1', title: 'Chapter 1' }),
+      };
+      return {
+        ...data,
+        chapters: [chapter],
+        toJSON: () => data,
+      };
+    }
+
+    beforeEach(() => {
+      vi.mocked(checkCourseAccess).mockResolvedValue({ hasAccess: false } as never);
+    });
+
+    it('getCourse hides playable media from an anonymous viewer of a paid course', async () => {
+      vi.mocked(Course.findOne).mockResolvedValue(createCourseWithLesson() as never);
+
+      const ctx = createMockContext({ params: { id: 'course-123' } });
+      await getCourse(ctx);
+
+      const lesson = (ctx.body as { data: { chapters: { lessons: Record<string, unknown>[] }[] } })
+        .data.chapters[0].lessons[0];
+      expect(lesson).not.toHaveProperty('videoUrl');
+      expect(lesson).not.toHaveProperty('videoId');
+      expect(lesson).not.toHaveProperty('videoPlaybackUrl');
+      expect(lesson).not.toHaveProperty('transcript');
+      // Non-gated metadata still present
+      expect(lesson.videoThumbnailUrl).toBe('https://cdn.example.com/thumb.jpg');
+    });
+
+    it('getCourse exposes media to an entitled viewer', async () => {
+      vi.mocked(Course.findOne).mockResolvedValue(createCourseWithLesson() as never);
+      vi.mocked(checkCourseAccess).mockResolvedValue({ hasAccess: true, accessType: 'purchase' } as never);
+      vi.mocked(LessonContent.findAll).mockResolvedValue([] as never);
+
+      const ctx = createMockContext({
+        params: { id: 'course-123' },
+        state: { user: { userId: 'buyer-1', role: UserRole.LEARNER } },
+      });
+      await getCourse(ctx);
+
+      const lesson = (ctx.body as { data: { chapters: { lessons: Record<string, unknown>[] }[] } })
+        .data.chapters[0].lessons[0];
+      expect(lesson.videoPlaybackUrl).toBe('https://stream.example.com/playback.m3u8');
+      expect(lesson.videoUrl).toBe('https://cdn.example.com/source.mp4');
+      expect(lesson.transcript).toBe('secret transcript');
+    });
+
+    it('listLessons hides media from a non-purchaser', async () => {
+      vi.mocked(Chapter.findOne).mockResolvedValue(createMockChapter() as never);
+      vi.mocked(Lesson.findAll).mockResolvedValue([createGatedLesson()] as never);
+
+      const ctx = createMockContext({
+        params: { courseId: 'course-123', chapterId: 'chapter-123' },
+        state: { user: { userId: 'learner-1', role: UserRole.LEARNER } },
+      });
+      await listLessons(ctx);
+
+      const lesson = (ctx.body as { data: Record<string, unknown>[] }).data[0];
+      expect(lesson).not.toHaveProperty('videoPlaybackUrl');
+      expect(lesson).not.toHaveProperty('videoUrl');
+    });
+
+    it('listLessons exposes media to an entitled viewer', async () => {
+      vi.mocked(checkCourseAccess).mockResolvedValue({ hasAccess: true } as never);
+      vi.mocked(Chapter.findOne).mockResolvedValue(createMockChapter() as never);
+      vi.mocked(Lesson.findAll).mockResolvedValue([createGatedLesson()] as never);
+
+      const ctx = createMockContext({
+        params: { courseId: 'course-123', chapterId: 'chapter-123' },
+        state: { user: { userId: 'buyer-1', role: UserRole.LEARNER } },
+      });
+      await listLessons(ctx);
+
+      const lesson = (ctx.body as { data: Record<string, unknown>[] }).data[0];
+      expect(lesson.videoPlaybackUrl).toBe('https://stream.example.com/playback.m3u8');
+    });
+
+    it('exposes media on a free lesson even without access', async () => {
+      const freeLesson = { ...createGatedLesson(), isFree: true };
+      vi.mocked(Chapter.findOne).mockResolvedValue(createMockChapter() as never);
+      vi.mocked(Lesson.findAll).mockResolvedValue([freeLesson] as never);
+
+      const ctx = createMockContext({
+        params: { courseId: 'course-123', chapterId: 'chapter-123' },
+        state: { user: { userId: 'learner-1', role: UserRole.LEARNER } },
+      });
+      await listLessons(ctx);
+
+      const lesson = (ctx.body as { data: Record<string, unknown>[] }).data[0];
+      expect(lesson.videoPlaybackUrl).toBe('https://stream.example.com/playback.m3u8');
     });
   });
 

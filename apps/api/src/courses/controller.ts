@@ -5,7 +5,7 @@ import { CourseStatus, UserRole, LessonType, Currency, CourseCategory, CourseLev
 import { AppError } from '../utils/app-error.js';
 import { sequelize } from '../database/sequelize.js';
 import { parseLocaleFromRequest, getLocalizedLessonContent } from '../utils/locale.js';
-import { checkCourseAccess, canEditCourse } from '../utils/course-access.js';
+import { checkCourseAccess, canEditCourse, gateLessonMedia } from '../utils/course-access.js';
 import { isTranscodingAvailable, getTranscoding } from '../services/transcoding/index.js';
 import { getStorage } from '../storage/index.js';
 import { logger } from '../utils/logger.js';
@@ -232,6 +232,13 @@ export async function getCourse(ctx: Context): Promise<void> {
     }
   }
 
+  // Compute course entitlement ONCE for this request (avoid N+1 per lesson).
+  // Drives both media gating below and the enrollment block further down.
+  const accessResult = user
+    ? await checkCourseAccess(user, course.id)
+    : { hasAccess: false, accessType: undefined };
+  const hasAccess = accessResult.hasAccess;
+
   // Transform course to apply localization to lessons
   const courseData = course.toJSON() as Record<string, unknown>;
 
@@ -239,24 +246,10 @@ export async function getCourse(ctx: Context): Promise<void> {
     courseData.chapters = course.chapters.map((chapter) => {
       const chapterData = chapter.toJSON() as Record<string, unknown>;
       if (chapter.lessons) {
+        // Secure-by-default: only entitled viewers (or free lessons) get media.
         chapterData.lessons = chapter.lessons.map((lesson) => {
           const localized = getLocalizedLessonContent(lesson, locale);
-          return {
-            id: lesson.id,
-            title: localized.title,
-            type: lesson.type,
-            duration: lesson.duration,
-            position: lesson.position,
-            isFree: lesson.isFree,
-            videoUrl: localized.videoUrl,
-            videoId: localized.videoId,
-            videoPlaybackUrl: localized.videoPlaybackUrl,
-            videoThumbnailUrl: localized.videoThumbnailUrl,
-            transcodingStatus: localized.transcodingStatus,
-            // Include transcript and description if available
-            ...(localized.transcript && { transcript: localized.transcript }),
-            ...(localized.description && { description: localized.description }),
-          };
+          return gateLessonMedia(lesson, localized, { hasAccess });
         });
       }
       return chapterData;
@@ -266,11 +259,9 @@ export async function getCourse(ctx: Context): Promise<void> {
   // Add locale info to response
   courseData.locale = locale;
 
-  // Check enrollment status using centralized access check
+  // Check enrollment status using the access check computed above
   let enrollment = null;
   if (user) {
-    const accessResult = await checkCourseAccess(user, course.id);
-
     if (accessResult.hasAccess) {
       // Get user progress for this course
       const progressRecords = await UserProgress.findAll({
@@ -683,6 +674,13 @@ export async function listLessons(ctx: Context): Promise<void> {
     throw AppError.notFound('Chapter not found');
   }
 
+  // Compute course entitlement once; gates media on every lesson below.
+  const user = ctx.state.user as AuthenticatedUser | undefined;
+  const accessResult = user
+    ? await checkCourseAccess(user, courseId)
+    : { hasAccess: false };
+  const hasAccess = accessResult.hasAccess;
+
   const lessons = await Lesson.findAll({
     where: { chapterId },
     include: [
@@ -695,24 +693,10 @@ export async function listLessons(ctx: Context): Promise<void> {
     order: [['position', 'ASC']],
   });
 
-  // Apply localization
+  // Apply localization + secure-by-default media gating
   const localizedLessons = lessons.map((lesson) => {
     const localized = getLocalizedLessonContent(lesson, locale);
-    return {
-      id: lesson.id,
-      title: localized.title,
-      type: lesson.type,
-      duration: lesson.duration,
-      position: lesson.position,
-      isFree: lesson.isFree,
-      videoUrl: localized.videoUrl,
-      videoId: localized.videoId,
-      videoPlaybackUrl: localized.videoPlaybackUrl,
-      videoThumbnailUrl: localized.videoThumbnailUrl,
-      transcodingStatus: localized.transcodingStatus,
-      ...(localized.transcript && { transcript: localized.transcript }),
-      ...(localized.description && { description: localized.description }),
-    };
+    return gateLessonMedia(lesson, localized, { hasAccess });
   });
 
   ctx.body = { data: localizedLessons, locale };
@@ -759,9 +743,9 @@ export async function getLesson(ctx: Context): Promise<void> {
   }
 
   // Check if user can view unpublished course lessons
+  const user = ctx.state.user as AuthenticatedUser | undefined;
   const course = lesson.chapter?.course;
   if (course && course.status !== CourseStatus.PUBLISHED) {
-    const user = ctx.state.user as AuthenticatedUser | undefined;
     if (!user) {
       throw AppError.notFound('Lesson not found');
     }
@@ -770,25 +754,19 @@ export async function getLesson(ctx: Context): Promise<void> {
     }
   }
 
-  // Apply localization
+  // Compute entitlement for this course (gateLessonMedia also honours isFree).
+  const hasAccess = course
+    ? (await checkCourseAccess(user, course.id)).hasAccess
+    : false;
+
+  // Apply localization + secure-by-default media gating
   const localized = getLocalizedLessonContent(lesson, locale);
+  const gated = gateLessonMedia(lesson, localized, { hasAccess });
 
   ctx.body = {
     data: {
-      id: lesson.id,
-      title: localized.title,
-      type: lesson.type,
-      duration: lesson.duration,
-      position: lesson.position,
-      isFree: lesson.isFree,
+      ...gated,
       requiresPrevious: lesson.requiresPrevious,
-      videoUrl: localized.videoUrl,
-      videoId: localized.videoId,
-      videoPlaybackUrl: localized.videoPlaybackUrl,
-      videoThumbnailUrl: localized.videoThumbnailUrl,
-      transcodingStatus: localized.transcodingStatus,
-      transcript: localized.transcript,
-      description: localized.description,
       chapter: lesson.chapter ? {
         id: lesson.chapter.id,
         title: lesson.chapter.title,
