@@ -10,13 +10,15 @@ interface Props {
   description?: string;
   lang?: Lang;
   canonicalPath?: string;
+  noindex?: boolean;
 }
 
 const {
   title,
   description = 'Modern Learning Management System powered by AI',
   lang: langProp,
-  canonicalPath = Astro.url.pathname
+  canonicalPath = Astro.url.pathname,
+  noindex = false
 } = Astro.props;
 
 const lang = langProp || getLangFromUrl(Astro.url);
@@ -38,12 +40,9 @@ const footerLinks = {
     { key: 'footer.features' as const, href: '/features' },
     { key: 'footer.pricing' as const, href: '/pricing' },
     { key: 'footer.integrations' as const, href: '/features#integrations' },
-    { key: 'footer.changelog' as const, href: '/changelog' },
   ],
   company: [
     { key: 'footer.about' as const, href: '/about' },
-    { key: 'footer.blog' as const, href: '/blog' },
-    { key: 'footer.careers' as const, href: '/careers' },
     { key: 'footer.contact' as const, href: '/contact' },
   ],
   legal: [
@@ -61,6 +60,7 @@ const footerLinks = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
 
@@ -68,6 +68,10 @@ const footerLinks = {
     <link rel="canonical" href={`https://iqon-ia.com${canonicalPath}`} />
     {alternateLinks.map(({ lang: altLang, href }) => (
       <link rel="alternate" hreflang={altLang} href={`https://iqon-ia.com${href}`} />
+    ))}
+    {/* x-default points search engines at the default-locale (en) URL */}
+    {alternateLinks.filter(({ lang: altLang }) => altLang === 'en').map(({ href }) => (
+      <link rel="alternate" hreflang="x-default" href={`https://iqon-ia.com${href}`} />
     ))}
 
     <!-- Open Graph -->
@@ -84,10 +88,23 @@ const footerLinks = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="https://iqon-ia.com/og-image.png" />
 
-    <!-- Fonts -->
+    <!-- Fonts (loaded non-render-blocking to protect LCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    </noscript>
 
     <!-- JSON-LD: Organization (all pages) -->
     <JsonLd schema={{
