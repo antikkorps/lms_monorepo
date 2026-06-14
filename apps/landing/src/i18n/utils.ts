@@ -22,17 +22,19 @@ export function getLangFromUrl(url: URL): Lang {
  */
 export function useTranslations(lang: Lang) {
   return function t(key: TranslationKey, params?: Record<string, string | number>): string {
-    let text = translations[lang][key] ?? translations[defaultLang][key] ?? key;
+    const value = translations[lang][key] ?? translations[defaultLang][key] ?? key;
 
-    // Handle string type
-    if (typeof text !== 'string') {
+    // Only string values are interpolatable; array values are read via getTranslation
+    if (typeof value !== 'string') {
       return key;
     }
+
+    let text: string = value;
 
     // Replace parameters
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
-        text = (text as string).replace(`{${k}}`, String(v));
+        text = text.replace(`{${k}}`, String(v));
       });
     }
 
